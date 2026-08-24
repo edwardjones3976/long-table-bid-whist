@@ -1,3 +1,4 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]] -->
 # PROJECT_BOOTSTRAP
@@ -67,16 +68,21 @@ dignity.
 - Operations: **disabled** — no live service is authorized.
 - Learning and reuse: **enabled** — retain project-local decisions and evidence.
 
-## Initial team hypothesis
+## Team and workload contract
 
-| Lane | Provider/capability | Shared workflow skill | Why it may fit |
-| --- | --- | --- | --- |
-| Director | OpenAI | none | Framing, routing, synthesis, and acceptance |
-| Future primary | Cursor | `cursor-agent-workflow` | Bounded prototype implementation after owner authorization |
-| Future independent | Claude | none | Independent exact-candidate gameplay/rules review |
-| Optional research | Perplexity | `perplexity-research-workflow` | One bounded public-source question when needed |
+| Lane | Provider/capability | Direct-production target | Shared workflow skill | Role |
+| --- | --- | ---: | --- | --- |
+| Director/control plane | OpenAI | excluded | none | Continuous planning, routing, evidence synthesis, acceptance, and recovery; never a specialist target |
+| Chief Programmer | Claude | 60% | none | Primary implementation and repository-scale reasoning |
+| Project Secretary | Cursor | 28% | `cursor-agent-workflow` | Technical continuity, full-spectrum implementation, QA, records, and eligible review |
+| Specialist/backup | Gemini/Antigravity | 7% | `antigravity-sandbox-workflow` | Bounded scaffolding and mechanical work requiring primary-provider verification |
+| Research Programmers | Perplexity | 4% | `perplexity-research-workflow` | Strict public-evidence research |
+| External production | OpenAI/Codex | 1% | none | Separately owner-authorized work outside the Director runtime, with different-provider review |
 
-No paid provider contact or assignment is authorized by this hypothesis.
+The percentages are flexible routing targets for eligible direct production,
+not permissions, voting weights, or a reason to manufacture low-value work. The
+capacity target is 95% productive coordination with a 5% reserve. No paid
+provider contact or direct-production assignment has occurred in bootstrap.
 
 ## First reversible move
 
@@ -102,3 +108,4 @@ surface, and smallest useful module set are established. The Director may now
 prepare the gameplay prototype specification without another setup decision.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->

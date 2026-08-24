@@ -1,3 +1,4 @@
+# [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]]
 # Living project-local authority record. Do not store secrets or tokens here.
@@ -10,7 +11,7 @@ project:
   state: "framing"
   owner: "project owner"
   created_at: "2026-08-24T20:48:09Z"
-  updated_at: "2026-08-24T20:53:03Z"
+  updated_at: "2026-08-24T21:06:21Z"
 
 source_context:
   thread: "current VR/Meta Quest Games project conversation"
@@ -99,7 +100,7 @@ modules:
     purpose: "Convert the accepted critique into a gameplay prototype specification."
   implementation:
     state: "optional"
-    purpose: "Begins only after repository, ref, worktree, engine, scope, and budget are confirmed."
+    purpose: "Begins after the prototype specification establishes the engine, scope, and bounded assignment packets."
   quality_and_security:
     state: "optional"
     purpose: "Verify rules determinism, concealed-information boundaries, multiplayer authority, privacy, and asset provenance."
@@ -116,32 +117,66 @@ modules:
 team:
   director:
     provider: "openai"
-    responsibilities: ["framing", "routing", "synthesis", "acceptance"]
+    responsibilities: ["intake interpretation", "planning", "decomposition", "neutral coordination", "evidence collection", "routing", "recovery decisions", "acceptance review", "milestone reporting", "bounded escalation"]
+    measured_in_direct_production: false
+    specialist_assignment_target: false
+  workload:
+    direct_production_targets:
+      claude: 60
+      cursor: 28
+      gemini_antigravity: 7
+      perplexity: 4
+      external_openai_codex: 1
+    external_openai_codex:
+      authorization: "separate owner authorization required outside the Director runtime"
+      review: "different-provider exact-candidate review required"
+    coordination_capacity:
+      productive_percent: 95
+      reserve_percent: 5
+      reserve_purpose: "checks, drift reconciliation, evidence gaps, recovery, process failures, and infrastructure variance"
+    avoidable_micro_fixup_commit_reduction_target_percent: 33
   lanes:
-    - id: "future-prototype-producer"
+    - id: "chief-programmer"
+      provider: "claude"
+      role: "producer"
+      workflow_skill: "none"
+      responsibilities:
+        - "Primary implementation, repository-scale reasoning, debugging, and eligible independent review when not the producer"
+      forbidden_authority:
+        - "No unnamed repository access, self-review, merge, deployment, publication, spending, or permission changes"
+    - id: "project-secretary"
       provider: "cursor"
       role: "producer"
       workflow_skill: "cursor-agent-workflow"
       responsibilities:
-        - "Implement a bounded gameplay prototype only after the implementation surface is confirmed"
+        - "Technical continuity, canonical records, writer leases, branch and candidate maps, full-spectrum implementation, QA, and eligible independent review"
       forbidden_authority:
-        - "No unnamed repository access, spending, self-review, merge, deployment, publication, or external representation"
-    - id: "future-independent-review"
-      provider: "claude"
-      role: "reviewer"
-      workflow_skill: "none"
+        - "No self-review, Director acceptance, merge, deployment, publication, spending, or permission changes"
+    - id: "specialist-backup"
+      provider: "gemini_antigravity"
+      role: "producer"
+      workflow_skill: "antigravity-sandbox-workflow"
       responsibilities:
-        - "Review an exact future prototype candidate without material authorship"
+        - "Bounded boilerplate, scaffolding, mechanical implementation, and alternate ideation under the closed outbound contract"
       forbidden_authority:
-        - "No self-review, merge, deployment, publication, or inferred repository access"
-    - id: "optional-public-research"
+        - "No repository context, primary authority, debate participation, exact-candidate review, acceptance, merge, deployment, publication, or external write"
+    - id: "research-programmer"
       provider: "perplexity"
       role: "researcher"
       workflow_skill: "perplexity-research-workflow"
       responsibilities:
-        - "Answer one approved public research question with source provenance"
+        - "Bounded public-source research, methodology evidence, source discovery, and fact verification"
       forbidden_authority:
         - "No repository context, private data, programming, provider voting, Slack posts, or operational verdicts"
+    - id: "external-openai-production"
+      provider: "openai_codex_external"
+      role: "producer"
+      workflow_skill: "none"
+      state: "inactive"
+      responsibilities:
+        - "At most the separately owner-authorized 1% direct-production lane outside the Director runtime"
+      forbidden_authority:
+        - "The Director cannot emit this assignment; separate owner authorization and different-provider exact-candidate review are mandatory"
   shared_skill_catalog:
     cursor_agent_workflow: "discovered"
     antigravity_sandbox_workflow: "discovered"
@@ -238,3 +273,4 @@ next:
   expected_evidence: "A bounded prototype specification with acceptance scenarios and an explicit implementation decision gate."
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]]

@@ -1,3 +1,4 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]] -->
 # Director workflow for The Long Table
@@ -38,6 +39,20 @@ phase.
 `REVIEW_READY` -> `DECISION` / `OWNER_DECISION_REQUIRED` -> `COMPLETE`,
 `PAUSED`, or `RESHAPED`.
 
+## Workload and capacity
+
+- OpenAI: full Director/control-plane duties, excluded from the percentages.
+- Claude: 60% direct-production target as Chief Programmer.
+- Cursor: 28% as Project Secretary and full-spectrum repository partner.
+- Gemini/Antigravity: 7% bounded specialist and backup production.
+- Perplexity: 4% strict public-evidence research production.
+- External OpenAI/Codex: 1% only when separately owner-authorized, outside the
+  Director runtime, and followed by different-provider exact-candidate review.
+
+The Director is never a specialist assignment target. The operating-capacity
+target is 95% productive coordination and 5% reserve; the reserve is not planned
+idle time.
+
 Local project work and pushes to the confirmed private repository are authorized
 at a zero-dollar external-provider budget. The Director will select the initial
 engine/toolchain after the prototype specification establishes the smallest
@@ -46,3 +61,4 @@ shared host-audio transmission, or broader external effects remain separately
 gated. Everything under `sources/` remains read-only.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->

@@ -1,3 +1,4 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]] -->
 # Project workstream plan
@@ -27,17 +28,36 @@
 
 | ID | Module | Provider | Workflow skill | Role | Scope/surface | Depends on | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| D1 | design | OpenAI Director | none | framing/synthesis | One strict table; analysis-only | none | State model and interaction test scenarios |
-| D2 | design | OpenAI Director | none | framing/synthesis | AI dealer, player dealer, and human host permissions | D1 | No role can reveal or alter concealed state |
-| D3 | design/research | OpenAI Director | none | synthesis | Rights-clean bundled and host-audio policy | D1 | Every audio path has provenance and transmission rules |
-| G1 | decision gate | OpenAI Director | none | technical selection | Minimum engine/toolchain and first prototype slice | D1-D3 | Selection is justified by the accepted specification and keeps external spend at $0 |
-| I1 | implementation | Cursor, provisional | `cursor-agent-workflow` | future producer | Owner-confirmed isolated prototype surface | G1 | Playable candidate plus focused tests |
-| Q1 | quality | Claude, provisional | none | future reviewer | Exact I1 candidate; no material authorship | I1 | `ACCEPT`, `CHANGES_REQUIRED`, or `SERIOUS_SAFETY_STOP` |
+| D1 | design | OpenAI Director | none | control plane | Frame one strict table and route the specification work | none | Bounded assignments and acceptance scenarios; not counted as direct production |
+| G1 | decision gate | OpenAI Director | none | control plane | Select minimum engine/toolchain and assignment topology | D1 | Evidence-backed selection; not counted as direct production |
+| I1 | implementation | Claude | none | Chief Programmer | Primary gameplay/rules implementation | G1 | Playable exact candidate plus focused tests |
+| S1 | implementation/QA | Cursor | `cursor-agent-workflow` | Project Secretary | Technical continuity, integration, QA, candidate records, or an independent surface | G1 | Complete records and focused evidence without conflicting writer ownership |
+| A1 | implementation support | Gemini/Antigravity | `antigravity-sandbox-workflow` | Specialist/backup | Only a fixed, bounded scaffolding or mechanical lane | G1 | Output independently verified and integrated or rejected by Claude/Cursor |
+| R1 | research | Perplexity | `perplexity-research-workflow` | Research Programmer | One approved public-evidence question without repository context | D1 | Provenanced research packet; no operational verdict |
+| Q1 | quality | Claude or Cursor, whichever did not produce the candidate | applicable discovered skill or none | independent reviewer | Exact candidate and complete scope | I1/S1/A1 | `ACCEPT`, `CHANGES_REQUIRED`, or `SERIOUS_SAFETY_STOP` |
 
-The named future lanes are routing hypotheses only. They are not provider
-dispatches, spending authorization, repository access, or acceptance authority.
+## Workload and coordination targets
 
-## D1-D3 assignment packet
+- **Director/control plane:** OpenAI continuously owns intake, planning,
+  decomposition, neutral coordination, routing, evidence synthesis, recovery,
+  acceptance review, milestone reporting, and bounded escalation. This is not
+  direct production and is not included in the percentages.
+- **Direct production:** Claude 60%, Cursor 28%, Gemini/Antigravity 7%,
+  Perplexity 4%, and separately owner-authorized external OpenAI/Codex 1%.
+- **External OpenAI production:** Inactive. The Director must never emit itself
+  as a specialist target; any 1% external candidate requires owner authorization
+  outside this runtime and different-provider exact-candidate review.
+- **Capacity:** 95% productive coordination, 5% reserve for checks, drift,
+  evidence gaps, recovery, process failures, and infrastructure variance.
+- **Commit quality:** Reduce avoidable micro/fixup commits by at least 33% from
+  a rolling comparable baseline without combining unrelated risk or weakening
+  exact-candidate evidence.
+
+These targets are routing guidance, not permissions, voting weights, guaranteed
+provider usage, or a reason to create low-value work. No direct-production
+provider has been dispatched in this bootstrap phase.
+
+## D1/G1 control-plane packet
 
 - **Starting state:** The concept, critique, private repository, branch, worktree,
   coordination surface, and zero-dollar phase budget are established.
@@ -45,7 +65,8 @@ dispatches, spending authorization, repository access, or acceptance authority.
   interaction, host/dealer, and rights requirements.
 - **Scope:** Project documents in the confirmed private repository; no mutation
   of `sources/`.
-- **Provider:** OpenAI Director for framing and synthesis.
+- **Provider:** OpenAI Director for framing, routing, and acceptance synthesis;
+  never as a specialist assignment target.
 - **Authority granted:** Create and revise project-local planning artifacts.
 - **Authority denied:** Paid provider launches, Slack posts, uploads, deployment,
   publication, purchases, credential changes, or licensing commitments.
@@ -86,3 +107,4 @@ dispatches, spending authorization, repository access, or acceptance authority.
 - Current CI, security/privacy, and asset-provenance evidence when applicable.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
