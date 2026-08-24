@@ -1,0 +1,48 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]] -->
+# Director workflow for The Long Table
+
+This directory applies the modular project-bootstrap workflow from
+[`edwardjones3976/director-orchestrator`](https://github.com/edwardjones3976/director-orchestrator)
+to this project.
+
+## Provenance
+
+- Workflow source: `edwardjones3976/director-orchestrator`
+- Source branch: `main`
+- Source commit: `ed02458d5c425115e49b330ed1f6cdc1d9af1ce6`
+- Protocol: `docs/project-bootstrap-protocol.md`
+- Schema: `director-project-profile/v1`
+- Installed locally: `2026-08-24T20:48:09Z`
+
+The workflow source is a reference and coordination system, not the game's
+implementation target. This project's private repository is
+`edwardjones3976/long-table-bid-whist`; the current Codex project task is its
+coordination surface. Slack and paid providers are not required for the current
+phase.
+
+## Local workflow artifacts
+
+- [`intake.md`](intake.md) records the project-specific bootstrap request.
+- [`project-profile.yaml`](project-profile.yaml) is the living authority and
+  boundary record.
+- [`workstream-plan.md`](workstream-plan.md) defines the first prototype-planning
+  phase and its future provider lanes.
+- [`review-ready.md`](review-ready.md) is the exact-candidate handoff template.
+- [`project-state-report.md`](project-state-report.md) records current state
+  without implying that unperformed provider or service actions occurred.
+
+## Operating sequence
+
+`PROJECT_BOOTSTRAP` -> `BOOTSTRAP` -> `PLAN` -> `WORKING` / `EVIDENCE` ->
+`REVIEW_READY` -> `DECISION` / `OWNER_DECISION_REQUIRED` -> `COMPLETE`,
+`PAUSED`, or `RESHAPED`.
+
+Local project work and pushes to the confirmed private repository are authorized
+at a zero-dollar external-provider budget. The Director will select the initial
+engine/toolchain after the prototype specification establishes the smallest
+useful technical surface. New spending, public release, service deployment,
+shared host-audio transmission, or broader external effects remain separately
+gated. Everything under `sources/` remains read-only.
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->

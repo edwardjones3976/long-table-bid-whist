@@ -1,0 +1,240 @@
+# [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]]
+# [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]]
+# Living project-local authority record. Do not store secrets or tokens here.
+schema_version: "director-project-profile/v1"
+
+project:
+  id: "long-table-bid-whist"
+  name: "The Long Table — Bid Whist"
+  proposition: "Create an authentic, auditable VR/MR Bid Whist table that teaches real play and supports private social and hosted events."
+  state: "framing"
+  owner: "project owner"
+  created_at: "2026-08-24T20:48:09Z"
+  updated_at: "2026-08-24T20:53:03Z"
+
+source_context:
+  thread: "current VR/Meta Quest Games project conversation"
+  preserve:
+    - "Deterministic and auditable Bid Whist rules"
+    - "A serious, inhabited table rather than a casino or fantasy metagame"
+    - "House-rule respect through an acknowledged rules manifest"
+    - "Dignified, advisor-led cultural specificity"
+    - "Controller and hand-tracking accessibility"
+    - "No AI access to concealed cards"
+    - "Rights-clean game assets and music"
+  reshape:
+    - "Separate AI dealer, rotating player dealer, and human event host permissions"
+    - "Constrain rules combinations to validated presets and compatible switches"
+    - "Separate core table play from optional heritage presentation"
+    - "Treat shared host music as a rights and transmission feature, not a file-format feature"
+  discard:
+    - "Director Orchestrator repository permissions, credentials, budgets, channels, deployments, and provider state"
+    - "Any assumption that historic jazz or blues recordings are automatically public domain"
+  inherited_authority: false
+
+outcomes:
+  desired:
+    - value: "A prototype-ready interaction and state-machine specification for one strict four-seat table"
+      status: "confirmed"
+    - value: "AI dealer and human host modes with server-authoritative fairness boundaries"
+      status: "confirmed"
+    - value: "A commercial MVP roadmap after the gameplay prototype is evaluated"
+      status: "confirmed"
+    - value: "A rights-clean bundled soundtrack and bounded host-audio policy"
+      status: "confirmed"
+  non_goals:
+    - "No casino mechanics, collectible advantages, deck construction, or card powers"
+    - "No public ranked play, prize tournaments, live spectators, or manual renege adjudication in the first prototype"
+    - "No unlicensed third-party music, samples, likenesses, oral histories, photographs, or archival assets"
+    - "No service deployment or provider launch during workflow bootstrap"
+  evidence_standard:
+    - "Every rule transition is represented in a deterministic state model and focused acceptance scenarios"
+    - "Experienced-player review confirms authentic table flow"
+    - "Beginner usability test confirms that teaching transfers to a physical table"
+    - "Every shipped asset has recorded provenance and usage authority"
+  stopping_point: "Complete the bounded gameplay prototype specification before selecting and initializing the smallest useful implementation toolchain."
+
+surfaces:
+  slack:
+    channel: "not_applicable"
+    thread: "current Codex project task"
+    status: "not_applicable"
+  repositories:
+    - name: "edwardjones3976/long-table-bid-whist"
+      starting_ref: "main"
+      worktree: "C:\\Users\\edwar\\.codex\\.chatgpt-projects\\g-p-6a8baa37498881918581f26b68f1fb4c"
+      status: "confirmed"
+  systems_and_data:
+    classification: "private"
+    allowed_sources:
+      - "User-provided concept and decisions in this project"
+      - "Public sources used for bounded rules, platform, accessibility, cultural, and rights research"
+      - "Private project repository edwardjones3976/long-table-bid-whist"
+    prohibited_sources:
+      - "Secrets, credentials, tokens, or unrelated private project context"
+      - "Unlicensed media or unverifiable scrape artifacts"
+      - "Any mutation of synced sources/ content"
+  browser_conversations:
+    - "current project conversation"
+  external_effects:
+    mode: "explicitly_scoped"
+    allowed:
+      - "Create and revise project files outside sources/"
+      - "Commit and push project workflow artifacts to the confirmed private repository"
+    prohibited:
+      - "Provider launches or paid runs"
+      - "Slack posts or messages"
+      - "Public release, deployment, purchases, credential changes, or service activation"
+      - "Shared host-audio transmission or third-party content ingestion"
+
+modules:
+  discovery:
+    state: "enabled"
+    purpose: "Resolve only prototype-blocking uncertainties; exploratory activity is intentionally limited."
+  research_and_evidence:
+    state: "optional"
+    purpose: "Use bounded authoritative sources only when a rules, platform, cultural, accessibility, or rights claim affects design."
+  design_and_decision:
+    state: "enabled"
+    purpose: "Convert the accepted critique into a gameplay prototype specification."
+  implementation:
+    state: "optional"
+    purpose: "Begins only after repository, ref, worktree, engine, scope, and budget are confirmed."
+  quality_and_security:
+    state: "optional"
+    purpose: "Verify rules determinism, concealed-information boundaries, multiplayer authority, privacy, and asset provenance."
+  review_to_merge:
+    state: "disabled"
+    purpose: "The repository exists, but no gameplay implementation candidate exists yet."
+  operations:
+    state: "disabled"
+    purpose: "No live service is authorized."
+  learning_and_reuse:
+    state: "enabled"
+    purpose: "Keep decisions, tests, and advisor findings reusable within this project without copying private context elsewhere."
+
+team:
+  director:
+    provider: "openai"
+    responsibilities: ["framing", "routing", "synthesis", "acceptance"]
+  lanes:
+    - id: "future-prototype-producer"
+      provider: "cursor"
+      role: "producer"
+      workflow_skill: "cursor-agent-workflow"
+      responsibilities:
+        - "Implement a bounded gameplay prototype only after the implementation surface is confirmed"
+      forbidden_authority:
+        - "No unnamed repository access, spending, self-review, merge, deployment, publication, or external representation"
+    - id: "future-independent-review"
+      provider: "claude"
+      role: "reviewer"
+      workflow_skill: "none"
+      responsibilities:
+        - "Review an exact future prototype candidate without material authorship"
+      forbidden_authority:
+        - "No self-review, merge, deployment, publication, or inferred repository access"
+    - id: "optional-public-research"
+      provider: "perplexity"
+      role: "researcher"
+      workflow_skill: "perplexity-research-workflow"
+      responsibilities:
+        - "Answer one approved public research question with source provenance"
+      forbidden_authority:
+        - "No repository context, private data, programming, provider voting, Slack posts, or operational verdicts"
+  shared_skill_catalog:
+    cursor_agent_workflow: "discovered"
+    antigravity_sandbox_workflow: "discovered"
+    perplexity_research_workflow: "discovered"
+
+coordination:
+  live_transport: "current_codex_project_task"
+  execution_transport: "local_cli_in_verified_worktree"
+  canonical_review_and_merge: "github"
+  browser_role: "continuity_only"
+  provider_messages_relay_through_director: true
+
+contribution_attribution:
+  enabled: true
+  canonical_format: "[[Contributor | System | YYYY-MM-DD | HH:MM UTC | BEGIN|END]]"
+  preserve_prior_valid_tags: true
+  safe_human_text: "matching_inline_or_message_envelope"
+  structured_or_syntax_sensitive_artifacts: "external_submission_envelope"
+  authentication_or_authority_effect: "none"
+
+controls:
+  total_budget: "$0 external-provider spend until separately authorized"
+  phase_budget: "$0 external-provider spend for bootstrap and prototype specification"
+  timeout: "one bounded phase at a time"
+  provider_contact_attempt_limit: 3
+  minimal_fix:
+    enabled: true
+    attempt_limit: 1
+    changed_candidate_invalidates_evidence: true
+  revision_limit: 3
+  hop_limit: 2
+  allowlists:
+    projects: ["long-table-bid-whist"]
+    repositories: ["edwardjones3976/long-table-bid-whist"]
+    starting_refs: ["main"]
+  approval_gates:
+    - "Prototype specification defines the minimum technical surface before the Director selects the engine/toolchain"
+    - "Owner explicitly scopes any paid-provider, public-room, upload, publication, purchase, credential, or deployment effect"
+    - "Specialist rights review before shared host-supplied music is enabled"
+    - "Different-provider review for each exact implementation candidate"
+  acceptance_checks:
+    - "One versioned house-rules manifest drives bidding, play, scoring, endings, and replay"
+    - "AI dealer, player dealer, and human host permissions cannot reveal or alter concealed state"
+    - "Input prototype proves reliable select, inspect, discard, bid, and commit interactions"
+    - "Rights ledger covers composition, recording, samples, voice, likeness, environment, and archival assets"
+  serious_safety_stop: true
+
+review_chain:
+  producer: "unassigned until implementation approval"
+  material_authors: []
+  eligible_reviewer: "different provider, unassigned"
+  candidate:
+    repository: "none"
+    base_sha: "none"
+    head_sha: "none"
+    artifact_digest: "none"
+  required_evidence:
+    - "Different-provider exact-candidate review"
+    - "Focused deterministic rules and interaction tests"
+    - "Current security and privacy evidence when networked play exists"
+    - "Trusted CI when a repository is configured"
+  candidate_change_invalidates_evidence: true
+  merge_authority: "deterministic gate after all required owner, review, CI, security, and rights checks"
+
+assumptions:
+  confirmed:
+    - "The game is a serious VR/MR Bid Whist recreation with optional teaching and heritage material."
+    - "An AI dealer and a human-host option are required."
+    - "Bundled content must be rights-clean, with particular care for jazz and blues."
+    - "Host music must be legally cleared; file format alone is not a rights control."
+    - "Exploratory activities should remain limited."
+    - "All existing files under sources/ are read-only."
+  provisional:
+    - "Meta Quest is the initial headset target."
+    - "The first prototype uses one room, one strict preset, four seats, and optional AI fill."
+    - "The human host may be a seated player or a non-playing fifth participant, with different permissions."
+  unknown:
+    - "Implementation engine and toolchain"
+    - "Prototype delivery schedule beyond the current zero-dollar planning phase"
+    - "Whether a paid provider will ever be useful or authorized"
+    - "Whether shared host audio will be deferred, venue-external, or supported through rights-verified virtual transmission"
+  not_applicable:
+    - "Deployment, merge, public matchmaking, prize tournaments, and live operations during project framing"
+
+fallbacks:
+  unavailable_provider: "Use a different eligible lane or reduce scope; do not duplicate an ambiguous paid dispatch."
+  incomplete_evidence: "Keep the affected decision provisional or pause it; never force acceptance."
+  ambiguous_paid_dispatch: "reconcile_existing_run_before_retry"
+  changed_scope: "reshape_profile_before_dependent_work"
+
+next:
+  action: "Produce a non-code gameplay prototype specification for one strict table, including the dealer/host permission matrix and testable interaction loops."
+  responsible_party: "Director"
+  expected_evidence: "A bounded prototype specification with acceptance scenarios and an explicit implementation decision gate."
+# [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]]
