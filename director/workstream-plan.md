@@ -1,3 +1,4 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 22:04 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
@@ -24,6 +25,23 @@
 | Implementation | gated | Build only after the execution surface is authorized | Playable exact candidate and focused tests |
 | Quality and security | gated | Verify rules, concealed information, networking, privacy, and provenance | Independent exact-candidate evidence |
 | Learning and reuse | enabled | Preserve project-local decisions | Updated profile and state report |
+
+## Foundation research execution record
+
+- **Packet:**
+  [`research/2026-08-24-foundation-research.md`](research/2026-08-24-foundation-research.md)
+- **Status:** Firecrawl collection complete; Perplexity corroboration
+  `UNAVAILABLE` and explicitly unclaimed.
+- **Scope:** Ten bounded searches and 24 selected public sources covering rules,
+  culture, comparable social tabletop products, older-adult usability, current
+  Meta/Unity guidance, and content rights.
+- **Accounting:** Firecrawl is a requested collection tool under the OpenAI
+  Director control plane, not a new workforce lane. No Perplexity production is
+  credited and direct-production actuals remain zero until a specialist is
+  successfully dispatched.
+- **Decision:** The packet recommends a private, local-first Strict Table
+  prototype, but does not itself authorize implementation or select versioned
+  packages.
 
 ## Workstreams
 
@@ -130,3 +148,4 @@ query/source/date/excerpt/type/confidence/contradiction/gap provenance.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 22:04 UTC | END]] -->

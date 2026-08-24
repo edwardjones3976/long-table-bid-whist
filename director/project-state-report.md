@@ -1,3 +1,4 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 22:04 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
@@ -8,7 +9,7 @@
 [`project-profile.yaml`](project-profile.yaml).
 
 - **Project ID:** `long-table-bid-whist`
-- **Report label:** Authenticated local setup; Slack not applicable
+- **Report label:** Bootstrap plus bounded foundation research; Slack not applicable
 - **Categorized status:** Planned
 
 ## Current shape
@@ -45,6 +46,11 @@
 - **Workload:** Target `60/28/7/4/1`; actual direct-production share is
   `0/0/0/0/0` because no specialist production assignment has been dispatched.
   There is no workload deviation to calculate until direct production begins.
+- **Research execution:** Firecrawl was used as a bounded public collection
+  tool under Director control. It is not an additional workforce/provider lane.
+  Perplexity was not dispatched because its required API/connector lane was
+  unavailable, so the 4% research-programmer target remains unfilled rather
+  than being reassigned or falsely credited.
 - **Avoidable commit trend:** Baseline contains three commits after this
   correction: one bootstrap commit and two avoidable workflow-contract fixups
   covering workload and roles/responsibilities. Current avoidable count is 2 of
@@ -72,6 +78,10 @@
   including OpenAI function separation, Cursor's 90% capability-parity target,
   Antigravity's closed outbound contract, Perplexity provenance requirements,
   and producer/reviewer independence.
+- Completed a bounded 24-source foundation research packet using Firecrawl,
+  with a critique, comparable-product patterns, audience/accessibility evidence,
+  provisional technical direction, content-rights policy, prototype gates,
+  source matrix, contradictions/limitations, and rerun inputs.
 
 ## Boundaries
 
@@ -81,9 +91,10 @@
 - The Director cannot emit OpenAI as a specialist assignment target; the 1%
   external lane requires separate owner authorization and different-provider
   exact-candidate review.
-- No provider, paid run, service, Slack post, upload, publication, or deployment
-  was initiated. Repository creation and project workflow setup were explicitly
-  authorized.
+- No direct-production provider, paid run, service, Slack post, upload,
+  publication, or deployment was initiated. Firecrawl public research was
+  explicitly requested by the owner; Perplexity remained unavailable and no
+  query was sent through the signed-in browser session.
 - Host-supplied file format is not treated as evidence of music rights.
 
 ## Evidence
@@ -107,18 +118,26 @@
 - **Roles/responsibilities evidence:** Project-local contract at
   `director/roles-and-responsibilities.md`, aligned to the authoritative charter
   at `director-orchestrator@ed02458d5c425115e49b330ed1f6cdc1d9af1ce6`.
+- **Research evidence:**
+  `director/research/2026-08-24-foundation-research.md`; 10 bounded Firecrawl
+  searches, 24 selected public pages, 65 observed Firecrawl credits, no private
+  repository context sent, and no Perplexity result claimed.
 - **Unverified:** Engine/toolchain, schedule beyond the current phase, future
-  provider availability, and virtual shared-music scope.
+  provider availability, Perplexity corroboration, and virtual shared-music
+  scope.
 
 ## Current handoff
 
-- **State:** Bootstrap ready; prototype specification is next
+- **State:** Foundation research complete with Perplexity gap; committee
+  direction gate is next
 - **Exact candidate:** Not applicable
 - **Next responsible party:** Director
-- **Next action:** Produce the bounded non-code gameplay prototype specification
-  when requested.
-- **Next gate:** Accept the gameplay prototype specification, then select the
-  smallest local engine/toolchain before implementation.
+- **Next action:** Run one bounded committee position/rebuttal round on the
+  seven decisions in the foundation research packet, then record the Director
+  conclusion and owner decision.
+- **Next gate:** Convert accepted decisions into the bounded non-code gameplay
+  prototype specification; select the smallest local engine/toolchain only
+  after that specification is accepted.
 
 Outside this project repository and its Director workflow, nothing was written,
 merged, deployed, published, enabled, or otherwise changed.
@@ -126,3 +145,4 @@ merged, deployed, published, enabled, or otherwise changed.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 22:04 UTC | END]] -->
