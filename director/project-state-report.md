@@ -1,3 +1,4 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]] -->
@@ -35,7 +36,7 @@
   remote SHA. Repository creation and the bootstrap push were separately
   owner-authorized writes.
 - **Starting identity:** `main` at
-  `a18d4f171e4e0ea638d363abc2679a23f855a283` before this correction.
+  `0132c617d247a1723567941a3335c77bc6d70e52` before this roles correction.
 - **Current identity:** Correction candidate; exact published SHA is verified
   after commit and push rather than embedded self-referentially.
 - **Coordination capacity:** Target 95% productive coordination and 5% reserve;
@@ -44,10 +45,10 @@
 - **Workload:** Target `60/28/7/4/1`; actual direct-production share is
   `0/0/0/0/0` because no specialist production assignment has been dispatched.
   There is no workload deviation to calculate until direct production begins.
-- **Avoidable commit trend:** Baseline begins with two commits after this
-  correction: one bootstrap commit and one avoidable workload-contract fixup.
-  Current avoidable count is 1 of 2; no 33% reduction claim is made from this
-  undersized initial sample.
+- **Avoidable commit trend:** Baseline contains three commits after this
+  correction: one bootstrap commit and two avoidable workflow-contract fixups
+  covering workload and roles/responsibilities. Current avoidable count is 2 of
+  3; no 33% reduction claim is made from this undersized initial sample.
 - **Coordination:** Current Codex project task; no Slack dependency.
 - **Execution surface:** Private repository
   `edwardjones3976/long-table-bid-whist`, branch `main`, current project root,
@@ -67,6 +68,10 @@
   template.
 - Corrected the workload contract so OpenAI's full Director role is separate
   from its separately authorized 1% external direct-production lane.
+- Added the eight-area responsibility standard and exact provider role contract,
+  including OpenAI function separation, Cursor's 90% capability-parity target,
+  Antigravity's closed outbound contract, Perplexity provenance requirements,
+  and producer/reviewer independence.
 
 ## Boundaries
 
@@ -89,7 +94,9 @@
   `edwardjones3976/director-orchestrator@ed02458d5c425115e49b330ed1f6cdc1d9af1ce6`.
 - **Validated:** Contribution tags balanced in every project file; no material
   placeholders remain in the project profile; `sources/` and `AGENTS.md` are
-  ignored; staged content passes Git whitespace/error checks.
+  ignored; all eight responsibility areas and five provider/control-plane role
+  contracts are present; obsolete role labels are absent; staged content passes
+  Git whitespace/error checks.
 - **Trusted CI:** Not applicable; this project mirror is not a Git repository.
 - **Independent review:** Not requested; no implementation candidate exists.
 - **OpenAI function:** Director. No external OpenAI Participant or specialist
@@ -97,6 +104,9 @@
 - **Authenticated participation:** No direct-production provider participation;
   no positions, rebuttals, or votes are claimed.
 - **Debate integrity:** Not applicable; no decision debate occurred.
+- **Roles/responsibilities evidence:** Project-local contract at
+  `director/roles-and-responsibilities.md`, aligned to the authoritative charter
+  at `director-orchestrator@ed02458d5c425115e49b330ed1f6cdc1d9af1ce6`.
 - **Unverified:** Engine/toolchain, schedule beyond the current phase, future
   provider availability, and virtual shared-music scope.
 
@@ -115,3 +125,4 @@ merged, deployed, published, enabled, or otherwise changed.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->

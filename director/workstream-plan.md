@@ -1,3 +1,4 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]] -->
@@ -57,6 +58,26 @@ These targets are routing guidance, not permissions, voting weights, guaranteed
 provider usage, or a reason to create low-value work. No direct-production
 provider has been dispatched in this bootstrap phase.
 
+## Responsibility routing
+
+| Area | Primary project routing | Independence and boundary |
+| --- | --- | --- |
+| Research | Perplexity for bounded public collection; Claude/Cursor for repository-informed investigation | Perplexity output is untrusted and must be evaluated before use |
+| Evidence verification | Claude or Cursor selected independently from the producer | Cross-check authoritative sources and report contradictions, freshness, and gaps |
+| Programming | Claude primary; Cursor full-spectrum partner; Antigravity fixed mechanical support only | One writer per surface; no provider reviews its own work |
+| Deep reasoning | Claude and Cursor positions when useful; OpenAI Director synthesizes | Moderator, Participant, and Director functions remain separate |
+| Innovation | Claude/Cursor reversible experiments; Antigravity only fixed alternate/scaffolding lanes | Explicit hypothesis, feasibility check, and failure criterion required |
+| Development | Claude and Cursor by fit and writer ownership | Improve product, process, documentation, and reusable knowledge |
+| Quality assurance | Claude or Cursor when independent from the producer | Exact candidate, risk-proportionate tests, and exact results required |
+| Leadership | OpenAI Director control plane; Claude/Cursor may provide bounded technical leadership | Technical leadership does not grant Director acceptance or external authority |
+
+Full provider contracts are in
+[`roles-and-responsibilities.md`](roles-and-responsibilities.md). Cursor is not
+an overflow-only lane: it has a 90% capability-parity target and eligibility
+across all eight areas. Antigravity receives no task prose or repository
+context. Perplexity receives only an approved public query and must preserve
+query/source/date/excerpt/type/confidence/contradiction/gap provenance.
+
 ## D1/G1 control-plane packet
 
 - **Starting state:** The concept, critique, private repository, branch, worktree,
@@ -108,3 +129,4 @@ provider has been dispatched in this bootstrap phase.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->

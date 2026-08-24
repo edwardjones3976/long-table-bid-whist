@@ -1,3 +1,4 @@
+# [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]]
@@ -11,7 +12,7 @@ project:
   state: "framing"
   owner: "project owner"
   created_at: "2026-08-24T20:48:09Z"
-  updated_at: "2026-08-24T21:06:21Z"
+  updated_at: "2026-08-24T21:15:10Z"
 
 source_context:
   thread: "current VR/Meta Quest Games project conversation"
@@ -115,11 +116,24 @@ modules:
     purpose: "Keep decisions, tests, and advisor findings reusable within this project without copying private context elsewhere."
 
 team:
+  responsibility_standard:
+    research: "Investigate systematically with diverse relevant sources, provenance, and explicit fact, inference, disagreement, and unknown labels."
+    evidence_verification: "Cross-check material claims against independent or authoritative sources; report contradictions, freshness limits, and missing evidence."
+    programming: "Build, debug, maintain, and refactor only inside the assignment repository and side-effect boundaries."
+    deep_reasoning: "Compare credible alternatives, challenge assumptions, and anticipate consequences before recommendation."
+    innovation: "Use explicit hypotheses, reversible experiments, feasibility checks, and failure criteria."
+    development: "Improve product, process, documentation, productivity, and reusable project knowledge."
+    quality_assurance: "Reproduce defects, test in proportion to risk, verify acceptance checks, and report exact results."
+    leadership: "Coordinate dependencies, surface dissent, unblock bounded work, and align the team to the owner objective."
   director:
     provider: "openai"
     responsibilities: ["intake interpretation", "planning", "decomposition", "neutral coordination", "evidence collection", "routing", "recovery decisions", "acceptance review", "milestone reporting", "bounded escalation"]
     measured_in_direct_production: false
     specialist_assignment_target: false
+    functions:
+      moderator: "Neutral framing and counter-bias check; no advocacy or vote."
+      participant: "At most one independently formed position and the one existing OpenAI advisory vote."
+      director: "Evidence synthesis, dissent and uncertainty reporting, deterministic-gate routing, tie judgment, acceptance review, and escalation."
   workload:
     direct_production_targets:
       claude: 60
@@ -138,6 +152,8 @@ team:
   lanes:
     - id: "chief-programmer"
       provider: "claude"
+      title: "Chief Programmer"
+      direct_production_target_percent: 60
       role: "producer"
       workflow_skill: "none"
       responsibilities:
@@ -146,6 +162,10 @@ team:
         - "No unnamed repository access, self-review, merge, deployment, publication, spending, or permission changes"
     - id: "project-secretary"
       provider: "cursor"
+      title: "Project Secretary"
+      direct_production_target_percent: 28
+      capability_parity_target_percent: 90
+      eligible_responsibility_areas: ["research", "evidence_verification", "programming", "deep_reasoning", "innovation", "development", "quality_assurance", "leadership"]
       role: "producer"
       workflow_skill: "cursor-agent-workflow"
       responsibilities:
@@ -154,6 +174,12 @@ team:
         - "No self-review, Director acceptance, merge, deployment, publication, spending, or permission changes"
     - id: "specialist-backup"
       provider: "gemini_antigravity"
+      title: "Specialist and Backup Programmer"
+      direct_production_target_percent: 7
+      primary_team_substitute: false
+      debate_participant: false
+      exact_candidate_reviewer: false
+      outbound_contract: "fixed strings, closed enums, and bounded integers only; no model-authored prose or repository context"
       role: "producer"
       workflow_skill: "antigravity-sandbox-workflow"
       responsibilities:
@@ -162,21 +188,16 @@ team:
         - "No repository context, primary authority, debate participation, exact-candidate review, acceptance, merge, deployment, publication, or external write"
     - id: "research-programmer"
       provider: "perplexity"
+      title: "Research Programmers"
+      direct_production_target_percent: 4
+      output_authority: "untrusted evidence until evaluated by the Director or an authorized primary-team member"
+      required_provenance: ["query", "result URL", "page title", "publication date", "update date", "retrieval date", "supporting excerpt or extracted content", "source type", "confidence", "contradictions", "unavailable evidence"]
       role: "researcher"
       workflow_skill: "perplexity-research-workflow"
       responsibilities:
         - "Bounded public-source research, methodology evidence, source discovery, and fact verification"
       forbidden_authority:
         - "No repository context, private data, programming, provider voting, Slack posts, or operational verdicts"
-    - id: "external-openai-production"
-      provider: "openai_codex_external"
-      role: "producer"
-      workflow_skill: "none"
-      state: "inactive"
-      responsibilities:
-        - "At most the separately owner-authorized 1% direct-production lane outside the Director runtime"
-      forbidden_authority:
-        - "The Director cannot emit this assignment; separate owner authorization and different-provider exact-candidate review are mandatory"
   shared_skill_catalog:
     cursor_agent_workflow: "discovered"
     antigravity_sandbox_workflow: "discovered"
@@ -274,3 +295,4 @@ next:
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]]

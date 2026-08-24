@@ -1,3 +1,4 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]] -->
@@ -84,6 +85,13 @@ not permissions, voting weights, or a reason to manufacture low-value work. The
 capacity target is 95% productive coordination with a 5% reserve. No paid
 provider contact or direct-production assignment has occurred in bootstrap.
 
+The binding project-local role details and all eight responsibility areas are
+recorded in [`roles-and-responsibilities.md`](roles-and-responsibilities.md).
+Cursor is eligible across all eight areas with a 90% capability-parity target;
+Antigravity receives no model-authored prose or repository context; Perplexity
+returns untrusted evidence with the required provenance fields; and OpenAI's
+Moderator, Participant, and Director functions remain distinct.
+
 ## First reversible move
 
 - **Action:** Produce a non-code gameplay prototype specification for one strict
@@ -109,3 +117,4 @@ prepare the gameplay prototype specification without another setup decision.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->

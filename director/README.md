@@ -1,3 +1,4 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]] -->
@@ -32,6 +33,9 @@ phase.
 - [`review-ready.md`](review-ready.md) is the exact-candidate handoff template.
 - [`project-state-report.md`](project-state-report.md) records current state
   without implying that unperformed provider or service actions occurred.
+- [`roles-and-responsibilities.md`](roles-and-responsibilities.md) defines the
+  eight responsibility areas and each provider's exact project-local role,
+  authority boundary, provenance duties, and review eligibility.
 
 ## Operating sequence
 
@@ -62,3 +66,4 @@ gated. Everything under `sources/` remains read-only.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->

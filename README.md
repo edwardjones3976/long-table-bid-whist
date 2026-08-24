@@ -1,3 +1,4 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
 # The Long Table — Bid Whist
@@ -32,6 +33,10 @@ must never emit itself as a specialist assignment target.
 Coordination capacity targets 95% productive work with a 5% reserve for checks,
 drift, evidence gaps, recovery, and infrastructure variance.
 
+The complete eight-area responsibility standard, provider boundaries, debate
+separation, research provenance requirements, and review-independence rules are
+defined in [`director/roles-and-responsibilities.md`](director/roles-and-responsibilities.md).
+
 ## Content policy
 
 No unlicensed third-party content may ship. Music, including jazz- and
@@ -45,3 +50,4 @@ The ChatGPT-synced `sources/` directory and its local `AGENTS.md` are excluded
 from this repository and remain read-only reference material.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->
