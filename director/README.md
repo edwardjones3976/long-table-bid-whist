@@ -36,12 +36,31 @@ phase.
 - [`roles-and-responsibilities.md`](roles-and-responsibilities.md) defines the
   eight responsibility areas and each provider's exact project-local role,
   authority boundary, provenance duties, and review eligibility.
+- [`committee/2026-08-24-rebaseline-work-order.md`](committee/2026-08-24-rebaseline-work-order.md)
+  freezes the accelerated prototype's authority, provider, budget, and stopping
+  boundaries.
+- [`committee/2026-08-24-provider-attempts.md`](committee/2026-08-24-provider-attempts.md)
+  records actual provider availability without fabricated participation.
+- [`committee/2026-08-24-director-conclusion.md`](committee/2026-08-24-director-conclusion.md)
+  records the provisional decision, missing rebuttal, workload deviation, and
+  next gates.
+- [`prestage-rules-of-engagement.md`](prestage-rules-of-engagement.md) and
+  [`reshaped-workstream-plan.md`](reshaped-workstream-plan.md) freeze the build
+  contracts and current provider/chunk sequence.
 
 ## Operating sequence
 
-`PROJECT_BOOTSTRAP` -> `BOOTSTRAP` -> `PLAN` -> `WORKING` / `EVIDENCE` ->
-`REVIEW_READY` -> `DECISION` / `OWNER_DECISION_REQUIRED` -> `COMPLETE`,
-`PAUSED`, or `RESHAPED`.
+`BOOTSTRAP` -> `BOUNDED RESEARCH` -> `INDEPENDENT POSITIONS` -> `ONE REBUTTAL`
+-> `DIRECTOR/OWNER DECISION` -> `PRE-STAGE` -> `PROVIDER CHUNKS` -> `0–50%`
+-> `MIDWAY EVIDENCE` -> optional `RESHAPED` -> `50–100%` -> `HEAVY TESTING`
+-> `TECHNICAL CANDIDATE / REVIEW_READY` -> `HUMAN USER TEST` -> `KICKBACK` or
+`ACCEPTANCE` -> `COMPLETE`.
+
+Unavailable provider positions do not get simulated. The current accelerated
+cycle recorded an OpenAI position, no Claude/Cursor responses, no rebuttal, and
+a provisional Director continuation based on the owner's explicit direction
+and a reversible local candidate. `COMPLETE` remains unavailable before human
+acceptance.
 
 ## Workload and capacity
 

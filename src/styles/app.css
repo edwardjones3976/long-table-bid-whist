@@ -1,0 +1,228 @@
+.utility-controls {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 999px;
+}
+
+.table-scene__overlays {
+  pointer-events: none;
+}
+
+.table-scene__overlays > * {
+  pointer-events: auto;
+}
+
+.utility-controls > button {
+  display: grid;
+  width: 44px;
+  min-height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(224, 207, 176, 0.24);
+  border-radius: 50%;
+  color: var(--lt-text);
+  background: rgba(247, 240, 223, 0.045);
+  cursor: pointer;
+}
+
+.utility-controls > button:hover,
+.utility-controls > button:focus-visible {
+  border-color: var(--lt-brass);
+}
+
+.decision-panel {
+  position: absolute;
+  bottom: clamp(72px, 8vh, 90px);
+  left: 50%;
+  width: min(700px, calc(100vw - 48px));
+  padding: 18px;
+  border-radius: var(--lt-radius-panel);
+  transform: translateX(-50%);
+}
+
+.table-setup__avatar-note {
+  margin: 14px 4px 0;
+  color: var(--lt-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.turn-banner__mode {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.decision-panel > strong {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--lt-brass-bright);
+  font-size: 19px;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.decision-panel__choices {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.discard-confirm {
+  position: absolute;
+  right: clamp(18px, 4vw, 68px);
+  bottom: 58px;
+  min-width: 184px;
+}
+
+@media (min-width: 760px) {
+  .discard-confirm {
+    right: calc(clamp(15px, 1.65vw, 28px) + clamp(246px, 15.3vw, 274px) + 16px);
+  }
+}
+
+.discard-picker {
+  position: relative;
+  display: grid;
+  height: 100%;
+  align-items: end;
+  justify-items: center;
+}
+
+.discard-picker__cards {
+  position: absolute;
+  right: max(8%, 100px);
+  bottom: -34px;
+  left: max(8%, 100px);
+  display: flex;
+  height: 100%;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.discard-picker__cards .playing-card {
+  margin-left: clamp(-53px, -3vw, -35px);
+}
+
+.discard-picker__cards .playing-card:first-child {
+  margin-left: 0;
+}
+
+.discard-picker__cards .playing-card.is-selected {
+  z-index: 8;
+  border-color: var(--lt-brass-bright);
+  transform: translateY(-30px);
+  box-shadow: 0 0 0 3px rgba(213, 166, 75, 0.5), 0 18px 32px rgba(0, 0, 0, 0.5);
+}
+
+.discard-picker > p {
+  position: absolute;
+  bottom: 15px;
+  left: clamp(16px, 3vw, 46px);
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--lt-panel-border);
+  border-radius: 999px;
+  color: var(--lt-text);
+  background: var(--lt-panel);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.caption-bar {
+  position: absolute;
+  z-index: 46;
+  right: 50%;
+  bottom: 14px;
+  max-width: min(720px, calc(100vw - 340px));
+  padding: 9px 16px;
+  border: 1px solid rgba(208, 169, 93, 0.28);
+  border-radius: 999px;
+  color: var(--lt-text);
+  background: rgba(8, 8, 7, 0.86);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+  font-size: 13px;
+  text-align: center;
+  transform: translateX(50%);
+  backdrop-filter: blur(9px);
+  pointer-events: none;
+}
+
+@media (max-width: 1179px) {
+  .caption-bar {
+    max-width: calc(100vw - 290px);
+  }
+
+  .discard-picker__cards {
+    right: 2%;
+    left: 2%;
+  }
+}
+
+@media (max-width: 759px) {
+  .score-rail__contract {
+    display: grid;
+    gap: 1px;
+    align-items: initial;
+    justify-content: initial;
+  }
+
+  .table-scene__turn {
+    top: 160px;
+  }
+
+  .utility-controls {
+    flex-direction: column;
+  }
+
+  .decision-panel {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 16px;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .decision-panel__choices {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .discard-picker__cards {
+    right: 0;
+    bottom: -24px;
+    left: 0;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 40px 44px 0;
+    scrollbar-width: none;
+  }
+
+  .discard-picker__cards::-webkit-scrollbar {
+    display: none;
+  }
+
+  .discard-picker__cards .playing-card {
+    margin-left: -33px;
+  }
+
+  .discard-confirm {
+    position: fixed;
+    z-index: 38;
+    right: 50%;
+    bottom: 10px;
+    transform: translateX(50%);
+  }
+
+  .caption-bar {
+    right: 12px;
+    bottom: 8px;
+    left: 12px;
+    max-width: none;
+    border-radius: 12px;
+    transform: none;
+  }
+}

@@ -9,10 +9,10 @@ project:
   id: "long-table-bid-whist"
   name: "The Long Table — Bid Whist"
   proposition: "Create an authentic, auditable VR/MR Bid Whist table that teaches real play and supports private social and hosted events."
-  state: "framing"
+  state: "reshaped"
   owner: "project owner"
   created_at: "2026-08-24T20:48:09Z"
-  updated_at: "2026-08-24T21:15:10Z"
+  updated_at: "2026-08-24T22:51:06Z"
 
 source_context:
   thread: "current VR/Meta Quest Games project conversation"
@@ -54,7 +54,7 @@ outcomes:
     - "Experienced-player review confirms authentic table flow"
     - "Beginner usability test confirms that teaching transfers to a physical table"
     - "Every shipped asset has recorded provenance and usage authority"
-  stopping_point: "Complete the bounded gameplay prototype specification before selecting and initializing the smallest useful implementation toolchain."
+  stopping_point: "Reach a Technical Candidate / REVIEW_READY handoff, then require human testing and owner acceptance before COMPLETE."
 
 surfaces:
   slack:
@@ -83,8 +83,10 @@ surfaces:
     allowed:
       - "Create and revise project files outside sources/"
       - "Commit and push project workflow artifacts to the confirmed private repository"
+      - "Owner-authorized OpenAI/Codex production for the bounded accelerated technical prototype"
+      - "One read-only zero-incremental-cost provider attempt per configured lane"
     prohibited:
-      - "Provider launches or paid runs"
+      - "Paid provider runs, account login, credential changes, or duplicate ambiguous dispatches"
       - "Slack posts or messages"
       - "Public release, deployment, purchases, credential changes, or service activation"
       - "Shared host-audio transmission or third-party content ingestion"
@@ -100,14 +102,14 @@ modules:
     state: "enabled"
     purpose: "Convert the accepted critique into a gameplay prototype specification."
   implementation:
-    state: "optional"
-    purpose: "Begins after the prototype specification establishes the engine, scope, and bounded assignment packets."
+    state: "enabled"
+    purpose: "Bounded React/TypeScript browser technical prototype with a headless deterministic rules kernel."
   quality_and_security:
-    state: "optional"
-    purpose: "Verify rules determinism, concealed-information boundaries, multiplayer authority, privacy, and asset provenance."
+    state: "enabled"
+    purpose: "Verify determinism, logical concealed-information projection, interactions, responsive layout, permissions, and asset provenance without claiming server security."
   review_to_merge:
-    state: "disabled"
-    purpose: "The repository exists, but no gameplay implementation candidate exists yet."
+    state: "gated"
+    purpose: "Candidate commit/push is authorized; different-provider exact-candidate review and human acceptance remain open gates."
   operations:
     state: "disabled"
     purpose: "No live service is authorized."
@@ -219,8 +221,8 @@ contribution_attribution:
   authentication_or_authority_effect: "none"
 
 controls:
-  total_budget: "$0 external-provider spend until separately authorized"
-  phase_budget: "$0 external-provider spend for bootstrap and prototype specification"
+  total_budget: "$0 incremental provider spend; existing authenticated subscription access only"
+  phase_budget: "$0 incremental spend for the accelerated technical-candidate cycle"
   timeout: "one bounded phase at a time"
   provider_contact_attempt_limit: 3
   minimal_fix:
@@ -234,7 +236,7 @@ controls:
     repositories: ["edwardjones3976/long-table-bid-whist"]
     starting_refs: ["main"]
   approval_gates:
-    - "Prototype specification defines the minimum technical surface before the Director selects the engine/toolchain"
+    - "The browser candidate may reach REVIEW_READY but not COMPLETE before human acceptance"
     - "Owner explicitly scopes any paid-provider, public-room, upload, publication, purchase, credential, or deployment effect"
     - "Specialist rights review before shared host-supplied music is enabled"
     - "Different-provider review for each exact implementation candidate"
@@ -246,14 +248,14 @@ controls:
   serious_safety_stop: true
 
 review_chain:
-  producer: "unassigned until implementation approval"
-  material_authors: []
-  eligible_reviewer: "different provider, unassigned"
+  producer: "owner-authorized external OpenAI/Codex accelerated prototype lane"
+  material_authors: ["OpenAI Codex root", "OpenAI Codex rules_ai", "OpenAI Codex spatial_ui", "OpenAI Codex ui_tests", "OpenAI Codex avatar_policy", "OpenAI Codex app_flow_tests"]
+  eligible_reviewer: "different authenticated provider; currently unavailable"
   candidate:
-    repository: "none"
-    base_sha: "none"
-    head_sha: "none"
-    artifact_digest: "none"
+    repository: "edwardjones3976/long-table-bid-whist"
+    base_sha: "c9613093af704fdd3e4bedf87bdf375e15d03f00"
+    head_sha: "pending final candidate commit"
+    artifact_digest: "pending final production-build digest"
   required_evidence:
     - "Different-provider exact-candidate review"
     - "Focused deterministic rules and interaction tests"
@@ -275,7 +277,6 @@ assumptions:
     - "The first prototype uses one room, one strict preset, four seats, and optional AI fill."
     - "The human host may be a seated player or a non-playing fifth participant, with different permissions."
   unknown:
-    - "Implementation engine and toolchain"
     - "Prototype delivery schedule beyond the current zero-dollar planning phase"
     - "Whether a paid provider will ever be useful or authorized"
     - "Whether shared host audio will be deferred, venue-external, or supported through rights-verified virtual transmission"
@@ -289,9 +290,9 @@ fallbacks:
   changed_scope: "reshape_profile_before_dependent_work"
 
 next:
-  action: "Produce a non-code gameplay prototype specification for one strict table, including the dealer/host permission matrix and testable interaction loops."
+  action: "Finish heavy testing, bind the exact technical candidate and artifact digest, then request different-provider review and human critique."
   responsible_party: "Director"
-  expected_evidence: "A bounded prototype specification with acceptance scenarios and an explicit implementation decision gate."
+  expected_evidence: "Exact SHA, production artifact digest, test/browser packet, review status, known limitations, and human-test plan."
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]]

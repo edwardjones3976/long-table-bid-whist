@@ -21,6 +21,10 @@ venv/
 .DS_Store
 Thumbs.db
 coverage/
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
 TestResults/
 Build/
 Builds/
