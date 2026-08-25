@@ -90,7 +90,6 @@ export interface PlayerView {
   completedTricks: CompletedTrick[];
   tricksWon: Record<Seat, number>;
   scores: Record<Team, number>;
-  seed: string;
 }
 
 export interface ActionResult {

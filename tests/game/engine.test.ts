@@ -52,7 +52,38 @@ describe("fresh Strict Table engine", () => {
     expect(view.hand).toEqual(state.hands.west);
     expect(view).not.toHaveProperty("hands");
     expect(view).not.toHaveProperty("kitty");
+    expect(view).not.toHaveProperty("seed");
+    expect(JSON.stringify(view)).not.toContain(state.seed);
     expect(JSON.stringify(view)).not.toContain(state.hands.north[0].id);
+  });
+
+  it("fails closed on level 7 and unresolved No-Trump bids", () => {
+    const state = newTable("provisional-contract-surface");
+    const bidActions = legalHumanActions(state).filter(
+      (action): action is Extract<HumanAction, { type: "bid" }> => action.type === "bid",
+    );
+    expect(bidActions.length).toBeGreaterThan(0);
+    expect(bidActions.every((action) => action.bid.level >= 3 && action.bid.level <= 6)).toBe(true);
+    expect(bidActions.every((action) => action.bid.mode === "low" || action.bid.mode === "high")).toBe(true);
+
+    const before = structuredClone(state);
+    const levelSeven = applyHumanAction(state, { type: "bid", bid: { level: 7, mode: "high" } });
+    expect(levelSeven.error).toBe("That action is not legal now");
+    expect(levelSeven.state).toEqual(before);
+
+    const noTrump = applyHumanAction(state, {
+      type: "bid",
+      bid: { level: 3, mode: "no-trump-high" },
+    });
+    expect(noTrump.error).toBe("That action is not legal now");
+    expect(noTrump.state).toEqual(before);
+  });
+
+  it("keeps the internal seed out of the public digest input", () => {
+    const first = newTable("digest-seed-a");
+    const second = structuredClone(first);
+    second.seed = "digest-seed-b";
+    expect(publicDigest(first)).toBe(publicDigest(second));
   });
 
   it("enforces follow suit", () => {

@@ -120,6 +120,8 @@ describe("App browser surface", () => {
     const buttons = screen.getAllByRole("button");
     const levelSevenBids = buttons.filter((button) => /^7 /.test(button.textContent ?? ""));
     expect(levelSevenBids).toHaveLength(0);
+    const noTrumpBids = buttons.filter((button) => /no trump/i.test(button.textContent ?? ""));
+    expect(noTrumpBids).toHaveLength(0);
   });
 
   it("keeps opponent card faces, concealed labels, and seed out of the DOM", () => {

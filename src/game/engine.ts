@@ -21,6 +21,7 @@ import {
 } from "./model";
 
 const MODE_ORDER: ContractMode[] = ["low", "high", "no-trump-low", "no-trump-high"];
+const PROVISIONAL_ENABLED_MODES: ContractMode[] = ["low", "high"];
 const RANK_LABELS: Record<number, string> = { 11: "J", 12: "Q", 13: "K", 14: "A" };
 
 function seedHash(seed: string): number {
@@ -135,7 +136,6 @@ export function makePlayerView(state: GameState, seat: Seat): PlayerView {
     completedTricks: structuredClone(state.completedTricks),
     tricksWon: { ...state.tricksWon },
     scores: { ...state.scores },
-    seed: state.seed,
   };
 }
 
@@ -146,8 +146,8 @@ function bidValue(bid: Bid): number {
 export function legalBids(state: GameState): Bid[] {
   const high = state.auction.filter((entry) => entry.bid).map((entry) => entry.bid!).sort((a, b) => bidValue(b) - bidValue(a))[0];
   const result: Bid[] = [];
-  for (let level = 3; level <= 7; level += 1) {
-    MODE_ORDER.forEach((mode) => {
+  for (let level = 3; level <= 6; level += 1) {
+    PROVISIONAL_ENABLED_MODES.forEach((mode) => {
       const bid = { level: level as Bid["level"], mode };
       if (!high || bidValue(bid) > bidValue(high)) result.push(bid);
     });
@@ -345,7 +345,6 @@ export function togglePause(input: GameState): GameState {
 export function publicDigest(state: GameState): string {
   const publicState = {
     manifestId: state.manifestId,
-    seed: state.seed,
     handNumber: state.handNumber,
     phase: state.phase,
     dealer: state.dealer,

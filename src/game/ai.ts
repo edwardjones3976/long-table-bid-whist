@@ -18,7 +18,12 @@ export function chooseBid(view: PlayerView, legal: Bid[]): Bid | null {
     return sum + Math.max(0, card.rank - 9);
   }, 0);
   if (strength < 16 && view.auction.length < 3) return null;
-  const index = hash(`${view.seed}:${view.seat}:bid:${view.auction.length}`) % Math.min(legal.length, 4);
+  const privateHandKey = view.hand
+    .map((card) => card.id)
+    .sort()
+    .join(",");
+  const index =
+    hash(`${view.seat}:bid:${view.auction.length}:${privateHandKey}`) % Math.min(legal.length, 4);
   return legal[index];
 }
 
@@ -44,7 +49,11 @@ export function choosePlay(view: PlayerView, legal: Card[]): Card {
   const mode = view.contract?.mode ?? "high";
   const lowWins = mode === "low" || mode === "no-trump-low";
   const sorted = [...legal].sort((a, b) => a.rank - b.rank || a.id.localeCompare(b.id));
-  const offset = hash(`${view.seed}:${view.seat}:play:${view.completedTricks.length}:${view.currentTrick.length}`) % Math.min(2, sorted.length);
+  const legalKey = sorted.map((card) => card.id).join(",");
+  const offset =
+    hash(
+      `${view.seat}:play:${view.completedTricks.length}:${view.currentTrick.length}:${legalKey}`,
+    ) % Math.min(2, sorted.length);
   return lowWins ? sorted[Math.max(0, sorted.length - 1 - offset)] : sorted[offset];
 }
 // [[Codex | GPT-5.6 | 2026-08-25 | 03:10 UTC | END]]
