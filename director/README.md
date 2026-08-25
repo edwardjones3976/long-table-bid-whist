@@ -44,6 +44,9 @@ phase.
   machine-readable companion contract for ordinary work, invited debate,
   research revisions, completion authority, runtime permissions, and separate
   activation gates.
+- [`privacy-control-policy.md`](privacy-control-policy.md) records the owner's
+  categorical prohibition on regex-based privacy controls and the required
+  typed, allowlisted, structurally isolated replacements.
 - [`2026-08-25-pr71-review-and-adoption.md`](2026-08-25-pr71-review-and-adoption.md)
   binds the exact reviewed PR head, findings, verdict, and adoption matrix.
 - [`committee/2026-08-24-rebaseline-work-order.md`](committee/2026-08-24-rebaseline-work-order.md)

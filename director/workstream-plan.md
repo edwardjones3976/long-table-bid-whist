@@ -150,9 +150,10 @@ query/source/date/excerpt/type/confidence/contradiction/gap provenance.
   exact candidate, regardless of assignment or automated-gate status.
 - Merge eligibility is evidence only and performs no merge.
 - Director host completion runners, live LangGraph packet handling, live
-  provider dispatch, parallel external execution, and regex-based privacy
-  filtering are permitted future work. They are not presently enabled; each
-  requires its own readiness, evidence, budget, and owner-activation gate.
+  provider dispatch, and parallel external execution are permitted future work.
+  They are not presently enabled; each requires its own readiness, evidence,
+  budget, and owner-activation gate. Regex-based privacy controls are prohibited
+  and have no readiness or activation path.
 
 ## Owner and deterministic gates
 

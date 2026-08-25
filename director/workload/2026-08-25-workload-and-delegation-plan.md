@@ -86,11 +86,12 @@ GitHub, Slack, Linear, Claude, Cursor, Perplexity, Firecrawl, and Antigravity
 are used only through authenticated and project-scoped interfaces. GitHub is
 the code/evidence authority. Slack is coordination after the channel and
 message scope are confirmed. Linear work is not placed in the unrelated
-Project Uppercut team. Host completion runners, live LangGraph execution,
-parallel external dispatch, and regex-based privacy controls are **permitted**;
-they are activated only when the exact project configuration, single-writer or
-idempotency design, budget, redaction limitations, and external-write scope are
-ready and recorded. “Permitted” is not the same as “currently configured.”
+Project Uppercut team. Host completion runners, live LangGraph execution, and
+parallel external dispatch are **permitted**; they are activated only when the
+exact project configuration, single-writer or idempotency design, budget, and
+external-write scope are ready and recorded. Regex-based privacy controls are
+**prohibited** and cannot be activated, including as supplemental or fallback
+filtering. Private payloads require structurally public-only construction.
 
 ## Checkpoints
 

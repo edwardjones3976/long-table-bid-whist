@@ -135,12 +135,13 @@ query is never silently rerun.
 - Dependency-ready work may be selected, but external provider dispatch remains
   sequential and ambiguous dispatches are reconciled rather than duplicated.
 - Merge eligibility is a pure decision and has no merge side effect.
-- Director host completion runners, a live LangGraph packet runtime, parallel
-  external dispatch, and regex-based privacy filtering are all permitted.
-  Permission is separate from present readiness: each remains default-off until
-  its applicable isolation, routing, timeout, recovery, budget, ownership,
-  privacy, evidence, and owner-activation gates pass. Regex filtering may be
-  used as a supplemental control and does not independently clear private data.
+- Director host completion runners, a live LangGraph packet runtime, and
+  parallel external dispatch are permitted. Permission is separate from present
+  readiness: each remains default-off until its applicable isolation, routing,
+  timeout, recovery, budget, ownership, privacy, evidence, and owner-activation
+  gates pass. Regex-based privacy filtering is prohibited as a primary,
+  supplemental, fallback, or clearance control. No provider or role may use a
+  regex or blacklist result to decide that a payload is safe to disclose.
 
 ## Project routing and independence
 

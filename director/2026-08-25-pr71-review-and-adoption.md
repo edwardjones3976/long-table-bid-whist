@@ -69,7 +69,7 @@ The PR should not be merged or activated at the reviewed head. Green repository 
 | Pure merge eligibility | Adopt | A green decision records eligibility only; it never performs a merge. |
 | Host completion runners | Permitted, activation-gated | May run allowlisted project checks after host isolation, process-tree termination, executable reauthentication, evidence binding, and owner activation gates pass. |
 | Live LangGraph packet runtime | Permitted, activation-gated | May become the live writer after production intake routing, enforceable dispatch timeouts, recovery, single-writer, and readiness gates pass. |
-| Regex-only privacy controls | Permitted as a supplemental control | Regex filtering may be used, but by itself does not prove that a private outbound payload is cleared; data classification and exact-payload authority remain separate evidence. |
+| Regex-based privacy controls | Prohibited | Regex, blacklist, or pattern-based filtering may not be used as a sole, supplemental, fallback, or clearance control for private data. Use typed allowlisted projections, source isolation, role authority, and exact structural validation instead. |
 | Parallel external dispatch | Permitted, activation-gated | May run after dependency, budget, provider-capacity, idempotency, writer-ownership, and ambiguous-dispatch reconciliation controls pass. |
 
 This integration permits future guarded adoption of every listed runtime capability. It does not claim that unresolved PR #71 code is currently ready, import that code, activate a provider, publish a review, merge a branch, or change the game build.

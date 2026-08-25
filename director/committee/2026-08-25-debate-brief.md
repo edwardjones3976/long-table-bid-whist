@@ -5,7 +5,7 @@
 - **Order:** evidence → independent positions → one rebuttal each → counter-bias → synthesis → workload plan → delegations.
 - **No implementation authority:** this brief requests product judgment only.
 - **Evidence authority:** `director/research/2026-08-25-perplexity-firecrawl-evidence.md`.
-- **Owner corrections:** live LangGraph execution, host completion runners, parallel external dispatch, and regex privacy controls are permitted when their own readiness, approval, and evidence gates pass. Antigravity is debate-eligible after a Director invitation and may provide one position plus one rebuttal; it may not initiate the debate or claim review, merge, deployment, or approval authority.
+- **Owner corrections:** live LangGraph execution, host completion runners, and parallel external dispatch are permitted when their own readiness, approval, and evidence gates pass. A later owner correction prohibits regex-based privacy controls in every role, including supplemental and fallback filtering; use typed allowlisted projections and structural isolation. Antigravity is debate-eligible after a Director invitation and may provide one position plus one rebuttal; it may not initiate the debate or claim review, merge, deployment, or approval authority.
 - **Workload target:** direct specialist work is Claude 60%, Cursor 28%, Antigravity 7%, Perplexity 4%, OpenAI 1%. Director moderation, planning, synthesis, and acceptance do not count as OpenAI direct specialist work. Percentages are allocation targets—not votes, permissions, forced spend, or invented work.
 
 ## Frozen decision question

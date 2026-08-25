@@ -42,10 +42,12 @@
   sequential dependency-ready routing, a new approved Perplexity query on
   revision, invited Antigravity debate, and side-effect-free merge eligibility.
 - Director host completion runners, repository-selected subprocesses, live
-  LangGraph packet writing, live provider dispatch, parallel external dispatch,
-  and regex-based privacy filtering are authorized capabilities. They remain
-  default-off until their capability-specific safety, evidence, budget, and
-  owner-activation gates pass.
+  LangGraph packet writing, live provider dispatch, and parallel external
+  dispatch are authorized capabilities. They remain default-off until their
+  capability-specific safety, evidence, budget, and owner-activation gates
+  pass. Regex-based privacy controls are prohibited in every mode, including as
+  supplemental, fallback, or preflight filtering. Private boundaries require
+  typed allowlisted projections and structural isolation.
 - Antigravity ordinary work remains prose-free. Invited debate must be initiated
   by the owner or Director, use an approved exact outbound payload containing
   only public/non-private abstract framing, and remain Director-relayed and

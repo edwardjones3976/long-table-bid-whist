@@ -64,9 +64,10 @@ ambiguous paid runs, and missing tools are not retried in the same cycle.
 - An accepted chunk does not make the project complete. The unchanged exact
   candidate still requires different-provider review, human user testing, and
   owner acceptance.
-- Director host completion runners, live LangGraph execution, parallel external
-  dispatch, and regex-based privacy filtering are permitted later chunks. They
-  remain inactive until their explicit readiness and owner-activation gates
-  pass.
+- Director host completion runners, live LangGraph execution, and parallel
+  external dispatch are permitted in later chunks. They remain inactive until
+  their explicit readiness and owner-activation gates pass. Regex-based privacy
+  controls are prohibited and must not be introduced as primary, supplemental,
+  fallback, or preflight filtering.
 <!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]] -->

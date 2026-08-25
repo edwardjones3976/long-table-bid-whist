@@ -249,7 +249,7 @@ controls:
     live_langgraph_packet_runtime: {permitted: true, enabled: false}
     live_provider_dispatch: {permitted: true, enabled: false}
     parallel_external_dispatch: {permitted: true, enabled: false}
-    regex_only_privacy_controls: {permitted: true, enabled: false, role: "supplemental_filtering", sole_clearance_for_private_payload: false}
+    regex_based_privacy_controls: {permitted: false, enabled: false, role: "prohibited", activation_path: "none"}
     merge_side_effects: false
   allowlists:
     projects: ["long-table-bid-whist"]

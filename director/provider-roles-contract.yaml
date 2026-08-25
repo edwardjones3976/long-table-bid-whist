@@ -86,11 +86,12 @@ runtime_permissions:
     permitted: true
     enabled: false
     activation_requires: ["provider authorization", "approved budget", "idempotency", "timeout and recovery", "owner activation"]
-  regex_only_privacy_controls:
-    permitted: true
+  regex_based_privacy_controls:
+    permitted: false
     enabled: false
-    role: "supplemental_filtering"
-    sole_clearance_for_private_payload: false
+    role: "prohibited"
+    activation_path: "none"
+    required_replacement: ["typed allowlisted projections", "role-specific authority", "source isolation", "structural schema validation", "fail-closed unexpected-field rejection"]
   shared_audio_transmission:
     permitted: true
     enabled: false

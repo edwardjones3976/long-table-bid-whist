@@ -77,9 +77,11 @@ permitted but presently activation-gated: separate assignment/project completion
 readiness, sequential dependency-ready routing, bounded revisions, new approved
 Perplexity queries, side-effect-free merge eligibility, and owner/Director-
 invited Antigravity debate with an approved public-only exact payload.
-Host completion runners, live LangGraph execution, parallel external dispatch,
-and regex-based privacy controls are not prohibited; they remain disabled until
-their specific readiness and owner-activation gates pass.
+Host completion runners, live LangGraph execution, and parallel external
+dispatch remain disabled until their specific readiness and owner-activation
+gates pass. Regex-based privacy controls are prohibited and have no activation
+path; privacy must be enforced through typed allowlisted projections,
+role-specific authority, source isolation, and structural validation.
 
 No public deployment, shared-audio transmission, provider login, credential
 change, purchase, or paid provider run was performed.
