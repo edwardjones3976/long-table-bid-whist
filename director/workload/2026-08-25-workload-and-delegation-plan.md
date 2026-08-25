@@ -12,12 +12,12 @@ receive zero credit.
 
 | Provider | Target units | Target share | Current credited units | Status |
 |---|---:|---:|---:|---|
-| Claude | 60 | 60% | 0 | available; debate output is not direct implementation |
+| Claude | 60 | 60% | 12 | rules draft completed in authenticated Chrome and independently accepted |
 | Cursor | 28 | 28% | 8 | browser acceleration packet accepted at exact SHA |
 | Antigravity | 7 | 7% | 0 | queued; execution adapter required |
 | Perplexity | 4 | 4% | 4 | authenticated research packet complete |
 | OpenAI | 1 | 1% | 1 | used for narrow independent acceptance corrections |
-| **Total** | **100** | **100%** | **13** | **13% of planned direct work credited** |
+| **Total** | **100** | **100%** | **25** | **25% of planned direct work credited** |
 
 The premature OpenAI TypeScript/React implementation is quarantined and gets
 zero units. Workload targets are neither vote weights nor provider authority.
@@ -36,6 +36,11 @@ zero units. Workload targets are neither vote weights nor provider authority.
 Claude may use repository tools only inside its isolated worktree and owned
 surface. It may not merge, deploy, message Slack, update Linear, or claim final
 acceptance.
+
+`LT-CLAUDE-01` is complete as a `DRAFT_REVIEW_READY` provider artifact after
+one independent kickback. Human-council ratification is still a separate rules
+checkpoint. A follow-on Claude Chrome implementation diff was rejected because
+it invented repository APIs and receives zero implementation credit.
 
 ### Cursor — 28 units
 

@@ -322,7 +322,8 @@ button.primary {
 }
 
 .host-trigger,
-.a11y-trigger {
+.a11y-trigger,
+.xr-trigger {
   position: absolute;
   top: 1rem;
   z-index: 6;
@@ -334,6 +335,30 @@ button.primary {
 
 .a11y-trigger {
   right: 6.5rem;
+}
+
+.xr-trigger {
+  right: 14.8rem;
+}
+
+.xr-status {
+  position: absolute;
+  top: 3.7rem;
+  right: 1rem;
+  z-index: 5;
+  width: min(420px, calc(100vw - 2rem));
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-align: right;
+}
+
+.xr-layer-canvas {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .drawer {
@@ -663,6 +688,16 @@ button.primary {
     right: 1rem;
     top: auto;
     bottom: calc(220px * var(--card-scale));
+  }
+
+  .xr-trigger {
+    right: 1rem;
+    top: auto;
+    bottom: calc(270px * var(--card-scale));
+  }
+
+  .xr-status {
+    display: none;
   }
 }
 

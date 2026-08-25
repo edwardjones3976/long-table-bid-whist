@@ -124,6 +124,16 @@ describe("App browser surface", () => {
     expect(noTrumpBids).toHaveLength(0);
   });
 
+  it("exposes an honest Quest WebXR entry state without claiming device proof", () => {
+    enterTable("AI Dealer");
+    const xrButton = screen.getByRole("button", { name: /quest vr/i });
+    expect(xrButton).toBeTruthy();
+    expect(
+      screen.getByText(/checking for immersive webxr support|immersive webxr is unavailable here/i),
+    ).toBeTruthy();
+    expect(screen.queryByText(/meta avatar.*ready/i)).toBeNull();
+  });
+
   it("keeps opponent card faces, concealed labels, and seed out of the DOM", () => {
     const concealed = newTable("long-table-001");
     const hiddenLabel = concealed.hands.north[0]?.label ?? "";

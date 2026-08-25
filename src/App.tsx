@@ -16,6 +16,12 @@ import {
   type Seat,
   type Suit,
 } from "./game";
+import {
+  queryImmersiveVrSupport,
+  startImmersiveTable,
+  type XrSessionHandle,
+  type XrSupport,
+} from "./xr/session";
 
 const INTERNAL_TABLE_SEED = "long-table-001";
 const INVITE_CODE = "LT-7K2M";
@@ -107,7 +113,11 @@ export default function App() {
   const [aiSubstituteSeat, setAiSubstituteSeat] = useState<Seat | null>(null);
   const [aiSubstituted, setAiSubstituted] = useState(false);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
+  const [xrSupport, setXrSupport] = useState<XrSupport>("checking");
+  const [xrActive, setXrActive] = useState(false);
+  const [xrMessage, setXrMessage] = useState("Checking for immersive WebXR support.");
   const shellRef = useRef<HTMLDivElement>(null);
+  const xrSessionRef = useRef<XrSessionHandle | null>(null);
 
   const cardScale = a11y.largeCards ? 1.28 : 1;
 
@@ -189,6 +199,23 @@ export default function App() {
       setParallax({ x: 0, y: 0 });
     }
   }, [a11y.reducedMotion, a11y.effectsOff]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void queryImmersiveVrSupport().then((support) => {
+      if (cancelled) return;
+      setXrSupport(support);
+      setXrMessage(
+        support === "supported"
+          ? "Quest/WebXR room preview is available. Gameplay remains on the accessible table surface."
+          : "Immersive WebXR is unavailable here. Use a compatible Quest browser for the spatial room preview.",
+      );
+    });
+    return () => {
+      cancelled = true;
+      if (xrSessionRef.current) void xrSessionRef.current.end();
+    };
+  }, []);
 
   const onPointerMove = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
@@ -276,6 +303,25 @@ export default function App() {
     }
     setAiSubstituted(true);
     setCaption("Between-hand AI substitution enabled for the next seated player.");
+  };
+
+  const handleEnterXr = async () => {
+    if (!shellRef.current || !hostMode || xrSupport !== "supported" || xrActive) return;
+    try {
+      setXrMessage("Opening the seated WebXR room preview.");
+      xrSessionRef.current = await startImmersiveTable(shellRef.current, hostMode, () => {
+        xrSessionRef.current = null;
+        setXrActive(false);
+        setXrMessage("WebXR room preview ended. The table session is still active.");
+      });
+      setXrActive(true);
+      setXrMessage(
+        "WebXR room preview active. This shell does not claim Quest controller, hand-input, or Meta Avatar proof.",
+      );
+    } catch (error) {
+      setXrActive(false);
+      setXrMessage(error instanceof Error ? error.message : "Unable to start WebXR.");
+    }
   };
 
   const addAiDisabled =
@@ -472,6 +518,18 @@ export default function App() {
       >
         Accessibility
       </button>
+      <button
+        type="button"
+        className="xr-trigger"
+        disabled={xrSupport !== "supported" || xrActive}
+        aria-describedby="xr-status"
+        onClick={() => void handleEnterXr()}
+      >
+        {xrActive ? "Quest VR active" : xrSupport === "checking" ? "Checking Quest VR" : "Enter Quest VR"}
+      </button>
+      <p id="xr-status" className="xr-status" role="status">
+        {xrMessage}
+      </p>
 
       {drawer === "host" && (
         <HostDrawer
