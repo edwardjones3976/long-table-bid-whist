@@ -195,8 +195,8 @@ describe("App browser surface", () => {
     enterTable("Human Host");
     const hostDrawer = openHostDrawer();
     fireEvent.click(within(hostDrawer).getByRole("button", { name: /^block$/i }));
-    expect(within(hostDrawer).getByText(/west blocked locally/i)).toBeTruthy();
-    expect(within(hostDrawer).getByText(/local only/i)).toBeTruthy();
+    expect(within(hostDrawer).getByText(/west marked as blocked in this local prototype/i)).toBeTruthy();
+    expect(within(hostDrawer).getByText(/marker changes no game state/i)).toBeTruthy();
     expect(screen.getAllByText(/blocked locally/i).length).toBeGreaterThan(0);
     expect(screen.getByLabelText(/west open avatar anchor blocked locally/i)).toBeTruthy();
   });

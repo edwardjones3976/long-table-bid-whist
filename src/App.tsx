@@ -249,7 +249,7 @@ export default function App() {
   const handleBlock = () => {
     setBlockedWest(true);
     setHostNotice(
-      "West blocked locally. This mute is local only and does not change game state or send anything externally.",
+      "West marked as blocked in this local prototype. This marker changes no game state and sends nothing externally.",
     );
   };
 
