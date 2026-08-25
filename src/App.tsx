@@ -77,8 +77,8 @@ function betweenHands(state: GameState | null): boolean {
   return !state || state.phase === "summary";
 }
 
-function committedHand(state: GameState | null): boolean {
-  return Boolean(state && state.phase !== "summary" && state.phase !== "auction");
+function canRequestPause(state: GameState | null): boolean {
+  return Boolean(state && state.phase === "summary" && !state.paused);
 }
 
 export default function App() {
@@ -91,7 +91,6 @@ export default function App() {
   const [drawer, setDrawer] = useState<Drawer>(null);
   const [tableMuted, setTableMuted] = useState(false);
   const [reconnectStatus, setReconnectStatus] = useState<"connected" | "reconnecting">("connected");
-  const [aiSubstituted, setAiSubstituted] = useState(false);
   const [a11y, setA11y] = useState<AccessibilityPrefs>({
     highContrast: false,
     reducedMotion: false,
@@ -102,6 +101,11 @@ export default function App() {
     oneClickPlay: false,
   });
   const [caption, setCaption] = useState("");
+  const [hostNotice, setHostNotice] = useState<string | null>(null);
+  const [blockedWest, setBlockedWest] = useState(false);
+  const [simulatedRemovedSeat, setSimulatedRemovedSeat] = useState<Seat | null>(null);
+  const [aiSubstituteSeat, setAiSubstituteSeat] = useState<Seat | null>(null);
+  const [aiSubstituted, setAiSubstituted] = useState(false);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
   const shellRef = useRef<HTMLDivElement>(null);
 
@@ -118,6 +122,23 @@ export default function App() {
     setPendingPlay(null);
   }, []);
 
+  const resetTableSession = useCallback(() => {
+    setStarted(false);
+    setGame(null);
+    setDiscardIds([]);
+    setPendingBid(null);
+    setPendingPlay(null);
+    setDrawer(null);
+    setTableMuted(false);
+    setReconnectStatus("connected");
+    setAiSubstituted(false);
+    setHostNotice(null);
+    setBlockedWest(false);
+    setSimulatedRemovedSeat(null);
+    setAiSubstituteSeat(null);
+    setCaption("");
+  }, []);
+
   const startTable = useCallback(() => {
     if (!hostMode) return;
     const initial = newTable(INTERNAL_TABLE_SEED);
@@ -126,6 +147,10 @@ export default function App() {
     setDiscardIds([]);
     setPendingBid(null);
     setPendingPlay(null);
+    setHostNotice(null);
+    setBlockedWest(false);
+    setSimulatedRemovedSeat(null);
+    setAiSubstituteSeat(null);
     setCaption(`Hand ${initial.handNumber} begins. ${SEAT_LABELS[initial.turn]} to act.`);
   }, [hostMode]);
 
@@ -139,6 +164,7 @@ export default function App() {
     setPendingBid(null);
     setPendingPlay(null);
     setAiSubstituted(false);
+    setSimulatedRemovedSeat(null);
   }, []);
 
   const selectableBids = useMemo(() => {
@@ -216,16 +242,46 @@ export default function App() {
   };
 
   const handlePause = () => {
-    if (!game) return;
-    if (committedHand(game)) return;
+    if (!canRequestPause(game)) return;
     setGame((current) => (current ? togglePause(current) : current));
+  };
+
+  const handleBlock = () => {
+    setBlockedWest(true);
+    setHostNotice(
+      "West blocked locally. This mute is local only and does not change game state or send anything externally.",
+    );
+  };
+
+  const handleReport = () => {
+    setHostNotice("Report recorded locally only. It was NOT filed or sent externally.");
+  };
+
+  const handleRemovePlayer = () => {
+    if (!betweenHands(game) || !game) return;
+    setSimulatedRemovedSeat("west");
+    setHostNotice(
+      "West marked for between-hand removal (simulated). Cards, bids, tricks, and score are unchanged.",
+    );
   };
 
   const handleAiSubstitution = () => {
     if (!betweenHands(game)) return;
+    if (simulatedRemovedSeat) {
+      setAiSubstituteSeat(simulatedRemovedSeat);
+      setHostNotice(
+        `${SEAT_LABELS[simulatedRemovedSeat]} AI substitute ready for the next hand (simulated). Game state unchanged.`,
+      );
+      return;
+    }
     setAiSubstituted(true);
     setCaption("Between-hand AI substitution enabled for the next seated player.");
   };
+
+  const addAiDisabled =
+    !betweenHands(game) ||
+    Boolean(aiSubstituteSeat) ||
+    (simulatedRemovedSeat ? aiSubstituteSeat === simulatedRemovedSeat : aiSubstituted);
 
   const shellClass = [
     "app-shell",
@@ -336,7 +392,14 @@ export default function App() {
           </div>
         </div>
         {(["north", "west", "east"] as Seat[]).map((seat) => (
-          <OpponentSeat key={seat} seat={seat} count={game.hands[seat].length} />
+          <OpponentSeat
+            key={seat}
+            seat={seat}
+            count={game.hands[seat].length}
+            removed={simulatedRemovedSeat === seat && aiSubstituteSeat !== seat}
+            blocked={seat === "west" && blockedWest}
+            aiSubstitute={aiSubstituteSeat === seat}
+          />
         ))}
         {showRobot && (
           <div className="robot-dealer" aria-label="AI dealer robot">
@@ -383,7 +446,8 @@ export default function App() {
         {" · "}
         {game.phase}
         {tableMuted ? " · Muted" : ""}
-        {aiSubstituted ? " · AI seat ready" : ""}
+        {aiSubstituted || aiSubstituteSeat ? " · AI seat ready" : ""}
+        {blockedWest ? " · West blocked locally" : ""}
       </div>
 
       <div className="status-live" role="status" aria-live="polite" aria-atomic="true">
@@ -409,32 +473,40 @@ export default function App() {
         Accessibility
       </button>
 
-      <HostDrawer
-        open={drawer === "host"}
-        hostMode={hostMode}
-        muted={tableMuted}
-        paused={handPaused}
-        reconnectStatus={reconnectStatus}
-        aiSubstituted={aiSubstituted}
-        betweenHands={betweenHands(game)}
-        committedHand={committedHand(game)}
-        musicOff={a11y.musicOff}
-        onClose={() => setDrawer(null)}
-        onMute={() => setTableMuted((value) => !value)}
-        onPause={handlePause}
-        onResume={() => setGame((current) => (current ? togglePause(current) : current))}
-        onSubstitute={handleAiSubstitution}
-        onReconnect={() =>
-          setReconnectStatus((status) => (status === "connected" ? "reconnecting" : "connected"))
-        }
-      />
+      {drawer === "host" && (
+        <HostDrawer
+          hostMode={hostMode}
+          muted={tableMuted}
+          paused={handPaused}
+          reconnectStatus={reconnectStatus}
+          betweenHands={betweenHands(game)}
+          inHand={!betweenHands(game)}
+          canRequestPause={canRequestPause(game)}
+          hostNotice={hostNotice}
+          addAiDisabled={addAiDisabled}
+          musicOff={a11y.musicOff}
+          onClose={() => setDrawer(null)}
+          onMute={() => setTableMuted((value) => !value)}
+          onPause={handlePause}
+          onResume={() => setGame((current) => (current ? togglePause(current) : current))}
+          onSubstitute={handleAiSubstitution}
+          onReconnect={() =>
+            setReconnectStatus((status) => (status === "connected" ? "reconnecting" : "connected"))
+          }
+          onBlock={handleBlock}
+          onReport={handleReport}
+          onLeave={resetTableSession}
+          onRemovePlayer={handleRemovePlayer}
+        />
+      )}
 
-      <AccessibilityDrawer
-        open={drawer === "a11y"}
-        prefs={a11y}
-        onClose={() => setDrawer(null)}
-        onChange={(patch) => setA11y((current) => ({ ...current, ...patch }))}
-      />
+      {drawer === "a11y" && (
+        <AccessibilityDrawer
+          prefs={a11y}
+          onClose={() => setDrawer(null)}
+          onChange={(patch) => setA11y((current) => ({ ...current, ...patch }))}
+        />
+      )}
 
       {isSummary && game.summary && (
         <div className="summary-panel panel" role="region" aria-label="Hand summary">
@@ -583,11 +655,43 @@ function PlayingCardView({ card }: { card: Card }) {
   );
 }
 
-function OpponentSeat({ seat, count }: { seat: Seat; count: number }) {
+function OpponentSeat({
+  seat,
+  count,
+  removed,
+  blocked,
+  aiSubstitute,
+}: {
+  seat: Seat;
+  count: number;
+  removed?: boolean;
+  blocked?: boolean;
+  aiSubstitute?: boolean;
+}) {
   const position = seat === "north" ? "seat-north" : seat === "west" ? "seat-west" : "seat-east";
+  const statusSuffix = aiSubstitute
+    ? " AI substitute ready for next hand"
+    : blocked
+      ? " blocked locally"
+      : removed
+        ? " marked for between-hand removal"
+        : "";
   return (
-    <div className={`seat-anchor ${position}`} aria-label={`${SEAT_LABELS[seat]} open avatar anchor`}>
+    <div
+      className={[
+        "seat-anchor",
+        position,
+        removed ? "seat-removed" : "",
+        blocked ? "seat-blocked" : "",
+        aiSubstitute ? "seat-ai-substitute" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      aria-label={`${SEAT_LABELS[seat]} open avatar anchor${statusSuffix}`}
+    >
       <span>{SEAT_LABELS[seat]}</span>
+      {blocked && <span className="seat-status">Blocked locally</span>}
+      {aiSubstitute && <span className="seat-status">AI substitute</span>}
       <div className="opponent-stack" aria-hidden="true">
         {Array.from({ length: Math.min(count, 4) }).map((_, index) => (
           <div key={index} className="card-back" />
@@ -599,14 +703,15 @@ function OpponentSeat({ seat, count }: { seat: Seat; count: number }) {
 }
 
 function HostDrawer({
-  open,
   hostMode,
   muted,
   paused,
   reconnectStatus,
-  aiSubstituted,
   betweenHands,
-  committedHand,
+  inHand,
+  canRequestPause,
+  hostNotice,
+  addAiDisabled,
   musicOff,
   onClose,
   onMute,
@@ -614,15 +719,20 @@ function HostDrawer({
   onResume,
   onSubstitute,
   onReconnect,
+  onBlock,
+  onReport,
+  onLeave,
+  onRemovePlayer,
 }: {
-  open: boolean;
   hostMode: HostMode | null;
   muted: boolean;
   paused: boolean;
   reconnectStatus: "connected" | "reconnecting";
-  aiSubstituted: boolean;
   betweenHands: boolean;
-  committedHand: boolean;
+  inHand: boolean;
+  canRequestPause: boolean;
+  hostNotice: string | null;
+  addAiDisabled: boolean;
   musicOff: boolean;
   onClose: () => void;
   onMute: () => void;
@@ -630,9 +740,29 @@ function HostDrawer({
   onResume: () => void;
   onSubstitute: () => void;
   onReconnect: () => void;
+  onBlock: () => void;
+  onReport: () => void;
+  onLeave: () => void;
+  onRemovePlayer: () => void;
 }) {
+  const [pendingRemove, setPendingRemove] = useState(false);
+  const [pendingLeave, setPendingLeave] = useState(false);
+  const pauseHintId = "pause-between-hands-hint";
+
+  useEffect(() => {
+    if (!betweenHands) setPendingRemove(false);
+  }, [betweenHands]);
+
+  const requestLeave = () => {
+    if (inHand) {
+      setPendingLeave(true);
+      return;
+    }
+    onLeave();
+  };
+
   return (
-    <aside className={`drawer panel ${open ? "open" : ""}`} aria-label="Host controls" aria-hidden={!open}>
+    <aside className="drawer panel open" aria-label="Host controls">
       <h2>Host</h2>
       <section>
         <p>
@@ -653,11 +783,23 @@ function HostDrawer({
               Resume
             </button>
           ) : (
-            <button type="button" onClick={onPause} disabled={committedHand}>
-              Pause Between Hands
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={onPause}
+                disabled={!canRequestPause}
+                aria-describedby={!canRequestPause ? pauseHintId : undefined}
+              >
+                Pause Between Hands
+              </button>
+              {!canRequestPause && (
+                <p id={pauseHintId} className="control-hint">
+                  Pause Between Hands becomes available only after the hand summary.
+                </p>
+              )}
+            </>
           )}
-          <button type="button" onClick={onSubstitute} disabled={!betweenHands || aiSubstituted}>
+          <button type="button" onClick={onSubstitute} disabled={addAiDisabled}>
             Add AI
           </button>
         </div>
@@ -668,20 +810,49 @@ function HostDrawer({
       </section>
       <section>
         <div className="control-row">
-          <button type="button" disabled>
+          <button type="button" onClick={onBlock}>
             Block
           </button>
-          <button type="button" disabled>
+          <button type="button" onClick={onReport}>
             Report
           </button>
-          <button type="button" disabled>
-            Leave
-          </button>
-          <button type="button" disabled={committedHand}>
-            Remove player
-          </button>
+          {!pendingLeave ? (
+            <button type="button" onClick={requestLeave}>
+              Leave
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="primary"
+                onClick={() => {
+                  onLeave();
+                  setPendingLeave(false);
+                }}
+              >
+                Confirm leave
+              </button>
+              <button type="button" onClick={() => setPendingLeave(false)}>
+                Cancel
+              </button>
+            </>
+          )}
+          {!pendingRemove ? (
+            <button type="button" onClick={() => setPendingRemove(true)} disabled={!betweenHands}>
+              Remove player
+            </button>
+          ) : (
+            <button type="button" className="primary" onClick={() => { onRemovePlayer(); setPendingRemove(false); }}>
+              Confirm removal
+            </button>
+          )}
         </div>
-        <p>Block, leave, report, and constrained remove are simulated. Committed-hand changes stay disabled.</p>
+        {hostNotice && (
+          <p className="host-notice" role="status">
+            {hostNotice}
+          </p>
+        )}
+        <p>Block, leave, report, and constrained remove are simulated locally. Remove is only available between hands.</p>
       </section>
       <section>
         <p>
@@ -706,18 +877,16 @@ function HostDrawer({
 }
 
 function AccessibilityDrawer({
-  open,
   prefs,
   onClose,
   onChange,
 }: {
-  open: boolean;
   prefs: AccessibilityPrefs;
   onClose: () => void;
   onChange: (patch: Partial<AccessibilityPrefs>) => void;
 }) {
   return (
-    <aside className={`drawer panel ${open ? "open" : ""}`} aria-label="Accessibility controls" aria-hidden={!open}>
+    <aside className="drawer panel open" aria-label="Accessibility controls">
       <h2>Accessibility</h2>
       <div className="control-row">
         <button
