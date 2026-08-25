@@ -13,11 +13,11 @@ receive zero credit.
 | Provider | Target units | Target share | Current credited units | Status |
 |---|---:|---:|---:|---|
 | Claude | 60 | 60% | 0 | available; debate output is not direct implementation |
-| Cursor | 28 | 28% | 0 | queued; CLI authentication required |
+| Cursor | 28 | 28% | 8 | browser acceleration packet accepted at exact SHA |
 | Antigravity | 7 | 7% | 0 | queued; execution adapter required |
 | Perplexity | 4 | 4% | 4 | authenticated research packet complete |
-| OpenAI | 1 | 1% | 0 | held for evidence binding only |
-| **Total** | **100** | **100%** | **4** | **4% of planned direct work credited** |
+| OpenAI | 1 | 1% | 1 | used for narrow independent acceptance corrections |
+| **Total** | **100** | **100%** | **13** | **13% of planned direct work credited** |
 
 The premature OpenAI TypeScript/React implementation is quarantined and gets
 zero units. Workload targets are neither vote weights nor provider authority.
@@ -45,8 +45,10 @@ acceptance.
 | `LT-CURSOR-02` | 10 | Quest Android/OpenXR seated room slice: calibration, controller path, readable cards, robot dealer anchor | Cursor `01` | device/build evidence; claims limited to what ran |
 | `LT-CURSOR-03` | 6 | Meta Avatar and hand-input adapter spike, or explicit unavailable evidence if SDK/device prerequisites block | Cursor `02` | user avatars only; controller fallback retained |
 
-Cursor remains queued until `agent status` is authenticated. No other provider
-may silently absorb these 28 units; a deviation requires a new Director report.
+Eight units are complete through `LT-CURSOR-PRE-01`, accepted as browser proof
+at `edfc044f54959462c659541bd78564ea4e79869e`. The remaining 20 units stay
+assigned to the Unity/OpenXR and Meta Avatar work above. No other provider may
+silently absorb them; a deviation requires a new Director report.
 
 ### Antigravity — 7 units
 
@@ -67,10 +69,11 @@ Perplexity has no implementation, review, vote, Slack, Linear, or approval role.
 
 ### OpenAI — 1 unit
 
-`LT-OAI-01`: bind the final accepted manifest, provider outputs, exact candidate
-identity, tests, limitations, and human gates into the milestone evidence index.
-This unit must not author the production implementation, preserving OpenAI's
-independence for Director acceptance.
+`LT-OAI-01` is complete. Independent acceptance found and corrected two narrow
+browser-state/copy defects: AI-seat continuity into the next hand and an
+overstated block notice. Director evidence binding remains excluded overhead,
+not additional direct-work credit. OpenAI receives no further implementation
+units without an owner-approved workload deviation.
 
 ## Execution tools and permission boundary
 
