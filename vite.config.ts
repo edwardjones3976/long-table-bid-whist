@@ -15,6 +15,6 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    exclude: ['**/node_modules/**', '**/_restart_archive/**'],
+    exclude: ['**/node_modules/**', '**/_restart_archive/**', '**/_provider_worktrees/**'],
   },
 });
