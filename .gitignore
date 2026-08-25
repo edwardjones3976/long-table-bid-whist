@@ -12,6 +12,7 @@ venv/
 
 # Editors, operating systems, and build/test output.
 _restart_archive/
+_provider_worktrees/
 .firecrawl/
 .vs/
 .vscode/
