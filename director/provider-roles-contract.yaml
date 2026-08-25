@@ -1,0 +1,103 @@
+# [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]]
+# [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]]
+schema_version: "long-table-provider-roles/v1"
+
+source_binding:
+  stable_director_commit: "5c112bfdbc1bc6e5299aad6428fec9b03edb1cb3"
+  reviewed_pr: 71
+  reviewed_head: "4ba6032d5e79dd06f5d571f7c88dd75c114c5590"
+  review_verdict: "REQUEST_CHANGES"
+  adoption_scope: "governance_only_safe_subset"
+
+responsibility_areas: ["research", "evidence_verification", "programming", "deep_reasoning", "innovation", "development", "quality_assurance", "leadership"]
+
+providers:
+  openai_director:
+    role: "control_plane"
+    direct_production_percent: null
+    may: ["interpret intake and owner direction", "plan, decompose, route, reconcile, and report milestones", "invite bounded committee debate", "evaluate evidence and apply deterministic gates"]
+    may_not: ["count control-plane work as specialist production", "self-approve a material contribution", "infer merge, deployment, publication, spending, or final acceptance"]
+  claude:
+    role: "chief_programmer"
+    direct_production_target_percent: 60
+    eligible_areas: ["research", "evidence_verification", "programming", "deep_reasoning", "innovation", "development", "quality_assurance", "leadership"]
+    independent_review_only_when_not_material_author: true
+  cursor:
+    role: "project_secretary_and_repository_partner"
+    direct_production_target_percent: 28
+    capability_parity_target_percent: 90
+    eligible_areas: ["research", "evidence_verification", "programming", "deep_reasoning", "innovation", "development", "quality_assurance", "leadership"]
+    independent_review_only_when_not_material_author: true
+  gemini_antigravity:
+    role: "specialist_backup_and_invited_debate_participant"
+    direct_production_target_percent: 7
+    ordinary_work:
+      outbound_contract: "fixed strings, closed enums, and bounded integers only"
+      repository_context: false
+      model_authored_task_prose: false
+      exact_candidate_review: false
+    invited_debate:
+      equally_debate_eligible: true
+      may_initiate: false
+      invitation_authority: "owner_or_openai_director"
+      exact_outbound_payload_approval_required: true
+      allowed_context: "public, non-private, abstract decision framing only"
+      allowed_turns: ["position", "rebuttal", "focused_follow_up", "abstain"]
+      continuation: "Director_relays_each_bounded_turn"
+      authority_effect: "none"
+    may_not: ["receive source code, repository context, credentials, private prose, player data, rights records, or concealed game state", "self-route or continue debate autonomously", "execute, review, accept, merge, deploy, publish, spend, or write externally"]
+  perplexity:
+    role: "public_evidence_researcher"
+    direct_production_target_percent: 4
+    receives: "one owner-approved bounded public query"
+    revision_rule: "review feedback requires a new approved query; never silently rerun the original"
+    output_authority: "untrusted_until_primary_team_evaluation"
+    required_provenance: ["query", "url", "title", "publication_date", "update_date", "retrieval_date", "support", "source_type", "confidence", "contradictions", "unavailable_evidence"]
+    may_not: ["receive private context", "program", "vote", "review", "approve", "write externally"]
+  external_openai_codex:
+    role: "separately_owner_authorized_production_lane"
+    direct_production_target_percent: 1
+    independent_review_required: "different authenticated provider at exact candidate"
+
+completion_authority:
+  assignment_accepted_does_not_complete_project: true
+  project_complete_requires: ["unchanged exact candidate", "required independent review", "current tests, CI, security, privacy, and rights evidence where applicable", "human user testing", "owner acceptance"]
+  merge_eligibility_has_side_effects: false
+
+scheduling:
+  dependency_ready_selection: true
+  current_external_dispatch: "sequential_until_parallel_activation_gates_pass"
+  parallel_external_dispatch:
+    permitted: true
+    enabled: false
+    activation_requires: ["dependency readiness", "approved budget", "provider capacity", "idempotent effect identity", "writer ownership", "ambiguous-dispatch reconciliation"]
+  ambiguous_dispatch_retry: false
+
+runtime_permissions:
+  director_host_completion_runners:
+    permitted: true
+    enabled: false
+    activation_requires: ["allowlist", "host isolation", "network policy", "process-tree termination", "executable reauthentication", "evidence binding", "owner activation"]
+  live_langgraph_packet_runtime:
+    permitted: true
+    enabled: false
+    activation_requires: ["production intake routing", "enforceable provider timeout", "stranded-dispatch recovery", "single-writer proof", "readiness evidence", "owner activation"]
+  live_provider_dispatch:
+    permitted: true
+    enabled: false
+    activation_requires: ["provider authorization", "approved budget", "idempotency", "timeout and recovery", "owner activation"]
+  regex_only_privacy_controls:
+    permitted: true
+    enabled: false
+    role: "supplemental_filtering"
+    sole_clearance_for_private_payload: false
+  shared_audio_transmission:
+    permitted: true
+    enabled: false
+    activation_requires: ["rights verification", "privacy and consent", "moderation", "owner activation"]
+  merge_or_deployment_side_effects:
+    permitted: true
+    enabled: false
+    activation_requires: ["exact-candidate acceptance", "current review and checks", "owner authority"]
+# [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]]

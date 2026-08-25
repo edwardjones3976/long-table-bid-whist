@@ -1,3 +1,5 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 22:04 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
@@ -92,8 +94,11 @@ provider has been dispatched in this bootstrap phase.
 Full provider contracts are in
 [`roles-and-responsibilities.md`](roles-and-responsibilities.md). Cursor is not
 an overflow-only lane: it has a 90% capability-parity target and eligibility
-across all eight areas. Antigravity receives no task prose or repository
-context. Perplexity receives only an approved public query and must preserve
+across all eight areas. Antigravity ordinary work receives no task prose or
+repository context. An owner/Director-invited debate may use only an approved
+exact payload containing public, non-private, abstract framing; it remains
+bounded and grants no operational authority. Perplexity receives only an
+approved public query and must preserve
 query/source/date/excerpt/type/confidence/contradiction/gap provenance.
 
 ## D1/G1 control-plane packet
@@ -133,6 +138,21 @@ query/source/date/excerpt/type/confidence/contradiction/gap provenance.
 5. Any candidate change invalidates earlier review, security, CI, and merge
    evidence.
 6. Do not retry an ambiguous paid dispatch; reconcile it first.
+7. Select dependency-ready work sequentially; do not infer parallel external
+   dispatch from scheduler readiness.
+8. Perplexity review feedback requires a newly approved public query rather
+   than a silent rerun of the original.
+
+## Completion and runtime overlay
+
+- Provider-chunk acceptance and whole-project completion are separate gates.
+- `COMPLETE` requires human user testing and owner acceptance of the unchanged
+  exact candidate, regardless of assignment or automated-gate status.
+- Merge eligibility is evidence only and performs no merge.
+- Director host completion runners, live LangGraph packet handling, live
+  provider dispatch, parallel external execution, and regex-based privacy
+  filtering are permitted future work. They are not presently enabled; each
+  requires its own readiness, evidence, budget, and owner-activation gate.
 
 ## Owner and deterministic gates
 
@@ -149,3 +169,5 @@ query/source/date/excerpt/type/confidence/contradiction/gap provenance.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 22:04 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]] -->

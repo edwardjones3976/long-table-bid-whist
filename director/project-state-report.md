@@ -1,3 +1,5 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 23:13 UTC | BEGIN]] -->
 # Project state report
 
@@ -8,7 +10,8 @@
 - **Repository:** `edwardjones3976/long-table-bid-whist`
 - **Branch:** `main`
 - **Base SHA:** `c9613093af704fdd3e4bedf87bdf375e15d03f00`
-- **Candidate SHA:** pending the immutable implementation commit
+- **Implementation SHA:** `510a4229ccc4295685333581826e67346482e2e3`
+- **Review candidate SHA:** pending a governance-integration commit based on the implementation SHA
 
 ## Delivered candidate
 
@@ -63,6 +66,23 @@ production credit. OpenAI Director/control-plane work remains excluded.
    severe accessibility, or safety failure. Otherwise record owner acceptance
    before issuing `COMPLETE`.
 
+## Director workflow integration status
+
+Director Orchestrator PR #71 was reviewed at exact head
+`4ba6032d5e79dd06f5d571f7c88dd75c114c5590` with verdict
+`REQUEST CHANGES`. Four security findings, additional exact-head correctness
+findings, and stale acceptance evidence block adoption of its runtime. This
+project adopted its governance concepts and records its runtime capabilities as
+permitted but presently activation-gated: separate assignment/project completion, default-off honest
+readiness, sequential dependency-ready routing, bounded revisions, new approved
+Perplexity queries, side-effect-free merge eligibility, and owner/Director-
+invited Antigravity debate with an approved public-only exact payload.
+Host completion runners, live LangGraph execution, parallel external dispatch,
+and regex-based privacy controls are not prohibited; they remain disabled until
+their specific readiness and owner-activation gates pass.
+
 No public deployment, shared-audio transmission, provider login, credential
 change, purchase, or paid provider run was performed.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 23:13 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]] -->

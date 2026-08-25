@@ -1,3 +1,5 @@
+# [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]]
+# [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]]
@@ -9,10 +11,10 @@ project:
   id: "long-table-bid-whist"
   name: "The Long Table — Bid Whist"
   proposition: "Create an authentic, auditable VR/MR Bid Whist table that teaches real play and supports private social and hosted events."
-  state: "reshaped"
+  state: "validating"
   owner: "project owner"
   created_at: "2026-08-24T20:48:09Z"
-  updated_at: "2026-08-24T22:51:06Z"
+  updated_at: "2026-08-25T02:51:35Z"
 
 source_context:
   thread: "current VR/Meta Quest Games project conversation"
@@ -118,6 +120,7 @@ modules:
     purpose: "Keep decisions, tests, and advisor findings reusable within this project without copying private context elsewhere."
 
 team:
+  provider_roles_contract: "provider-roles-contract.yaml"
   responsibility_standard:
     research: "Investigate systematically with diverse relevant sources, provenance, and explicit fact, inference, disagreement, and unknown labels."
     evidence_verification: "Cross-check material claims against independent or authoritative sources; report contradictions, freshness limits, and missing evidence."
@@ -179,15 +182,22 @@ team:
       title: "Specialist and Backup Programmer"
       direct_production_target_percent: 7
       primary_team_substitute: false
-      debate_participant: false
+      debate_participant: "only_after_owner_or_director_invitation"
       exact_candidate_reviewer: false
       outbound_contract: "fixed strings, closed enums, and bounded integers only; no model-authored prose or repository context"
+      invited_debate:
+        equally_debate_eligible: true
+        may_initiate: false
+        exact_outbound_payload_approval_required: true
+        allowed_context: "public, non-private, abstract decision framing only"
+        continuation: "Director-relayed bounded turns only"
+        authority_effect: "none"
       role: "producer"
       workflow_skill: "antigravity-sandbox-workflow"
       responsibilities:
         - "Bounded boilerplate, scaffolding, mechanical implementation, and alternate ideation under the closed outbound contract"
       forbidden_authority:
-        - "No repository context, primary authority, debate participation, exact-candidate review, acceptance, merge, deployment, publication, or external write"
+        - "No repository context, private prose, self-initiated debate, autonomous continuation, exact-candidate review, acceptance, merge, deployment, publication, or external write"
     - id: "research-programmer"
       provider: "perplexity"
       title: "Research Programmers"
@@ -230,7 +240,17 @@ controls:
     attempt_limit: 1
     changed_candidate_invalidates_evidence: true
   revision_limit: 3
+  revision_policy:
+    candidate_change_invalidates_evidence: true
+    perplexity: "A revision requires a new owner-approved bounded public query; never silently rerun the original."
   hop_limit: 2
+  runtime_activation:
+    director_host_completion_runners: {permitted: true, enabled: false}
+    live_langgraph_packet_runtime: {permitted: true, enabled: false}
+    live_provider_dispatch: {permitted: true, enabled: false}
+    parallel_external_dispatch: {permitted: true, enabled: false}
+    regex_only_privacy_controls: {permitted: true, enabled: false, role: "supplemental_filtering", sole_clearance_for_private_payload: false}
+    merge_side_effects: false
   allowlists:
     projects: ["long-table-bid-whist"]
     repositories: ["edwardjones3976/long-table-bid-whist"]
@@ -254,15 +274,18 @@ review_chain:
   candidate:
     repository: "edwardjones3976/long-table-bid-whist"
     base_sha: "c9613093af704fdd3e4bedf87bdf375e15d03f00"
-    head_sha: "pending final candidate commit"
-    artifact_digest: "pending final production-build digest"
+    implementation_sha: "510a4229ccc4295685333581826e67346482e2e3"
+    head_sha: "pending governance-integration commit based on 510a4229ccc4295685333581826e67346482e2e3"
+    artifact_digest: "artifacts/technical-candidate-build.sha256"
   required_evidence:
     - "Different-provider exact-candidate review"
     - "Focused deterministic rules and interaction tests"
     - "Current security and privacy evidence when networked play exists"
     - "Trusted CI when a repository is configured"
   candidate_change_invalidates_evidence: true
-  merge_authority: "deterministic gate after all required owner, review, CI, security, and rights checks"
+  assignment_completion_authority: "A provider assignment may be accepted without completing the project."
+  project_completion_authority: "Human testing and owner acceptance of the unchanged exact candidate are mandatory."
+  merge_authority: "pure eligibility decision after all required owner, review, CI, security, and rights checks; no merge side effect"
 
 assumptions:
   confirmed:
@@ -290,10 +313,12 @@ fallbacks:
   changed_scope: "reshape_profile_before_dependent_work"
 
 next:
-  action: "Finish heavy testing, bind the exact technical candidate and artifact digest, then request different-provider review and human critique."
+  action: "Commit the governance overlay with the existing implementation candidate, rerun affected validation, then request different-provider exact-candidate review and human critique."
   responsible_party: "Director"
   expected_evidence: "Exact SHA, production artifact digest, test/browser packet, review status, known limitations, and human-test plan."
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]]

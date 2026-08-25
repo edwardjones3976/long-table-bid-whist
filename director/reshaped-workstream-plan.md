@@ -1,3 +1,5 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]] -->
 # Reshaped provider work plan — LT-REB-20260824
 
 ## Lifecycle status
@@ -28,6 +30,7 @@
 | `LT-COM-CLAUDE-01` | Claude | Independent position; read-only repository scope | unavailable: expired OAuth | retry only after owner restores auth |
 | `LT-COM-CURSOR-01` | Cursor | Independent position; read-only plan lane | unavailable: login required | retry only after owner restores auth |
 | `LT-MECH-AGY-01` | Gemini/Antigravity | Closed synthetic mechanical check; no repository context | unavailable: CLI/adapter absent | primary provider verifies any future artifact |
+| `LT-DEB-AGY-01` | Gemini/Antigravity | Owner/Director-invited debate using an approved exact public-only abstract payload | not dispatched | Director relays bounded turns; no authority effect |
 | `LT-RES-PPLX-01` | Perplexity | Sanitized public evidence only | unavailable: API credential absent | Director/primary-team provenance review |
 | `LT-IMPL-OAI-01` | external OpenAI/Codex | Owner-accelerated rules, app, room, tests, docs | complete candidate, 100% actual direct production | different-provider exact-SHA review required |
 | `LT-QA-OAI-01` | OpenAI/Codex | Same-provider testing and browser evidence | active; not independent review | different provider plus human cohorts |
@@ -51,3 +54,19 @@ ambiguous paid runs, and missing tools are not retried in the same cycle.
 - The +99 percentage-point OpenAI production deviation is explicitly accepted
   only as the owner's acceleration exception. It does not revise the canonical
   target or satisfy independent review.
+
+## Safe scheduling and completion overlay
+
+- Dependency-ready chunks are selected sequentially. No parallel external
+  dispatch or duplicate ambiguous retry is authorized.
+- Perplexity revisions require a new owner-approved bounded public query and a
+  new provenance packet.
+- An accepted chunk does not make the project complete. The unchanged exact
+  candidate still requires different-provider review, human user testing, and
+  owner acceptance.
+- Director host completion runners, live LangGraph execution, parallel external
+  dispatch, and regex-based privacy filtering are permitted later chunks. They
+  remain inactive until their explicit readiness and owner-activation gates
+  pass.
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]] -->

@@ -1,3 +1,5 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
@@ -12,7 +14,9 @@ to this project.
 
 - Workflow source: `edwardjones3976/director-orchestrator`
 - Source branch: `main`
-- Source commit: `ed02458d5c425115e49b330ed1f6cdc1d9af1ce6`
+- Stable source commit: `5c112bfdbc1bc6e5299aad6428fec9b03edb1cb3`
+- Reviewed PR candidate: `#71@4ba6032d5e79dd06f5d571f7c88dd75c114c5590`
+- PR review verdict: `REQUEST CHANGES`; governance-only safe subset adopted
 - Protocol: `docs/project-bootstrap-protocol.md`
 - Schema: `director-project-profile/v1`
 - Installed locally: `2026-08-24T20:48:09Z`
@@ -36,6 +40,12 @@ phase.
 - [`roles-and-responsibilities.md`](roles-and-responsibilities.md) defines the
   eight responsibility areas and each provider's exact project-local role,
   authority boundary, provenance duties, and review eligibility.
+- [`provider-roles-contract.yaml`](provider-roles-contract.yaml) is the
+  machine-readable companion contract for ordinary work, invited debate,
+  research revisions, completion authority, runtime permissions, and separate
+  activation gates.
+- [`2026-08-25-pr71-review-and-adoption.md`](2026-08-25-pr71-review-and-adoption.md)
+  binds the exact reviewed PR head, findings, verdict, and adoption matrix.
 - [`committee/2026-08-24-rebaseline-work-order.md`](committee/2026-08-24-rebaseline-work-order.md)
   freezes the accelerated prototype's authority, provider, budget, and stopping
   boundaries.
@@ -86,3 +96,5 @@ gated. Everything under `sources/` remains read-only.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]] -->

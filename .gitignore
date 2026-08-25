@@ -11,6 +11,8 @@ AGENTS.md
 venv/
 
 # Editors, operating systems, and build/test output.
+_restart_archive/
+.firecrawl/
 .vs/
 .vscode/
 .idea/

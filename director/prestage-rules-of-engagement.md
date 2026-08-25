@@ -1,3 +1,5 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]] -->
 # Pre-stage and rules of engagement — Technical Candidate
 
 ## Frozen contracts
@@ -33,6 +35,25 @@
 - No assignment grants merge, deployment, publication, public-room, purchase,
   permissions, shared-audio, or final-acceptance authority.
 
+## Director PR #71 adoption boundary
+
+- Adopted concepts are governance-only: default-off readiness, assignment vs.
+  project completion, bounded revision, prospective review budgeting,
+  sequential dependency-ready routing, a new approved Perplexity query on
+  revision, invited Antigravity debate, and side-effect-free merge eligibility.
+- Director host completion runners, repository-selected subprocesses, live
+  LangGraph packet writing, live provider dispatch, parallel external dispatch,
+  and regex-based privacy filtering are authorized capabilities. They remain
+  default-off until their capability-specific safety, evidence, budget, and
+  owner-activation gates pass.
+- Antigravity ordinary work remains prose-free. Invited debate must be initiated
+  by the owner or Director, use an approved exact outbound payload containing
+  only public/non-private abstract framing, and remain Director-relayed and
+  bounded. Antigravity receives no execution or acceptance authority.
+- A green assignment record may advance a provider chunk. It cannot advance the
+  whole project to `COMPLETE`, merge a branch, deploy, publish, or enable shared
+  host audio.
+
 ## Match and audit model
 
 The current browser candidate is a local deterministic simulation. Its seat
@@ -59,3 +80,5 @@ Rollback is a new reviewed commit that restores the last accepted exact SHA;
 never rewrite unrelated user work. Stop immediately on card leakage, scoring or
 replay divergence, host control of committed play, unlicensed content, fixed
 human casting, credential ambiguity, unexpected cost, or cultural harm.
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]] -->
