@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  ALPHA_EXCLUSION_NOTICE,
+  MANIFEST_DISABLED_NOTICES,
   MANIFEST_ID,
   SUITS,
-  applyHumanAction,
-  applyHumanDiscard,
   legalBids,
   legalCards,
   legalHumanActions,
@@ -14,8 +14,22 @@ import {
   type ContractMode,
   type GameState,
   type Seat,
-  type Suit,
 } from "./game";
+// [[Claude | Opus 5 | 2026-08-25 | LT-CLAUDE-S1-XR-002 | BEGIN]]
+import { BUILD_LABEL, BUILD_SHORT_SHA } from "./build-identity";
+import type { TableInputSource, TableIntent } from "./table/intent";
+import {
+  DISCARD_PICK_TARGET,
+  createInteractionState,
+  dispatchTableInput,
+  type TableInteractionState,
+} from "./table/interaction";
+import { cardRankText } from "./table/labels";
+import { buildXrTableProjection } from "./table/projection";
+import { readPageCalibration, type XrCalibration } from "./xr/calibration";
+import { lifecycleMessageOf } from "./xr/lifecycle";
+import { XR_DEALER_LABEL } from "./xr/targets";
+// [[Claude | Opus 5 | 2026-08-25 | LT-CLAUDE-S1-XR-002 | END]]
 import {
   queryImmersiveVrSupport,
   startImmersiveTable,
@@ -26,6 +40,7 @@ import {
 const INTERNAL_TABLE_SEED = "long-table-001";
 const INVITE_CODE = "LT-7K2M";
 const MAX_SELECTABLE_BID_LEVEL = 6;
+const EXCLUSION_NOTICE_ID = "alpha-exclusion-notice";
 
 type HostMode = "ai-dealer" | "human-host";
 type Drawer = "host" | "a11y" | null;
@@ -38,14 +53,6 @@ interface AccessibilityPrefs {
   effectsOff: boolean;
   musicOff: boolean;
   oneClickPlay: boolean;
-}
-
-interface PendingBid {
-  bid: Bid;
-}
-
-interface PendingPlay {
-  cardId: string;
 }
 
 const MODE_LABELS: Record<ContractMode, string> = {
@@ -87,13 +94,22 @@ function canRequestPause(state: GameState | null): boolean {
   return Boolean(state && state.phase === "summary" && !state.paused);
 }
 
+function calibrationSummary(calibration: XrCalibration): string {
+  return `Seated calibration: table ${Math.round(calibration.heightMeters * 100)} cm high, ${Math.round(
+    calibration.distanceMeters * 100,
+  )} cm forward. Held for this page, not just this session.`;
+}
+
 export default function App() {
   const [started, setStarted] = useState(false);
   const [hostMode, setHostMode] = useState<HostMode | null>(null);
-  const [game, setGame] = useState<GameState | null>(null);
-  const [pendingBid, setPendingBid] = useState<PendingBid | null>(null);
-  const [pendingPlay, setPendingPlay] = useState<PendingPlay | null>(null);
-  const [discardIds, setDiscardIds] = useState<string[]>([]);
+  // [[Claude | Opus 5 | 2026-08-25 | LT-CLAUDE-S1-XR-002 | BEGIN]]
+  // The desktop surface holds the same interaction state the XR room drives.
+  // Preview, discard picks, and idempotent input ids live in one place.
+  const [table, setTable] = useState<TableInteractionState | null>(null);
+  const inputCounter = useRef(0);
+  const [calibration, setCalibration] = useState<XrCalibration>(() => readPageCalibration());
+  // [[Claude | Opus 5 | 2026-08-25 | LT-CLAUDE-S1-XR-002 | END]]
   const [drawer, setDrawer] = useState<Drawer>(null);
   const [tableMuted, setTableMuted] = useState(false);
   const [reconnectStatus, setReconnectStatus] = useState<"connected" | "reconnecting">("connected");
@@ -119,25 +135,42 @@ export default function App() {
   const shellRef = useRef<HTMLDivElement>(null);
   const xrSessionRef = useRef<XrSessionHandle | null>(null);
 
+  const game = table?.game ?? null;
   const cardScale = a11y.largeCards ? 1.28 : 1;
 
-  const applyAction = useCallback((action: Parameters<typeof applyHumanAction>[1]) => {
-    setGame((current) => {
-      if (!current) return current;
-      const result = applyHumanAction(current, action);
-      if (result.error) return current;
-      return result.state;
-    });
-    setPendingBid(null);
-    setPendingPlay(null);
+  // [[Claude | Opus 5 | 2026-08-25 | LT-CLAUDE-S1-XR-002 | BEGIN]]
+  /**
+   * The single semantic port. Every desktop control and every XR controller
+   * select becomes one typed envelope with a fresh idempotency key, so a
+   * double-fired click or a repeated controller event can never commit twice.
+   */
+  const dispatch = useCallback((intent: TableIntent, source: TableInputSource = "desktop") => {
+    inputCounter.current += 1;
+    const inputId = `${source}:${inputCounter.current}`;
+    setTable((current) =>
+      current ? dispatchTableInput(current, { inputId, source, intent }).state : current,
+    );
   }, []);
+
+  const projection = useMemo(
+    () =>
+      table
+        ? buildXrTableProjection(table, {
+            manifestId: MANIFEST_ID,
+            buildShortSha: BUILD_SHORT_SHA,
+          })
+        : null,
+    [table],
+  );
+  const projectionRef = useRef(projection);
+  useEffect(() => {
+    projectionRef.current = projection;
+  }, [projection]);
+  // [[Claude | Opus 5 | 2026-08-25 | LT-CLAUDE-S1-XR-002 | END]]
 
   const resetTableSession = useCallback(() => {
     setStarted(false);
-    setGame(null);
-    setDiscardIds([]);
-    setPendingBid(null);
-    setPendingPlay(null);
+    setTable(null);
     setDrawer(null);
     setTableMuted(false);
     setReconnectStatus("connected");
@@ -152,11 +185,8 @@ export default function App() {
   const startTable = useCallback(() => {
     if (!hostMode) return;
     const initial = newTable(INTERNAL_TABLE_SEED);
-    setGame(initial);
+    setTable(createInteractionState(initial));
     setStarted(true);
-    setDiscardIds([]);
-    setPendingBid(null);
-    setPendingPlay(null);
     setHostNotice(null);
     setBlockedWest(false);
     setSimulatedRemovedSeat(null);
@@ -165,17 +195,10 @@ export default function App() {
   }, [hostMode]);
 
   const handleNextHand = useCallback(() => {
-    setGame((current) => {
-      if (!current || current.phase !== "summary") return current;
-      const result = applyHumanAction(current, { type: "next-hand" });
-      return result.state;
-    });
-    setDiscardIds([]);
-    setPendingBid(null);
-    setPendingPlay(null);
+    dispatch({ kind: "next-hand" });
     setAiSubstituted(false);
     setSimulatedRemovedSeat(null);
-  }, []);
+  }, [dispatch]);
 
   const selectableBids = useMemo(() => {
     if (!game) return [];
@@ -207,8 +230,8 @@ export default function App() {
       setXrSupport(support);
       setXrMessage(
         support === "supported"
-          ? "Quest/WebXR room preview is available. Gameplay remains on the accessible table surface."
-          : "Immersive WebXR is unavailable here. Use a compatible Quest browser for the spatial room preview.",
+          ? "Immersive WebXR is available here. The room shares this table's preview, Cancel, and Confirm path."
+          : "Immersive WebXR is unavailable here. Use a compatible WebXR browser for the seated room.",
       );
     });
     return () => {
@@ -228,49 +251,25 @@ export default function App() {
     [a11y.reducedMotion, a11y.effectsOff],
   );
 
-  const toggleDiscard = (cardId: string) => {
-    setDiscardIds((current) => {
-      if (current.includes(cardId)) return current.filter((id) => id !== cardId);
-      if (current.length >= 6) return current;
-      return [...current, cardId];
-    });
-  };
-
-  const confirmDiscard = () => {
-    if (!game || discardIds.length !== 6) return;
-    setGame((current) => {
-      if (!current) return current;
-      const result = applyHumanDiscard(current, discardIds);
-      if (result.error) return current;
-      return result.state;
-    });
-    setDiscardIds([]);
-  };
-
   const selectCard = (card: Card) => {
-    if (!game || game.turn !== "south" || game.phase !== "play") return;
-    const legal = southLegalCards.some((candidate) => candidate.id === card.id);
-    if (!legal) return;
-    if (a11y.oneClickPlay) {
-      applyAction({ type: "play", cardId: card.id });
+    if (!game || game.turn !== "south") return;
+    if (game.phase === "kitty") {
+      dispatch({ kind: "toggle-discard", cardId: card.id });
       return;
     }
-    setPendingPlay({ cardId: card.id });
-  };
-
-  const confirmBid = () => {
-    if (!pendingBid) return;
-    applyAction({ type: "bid", bid: pendingBid.bid });
-  };
-
-  const confirmPlay = () => {
-    if (!pendingPlay) return;
-    applyAction({ type: "play", cardId: pendingPlay.cardId });
+    if (game.phase !== "play") return;
+    dispatch({ kind: "preview", selection: { type: "play", cardId: card.id } });
+    // One-click play still travels the shared path; it simply confirms at once.
+    if (a11y.oneClickPlay) dispatch({ kind: "confirm" });
   };
 
   const handlePause = () => {
     if (!canRequestPause(game)) return;
-    setGame((current) => (current ? togglePause(current) : current));
+    setTable((current) => (current ? { ...current, game: togglePause(current.game) } : current));
+  };
+
+  const handleResume = () => {
+    setTable((current) => (current ? { ...current, game: togglePause(current.game) } : current));
   };
 
   const handleBlock = () => {
@@ -307,20 +306,29 @@ export default function App() {
 
   const handleEnterXr = async () => {
     if (!shellRef.current || !hostMode || xrSupport !== "supported" || xrActive) return;
+    if (!projectionRef.current) return;
     try {
-      setXrMessage("Opening the seated WebXR room preview.");
-      xrSessionRef.current = await startImmersiveTable(shellRef.current, hostMode, () => {
-        xrSessionRef.current = null;
-        setXrActive(false);
-        setXrMessage("WebXR room preview ended. The table session is still active.");
+      setXrMessage("Opening the seated WebXR room.");
+      xrSessionRef.current = await startImmersiveTable({
+        overlayRoot: shellRef.current,
+        dealerMode: hostMode,
+        getProjection: () => projectionRef.current!,
+        onTableIntent: (intent) => dispatch(intent, "xr"),
+        onCalibration: (next) => setCalibration(next),
+        onEnded: () => {
+          xrSessionRef.current = null;
+          setXrActive(false);
+          setXrMessage("WebXR room ended. The table session is still active.");
+        },
       });
       setXrActive(true);
       setXrMessage(
-        "WebXR room preview active. This shell does not claim Quest controller, hand-input, or Meta Avatar proof.",
+        "WebXR room active. Controller ray select drives the same preview, Cancel, and Confirm path as this table. No physical-headset verification is claimed here.",
       );
     } catch (error) {
       setXrActive(false);
-      setXrMessage(error instanceof Error ? error.message : "Unable to start WebXR.");
+      // Closed lifecycle vocabulary: no raw device or browser text is shown.
+      setXrMessage(lifecycleMessageOf(error));
     }
   };
 
@@ -352,8 +360,11 @@ export default function App() {
             <h1>THE LONG TABLE</h1>
             <p className="subtitle">Seated four-place Bid Whist · working browser prototype</p>
             <p className="manifest-notice" role="note">
-              {MANIFEST_ID} working draft — not a frozen rules manifest. Level 7 contracts are withheld
-              pending experienced-player review.
+              {MANIFEST_ID} working draft — not a frozen rules manifest. Levels 3–6 in High or Low
+              only. Level 7 and No Trump: {ALPHA_EXCLUSION_NOTICE}
+            </p>
+            <p className="build-identity" role="note">
+              {BUILD_LABEL}
             </p>
             <div className="mode-choice" role="group" aria-label="Table authority mode">
               <button
@@ -377,22 +388,23 @@ export default function App() {
               <div className="authority-box">
                 {hostMode === "ai-dealer" ? (
                   <>
-                    <strong>AI Dealer</strong> announces, teaches, and paces the table. The rules engine
-                    alone owns shuffle, deal, legality, tricks, and score. The dealer never sees concealed
-                    hands.
+                    <strong>{XR_DEALER_LABEL}</strong> announces, teaches, and paces the table. The
+                    rules engine alone owns shuffle, deal, legality, tricks, and score. The dealer
+                    never sees concealed hands.
                   </>
                 ) : (
                   <>
                     <strong>Human Host</strong> manages invite simulation, mute, between-hand pause, and
                     AI substitution. The host cannot inspect hands, alter cards, bids, tricks, score, force
-                    play, or void a committed hand.
+                    play, or void a committed hand. Every host control is a local, non-network demo.
                   </>
                 )}
               </div>
             )}
             <p className="authority-box">
-              Music defaults <strong>Off</strong>. No bundled recordings ship in this prototype. Host
-              playback remains external, private-room, unrecorded, and rights-dependent.
+              Music defaults <strong>Off</strong>. No music path ships in this prototype: no bundled
+              recordings, no player, and no playback controls. Host playback remains external,
+              private-room, unrecorded, and rights-dependent.
             </p>
             <button type="button" className="primary" disabled={!hostMode} onClick={startTable}>
               Enter the table
@@ -403,7 +415,7 @@ export default function App() {
     );
   }
 
-  if (!game) return null;
+  if (!table || !game) return null;
 
   const showRobot = hostMode === "ai-dealer";
   const handPaused = game.paused;
@@ -412,6 +424,16 @@ export default function App() {
   const isSouthKitty = game.phase === "kitty" && canAct;
   const isSouthPlay = game.phase === "play" && canAct;
   const isSummary = game.phase === "summary";
+  const discardIds = table.discardIds;
+  const preview = table.preview;
+  const feedback =
+    table.lastReceipt && table.lastReceipt.outcome !== "accepted" ? table.lastReceipt.message : null;
+  const confirmReady =
+    canAct &&
+    !isSummary &&
+    (isSouthKitty ? discardIds.length === DISCARD_PICK_TARGET : Boolean(preview));
+  const cancelReady = Boolean(preview) || discardIds.length > 0;
+  const showActionRail = isSouthAuction || isSouthDeclaration || isSouthKitty || isSouthPlay;
 
   return (
     <div
@@ -448,9 +470,9 @@ export default function App() {
           />
         ))}
         {showRobot && (
-          <div className="robot-dealer" aria-label="AI dealer robot">
+          <div className="robot-dealer" aria-label={`${XR_DEALER_LABEL} robot`}>
             <div className="robot-head" />
-            <span>AI Dealer</span>
+            <span>{XR_DEALER_LABEL}</span>
           </div>
         )}
       </div>
@@ -484,6 +506,10 @@ export default function App() {
             NS {game.tricksWon.south + game.tricksWon.north} · EW{" "}
             {game.tricksWon.east + game.tricksWon.west}
           </span>
+        </div>
+        <div className="team-line">
+          <span>Build</span>
+          <span>{BUILD_SHORT_SHA}</span>
         </div>
       </aside>
 
@@ -525,10 +551,10 @@ export default function App() {
         aria-describedby="xr-status"
         onClick={() => void handleEnterXr()}
       >
-        {xrActive ? "Quest VR active" : xrSupport === "checking" ? "Checking Quest VR" : "Enter Quest VR"}
+        {xrActive ? "WebXR room active" : xrSupport === "checking" ? "Checking WebXR" : "Enter WebXR room"}
       </button>
       <p id="xr-status" className="xr-status" role="status">
-        {xrMessage}
+        {xrMessage} {calibrationSummary(calibration)}
       </p>
 
       {drawer === "host" && (
@@ -546,7 +572,7 @@ export default function App() {
           onClose={() => setDrawer(null)}
           onMute={() => setTableMuted((value) => !value)}
           onPause={handlePause}
-          onResume={() => setGame((current) => (current ? togglePause(current) : current))}
+          onResume={handleResume}
           onSubstitute={handleAiSubstitution}
           onReconnect={() =>
             setReconnectStatus((status) => (status === "connected" ? "reconnecting" : "connected"))
@@ -575,13 +601,17 @@ export default function App() {
         </div>
       )}
 
-      {(isSouthAuction || isSouthDeclaration || isSouthKitty || isSouthPlay || pendingBid || pendingPlay) && (
+      {showActionRail && (
         <div className="action-rail panel">
           {isSouthAuction && (
             <>
               <div className="bid-grid" role="group" aria-label="Your bid">
                 {legalHumanActions(game).some((action) => action.type === "pass") && (
-                  <button type="button" onClick={() => applyAction({ type: "pass" })}>
+                  <button
+                    type="button"
+                    className={preview?.selection.type === "pass" ? "primary" : ""}
+                    onClick={() => dispatch({ kind: "preview", selection: { type: "pass" } })}
+                  >
                     Pass
                   </button>
                 )}
@@ -589,83 +619,105 @@ export default function App() {
                   <button
                     key={`${bid.level}-${bid.mode}`}
                     type="button"
-                    className={pendingBid?.bid.level === bid.level && pendingBid.bid.mode === bid.mode ? "primary" : ""}
-                    onClick={() => setPendingBid({ bid })}
+                    className={
+                      preview?.selection.type === "bid" &&
+                      preview.selection.bid.level === bid.level &&
+                      preview.selection.bid.mode === bid.mode
+                        ? "primary"
+                        : ""
+                    }
+                    onClick={() => dispatch({ kind: "preview", selection: { type: "bid", bid } })}
                   >
                     {bidLabel(bid)}
                   </button>
                 ))}
               </div>
-              {pendingBid && (
-                <>
-                  <span>Preview: {bidLabel(pendingBid.bid)}</span>
-                  <button type="button" onClick={() => setPendingBid(null)}>
-                    Cancel
+              {/*
+                Withheld Alpha 0.1 contracts stay visible and permanently
+                disabled, each carrying the one published explanation.
+              */}
+              <div className="bid-grid withheld" role="group" aria-label="Withheld contracts">
+                {MANIFEST_DISABLED_NOTICES.map((notice) => (
+                  <button
+                    key={notice.id}
+                    type="button"
+                    disabled
+                    aria-describedby={EXCLUSION_NOTICE_ID}
+                  >
+                    {notice.label}
                   </button>
-                  <button type="button" className="primary" onClick={confirmBid}>
-                    Confirm bid
-                  </button>
-                </>
-              )}
+                ))}
+              </div>
+              <p id={EXCLUSION_NOTICE_ID} className="control-hint">
+                {ALPHA_EXCLUSION_NOTICE}
+              </p>
             </>
           )}
 
           {isSouthDeclaration && (
-            <>
-              {game.contract?.mode.startsWith("no-trump") ? (
-                <button type="button" className="primary" onClick={() => applyAction({ type: "declare", trump: null })}>
-                  Confirm No Trump
+            <div className="bid-grid" role="group" aria-label="Declare trump">
+              {SUITS.map((trump) => (
+                <button
+                  key={trump}
+                  type="button"
+                  className={
+                    preview?.selection.type === "declaration" && preview.selection.trump === trump
+                      ? "primary"
+                      : ""
+                  }
+                  onClick={() =>
+                    dispatch({ kind: "preview", selection: { type: "declaration", trump } })
+                  }
+                >
+                  {trump}
                 </button>
-              ) : (
-                <div className="bid-grid" role="group" aria-label="Declare trump">
-                  {SUITS.map((trump) => (
-                    <button
-                      key={trump}
-                      type="button"
-                      className="primary"
-                      onClick={() => applyAction({ type: "declare", trump })}
-                    >
-                      {trump}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </>
+              ))}
+            </div>
           )}
 
           {isSouthKitty && (
-            <>
-              <span>Select 6 cards to discard ({discardIds.length}/6)</span>
-              <button type="button" disabled={discardIds.length !== 6} className="primary" onClick={confirmDiscard}>
-                Close kitty
-              </button>
-            </>
+            <span>
+              Select {DISCARD_PICK_TARGET} cards to discard ({discardIds.length}/
+              {DISCARD_PICK_TARGET})
+            </span>
           )}
 
-          {isSouthPlay && pendingPlay && !a11y.oneClickPlay && (
-            <>
-              <span>Preview card selected</span>
-              <button type="button" onClick={() => setPendingPlay(null)}>
-                Cancel
-              </button>
-              <button type="button" className="primary" onClick={confirmPlay}>
-                Play card
-              </button>
-            </>
+          {isSouthPlay && a11y.oneClickPlay && (
+            <span>One-click play: tap a legal card to commit</span>
           )}
 
-          {isSouthPlay && a11y.oneClickPlay && <span>One-click play: tap a legal card to commit</span>}
+          <span className="preview-line">Preview: {preview ? preview.label : "none"}</span>
+          <button type="button" disabled={!cancelReady} onClick={() => dispatch({ kind: "cancel" })}>
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="primary"
+            disabled={!confirmReady}
+            onClick={() => dispatch({ kind: "confirm" })}
+          >
+            Confirm
+          </button>
         </div>
+      )}
+
+      {feedback && (
+        <p className="table-feedback" role="status">
+          {feedback}
+        </p>
       )}
 
       {game.turn === "south" && (game.phase === "play" || game.phase === "kitty") && (
         <div className="player-hand" role="group" aria-label="Your hand">
           {game.hands.south.map((card) => {
-            const legal = game.phase === "play" ? southLegalCards.some((candidate) => candidate.id === card.id) : true;
+            const legal =
+              game.phase === "play"
+                ? southLegalCards.some((candidate) => candidate.id === card.id)
+                : true;
             const selected =
               game.phase === "kitty"
                 ? discardIds.includes(card.id)
-                : pendingPlay?.cardId === card.id;
+                : preview?.selection.type === "play" && preview.selection.cardId === card.id;
             return (
               <button
                 key={card.id}
@@ -682,9 +734,9 @@ export default function App() {
                   .join(" ")}
                 aria-label={card.label}
                 disabled={game.phase === "play" && !legal}
-                onClick={() => (game.phase === "kitty" ? toggleDiscard(card.id) : selectCard(card))}
+                onClick={() => selectCard(card)}
               >
-                <span className="rank">{card.suit === "joker" ? card.joker === "big" ? "BJ" : "LJ" : card.label.replace(/[♣♦♥♠]/g, "")}</span>
+                <span className="rank">{cardRankText(card)}</span>
                 <span className="suit" aria-hidden="true">
                   {card.glyph}
                 </span>
@@ -705,7 +757,7 @@ function PlayingCardView({ card }: { card: Card }) {
         .join(" ")}
       aria-label={card.label}
     >
-      <span className="rank">{card.suit === "joker" ? (card.joker === "big" ? "BJ" : "LJ") : card.label.replace(/[♣♦♥♠]/g, "")}</span>
+      <span className="rank">{cardRankText(card)}</span>
       <span className="suit" aria-hidden="true">
         {card.glyph}
       </span>

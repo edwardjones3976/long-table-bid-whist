@@ -1,65 +1,54 @@
-export type XrDealerMode = "ai-dealer" | "human-host";
+// [[Claude | Opus 5 | 2026-08-25 | LT-CLAUDE-S1-XR-002 | BEGIN]]
+/**
+ * Immersive session boundary.
+ *
+ * Entry is driven by the pinned three@0.165.0 WebXR manager: the page requests
+ * the session so it can keep control of the feature list, hands it to the
+ * renderer, and attaches one ray per controller. A controller `select` is the
+ * only way a target fires, and it resolves to exactly one typed action — a
+ * `TableIntent` for the shared preview/cancel/confirm path, or a view intent for
+ * the seated calibration.
+ *
+ * Failures are reported through the closed lifecycle vocabulary, and teardown
+ * runs exactly once no matter whether the headset, the page, or both end the
+ * session.
+ */
+import {
+  BufferGeometry,
+  Line,
+  LineBasicMaterial,
+  PerspectiveCamera,
+  Scene,
+  Vector3,
+  WebGLRenderer,
+  type Object3D,
+} from "three";
+
+import type { TableIntent } from "../table/intent";
+import type { XrTableProjection } from "../table/projection";
+import { readPageCalibration, updatePageCalibration, type XrCalibration } from "./calibration";
+import { XrLifecycleError, createCleanupRunner } from "./lifecycle";
+import { createTableRoom, type XrDealerMode } from "./room";
+
+export type { XrDealerMode } from "./room";
 export type XrSupport = "checking" | "supported" | "unsupported";
 
-interface XrViewportLike {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-interface XrViewLike {
-  projectionMatrix: Float32Array;
-  transform: { inverse: { matrix: Float32Array } };
-}
-
-interface XrPoseLike {
-  views: XrViewLike[];
-}
-
-interface XrReferenceSpaceLike {}
-
-interface XrFrameLike {
-  session: XrSessionLike;
-  getViewerPose(referenceSpace: XrReferenceSpaceLike): XrPoseLike | null;
-}
-
-interface XrLayerLike {
-  framebuffer: WebGLFramebuffer | null;
-  getViewport(view: XrViewLike): XrViewportLike | null;
-}
-
-interface XrSessionLike {
-  renderState: { baseLayer?: XrLayerLike };
-  requestReferenceSpace(type: "local-floor"): Promise<XrReferenceSpaceLike>;
-  updateRenderState(state: { baseLayer: XrLayerLike }): void;
-  requestAnimationFrame(callback: (time: number, frame: XrFrameLike) => void): number;
-  addEventListener(type: "end", listener: () => void, options?: { once?: boolean }): void;
-  end(): Promise<void>;
-}
-
-interface XrSystemLike {
-  isSessionSupported(mode: "immersive-vr"): Promise<boolean>;
-  requestSession(
-    mode: "immersive-vr",
-    options: {
-      requiredFeatures: string[];
-      optionalFeatures: string[];
-      domOverlay: { root: Element };
-    },
-  ): Promise<XrSessionLike>;
-}
-
-interface XrGlContext extends WebGLRenderingContext {
-  makeXRCompatible(): Promise<void>;
-}
-
-interface XrLayerConstructor {
-  new (session: XrSessionLike, context: XrGlContext): XrLayerLike;
-}
+const RAY_LENGTH_METRES = 5;
 
 export interface XrSessionHandle {
   end(): Promise<void>;
+}
+
+export interface XrTableSessionOptions {
+  /** DOM overlay root, used when the runtime offers `dom-overlay`. */
+  overlayRoot: Element;
+  dealerMode: XrDealerMode;
+  /** Read once per frame. The room never receives the authoritative state. */
+  getProjection: () => XrTableProjection;
+  /** Typed intents rejoin the same interaction controller the desktop uses. */
+  onTableIntent: (intent: TableIntent) => void;
+  onCalibration: (calibration: XrCalibration) => void;
+  onEnded: () => void;
 }
 
 export function immersiveSessionOptions(root: Element) {
@@ -70,9 +59,8 @@ export function immersiveSessionOptions(root: Element) {
   };
 }
 
-function xrSystem(): XrSystemLike | null {
-  const candidate = (navigator as Navigator & { xr?: XrSystemLike }).xr;
-  return candidate ?? null;
+function xrSystem(): XRSystem | null {
+  return navigator.xr ?? null;
 }
 
 export async function queryImmersiveVrSupport(): Promise<XrSupport> {
@@ -85,213 +73,135 @@ export async function queryImmersiveVrSupport(): Promise<XrSupport> {
   }
 }
 
-function multiplyMat4(left: Float32Array, right: Float32Array): Float32Array {
-  const output = new Float32Array(16);
-  for (let column = 0; column < 4; column += 1) {
-    for (let row = 0; row < 4; row += 1) {
-      output[column * 4 + row] =
-        left[row] * right[column * 4] +
-        left[4 + row] * right[column * 4 + 1] +
-        left[8 + row] * right[column * 4 + 2] +
-        left[12 + row] * right[column * 4 + 3];
-    }
-  }
-  return output;
-}
+let activeHandle: XrSessionHandle | null = null;
 
-function modelMatrix(
-  x: number,
-  y: number,
-  z: number,
-  scaleX: number,
-  scaleY: number,
-  scaleZ: number,
-): Float32Array {
-  return new Float32Array([
-    scaleX, 0, 0, 0,
-    0, scaleY, 0, 0,
-    0, 0, scaleZ, 0,
-    x, y, z, 1,
+function controllerRay(): Line {
+  const geometry = new BufferGeometry().setFromPoints([
+    new Vector3(0, 0, 0),
+    new Vector3(0, 0, -1),
   ]);
-}
-
-function compileShader(
-  gl: WebGLRenderingContext,
-  type: number,
-  source: string,
-): WebGLShader {
-  const shader = gl.createShader(type);
-  if (!shader) throw new Error("Unable to create XR shader");
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    throw new Error(gl.getShaderInfoLog(shader) ?? "Unable to compile XR shader");
-  }
-  return shader;
-}
-
-function createProgram(gl: WebGLRenderingContext): WebGLProgram {
-  const vertex = compileShader(
-    gl,
-    gl.VERTEX_SHADER,
-    `
-      attribute vec3 position;
-      uniform mat4 matrix;
-      void main() {
-        gl_Position = matrix * vec4(position, 1.0);
-      }
-    `,
-  );
-  const fragment = compileShader(
-    gl,
-    gl.FRAGMENT_SHADER,
-    `
-      precision mediump float;
-      uniform vec3 color;
-      void main() {
-        gl_FragColor = vec4(color, 1.0);
-      }
-    `,
-  );
-  const program = gl.createProgram();
-  if (!program) throw new Error("Unable to create XR program");
-  gl.attachShader(program, vertex);
-  gl.attachShader(program, fragment);
-  gl.linkProgram(program);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    throw new Error(gl.getProgramInfoLog(program) ?? "Unable to link XR program");
-  }
-  return program;
-}
-
-const CUBE_VERTICES = new Float32Array([
-  -0.5,-0.5, 0.5,  0.5,-0.5, 0.5,  0.5, 0.5, 0.5,
-  -0.5,-0.5, 0.5,  0.5, 0.5, 0.5, -0.5, 0.5, 0.5,
-   0.5,-0.5,-0.5, -0.5,-0.5,-0.5, -0.5, 0.5,-0.5,
-   0.5,-0.5,-0.5, -0.5, 0.5,-0.5,  0.5, 0.5,-0.5,
-  -0.5, 0.5, 0.5,  0.5, 0.5, 0.5,  0.5, 0.5,-0.5,
-  -0.5, 0.5, 0.5,  0.5, 0.5,-0.5, -0.5, 0.5,-0.5,
-  -0.5,-0.5,-0.5,  0.5,-0.5,-0.5,  0.5,-0.5, 0.5,
-  -0.5,-0.5,-0.5,  0.5,-0.5, 0.5, -0.5,-0.5, 0.5,
-   0.5,-0.5, 0.5,  0.5,-0.5,-0.5,  0.5, 0.5,-0.5,
-   0.5,-0.5, 0.5,  0.5, 0.5,-0.5,  0.5, 0.5, 0.5,
-  -0.5,-0.5,-0.5, -0.5,-0.5, 0.5, -0.5, 0.5, 0.5,
-  -0.5,-0.5,-0.5, -0.5, 0.5, 0.5, -0.5, 0.5,-0.5,
-]);
-
-function createRenderer(gl: XrGlContext, dealerMode: XrDealerMode) {
-  const program = createProgram(gl);
-  const position = gl.getAttribLocation(program, "position");
-  const matrix = gl.getUniformLocation(program, "matrix");
-  const color = gl.getUniformLocation(program, "color");
-  const buffer = gl.createBuffer();
-  if (!buffer || !matrix || !color) throw new Error("Unable to prepare XR geometry");
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, CUBE_VERTICES, gl.STATIC_DRAW);
-  gl.useProgram(program);
-  gl.enableVertexAttribArray(position);
-  gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
-  gl.enable(gl.DEPTH_TEST);
-
-  const drawCube = (
-    projectionView: Float32Array,
-    model: Float32Array,
-    rgb: [number, number, number],
-  ) => {
-    gl.uniformMatrix4fv(matrix, false, multiplyMat4(projectionView, model));
-    gl.uniform3fv(color, rgb);
-    gl.drawArrays(gl.TRIANGLES, 0, 36);
-  };
-
-  return (projectionView: Float32Array) => {
-    drawCube(projectionView, modelMatrix(0, -0.04, -1.5, 5, 0.04, 5), [0.035, 0.03, 0.025]);
-    drawCube(projectionView, modelMatrix(0, 0.72, -1.45, 1.65, 0.1, 0.9), [0.08, 0.26, 0.2]);
-    drawCube(projectionView, modelMatrix(0, 0.62, -1.45, 1.78, 0.06, 1.02), [0.24, 0.12, 0.07]);
-
-    drawCube(projectionView, modelMatrix(0, 1.05, -2.22, 0.28, 0.38, 0.08), [0.43, 0.28, 0.12]);
-    drawCube(projectionView, modelMatrix(-1.55, 1.02, -1.45, 0.08, 0.38, 0.28), [0.43, 0.28, 0.12]);
-    drawCube(projectionView, modelMatrix(1.55, 1.02, -1.45, 0.08, 0.38, 0.28), [0.43, 0.28, 0.12]);
-
-    if (dealerMode === "ai-dealer") {
-      drawCube(projectionView, modelMatrix(0.85, 1.15, -2.05, 0.22, 0.18, 0.18), [0.18, 0.42, 0.52]);
-      drawCube(projectionView, modelMatrix(0.85, 0.94, -2.05, 0.28, 0.26, 0.16), [0.12, 0.18, 0.2]);
-    }
-  };
+  const line = new Line(geometry, new LineBasicMaterial({ color: 0x8fe6ff }));
+  line.scale.z = RAY_LENGTH_METRES;
+  return line;
 }
 
 export async function startImmersiveTable(
-  root: Element,
-  dealerMode: XrDealerMode,
-  onEnded: () => void,
+  options: XrTableSessionOptions,
 ): Promise<XrSessionHandle> {
   const system = xrSystem();
-  if (!system) throw new Error("Immersive WebXR is unavailable in this browser");
+  if (!system) throw new XrLifecycleError("xr-unavailable");
+  if (activeHandle) throw new XrLifecycleError("already-active");
 
-  const session = await system.requestSession("immersive-vr", immersiveSessionOptions(root));
-
-  const canvas = document.createElement("canvas");
-  canvas.className = "xr-layer-canvas";
-  canvas.setAttribute("aria-hidden", "true");
-  document.body.append(canvas);
-
-  const gl = canvas.getContext("webgl", {
-    alpha: false,
-    antialias: true,
-    xrCompatible: true,
-  }) as XrGlContext | null;
-  if (!gl) {
-    canvas.remove();
-    await session.end();
-    throw new Error("A WebGL XR layer could not be created");
+  let session: XRSession;
+  try {
+    session = await system.requestSession(
+      "immersive-vr",
+      immersiveSessionOptions(options.overlayRoot) as XRSessionInit,
+    );
+  } catch (cause) {
+    throw new XrLifecycleError("session-rejected", cause);
   }
 
-  await gl.makeXRCompatible();
-  const Layer = (globalThis as typeof globalThis & { XRWebGLLayer?: XrLayerConstructor })
-    .XRWebGLLayer;
-  if (!Layer) {
-    canvas.remove();
-    await session.end();
-    throw new Error("XRWebGLLayer is unavailable");
+  let canvas: HTMLCanvasElement;
+  let renderer: WebGLRenderer;
+  try {
+    canvas = document.createElement("canvas");
+    canvas.className = "xr-layer-canvas";
+    canvas.setAttribute("aria-hidden", "true");
+    document.body.append(canvas);
+    renderer = new WebGLRenderer({ canvas, antialias: true, alpha: false });
+    renderer.xr.enabled = true;
+  } catch (cause) {
+    await session.end().catch(() => undefined);
+    throw new XrLifecycleError("renderer-unavailable", cause);
   }
 
-  const layer = new Layer(session, gl);
-  session.updateRenderState({ baseLayer: layer });
-  const referenceSpace = await session.requestReferenceSpace("local-floor");
-  const renderRoom = createRenderer(gl, dealerMode);
-  let active = true;
-
-  const cleanup = () => {
-    active = false;
+  try {
+    renderer.xr.setReferenceSpaceType("local-floor");
+    await renderer.xr.setSession(session);
+  } catch (cause) {
+    renderer.dispose();
     canvas.remove();
-    onEnded();
-  };
-  session.addEventListener("end", cleanup, { once: true });
+    await session.end().catch(() => undefined);
+    throw new XrLifecycleError("reference-space-unavailable", cause);
+  }
 
-  const onFrame = (_time: number, frame: XrFrameLike) => {
-    if (!active) return;
-    const baseLayer = frame.session.renderState.baseLayer;
-    const pose = frame.getViewerPose(referenceSpace);
-    if (baseLayer && pose) {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, baseLayer.framebuffer);
-      gl.clearColor(0.012, 0.01, 0.008, 1);
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      pose.views.forEach((view) => {
-        const viewport = baseLayer.getViewport(view);
-        if (!viewport) return;
-        gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
-        const projectionView = multiplyMat4(
-          view.projectionMatrix,
-          view.transform.inverse.matrix,
-        );
-        renderRoom(projectionView);
-      });
+  const scene = new Scene();
+  const camera = new PerspectiveCamera(70, 1, 0.05, 40);
+  const room = createTableRoom(options.dealerMode);
+  scene.add(room.root);
+  room.setCalibration(readPageCalibration());
+  room.setProjection(options.getProjection());
+
+  const controllers: Object3D[] = [];
+  const detachers: (() => void)[] = [];
+
+  /** A select fires exactly one typed action, or nothing at all. */
+  const activate = (controller: Object3D) => {
+    const hit = room.raycast(controller);
+    if (!hit) return;
+    if (hit.action.type === "table") {
+      options.onTableIntent(hit.action.intent);
+      return;
     }
-    session.requestAnimationFrame(onFrame);
+    // Calibration is page-scoped, so it survives leaving and re-entering XR.
+    const calibration = updatePageCalibration(hit.action.intent);
+    room.setCalibration(calibration);
+    options.onCalibration(calibration);
   };
-  session.requestAnimationFrame(onFrame);
 
-  return {
-    end: () => session.end(),
+  for (let index = 0; index < 2; index += 1) {
+    const controller = renderer.xr.getController(index);
+    controller.add(controllerRay());
+    const onSelect = () => activate(controller);
+    controller.addEventListener("select", onSelect);
+    detachers.push(() => controller.removeEventListener("select", onSelect));
+    scene.add(controller);
+    controllers.push(controller);
+  }
+
+  renderer.setAnimationLoop(() => {
+    room.setProjection(options.getProjection());
+    const hovered: string[] = [];
+    controllers.forEach((controller) => {
+      const hit = room.raycast(controller);
+      const ray = controller.children[0] as Line | undefined;
+      if (ray) ray.scale.z = hit ? Math.max(0.05, hit.distance) : RAY_LENGTH_METRES;
+      if (hit) hovered.push(hit.key);
+    });
+    room.setHovered(hovered);
+    renderer.render(scene, camera);
+  });
+
+  const cleanup = createCleanupRunner([
+    { name: "animation-loop", run: () => renderer.setAnimationLoop(null) },
+    {
+      name: "controllers",
+      run: () => {
+        detachers.forEach((detach) => detach());
+        controllers.forEach((controller) => controller.clear());
+      },
+    },
+    { name: "room", run: () => room.dispose() },
+    { name: "renderer", run: () => renderer.dispose() },
+    { name: "canvas", run: () => canvas.remove() },
+    { name: "active-handle", run: () => void (activeHandle = null) },
+    { name: "notify", run: () => options.onEnded() },
+  ]);
+
+  session.addEventListener("end", () => cleanup.run(), { once: true });
+
+  const handle: XrSessionHandle = {
+    end: async () => {
+      try {
+        await session.end();
+      } finally {
+        // Idempotent: if the `end` event already fired, this is a no-op.
+        cleanup.run();
+      }
+    },
   };
+  activeHandle = handle;
+  return handle;
 }
+// [[Claude | Opus 5 | 2026-08-25 | LT-CLAUDE-S1-XR-002 | END]]

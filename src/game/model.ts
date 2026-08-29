@@ -1,5 +1,5 @@
 // [[Codex | GPT-5.6 | 2026-08-25 | 03:10 UTC | BEGIN]]
-export const MANIFEST_ID = "STRICT_TABLE_V1" as const;
+export const MANIFEST_ID = "RESTRICTED_TABLE_SLICE_0_1" as const;
 
 export type Seat = "south" | "west" | "north" | "east";
 export type Team = "north-south" | "east-west";
@@ -99,6 +99,42 @@ export interface ActionResult {
 
 export const SEATS: Seat[] = ["south", "west", "north", "east"];
 export const SUITS: Suit[] = ["clubs", "diamonds", "hearts", "spades"];
+
+// [[Claude | Opus 5 | 2026-08-25 | LT-CLAUDE-S1-XR-002 | BEGIN]]
+/**
+ * Restricted Alpha 0.1 slice. Only levels 3-6 in High or Low are legal under the
+ * active manifest. Level 7 and every No-Trump mode are withheld, and the single
+ * published explanation below is the only wording surfaced for that exclusion.
+ */
+export const ALPHA_EXCLUSION_NOTICE =
+  "Not included in Alpha 0.1; available after the published-rules stage." as const;
+
+export const MANIFEST_BID_LEVELS: Bid["level"][] = [3, 4, 5, 6];
+export const MANIFEST_CONTRACT_MODES: ContractMode[] = ["high", "low"];
+
+export interface ManifestDisabledNotice {
+  id: "level-7" | "no-trump";
+  label: string;
+  explanation: typeof ALPHA_EXCLUSION_NOTICE;
+}
+
+export const MANIFEST_DISABLED_NOTICES: ManifestDisabledNotice[] = [
+  { id: "level-7", label: "Level 7", explanation: ALPHA_EXCLUSION_NOTICE },
+  { id: "no-trump", label: "No Trump", explanation: ALPHA_EXCLUSION_NOTICE },
+];
+
+export function isManifestLegalLevel(level: number): level is Bid["level"] {
+  return MANIFEST_BID_LEVELS.some((legal) => legal === level);
+}
+
+export function isManifestLegalMode(mode: string): mode is ContractMode {
+  return MANIFEST_CONTRACT_MODES.some((legal) => legal === mode);
+}
+
+export function isManifestLegalBid(bid: Bid): boolean {
+  return isManifestLegalLevel(bid.level) && isManifestLegalMode(bid.mode);
+}
+// [[Claude | Opus 5 | 2026-08-25 | LT-CLAUDE-S1-XR-002 | END]]
 
 export function teamFor(seat: Seat): Team {
   return seat === "south" || seat === "north" ? "north-south" : "east-west";

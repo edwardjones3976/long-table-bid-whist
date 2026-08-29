@@ -342,6 +342,19 @@ export function togglePause(input: GameState): GameState {
   return state.paused ? state : advanceAutomations(state);
 }
 
+// [[Claude | Opus 5 | 2026-08-25 | LT-CLAUDE-S1-XR-002 | BEGIN]]
+/** Stage 1 book counting: tricks taken per partnership, derived from public trick counts. */
+export function teamBooks(state: GameState): Record<Team, number> {
+  return SEATS.reduce(
+    (totals, seat) => {
+      totals[teamFor(seat)] += state.tricksWon[seat];
+      return totals;
+    },
+    { "north-south": 0, "east-west": 0 } as Record<Team, number>,
+  );
+}
+// [[Claude | Opus 5 | 2026-08-25 | LT-CLAUDE-S1-XR-002 | END]]
+
 export function publicDigest(state: GameState): string {
   const publicState = {
     manifestId: state.manifestId,
