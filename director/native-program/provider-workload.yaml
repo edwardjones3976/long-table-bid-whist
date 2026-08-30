@@ -83,9 +83,9 @@ native_code_assignments:
     required_model: "FABLE 5 ULTRA/MAX"
   cursor:
     scope_forecast_units: 4
-    credit_rule: "forecast is not credit; current broad packet is medium/5 and remains non-dispatchable"
+    credit_rule: "forecast is not credit; isolated XR-core packet is medium/5 and final integration remains separately dependency-gated"
     allocation: {native_foundation_first_deal: 2, private_game_night: 1, long_table_house: 1}
-    owned_surfaces: ["Unreal/Source/LongTableXR", "Unreal/Content/Input", "Unreal/Content/Presence", "Unreal/Content/Environment"]
+    owned_surfaces: ["Unreal/Plugins/LongTableXR/**"]
   grok:
     scope_forecast_units: 17
     credit_rule: "forecast is not credit; HouseCore and later social work use separate actual packets"
@@ -166,6 +166,16 @@ overall_effort_ledger:
     authenticated_run: "antigravity-conversation:4eaec0f1-1092-44a2-b5e9-bdb4574018db;run:LT-NATIVE-ANTIGRAVITY-002-74f856fd8042"
     direct_production_points: 0
     exclusion_reason: "directly observed provider effort earns overall assignment points once; zero code and unavailable status earn no accepted production credit"
+  - sequence: 6
+    assignment_id: "LT-NATIVE-CURSOR-XRCORE-001"
+    provider: cursor
+    size: medium
+    canonical_points: 0
+    completed: false
+    terminal_status: "PRESTAGED_NO_PROVIDER_EXECUTION"
+    authenticated_run: null
+    direct_production_points: 0
+    exclusion_reason: "immutable medium/5 packet is dependency-independent and dispatchable; no overall or direct-production points exist before provider execution"
 
 accepted_direct_production_ledger: []
 
@@ -175,7 +185,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 8, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 10, perplexity: 0}
   current_partial_shares_percent: {claude: 44.44, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 55.56, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
-  next_route: "resume exact Claude R1 at its confirmed 2026-08-30T10:30:00Z reset; do not retry early; Grok and Antigravity require explicit human account/permission actions and Cursor remains dependency-gated"
+  next_route: "dispatch the dependency-independent Cursor XR-core packet now; resume exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; Grok and Antigravity require explicit human account/permission actions; final Cursor integration remains dependency-gated"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -231,6 +241,17 @@ canonical_assignment_ledger:
     work_packet_digest: "sha256:7e8436fe9c1a203de2a266e90cab224520b38b1b2e5d94451d270f60e21d59fd"
     accepted_outcome_digest: null
     manual_overlay_reason: "owner-required isolated robot-presenter lane; dispatched after the required under-target Grok route exhausted and before dependent Cursor; warm-up advisory variance only"
+  - sequence: 6
+    assignment_id: "LT-NATIVE-CURSOR-XRCORE-001"
+    provider: cursor
+    size: medium
+    canonical_points: 5
+    status: "PRESTAGED_NO_PROVIDER_EXECUTION"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:0a11a591a5861253317d6a3fe4a0b960441d0279b53d9676f7306fc5d1fddefe"
+    work_packet_digest: "sha256:05c17de2488ddd6d69b51db78c42609d0b72c3451f05c90e6b6ba3b1eae2c3b4"
+    accepted_outcome_digest: null
+    manual_overlay_reason: "owner-required Cursor coding lane split into a self-registering dependency-independent XR-core plugin; real product scope routed to an under-target provider, never filler"
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."

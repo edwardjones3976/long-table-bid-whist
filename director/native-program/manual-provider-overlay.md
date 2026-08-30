@@ -38,7 +38,9 @@ A broad response cannot be split retroactively, and filler work is prohibited.
 
 - Claude writes the rules, protocol, table authority, Unreal scaffold,
   `LongTableProtocol`, `LongTableTable`, and composition root.
-- Cursor writes only `LongTableXR` and Input, Presence, and Environment content.
+- Cursor writes only the self-registering `Unreal/Plugins/LongTableXR/**`
+  project plugin, including plugin-local source, tests, Input, Presence and
+  Environment content.
 - Grok writes the session gateway, `LongTableSocial`, Social content, and—only
   under the clean-room fallback packet—the in-repository `LongTableHouseCore`.
 - Antigravity's historical writer authority ended when its single revision was
@@ -54,6 +56,26 @@ the later Grok session-gateway/social packet. The HouseCore packet may read only
 the canonical public house contract and governance snapshot; it cannot inspect
 Claude-private state or any quarantined Antigravity artifact. The later social
 packet remains dependency-bound to the exact OpenAI-accepted Claude R1 outcome.
+
+## Independent Cursor XR-core sequencing
+
+The original broad Cursor template remains non-dispatchable because it binds
+both the accepted Claude authority and the accepted robot-dealer interface.
+That final integration dependency does not block useful XR core work. Exact
+packet `LT-NATIVE-CURSOR-XRCORE-001` therefore owns one self-registering project
+plugin at `Unreal/Plugins/LongTableXR/**`, starts from the exact rejected
+`af199d0` structural base, and has no Long Table provider-module dependency.
+The prior `af199d0` Unreal runs are diagnostic only and cannot substitute for
+fresh clean Cursor-candidate checks. Its closed authority is
+`contracts/long-table-xr-public-v1.json`.
+
+The plugin normalizes hands/controllers, modality transitions, optional
+presence fallback, accessibility and MR/VR state only. It cannot read or bind
+rules, protocol, table, social, HouseCore or robot implementation. A later
+Cursor integration packet is still required after the relevant provider
+interfaces pass OpenAI QA. This split routes real dependency-independent work
+to an under-target provider; it is not filler and does not convert a local
+plugin pass into a combined-game or physical-Quest claim.
 
 ## Robot-dealer ownership amendment
 
@@ -86,22 +108,27 @@ exhausted its rolling allowance and its separate Chrome fallback stopped at an
 account Terms / Acceptable Use acknowledgement that OpenAI cannot accept for the
 owner. No Grok code or accepted production credit exists.
 
-Cursor cannot start until both Claude R1 and the robot-dealer public interface
-are independently accepted. The frozen short Antigravity robot-presenter
-sandbox was therefore the next useful dependency-reducing assignment. Exact
+Cursor's final integration cannot start until both Claude R1 and the
+robot-dealer public interface are independently accepted. The frozen short
+Antigravity robot-presenter sandbox was therefore the next useful
+dependency-reducing assignment before the isolated Cursor XR-core split. Exact
 Director policy remains in its fewer-than-20 completed-assignment warm-up, so
 the dispatch is recorded as an owner-authorized manual variance—not a
 rolling-20 pass, not filler, and not a relaxation of privacy, QA, budget,
 source-isolation or acceptance. The bounded run returned no artifact because
 its configured permission policy denied the required write and command tools.
 
-Accepted Claude protocol headers, schemas, fixtures, and registration interfaces
-are readable, immutable dependencies for Cursor and Grok. They must not appear in
-`prohibited_paths`, because Director defines a prohibited path as never read,
-written, or referenced. `owned_paths` remains the only writable surface.
+Accepted Claude protocol headers, schemas, fixtures, and registration
+interfaces are readable, immutable dependencies for the later Cursor
+integration and Grok. They are prohibited from the isolated Cursor XR-core
+packet because that plugin intentionally has no provider-module dependency.
+For later dependent packets, they must not appear in `prohibited_paths`, because
+Director defines a prohibited path as never read, written, or referenced.
+`owned_paths` remains the only writable surface.
 
-Cursor and Grok depend on Claude's OpenAI-accepted outcome only. They do not
-depend on one another. Quarantined Antigravity output is never a Grok input or
+Cursor integration and Grok depend on Claude's OpenAI-accepted outcome only.
+The isolated Cursor XR core does not. Cursor and Grok do not depend on one
+another. Quarantined Antigravity output is never a Cursor or Grok input or
 authority dependency.
 
 ## HouseCore exhausted-route fallback transfer

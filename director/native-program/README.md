@@ -58,12 +58,14 @@ physical headset, external account, human cohort, or owner gate.
 ## Provider code ownership
 
 - Claude: TypeScript authority, protocol, core table/runtime, composition root.
-- Cursor: native XR hands/controllers, presence, MR/VR environment adapters.
+- Cursor: the self-registering `Unreal/Plugins/LongTableXR/**` project plugin
+  for hands/controllers, presence fallback, accessibility and MR/VR adapters.
 - Grok: private-session, host, reconnect, voice/safety and social adapters,
   plus the prospective clean-room in-repository HouseCore fallback.
-- Gemini Antigravity: a new isolated source-only robot-dealer presentation
-  plugin driven by a closed public cue. Its historical Long Table House core
-  attempt remains quarantined and is not an integration dependency.
+- Gemini Antigravity: the isolated source-only robot-dealer presentation lane
+  driven by a closed public cue. Its current run ended unavailable because the
+  configured sandbox denied writes and commands; its historical Long Table
+  House core attempt remains quarantined and is not an integration dependency.
 - OpenAI: cross-module QA, evidence binding, findings, kickback and acceptance;
   no product-code ownership.
 
@@ -78,6 +80,12 @@ HouseCore product authority for `LT-NATIVE-GROK-HOUSE-001`: public event,
 occupancy, queue, rotation and standings facts only. It grants no rules,
 identity, session, moderation, networking, robot-dealer or concealed-state
 authority.
+
+The dependency-independent Cursor core is frozen by
+`contracts/long-table-xr-public-v1.json`. It is a self-contained project plugin
+with no Long Table provider-module dependency. A later Cursor integration
+packet—not this core packet—may bind its semantic events to independently
+accepted authority and robot-cue contracts.
 
 ## Bound source and engine
 

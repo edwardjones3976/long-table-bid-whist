@@ -55,8 +55,9 @@ window warms:
 - Grok receives the independent clean-room HouseCore packet first.
 - Claude R1 resumes only after its exact provider reset; it is a required
   correction of Claude's existing authority candidate, not filler.
-- Cursor's broad native XR packet remains dependency-bound and non-dispatchable
-  until its accepted interfaces exist.
+- Cursor's broad integration packet remains dependency-bound. Its new isolated
+  self-registering XR-core plugin packet is dependency-independent,
+  product-required, and dispatchable to the currently under-target Cursor lane.
 - Antigravity's robot-dealer assignment was dispatched only after the
   under-target Grok route. It terminated unavailable with zero code because its
   configured sandbox policy denied writes and commands. It contributes one
