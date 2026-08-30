@@ -245,7 +245,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 21, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0}
   current_partial_shares_percent: {claude: 32.81, cursor: 31.25, grok: 20.31, openai: 0, gemini_antigravity: 15.63, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "dispatch the final third transport of the same medium/5 Claude foundation-safety assignment through authenticated Claude Code in Chrome on sanitized GitHub branch codex/claude-foundation-safety-web-sandbox at exact transport base 6696731. The local recovery is terminal pre-write after an unrelated persistent-memory scope violation. The materially different browser transport plus new scope information permits this one final attempt; it creates no new row or points and permits no fourth contact or delivery retry. XR-test and RobotDealer remain closed until exact OpenAI acceptance of the new foundation candidate."
+  next_route: "dispatch the final third transport of the same medium/5 Claude foundation-safety assignment through authenticated Claude Code in Chrome on sanitized GitHub branch codex/claude-foundation-safety-web-sandbox at exact complete transport base 64a9c97. The local recovery is terminal pre-write after an unrelated persistent-memory scope violation. The materially different browser transport plus new scope information permits this one final attempt; it creates no new row or points and permits no fourth contact or delivery retry. XR-test and RobotDealer remain closed until exact OpenAI acceptance of the new foundation candidate."
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -460,13 +460,15 @@ canonical_assignment_ledger:
     local_recovery_transcript_sha256: "sha256:601f4b985158896724c3c236484c5879530fb0d8995778a5c57c665d686b996b"
     local_recovery_transcript_committed: false
     final_transport_delta_file: "director/native-program/packets/LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002-BROWSER-DELTA.json"
-    final_transport_delta_file_sha256: "sha256:a8279e2c6a793f3745d5f1806b1263218516120f8029acc8964ad12ef7154130"
-    final_transport_delta_digest: "sha256:10a4e3d3b83850d7d3c55e09e0cb4542ec6b90625b7bb6bf8bfd44322b6cf496"
+    final_transport_delta_file_sha256: "sha256:9fbf15e7f54540ebbac97bb4563728e0950deba13f646750f797542b45ff32a4"
+    final_transport_delta_digest: "sha256:0147b18bdb880691fe849a77edd3628eb6493a6f93c141811e53926083fc60eb"
     final_transport_classification: "ATTEMPT_3_MATERIALLY_DIFFERENT_CHROME_CODE_PLUS_NEW_SCOPE_INFORMATION"
     browser_transport_repository: "edwardjones3976/long-table-bid-whist"
     browser_transport_branch: "codex/claude-foundation-safety-web-sandbox"
-    browser_transport_base: "6696731d2647937c8d5c87bc34aa99503defcd4c"
-    browser_transport_tree: "3cef12d37a9ac9f495f0ce295611db1172c369e4"
+    browser_transport_base: "64a9c978cbe5a81e92756f9ddf6085ad6a9ee7e5"
+    browser_transport_tree: "96724372b87522166eb9efdc9c893a3b88f429b4"
+    browser_transport_tracked_files: 154
+    browser_transport_omitted_nonexcluded_files: 0
     browser_transport_status: "READY_NOT_SENT_ATTEMPT_3_FINAL_TRANSPORT"
     retry_after_final_transport: false
     manual_overlay_reason: "Fresh exhausted-route assignment based on materially new OpenAI authority analysis. The authenticated primary was stopped before edits for Director control conflicts, and the corrected local recovery was stopped before any tracked edit after it read unrelated persistent Edge Engine memory. The worktree remained clean and neither stop produced accepted bytes. Authenticated Claude Code in Chrome on a sanitized sole-repository GitHub branch is the materially different final transport permitted by the retry rule. It is the same sequence-12 row, earns no duplicate credit, excludes every rejected-provider artifact and unrelated memory source, and permits no fourth contact or delivery retry."

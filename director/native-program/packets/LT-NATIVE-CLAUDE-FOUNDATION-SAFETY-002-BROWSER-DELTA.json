@@ -45,14 +45,18 @@
   "transport_source": {
     "repository": "edwardjones3976/long-table-bid-whist",
     "branch": "codex/claude-foundation-safety-web-sandbox",
-    "base_commit": "6696731d2647937c8d5c87bc34aa99503defcd4c",
-    "base_tree": "3cef12d37a9ac9f495f0ce295611db1172c369e4",
+    "base_commit": "64a9c978cbe5a81e92756f9ddf6085ad6a9ee7e5",
+    "base_tree": "96724372b87522166eb9efdc9c893a3b88f429b4",
+    "base_parent": "6696731d2647937c8d5c87bc34aa99503defcd4c",
     "source_commit": "a6742a04a384a88e7342530041a1f0d3ab71db2c",
-    "source_archive_sha256": "sha256:6331ded68be1da1f9e8aecfd82b83902c6273ddb9c4b82e445f855c848c2779e",
-    "source_archive_bytes": 229500,
-    "archive_entries": 147,
-    "tracked_files": 116,
-    "crc_status": "PASS",
+    "tracked_files": 154,
+    "omitted_nonexcluded_files": 0,
+    "legacy_preflight_archive_sha256": "sha256:6331ded68be1da1f9e8aecfd82b83902c6273ddb9c4b82e445f855c848c2779e",
+    "legacy_preflight_archive_bytes": 229500,
+    "legacy_preflight_archive_entries": 147,
+    "legacy_preflight_archive_tracked_files": 116,
+    "legacy_preflight_archive_crc_status": "PASS",
+    "legacy_preflight_archive_provider_input": false,
     "excluded_roots": [
       ".git",
       ".github",
@@ -63,7 +67,7 @@
       "sources",
       "Unreal/Plugins"
     ],
-    "line_endings": "The Git transport branch stores the exact source blobs. The separate audit archive contains Windows CRLF working-tree representations that normalize byte-identically to the a6742a0 Git blobs; raw archive bytes are not Git-blob-identical.",
+    "source_fidelity": "All 154 nonexcluded Git transport paths and blob IDs match exact source commit a6742a0. The superseded 116-file audit archive is retained only as local preflight evidence and is not a provider input.",
     "transport_commit_is_not_candidate": true
   },
   "transport": {
@@ -83,13 +87,21 @@
     "prompt_sent": false,
     "status": "FROZEN_READY_FOR_FINAL_THIRD_ATTEMPT"
   },
+  "precedence": "This browser delta narrowly supersedes only the base work packet's conflicting transport, retry, external-effect, Git delivery and Chrome-executable-check clauses: the provider must push the one exact allowed transport commit and must mark the local Windows Unreal checks NOT_RUN. Every objective, path, source, privacy, rights, budget and acceptance clause not expressly changed here remains authoritative.",
+  "permitted_embedded_authority": [
+    "director/native-program/packets/LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002.json",
+    "director/native-program/contracts/intent-idempotency-v2.json",
+    "artifacts/native-program/qa/2026-08-30-claude-foundation-safety-002-acceptance.md",
+    "director/native-program/contracts/model-result-packet-v1.schema.json",
+    "director/native-program/packets/LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002-BROWSER-DELTA.json"
+  ],
   "packet_clarifications": [
     "Player and host welcomes expose only their own role-grant sessionId and next counter; public and dealer retain only their raw connection sessionId, expose nextIntentCounter null, and no role leaks another grant.",
     "LongTableEditor and LongTable Win64 Development must build. One complete LongTable automation run includes the Protocol and Table namespaces and reports zero failures and zero not-run tests; separate scoped automation runs are prohibited as duplicate validation."
   ],
   "delivery_contract_delta": {
-    "provider_write_root": "Only the exact 35 provider_writable_paths from the frozen contract may differ from transport base 6696731d2647937c8d5c87bc34aa99503defcd4c.",
-    "provider_git_effect": "Create and push exactly one provider commit whose parent is transport base 6696731d2647937c8d5c87bc34aa99503defcd4c on branch codex/claude-foundation-safety-web-sandbox. Do not create or modify any other branch, pull request, issue, tag or release.",
+    "provider_write_root": "Only the exact 35 provider_writable_paths from the frozen contract may differ from transport base 64a9c978cbe5a81e92756f9ddf6085ad6a9ee7e5.",
+    "provider_git_effect": "Create and push exactly one provider commit whose parent is transport base 64a9c978cbe5a81e92756f9ddf6085ad6a9ee7e5 on branch codex/claude-foundation-safety-web-sandbox. Do not create or modify any other branch, pull request, issue, tag or release.",
     "terminal_response": "Return exactly one model-result-packet-v1 JSON object identifying the transport commit and every check run. No markdown or extra prose.",
     "browser_check_limit": "Run focused and full TypeScript, fixture-current and production checks available in the web environment. Mark Windows UE5.7 builds and automation NOT_RUN; OpenAI runs them once on the mechanically materialized exact local candidate.",
     "mechanical_materialization": "OpenAI may mechanically transfer only exact Claude-authored changes under the 35-path lease onto local a6742a0, freeze one sole-parent candidate with Claude as author and OpenAI as committer, and run independent QA. OpenAI may not author a production correction.",
@@ -97,7 +109,7 @@
   },
   "unchanged_boundaries": [
     "All objective, non-goal, exact path, privacy, rights, budget and final-acceptance clauses in the base work packet and frozen authority remain unchanged.",
-    "No Grok, Cursor, Antigravity, OpenAI production artifact, rejected provider artifact, Director evidence, Slack, Linear, credential, cookie, unrelated memory or private workspace input is permitted.",
+    "No Grok, Cursor, Antigravity, OpenAI production artifact, rejected provider artifact, Director evidence beyond the exact five permitted_embedded_authority documents, Slack, Linear, credential, cookie, unrelated memory or private workspace input is permitted.",
     "No local or cloud Memory, Project knowledge, prior chat, connector, unrelated repository, rejected-provider task or resumed Claude task is an authorized source.",
     "No merge, deployment, publication, store, account, device, human, cultural, rights, purchase or release authority is added.",
     "This is the materially different final transport of the same assignment and earns no duplicate workload credit."

@@ -30,8 +30,9 @@ with no activation path.
   client/commit-machine, fixture/generator and exact 35-path regression-test
   allowlist is authoritative by packet reference. The final transport may read
   only the sanitized GitHub branch and the separately embedded frozen packet,
-  contract, acceptance page and result schema. XR-test/RobotDealer remain
-  closed until OpenAI accepts it.
+  contract, acceptance page, result schema and browser delta. No other Director
+  evidence is an authorized input. XR-test/RobotDealer remain closed until
+  OpenAI accepts it.
 - Cursor: `Unreal/Plugins/LongTableXR/**` only. Input, Presence, Environment,
   source, tests and any plugin-local configuration remain inside that subtree.
 - Grok: `LT-NATIVE-GROK-AUTHORITY-SAFETY-001` is terminal rejected with no
@@ -90,8 +91,8 @@ clean-room scope information. There is no fourth contact or delivery retry.
 2. `LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002` is a fresh medium/5 assignment from
    exact `a6742a0`. It owns only the exact 35-path allowlist in its frozen
    packet. Its primary and local recovery are terminal without accepted bytes;
-   the final Chrome Code transport runs once on sanitized GitHub base
-   `6696731`. It cannot read or derive from Grok implementation artifacts, any
+   the final Chrome Code transport runs once on complete sanitized GitHub base
+   `64a9c97`. It cannot read or derive from Grok implementation artifacts, any
    local or cloud Memory, Project knowledge, prior chat, connector, unrelated
    repository, rejected-provider task or resumed Claude task.
 3. After that foundation fallback is OpenAI-accepted,

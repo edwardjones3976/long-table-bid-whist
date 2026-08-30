@@ -421,10 +421,11 @@ same sequence-12 assignment one final third attempt. The frozen browser delta
 binds authenticated Claude Code in Chrome to the sole private repository
 `edwardjones3976/long-table-bid-whist`, sanitized branch
 `codex/claude-foundation-safety-web-sandbox` and exact transport base
-`6696731d2647937c8d5c87bc34aa99503defcd4c`. That branch contains only the
-sanitized Long Table source represented by exact base `a6742a0` and excludes
-Director records, provider evidence, plugins, workflows, unrelated repositories
-and memory. The prompt separately embeds only the frozen packet, contract,
+`64a9c978cbe5a81e92756f9ddf6085ad6a9ee7e5`. Its 154 nonexcluded paths and
+blob IDs match exact source base `a6742a0`; it excludes only the declared
+Director, evidence, plugin, workflow, source-reference and memory roots. The
+earlier 116-file archive is superseded local preflight evidence and is not a
+provider input. The prompt separately embeds only the frozen packet, contract,
 acceptance page, result schema and browser delta.
 
 Claude may push exactly one commit whose parent is the transport base and whose

@@ -252,9 +252,10 @@ Sequence 12 remains the same incomplete medium/5 assignment and contributes zero
 points. The final authenticated Claude Code transport in Chrome is permitted
 only because it is materially different from the local CLI route and the scope
 violation is new information. It is bound to sanitized private GitHub branch
-`codex/claude-foundation-safety-web-sandbox` at exact base `6696731`. There is
-no new workload row, no duplicate effort credit, no fourth contact and no
-delivery retry.
+`codex/claude-foundation-safety-web-sandbox` at exact complete base
+`64a9c97`, whose 154 nonexcluded paths and blob IDs match exact source
+`a6742a0`. There is no new workload row, no duplicate effort credit, no fourth
+contact and no delivery retry.
 
 The completed window therefore remains 11 of 20 and 64 points: Claude 21
 (32.81%), Cursor 20 (31.25%), Grok 13 (20.31%), Gemini Antigravity 10 (15.63%),
