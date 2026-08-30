@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-ANTIGRAVITY-STATE-MACHINE-003",
+  "provider": "Gemini Antigravity",
+  "sequence": 14,
+  "workload_size": "simple",
+  "canonical_points_on_terminal_execution": 1,
+  "kind": "scaffolding",
+  "model": "gemini-3.1-pro-high",
+  "status": "PRESTAGED",
+  "director_authority": {
+    "repository": "edwardjones3976/director-orchestrator",
+    "merge_commit": "cc791364e2f1ff1ac4c72e01c7122296e4ff7362",
+    "tree": "51f529f07b453ec8e388d5634a569efb8cd2a881",
+    "assignment_approval_digest": "sha256:570f43f7f826ebd4ac2f70f0db16990816163acef1a8c1cee2ba88e90c65e512"
+  },
+  "sandbox": {
+    "path": "C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-antigravity-state-machine-003",
+    "branch": "codex/antigravity-state-machine",
+    "base_sha": "9b23b75ca78a884b2221b41c65305a1b5a9b0770",
+    "base_tree": "436b94f165fc4c6c36a74c6cf73f38730b4b8ee5",
+    "classification": "public-synthetic-disposable",
+    "mode": "plan",
+    "writes_allowed": false
+  },
+  "assignment": {
+    "sequence": 14,
+    "agent": "gemini",
+    "kind": "scaffolding",
+    "workload_size": "simple",
+    "effort_points": 1,
+    "model_label": null,
+    "task": "Produce one generic state-machine skeleton as a bounded subordinate scaffold for later primary-team adaptation.",
+    "acceptance": [
+      "One generic TypeScript state enum, legal transition table, unimplemented transition handlers, and short evidence note; no external effects or authority claims."
+    ],
+    "public_research_query": null,
+    "antigravity_directive": {
+      "lane": "state_machine_skeleton",
+      "language": "typescript",
+      "variant_count": 1,
+      "max_lines_per_artifact": 220
+    },
+    "repository": null,
+    "starting_ref": "main",
+    "depends_on": [],
+    "requires_approval": false,
+    "allow_draft_pr": false,
+    "estimated_cost_usd": 0,
+    "discussion_phase": "work",
+    "discussion_round": 0
+  },
+  "exact_provider_request": {
+    "contract_version": "antigravity-subordinate-contract/v2",
+    "notice": "NON-AUTHORITATIVE ANTIGRAVITY ARTIFACT: This output is subordinate input. Claude, Cursor, or Grok must independently verify and integrate or reject it before use.",
+    "interaction_kind": "subordinate_work",
+    "capability": "scaffolding",
+    "lane": "state_machine_skeleton",
+    "language": "typescript",
+    "assignment_sequence": 14,
+    "variant_count": 1,
+    "max_lines_per_artifact": 220,
+    "directive": "You are a subordinate, non-authoritative contributor. Work only from the specification below, which is complete: there is no caller context, and you must not ask for any, infer any, or invent a caller. Do not request or act on repository access, branches, commits, pull requests, reviews, acceptance, merges, deployments, external messages, spending, or permissions. Capability: generate self-contained scaffolding only.",
+    "specification": "Produce a state-machine skeleton for a small generic workflow of your own invention: the state enum, the legal transition table, and unimplemented transition handlers.",
+    "granted_authorities": [],
+    "denied_authorities": [
+      "acceptance_verdict",
+      "billing_or_spend",
+      "branch_selection",
+      "contract_or_methodology_definition",
+      "deployment_or_publication",
+      "external_write",
+      "merge",
+      "permission_or_credential_change",
+      "repository_access",
+      "repository_write",
+      "review_verdict"
+    ],
+    "withheld_context": [
+      "acceptance_criteria",
+      "assignment_task_text",
+      "dependency_outcomes",
+      "owner_objective",
+      "owner_or_slack_identifiers",
+      "primary_team_handoff_context",
+      "private_project_data",
+      "repository_paths_diffs_or_source",
+      "reviewer_revision_text",
+      "run_session_or_task_identifiers"
+    ],
+    "output_contract": "Return the artifact plus a short evidence note. Separate anything you actually ran from anything you only reasoned about. A primary-team model adapts your output to its real setting and independently reproduces it before any part of it is used, so a generic, self-contained answer is the correct answer."
+  },
+  "exact_provider_request_digest": "sha256:e70126a93937cfd4a7a7a8a0d5566583a010efc1291f3fe64778e4e449ce982b",
+  "transport": {
+    "executable": "C:\\Users\\edwar\\AppData\\Local\\agy\\bin\\agy.exe",
+    "sandbox": true,
+    "mode": "plan",
+    "print": true,
+    "output_format": "json",
+    "primary_attempts": 1,
+    "recoveries": 0,
+    "timeout_seconds": 600,
+    "dangerously_skip_permissions": false,
+    "new_project_justification": "This is a genuinely new empty disposable fixture. Prior Antigravity projects contain quarantined rejected artifacts and may not be reused as context."
+  },
+  "acceptance_checks": [
+    "The outbound request is byte-for-byte equivalent to the exact Director-generated request and its digest",
+    "No Long Table task text, repository data, provider transcript, owner identifier, credential, private prose or rejected artifact is transmitted",
+    "One generic TypeScript state-machine skeleton contains a state enum, legal transition table and unimplemented handlers within 220 lines",
+    "The response separates executed evidence from reasoning and claims no review, acceptance, merge, release or external authority",
+    "OpenAI records the authenticated interaction identity, exact response digest, reported usage and terminal disposition"
+  ],
+  "prohibited_actions": [
+    "No repository or project-context access",
+    "No file writes, commands, network tools, external messages, permissions, spending, merge, deployment or publication",
+    "No revision or duplicate dispatch"
+  ],
+  "idempotency_key": "LT-NATIVE-ANTIGRAVITY-STATE-MACHINE-003-e70126a9"
+}

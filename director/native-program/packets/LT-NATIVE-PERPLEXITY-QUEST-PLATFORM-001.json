@@ -4,7 +4,7 @@
   "assignment_id": "LT-NATIVE-PERPLEXITY-QUEST-PLATFORM-001",
   "provider": "Perplexity",
   "project": "Public Quest platform evidence for a seated social card application",
-  "status": "PRESTAGED",
+  "status": "UNAVAILABLE_PRE_SUBMIT_CREDENTIAL_EMPTY_NO_EXECUTION_NO_CREDIT",
   "workload": {
     "sequence": 13,
     "size": "medium",
@@ -61,6 +61,20 @@
     "max_hops": 0,
     "max_revisions": 0,
     "max_sources": 10
+  },
+  "terminal_disposition": {
+    "preflight_at": "2026-08-30T23:39:27.520Z",
+    "configured_adapter_commit": "96764caac56c57c60bf0315ed4cd2f5befbebe04",
+    "credential_name_present": true,
+    "credential_value_nonempty": false,
+    "provider_request_submitted": false,
+    "provider_run_id": null,
+    "provider_response": null,
+    "canonical_points_awarded": 0,
+    "direct_production_points_awarded": 0,
+    "retry": false,
+    "replacement_evidence": "artifacts/native-program/research/2026-08-30-quest-platform-matrix.md",
+    "reason": "The configured Perplexity credential was empty. The adapter stopped before provider/model submission. Firecrawl independently retrieved the bounded official sources, so duplicating the query would add cost without closing a new evidence gap."
   },
   "idempotency_key": "LT-NATIVE-PERPLEXITY-QUEST-PLATFORM-001-314b6865",
   "correlation": {

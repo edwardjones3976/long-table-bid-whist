@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-GROK-QUEST-ARCHITECTURE-001",
+  "provider": "Grok",
+  "sequence": 15,
+  "workload_size": "medium",
+  "canonical_points_on_terminal_execution": 5,
+  "kind": "general",
+  "model": "grok-4.6",
+  "status": "PRESTAGED_DEPENDS_ON_SEQUENCE_14",
+  "objective": "Provide one independent public-only architecture dissent for the native Quest direction, challenge unsupported assumptions, and recommend the smallest coherent First Deal that can still feel exceptional.",
+  "public_context": "You are an invited, non-authoritative architecture committee member. Evaluate a native Unreal Engine 5.7.4 seated social card experience for Meta Quest 3/3S. The product must prioritize controller and hand interaction equivalence with safe live switching; support a visibly robotic AI dealer or a human event host; use a deliberate VR fallback when mixed reality, room data, anchors or passthrough are unavailable; use only original, commissioned, public-domain or otherwise documented cleared music and recordings; and keep host-selected personal music external to the product, never ingested, cached, streamed, recorded or represented as cleared. The intended audience is broadly ages 30-70, with an inviting social-table rhythm and only a light Foundational Black American spirit in hospitality, energy and environment—never caricature, imitation or a claim to represent everyone. Current official evidence says Meta XR SDK 205.0 targets UE 5.7.4; Meta supports controller/hand multimodal input through OpenXR but documents switching and feature limitations; Shared Scene is a UE 5.4 LAN sample without production authentication or proven persistence; the Meta Avatars SDK was never released for Unreal and Unreal support is not planned; Meta publishes Android values NDK 25.1.8937393, minimum API 32 and Store target API 34; ADB/logcat procedures exist; and Meta targets 72 FPS with Quest 3/3S draw-call and triangle guidance. No physical device, package, two-headset, store, rights or human acceptance is proven. Compare a standalone native app, a Horizon world, and a deliberate hybrid/companion strategy. Return one JSON object with keys recommended_surface, decisive_reasons, must_build_now, defer, reject, controller_hand_strategy, mr_vr_strategy, identity_fallback, host_event_strategy, accessibility_for_30_70, cultural_guardrails, music_rights_boundary, competitive_differentiators, highest_risks, falsification_tests, strongest_dissent, and confidence. Use only the supplied public facts and general reasoning; do not browse, use tools, request private context, write code, issue a verdict, or claim acceptance.",
+  "public_context_sha256": "sha256:6896794f9d89730e91e23e957d9ff9413da169377c0557047d404567b1cc5b41",
+  "director_authority": {
+    "repository": "edwardjones3976/director-orchestrator",
+    "merge_commit": "cc791364e2f1ff1ac4c72e01c7122296e4ff7362",
+    "tree": "51f529f07b453ec8e388d5634a569efb8cd2a881",
+    "assignment_approval_digest": "sha256:f27c1287032b4d01c597fafef2f22fa26866499d0595428e7263901d025ec01d"
+  },
+  "dependencies": [
+    "LT-NATIVE-ANTIGRAVITY-STATE-MACHINE-003 terminal overall-effort evidence",
+    "artifacts/native-program/research/2026-08-30-quest-platform-matrix.md"
+  ],
+  "assignment": {
+    "sequence": 15,
+    "agent": "grok",
+    "kind": "general",
+    "workload_size": "medium",
+    "effort_points": 5,
+    "model_label": "grok-4.6",
+    "task": "Produce one public-only native-Quest architecture dissent comparing a standalone app, a Horizon world and a deliberate hybrid. Challenge unsupported assumptions and recommend the smallest coherent First Deal that remains distinctive, controller/hand focused, event-hostable, accessible and rights-safe.",
+    "acceptance": [
+      "Return one bounded structured architecture brief covering app/world/hybrid, controller-hand equivalence, MR/VR fallback, identity fallback, event hosting, accessibility, cultural guardrails and music-rights boundaries.",
+      "Separate must-build-now, defer and reject decisions and identify the strongest dissent against the recommendation.",
+      "Use only the supplied public evidence and mark unsupported assumptions explicitly.",
+      "Provide falsification tests and confidence without a review, acceptance, merge, release or store verdict.",
+      "Request no repository, private project, credentials, tools, browsing, code or external write."
+    ],
+    "public_research_query": null,
+    "antigravity_directive": null,
+    "repository": null,
+    "starting_ref": "main",
+    "depends_on": [14],
+    "requires_approval": false,
+    "allow_draft_pr": false,
+    "estimated_cost_usd": 0.75,
+    "discussion_phase": "work",
+    "discussion_round": 0
+  },
+  "transport": {
+    "director_authority_commit": "cc791364e2f1ff1ac4c72e01c7122296e4ff7362",
+    "adapter": "director_orchestrator.providers.GrokAdapter",
+    "api": "xAI Responses API",
+    "endpoint": "https://api.x.ai/v1",
+    "tools": false,
+    "store": false,
+    "repository_write": false,
+    "review_verdict": false,
+    "primary_attempts": 1,
+    "recoveries": 0,
+    "timeout_seconds": 180,
+    "max_output_tokens": 4096,
+    "budget_usd": 0.75,
+    "ambiguous_failure_policy": "record and do not resend"
+  },
+  "prohibited_actions": [
+    "Do not reopen, retry, review or use any byte from LT-NATIVE-GROK-AUTHORITY-SAFETY-001",
+    "Do not receive repository source, diffs, rejected-provider artifacts, concealed gameplay state, credentials, browsing history, provider transcripts, Slack or Linear content",
+    "Do not browse, call tools, write code, mutate a repository, post externally, merge, deploy, publish, purchase, change permissions or issue acceptance"
+  ],
+  "acceptance_checks": [
+    "Exact committed public context and assignment approval digest match the dispatched request",
+    "One authenticated xAI response exists with tools disabled, storage disabled and no retry",
+    "Every requested decision field is present and bounded",
+    "Unsupported facts are labeled as assumptions or unknowns",
+    "OpenAI independently synthesizes or rejects the advice; Grok has no product authority"
+  ],
+  "idempotency_key": "LT-NATIVE-GROK-QUEST-ARCHITECTURE-001"
+}

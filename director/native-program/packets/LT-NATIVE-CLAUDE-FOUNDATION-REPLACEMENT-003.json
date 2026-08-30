@@ -1,0 +1,191 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003",
+  "provider": "Claude",
+  "required_model": "FABLE 5 ULTRA/MAX",
+  "sequence": 16,
+  "workload_size": "medium",
+  "canonical_points_on_terminal_execution": 5,
+  "kind": "implementation",
+  "status": "PRESTAGED_DEPENDS_ON_SEQUENCES_14_AND_15",
+  "director_authority": {
+    "repository": "edwardjones3976/director-orchestrator",
+    "merge_commit": "cc791364e2f1ff1ac4c72e01c7122296e4ff7362",
+    "tree": "51f529f07b453ec8e388d5634a569efb8cd2a881",
+    "assignment_approval_digest": "sha256:57df50c0157b7304817cd8f99eb738c2f968f8bc06dac193719f80b217209acb"
+  },
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "worktree": "C:\\Users\\edwar\\.codex\\worktrees\\long-table-claude-replacement-003",
+  "branch": "codex/claude-foundation-replacement-003",
+  "starting_ref": "623ca52c5679b5348630f86eb88ecd48c9db82a1",
+  "starting_tree": "746fc5ac7234fa49adaa728262e95745aee52755",
+  "repair_seed_only": true,
+  "rejected_seed_parent": "a6742a04a384a88e7342530041a1f0d3ab71db2c",
+  "objective": "Repair the exact 17-path authority/identity surface on the frozen rejected seed, preserve every independently verified positive blob and contribution marker, produce one local provider commit, and return a schema-valid terminal packet for independent OpenAI materialization and QA. The seed is repair input only and never becomes the final product parent.",
+  "dependencies": [
+    "LT-NATIVE-ANTIGRAVITY-STATE-MACHINE-003 terminal overall-effort evidence",
+    "LT-NATIVE-GROK-QUEST-ARCHITECTURE-001 terminal overall-effort evidence",
+    "artifacts/native-program/research/2026-08-30-quest-platform-matrix.md"
+  ],
+  "assignment": {
+    "sequence": 16,
+    "agent": "claude",
+    "kind": "implementation",
+    "workload_size": "medium",
+    "effort_points": 5,
+    "model_label": "FABLE 5 ULTRA/MAX",
+    "task": "Repair one frozen 17-path TypeScript and Unreal authority/identity surface on exact rejected seed 623ca52c. Implement non-reused incarnation-scoped grant identities, atomic restore, duplicate no-mutation, receipt-confirmed counter advancement, transport-epoch reentrancy guards, engine-rejected and real-socket retry evidence, contribution-marker restoration, and the exact focused/full gates. Create one local commit; do not push, merge or alter any other path.",
+    "acceptance": [
+      "Repair delta from 623ca52c is exactly the 17 leased paths with no mode changes, generated artifacts outside the four named fixtures, or unrelated edits.",
+      "Grant grammar is g:<incarnation-id>:<canonical-grant-counter>; incarnations are explicit, bounded and non-reused; restore atomically validates the five lanes, high-waters and exhaustion.",
+      "Duplicates return a receipt with byte-identical authority/player state; counters advance only from a matching receipt proving consumption or prior consumption.",
+      "Unreal uses legal project-owned delegate binding snapshots and epoch checks that stop old siblings, transports, hellos, credentials and sends after same-context replacement.",
+      "All named TypeScript, real-WebSocket, fixture, build, UE5.7 and complete LongTable automation gates pass from one clean committed candidate, or every unavailable gate is reported honestly as NOT_RUN.",
+      "All pre-existing contribution markers are restored/preserved and new assignment markers are balanced in every edited source/test file; generated JSON is exempt.",
+      "Return one model-result-packet-v1 JSON object binding exact base, candidate, tree, changed paths, commands, exit codes, limitations and zero external effects."
+    ],
+    "public_research_query": null,
+    "antigravity_directive": null,
+    "repository": "edwardjones3976/long-table-bid-whist",
+    "starting_ref": "623ca52c5679b5348630f86eb88ecd48c9db82a1",
+    "depends_on": [14, 15],
+    "requires_approval": false,
+    "allow_draft_pr": false,
+    "estimated_cost_usd": 0,
+    "discussion_phase": "work",
+    "discussion_round": 0
+  },
+  "owned_paths": [
+    "services/table-authority/src/table.ts",
+    "services/table-authority/src/main.ts",
+    "services/table-authority/tests/support.ts",
+    "services/table-authority/tests/credentials.test.ts",
+    "services/table-authority/tests/idempotency-flood.test.ts",
+    "services/table-authority/tests/session.test.ts",
+    "services/table-authority/tests/websocket.test.ts",
+    "scripts/native/generate-fixtures.ts",
+    "fixtures/protocol/authority-messages.json",
+    "fixtures/protocol/client-messages.json",
+    "fixtures/protocol/receipts.json",
+    "fixtures/protocol/rejections.json",
+    "Unreal/Source/LongTableTable/Public/LongTableCommitMachine.h",
+    "Unreal/Source/LongTableTable/Private/LongTableCommitMachine.cpp",
+    "Unreal/Source/LongTableTable/Public/LongTableAuthorityClient.h",
+    "Unreal/Source/LongTableTable/Private/LongTableAuthorityClient.cpp",
+    "Unreal/Source/LongTableTable/Private/Tests/LongTableTableTests.cpp"
+  ],
+  "read_only_dependencies": [
+    "All other tracked source and fixture paths at 623ca52c, excluding director/**, artifacts/** and sources/**",
+    "C:\\Program Files\\Epic Games\\UE_5.7\\Engine public headers and build tools"
+  ],
+  "prohibited_paths": [
+    "director/**",
+    "artifacts/**",
+    "sources/**",
+    ".github/**",
+    "Every tracked path not listed in owned_paths"
+  ],
+  "frozen_identity_contract": [
+    "Grant grammar is g:<incarnation-id>:<canonical-grant-counter>.",
+    "incarnation-id is externally allocated, non-reused, nonempty, colon-free and bounded so the final <grant>:<intent-counter> stays inside the existing 64-byte protocol ID limit.",
+    "Grant and intent counters are canonical positive safe integers and never wrap.",
+    "A fresh authority has no implicit incarnation; main.ts must receive an explicit external incarnation ID with no table-ID-derived or process-reset fallback.",
+    "Restart atomically restores incarnation ID, exactly five lane records, grant high-water, every lane counter high-water and table-incarnation exhaustion.",
+    "Every restored grant belongs to the restored incarnation, current grant counters are unique and canonical, and their maximum equals grant high-water.",
+    "False exhaustion is invalid if any lane reached the maximum; true exhaustion remains true even when later rotations remove that maximum from current lane records.",
+    "A duplicate returns a receipt and changes no authority state whatsoever.",
+    "Client counter advancement occurs only after a matching receipt proves consumption or prior consumption.",
+    "Same-incarnation grant rotation never clears global exhaustion; only a distinct externally unique incarnation can."
+  ],
+  "typescript_requirements": [
+    "Replace separate restored-lane/high-water options with one discriminated new-or-restore incarnation bundle.",
+    "Validate exact lane inventory, namespace, unique/current grant numbers, grant high-water, counter ranges and exhaustion consistency before usable state exists.",
+    "Expose an authority-internal complete state export for round-trip tests; never include it in projections, cues, logs or another role's welcome.",
+    "Remove the duplicate-path lastReceipt write. Snapshot, feedback, version, revision, history, replay, game state, lane bytes and presence remain byte-identical.",
+    "Add an executable engine-rejection seam/test without changing the production default rules-engine call.",
+    "Regenerate only authority-messages.json, client-messages.json, receipts.json and rejections.json; every other generated fixture remains byte-identical and --check current."
+  ],
+  "unreal_requirements": [
+    "Preserve the reflected BlueprintAssignable API.",
+    "Replace invalid GetInvocationList access with project-owned dynamic delegate classes that expose a by-value binding snapshot through legal protected-base access; invoke one copied binding at a time and recheck dispatch epoch before each sibling.",
+    "Do not use ordinary Broadcast, GetAllObjects, layout casts, engine patches, private-header access or engine-source edits as the sibling guard.",
+    "Separate logical authenticated context from transport dispatch epoch: logical state resets only for a genuinely different authority context/incarnation, while epoch advances on every transport binding/replacement including identical configuration.",
+    "Bind transport callbacks with their captured epoch. Already copied old callbacks return before config reads or sends.",
+    "Connect, Disconnect, SendHello, client sends, resends and resync capture epoch/transport/config and recheck after every synchronous callback.",
+    "A reentrant old hello sends old credentials to neither old nor replacement transport.",
+    "Schema failure stops after a context-changing frame-rejected listener; no old-context wire-error sibling runs.",
+    "Intent issuance reserves but does not advance the counter. Matching accepted/rejected/duplicate receipt advances it.",
+    "intent-identity abandons the in-flight intent, invalidates identity, disables submission and requires a fresh welcome; the new authoritative counter can then be reused without a gap loop.",
+    "A changed grant/incarnation discards old in-flight work; the same grant preserves an identical retry."
+  ],
+  "required_tests": [
+    "Two fresh authorities sharing an external table ID but using distinct incarnation IDs issue disjoint grants; the old identity is rejected.",
+    "Export/restore preserves consumed identities as duplicates and advertises the exact next counter.",
+    "Every malformed restore permutation fails closed: missing/extra lane, foreign namespace, duplicate grant, noncanonical grant, inconsistent high-water, invalid counter and inconsistent exhaustion.",
+    "Duplicate retry leaves the full player projection byte-identical including feedback.",
+    "Engine-rejected participates in all-outcomes exact-counter consumption.",
+    "Real loopback WebSocket dropped-receipt replay proves preview and confirm mutate once and then advance.",
+    "Maximum exhaustion survives grant rotation and restore.",
+    "Public/dealer floods leave every lane byte unchanged, followed by successful South preview and confirm.",
+    "Same-config transport replacement stops later projection siblings.",
+    "Old Connect and SendHello stop after reentrant transport replacement; no stale credential or send escapes.",
+    "Stale callback epoch is ignored and schema-reject reconfiguration suppresses later old-context wire-error siblings.",
+    "Identity rejection then fresh welcome reuses the unconsumed counter without a gap loop.",
+    "Dropped in-flight retry survives same-grant reconnect and disappears on grant/incarnation change."
+  ],
+  "contribution_marker_requirements": [
+    "Restore the removed FOUNDATION-FINAL-001 pair in services/table-authority/src/table.ts.",
+    "Restore the removed FOUNDATION-FINAL-001 and CLAUDE-001-R1 pairs in services/table-authority/tests/idempotency-flood.test.ts.",
+    "Restore the removed CLAUDE-001-R1 pair in Unreal/Source/LongTableTable/Private/LongTableCommitMachine.cpp.",
+    "Add the missing FOUNDATION-SAFETY-002 marker around its existing changes in services/table-authority/tests/credentials.test.ts.",
+    "Preserve every current safety marker and add a balanced FOUNDATION-REPLACEMENT-003 marker to every newly edited source/test file; generated JSON is exempt.",
+    "The final marker multiset must have no deletion, imbalance, renaming or reassignment."
+  ],
+  "provider_commands": [
+    "node .\\scripts\\native\\run-ts.mjs 'C:\\Users\\edwar\\.codex\\qa-probes\\lt-coalesced-policy-close.mjs' --repo (Get-Location).Path",
+    "npx.cmd vitest run services/table-authority/tests/idempotency-flood.test.ts services/table-authority/tests/session.test.ts services/table-authority/tests/rebinding.test.ts services/table-authority/tests/websocket.test.ts --configLoader runner",
+    "npm.cmd test",
+    "npx.cmd tsc -p scripts/native/tsconfig.native.json",
+    "node .\\scripts\\native\\run-ts.mjs .\\scripts\\native\\generate-fixtures.ts --check",
+    "npm.cmd run build",
+    "pwsh .\\scripts\\native\\build-unreal.ps1 -Target LongTableEditor -Platform Win64 -Configuration Development -BuildSha <candidate_sha>",
+    "pwsh .\\scripts\\native\\build-unreal.ps1 -Target LongTable -Platform Win64 -Configuration Development -BuildSha <candidate_sha>",
+    "pwsh .\\scripts\\native\\run-unreal-automation.ps1 -Filter LongTable"
+  ],
+  "final_materialization": {
+    "mechanical_integrator": "OpenAI",
+    "sole_parent": "a6742a04a384a88e7342530041a1f0d3ab71db2c",
+    "retained_seed_blobs": "Every original 623ca52 path not replaced by the exact 17 repair blobs",
+    "maximum_final_delta_paths": 36,
+    "additional_allowed_path": "services/table-authority/src/main.ts",
+    "rejected_commit_in_final_ancestry": false,
+    "provider_self_acceptance": false
+  },
+  "privacy_and_rights": [
+    "Use closed typed projections and positive field construction only. Regex, blacklist, keyword, substring, scanning, sanitizing, redaction and serialize-then-delete privacy controls are prohibited.",
+    "No grant, counter or incarnation state may appear in projections, dealer cues, telemetry, logs, public/dealer welcomes or another lane's welcome.",
+    "No music, audio, media, voice, likeness, asset, external endpoint, credential, account or third-party dependency may be added."
+  ],
+  "prohibited_actions": [
+    "Do not read or use prior provider transcripts, private memory, Claude Memory/Project knowledge, unrelated repositories, sources/**, director/** or artifacts/**.",
+    "Do not alter any path outside owned_paths, rewrite history, reset, clean, push, merge, deploy, publish, open/mutate PRs or issues, post Slack/Linear, purchase, change credentials/permissions/licenses or access a physical device.",
+    "Do not claim product, device, store, rights, cultural, human or milestone acceptance.",
+    "Do not contact another provider or perform a revision without a new Director delta."
+  ],
+  "limits": {
+    "budget_usd": 0,
+    "timeout_seconds": 3600,
+    "primary_attempts": 1,
+    "transient_recoveries": 1,
+    "max_revisions": 0,
+    "max_hops": 0,
+    "candidate_commits": 1
+  },
+  "stopping_conditions": [
+    "Stop immediately on unrelated or prohibited-path mutation, inaccessible exact seed, ambiguous provider contact, private-memory injection, concealed-data exposure, unlicensed media, regex-based privacy, failed provenance binding or request to widen authority.",
+    "Stop after one local provider commit and one terminal result; OpenAI owns materialization and QA.",
+    "XR-test and RobotDealer remain closed until OpenAI accepts the mechanically materialized replacement foundation."
+  ],
+  "idempotency_key": "LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003-623ca52c"
+}

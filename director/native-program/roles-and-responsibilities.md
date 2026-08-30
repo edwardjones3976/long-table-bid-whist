@@ -10,11 +10,11 @@ with no activation path.
 | Participant | Native-program responsibility | Production credit | Prohibited authority |
 | --- | --- | --- | --- |
 | OpenAI Director | Intake, scope freeze, routing, packets, workload enforcement, cross-module QA, synthesis, evidence binding, midpoint/final reports, kickback and owner gates | No; control-plane QA is excluded | No product-code lane, self-approval, fabricated participation, external-account assumption or gate-free completion |
-| Claude / FABLE 5 ULTRA/MAX | TypeScript authority, protocol, C++ table/runtime and composition root across all three chunks; foundation-safety v2 is terminal rejected with no active writer lease, and replacement sequence 15 is dependency-closed pending useful rebalance plus new repair-seed authority | 48 scope-forecast units only; sequence 12 earns one medium/5 overall-effort credit and zero direct-production credit; only separately OpenAI-accepted packets can earn direct-production points | No edits without a new active packet, simultaneous cross-lane lease, local or cloud Memory, Project knowledge, prior chat, connector, unrelated repository, rejected-provider task, resumed Claude task, self-review, merge/release, spending, credential change or final acceptance |
+| Claude / FABLE 5 ULTRA/MAX | TypeScript authority, protocol, C++ table/runtime and composition root across all three chunks; replacement sequence 16 owns one frozen 17-path repair only after sequences 14 and 15 are terminal and the workload recheck passes | 48 scope-forecast units only; sequence 12 earns medium/5 overall effort and zero direct production; sequence 16 earns medium/5 overall effort only after real terminal execution and direct production only after OpenAI accepts the mechanically materialized exact candidate | No edit before dependency activation; no path beyond the 17-path lease; no simultaneous lane, local/cloud Memory, Project knowledge, prior chat, connector, unrelated repository, resumed sequence-12 task, self-review, merge/release, spending, credential change or final acceptance |
 | Cursor | Self-registering LongTableXR project plugin for hands/controllers, optional-presence seam/fallback, accessibility and MR/VR state; later separately gated integration | 4 scope-forecast units only; isolated core packet is medium/5 and production credit still requires OpenAI acceptance | No edits outside the plugin subtree, cross-lane edits, self-review, merge/deploy/publish, spending or permissions |
-| Grok | Terminal rejected seven-path authority-safety attempt; separately gated public-only platform-evidence dissent and future clean-room HouseCore/session/social work | 22 scope-forecast units only; the terminal safety attempt earns medium/5 overall effort and zero direct-production credit; a new public critique earns one simple/1 point only after real terminal execution | No active writer lease, reopening sequence 11, repository/private context in the public critique, concurrent Claude lease, self-review, merge/deploy/publish, credentials, concealed data, or access to quarantined provider artifacts |
-| Gemini Antigravity | Historical rejected HouseCore attempt plus the terminal public-synthetic robot-dealer presentation attempt | Both attempts earn zero direct-production credit; the final robot recovery produced exact candidate `0ae3269`, which OpenAI rejected for sequence monotonicity, delegate-compilation, pause-state and evidence defects | No active writer lease, private repository context, credentials, concealed state, cross-lane edits, self-review, merge, external writes or acceptance |
-| Perplexity | Existing broad platform/comparable-product/accessibility/audience/culture/rights evidence plus one newly frozen current official UE5.7.4/Quest compatibility query | Sequence 13 earns medium/5 only after one authenticated terminal execution; prior legacy research is not converted into canonical PR76 points | No duplicate query, source/private context, code, vote, review verdict or external write |
+| Grok | Terminal rejected seven-path authority-safety attempt; sequence 15 is a new public-only native-app/world/hybrid architecture dissent and future clean-room HouseCore/session/social work remains separate | 22 scope-forecast units only; sequence 11 retains medium/5 overall effort and zero direct production; sequence 15 earns medium/5 overall effort only after one real terminal xAI response and no direct-production credit | No writer lease in sequence 15, no sequence-11 reopening, repository/private/rejected-provider context, tools, browsing, code, self-review, merge/deploy/publish, credentials, concealed data or acceptance |
+| Gemini Antigravity | Historical rejected HouseCore and RobotDealer attempts plus sequence 14's fixed-vocabulary generic TypeScript state-machine scaffold | Historical candidates remain zero direct production; sequence 14 earns simple/1 overall effort only after one authenticated terminal run and never direct-production credit by itself | No project/task prose, repository or owner context, private data, file writes, commands, credentials, rejected artifacts, self-review, merge, external writes or acceptance |
+| Perplexity | Existing broad research evidence; sequence 13's exact current Quest query stopped before submission because the configured credential was empty | Zero sequence-13 overall/direct points because no request reached Perplexity; prior legacy research is not converted into PR76 credit | No retry/duplicate query, private context, code, vote, review verdict or external write |
 | Firecrawl | Primary-source retrieval used to verify research | Tool, never a workforce provider | No vote, authorship or acceptance authority |
 | GitHub | Canonical branch, commit, PR, check, review and release evidence | Tool | No substitution for human/device/rights/owner gates |
 | Linear | Stage/chunk dependency and acceptance tracking after exact project/team verification | Tool | No use of unrelated team and no issue-as-implementation evidence |
@@ -39,14 +39,20 @@ with no activation path.
   packets may separately own `services/session-gateway`,
   `Unreal/Source/LongTableSocial`, `Unreal/Content/Social`, or clean-room
   `Unreal/Plugins/LongTableHouseCore`.
-- Research lanes own no repository product path. Perplexity sequence 13 may see
-  only its exact public query. Grok sequence 14 may later see only the sanitized
-  public evidence packet named by its not-yet-frozen packet; it may not see the
-  Long Table repository, provider code, terminal findings or concealed state.
-- Antigravity: no active path. Its rejected `LongTableHouseCore` and
+- Research/advisory lanes own no repository product path. Perplexity sequence
+  13 stopped before submission. Grok sequence 15 may see only the exact
+  committed public context and may not see the Long Table repository, provider
+  code, terminal findings or concealed state.
+- Antigravity sequence 14 has no product path and receives only the exact merged
+  Director fixed-vocabulary `state_machine_skeleton` request. Its rejected `LongTableHouseCore` and
   `LongTableRobotDealer` candidates, sandboxes, frozen QA copies, transcripts,
   hashes and diffs remain quarantined historical evidence and are never inputs
   to a fallback lane.
+- Claude sequence 16 owns exactly the 17 paths in
+  `LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003.json` after its two dependencies
+  are terminal. Exact seed `623ca52c` is repair input only. OpenAI must place
+  retained seed blobs plus exact repair blobs on sole parent `a6742a0`; the
+  rejected seed commit never becomes final product ancestry.
 - OpenAI: read-only QA of candidate paths plus mechanical materialization of
   exact provider blobs into an isolated frozen candidate. OpenAI-authored
   content is limited to `director/native-program` and
@@ -102,28 +108,31 @@ contact or delivery retry.
    leased paths and did not use Grok implementation artifacts. OpenAI rejected
    local candidate `623ca52c`; it is unpushed, no product PR exists, and the
    assignment owns no active path.
-3. Sequence 13, `LT-NATIVE-PERPLEXITY-QUEST-PLATFORM-001`, may execute its
-   exact-digest public official-platform query once. Firecrawl verifies the
-   cited public sources and earns no workforce credit.
-4. Sequence 14, `LT-NATIVE-GROK-QUEST-EVIDENCE-CRITIQUE-001`, remains closed
-   until sequence 13 and Firecrawl evidence are terminal and a sanitized exact
-   public-only packet is committed. It is a new research critique, never a
-   sequence-11 retry or product-code/rejected-artifact review.
-5. Sequence 15, `LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003`, remains closed
-   until sequences 13 and 14 are terminal, the strict workload projection is
-   rechecked, and Director freezes a complete 17-path repair contract. A new
-   authority may designate exact tree `746fc5a` as a repair seed only; the
-   final candidate must mechanically place retained provider blobs plus exact
-   repair blobs on sole parent `a6742a0`. The rejected commit is never an
+3. Sequence 13, `LT-NATIVE-PERPLEXITY-QUEST-PLATFORM-001`, stopped before
+   provider submission because the configured credential was empty. It earns
+   zero points and will not be duplicated. Firecrawl's official matrix closes
+   the evidence dependency as a tool action with no workforce credit.
+4. Sequence 14, `LT-NATIVE-ANTIGRAVITY-STATE-MACHINE-003`, may execute one
+   exact merged-Director fixed-vocabulary plan request. It returns a generic
+   TypeScript state-machine scaffold and no Long Table context, file or authority.
+5. Sequence 15, `LT-NATIVE-GROK-QUEST-ARCHITECTURE-001`, may execute once only
+   after sequence 14 is terminal. The xAI Responses API receives one sanitized
+   public context with tools and storage disabled. This is a new architecture
+   dissent, never a sequence-11 retry, source review or product writer lease.
+6. Sequence 16, `LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003`, remains closed
+   until sequences 14 and 15 are terminal and the 80-point hard-ceiling
+   projection is rechecked. Its exact 17-path repair contract designates tree
+   `746fc5a` as seed only. OpenAI must materialize retained provider blobs plus
+   repair blobs on sole parent `a6742a0`; the rejected commit is never an
    accepted dependency or product parent.
-6. Only after a replacement foundation is OpenAI-accepted under new explicit
+7. Only after a replacement foundation is OpenAI-accepted under new explicit
    Director authority may `LT-NATIVE-CLAUDE-XRTEST-001` transfer from terminal
    Cursor to Claude only
    `Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp`
    at exact base `33aca6106603342efcf43fb813482cb18fd4b18c`. The rest of
    that exact XR plugin is a readable immutable dependency. No production XR
    decoder or other file is writable.
-7. Only after a replacement foundation is OpenAI-accepted, XR QA is terminal,
+8. Only after a replacement foundation is OpenAI-accepted, XR QA is terminal,
    and explicit Director reauthorization is recorded may assignment
    `LT-NATIVE-CLAUDE-ROBOT-001` transfer the clean-room destination
    `Unreal/Plugins/LongTableRobotDealer/**` from terminal Antigravity to Claude.

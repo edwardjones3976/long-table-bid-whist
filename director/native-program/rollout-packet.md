@@ -59,13 +59,13 @@ result is recorded locally before any optional milestone notice.
 ## Provider and workflow readiness
 
 - **OpenAI Director:** ready for orchestration, mechanical materialization and independent QA; prohibited from product-code authorship or self-acceptance
-- **Perplexity:** ready only for one exact-digest public Search API query; no repository, project-private, code, vote, verdict or external-write authority
-- **Firecrawl:** ready for bounded retrieval of approved public sources; tool only, never workforce credit or decision authority
-- **Grok:** prior authority-safety route remains terminal and cannot be reopened; a separately frozen public-evidence critique may run only after the Perplexity/Firecrawl packet exists
-- **Claude:** required implementation model remains `FABLE 5 ULTRA/MAX`; no active product lease until genuine workload rebalance, new immutable authority and exact repair-seed rules are committed
+- **Perplexity:** sequence 13 is terminal before submission because the configured credential was empty. No request, response or point exists and the query will not be duplicated.
+- **Firecrawl:** the ten-source official Meta/Epic matrix is frozen at `artifacts/native-program/research/2026-08-30-quest-platform-matrix.md`; Firecrawl is a tool and earns no workforce credit or decision authority
+- **Gemini/Antigravity:** sequence 14 is ready for one exact merged-Director fixed-vocabulary `state_machine_skeleton` request in an empty public-synthetic plan sandbox. It receives no product/task prose, repository context, writes or authority.
+- **Grok:** sequence 11 remains terminal and cannot be reopened. Sequence 15 is a distinct public architecture dissent using one synchronous xAI Responses API request with tools/storage off, dependency-closed until sequence 14 is terminal.
+- **Claude:** required implementation model remains `FABLE 5 ULTRA/MAX`. Sequence 16 has a complete 17-path repair-seed contract and isolated worktree but remains dependency-closed until sequences 14/15 are terminal and the 80-point workload projection is rechecked.
 - **Cursor:** no active lease; prior XR route remains terminal and current workload is above its planning ceiling
-- **Gemini/Antigravity:** no active lease; quarantined rejected artifacts remain prohibited inputs
-- **Budget and timeout:** the Perplexity sequence-13 packet reserves at most `$0.25` for one exact Search API request; every later packet defaults to `$0` unless it records a separate bounded reservation; timeout and attempt count are mandatory
+- **Budget and timeout:** sequence 14 reserves `$0` and 600 seconds; sequence 15 reserves at most `$0.75` and 180 seconds; sequence 16 reserves `$0` and 3600 seconds. Each has one primary attempt, with no duplicate send; only sequence 16 permits one recovery for a demonstrably transient transport failure.
 - **n8n/workflow identity:** `not_applicable` for provider-native research and isolated local QA
 - **Callback and internal-secret status:** `pending`; no callback is required for the current provider-native research lane
 - **Usage-monitor status:** manual exact run/result reconciliation; Director runtime writer is not activated
@@ -81,7 +81,7 @@ result is recorded locally before any optional milestone notice.
 - **Paid-disabled health check:** not applicable to a provider-native `$0` packet unless its transport reports a charge
 - **Slack intake dry run:** not run; gateway disabled
 - **n8n route check:** `not_applicable`
-- **Provider checks:** exact authenticated run IDs, output digests and terminal results must be appended to project evidence after each bounded assignment
+- **Provider checks:** Antigravity CLI/model availability, the exact xAI adapter profile and Claude repair worktree are preflighted. Exact authenticated run IDs, output digests and terminal results must be appended after each bounded assignment.
 - **Restart/recovery check:** not applicable before runtime activation
 - **Exact configuration identity:** this file plus each immutable packet on the exact control commit produced by the pre-stage change
 
@@ -110,9 +110,9 @@ It does not reopen that route, create a candidate or satisfy a test gate.
 
 ## Disposition
 
-- **Current state:** `ready for bounded public research`; implementation, integration, Android/device, merge, release and Slack gateway activation remain blocked
-- **Blocking fields:** exact replacement-foundation packet and repair-seed authority; genuine workload rebalance; accepted native foundation; current XR/Robot authority deltas; Android package/install/launch; controller/hand/MR/anchor/two-headset evidence; cultural/rules/rights/human acceptance; exact Slack app isolation for gateway activation
-- **Next responsible party:** Perplexity through the exact public-query packet, with Firecrawl source verification and OpenAI synthesis
-- **Next bounded action:** dispatch `LT-NATIVE-PERPLEXITY-QUEST-PLATFORM-001` once from the immutable pre-stage commit and record its authenticated terminal evidence
+- **Current state:** `ready for bounded sequence 14`; implementation, integration, Android/device, merge, release and Slack gateway activation remain blocked
+- **Blocking fields:** terminal sequence-14 and sequence-15 evidence; accepted replacement foundation; current XR/Robot authority deltas; Android package/install/launch; controller/hand/MR/anchor/two-headset evidence; cultural/rules/rights/human acceptance; exact Slack app isolation for gateway activation
+- **Next responsible party:** Gemini Antigravity through exact packet `LT-NATIVE-ANTIGRAVITY-STATE-MACHINE-003`, followed sequentially by Grok and Claude only when each dependency closes
+- **Next bounded action:** dispatch sequence 14 once from the immutable pre-stage commit, record the exact terminal response, then re-evaluate sequence 15 without polling or duplicate validation
 - **Milestone stop:** stop only when Chunk A — Native Foundation / First Deal passes every code gate and every available unchanged-candidate physical Quest gate; unavailable physical devices remain explicitly missing evidence rather than inferred success
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 23:08 UTC | END]] -->
