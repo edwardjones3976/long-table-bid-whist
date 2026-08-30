@@ -1,0 +1,318 @@
+{
+  "schema_version": "long-table-xr-public/v1",
+  "contract_id": "LT-XR-PUBLIC-1",
+  "purpose": "Closed public contract for an independently buildable UE5.7 project plugin that normalizes hand and Touch-controller interaction, presence fallback, comfort settings, and MR/VR presentation without receiving or adjudicating Bid Whist state.",
+  "plugin_boundary": {
+    "owned_path": "Unreal/Plugins/LongTableXR/**",
+    "descriptor": "Unreal/Plugins/LongTableXR/LongTableXR.uplugin",
+    "enabled_by_default": true,
+    "can_contain_content": true,
+    "loading_phase": "PostEngineInit",
+    "allowed_engine_plugins": [
+      "EnhancedInput",
+      "OpenXR",
+      "OpenXRHandTracking"
+    ],
+    "allowed_module_dependencies": [
+      "Core",
+      "CoreUObject",
+      "Engine",
+      "EnhancedInput",
+      "HeadMountedDisplay",
+      "InputCore",
+      "OpenXRInput",
+      "XRBase"
+    ],
+    "prohibited_project_dependencies": [
+      "LongTable",
+      "LongTableProtocol",
+      "LongTableTable",
+      "LongTableHouseCore",
+      "LongTableRobotDealer",
+      "LongTableSocial"
+    ]
+  },
+  "closed_vocabulary": {
+    "semantic_action": [
+      "Point",
+      "Select",
+      "Grab",
+      "Inspect",
+      "Preview",
+      "Cancel",
+      "Confirm",
+      "Recenter",
+      "Menu"
+    ],
+    "input_source": [
+      "LeftHand",
+      "RightHand",
+      "LeftController",
+      "RightController"
+    ],
+    "event_phase": [
+      "Begin",
+      "Update",
+      "End",
+      "Cancel"
+    ],
+    "active_modality": [
+      "Hands",
+      "Controllers",
+      "Unavailable"
+    ],
+    "presence_mode": [
+      "OptionalMetaAdapter",
+      "TrackedFallback",
+      "Unavailable"
+    ],
+    "seat_marker": [
+      "North",
+      "East",
+      "South",
+      "West",
+      "Unseated"
+    ],
+    "dominant_hand": [
+      "Left",
+      "Right"
+    ],
+    "environment_mode": [
+      "MixedReality",
+      "VirtualReality"
+    ],
+    "anchor_state": [
+      "Unplaced",
+      "Placed",
+      "Recovering",
+      "Lost"
+    ],
+    "capability_state": [
+      "Available",
+      "Unavailable",
+      "PermissionRequired"
+    ]
+  },
+  "closed_structures": {
+    "FLongTableXRInteractionEvent": {
+      "fields": {
+        "SchemaVersion": {
+          "type": "uint8",
+          "exact": 1
+        },
+        "Action": {
+          "type": "semantic_action"
+        },
+        "Source": {
+          "type": "input_source"
+        },
+        "Phase": {
+          "type": "event_phase"
+        },
+        "InteractionId": {
+          "type": "uint64",
+          "range": [
+            1,
+            18446744073709551615
+          ]
+        },
+        "TargetHandle": {
+          "type": "uint32",
+          "range": [
+            0,
+            4294967295
+          ],
+          "meaning": "Opaque local registry handle. It never contains or derives from a card, bid, play, credential, participant identifier, projection, or private string."
+        },
+        "ConfirmGeneration": {
+          "type": "uint32",
+          "range": [
+            0,
+            4294967295
+          ]
+        }
+      },
+      "additional_fields": false
+    },
+    "FLongTableXRModalityState": {
+      "fields": {
+        "ActiveModality": {
+          "type": "active_modality"
+        },
+        "LeftCapability": {
+          "type": "capability_state"
+        },
+        "RightCapability": {
+          "type": "capability_state"
+        },
+        "TransitionGeneration": {
+          "type": "uint32",
+          "range": [
+            0,
+            4294967295
+          ]
+        },
+        "TransientOwner": {
+          "type": "input_source_or_none"
+        }
+      },
+      "additional_fields": false
+    },
+    "FLongTableXRPresenceView": {
+      "fields": {
+        "Mode": {
+          "type": "presence_mode"
+        },
+        "Seat": {
+          "type": "seat_marker"
+        },
+        "NameplateText": {
+          "type": "string",
+          "maximum_code_points": 32,
+          "allow_empty": true
+        },
+        "LeftTracked": {
+          "type": "boolean"
+        },
+        "RightTracked": {
+          "type": "boolean"
+        },
+        "HeadTracked": {
+          "type": "boolean"
+        }
+      },
+      "additional_fields": false,
+      "prohibited_members": [
+        "platformAccountId",
+        "credential",
+        "accessToken",
+        "refreshToken",
+        "avatarAsset",
+        "card",
+        "hand",
+        "bid",
+        "play",
+        "projection",
+        "intent"
+      ]
+    },
+    "FLongTableXRComfortSettings": {
+      "fields": {
+        "DominantHand": {
+          "type": "dominant_hand"
+        },
+        "ReachScaleBasisPoints": {
+          "type": "uint16",
+          "range": [
+            7500,
+            15000
+          ]
+        },
+        "InteractionScaleBasisPoints": {
+          "type": "uint16",
+          "range": [
+            7500,
+            15000
+          ]
+        },
+        "ContrastLevel": {
+          "type": "uint8",
+          "range": [
+            0,
+            3
+          ]
+        },
+        "TextScaleBasisPoints": {
+          "type": "uint16",
+          "range": [
+            8000,
+            20000
+          ]
+        },
+        "ReducedMotion": {
+          "type": "boolean"
+        },
+        "HapticsEnabled": {
+          "type": "boolean"
+        },
+        "SeatedMode": {
+          "type": "boolean"
+        }
+      },
+      "additional_fields": false
+    },
+    "FLongTableXREnvironmentState": {
+      "fields": {
+        "Mode": {
+          "type": "environment_mode"
+        },
+        "Anchor": {
+          "type": "anchor_state"
+        },
+        "PlacementGeneration": {
+          "type": "uint32",
+          "range": [
+            0,
+            4294967295
+          ]
+        },
+        "RecenterGeneration": {
+          "type": "uint32",
+          "range": [
+            0,
+            4294967295
+          ]
+        }
+      },
+      "additional_fields": false
+    }
+  },
+  "deterministic_interaction_rules": [
+    "Hands and controllers map into the same semantic_action vocabulary and emit the same closed interaction structure.",
+    "Exactly one input source may own a transient grab or inspection at a time.",
+    "A modality change increments TransitionGeneration and emits one local Cancel for every transient owned by the previous modality before accepting a new Begin.",
+    "A Confirm is emitted only once for an InteractionId and ConfirmGeneration pair; repeated input edges for that pair are local duplicates and do not emit again.",
+    "A lost or unavailable source cancels its transient state and cannot transfer a pending Confirm.",
+    "The plugin performs no Bid Whist legality, turn, card, bid, play, score, session, host, queue, standings, replay, persistence, or network authority decision.",
+    "Preview, Cancel, and Confirm are semantic local requests only. A later accepted authority adapter owns all authoritative interpretation.",
+    "Every opaque TargetHandle is allocated from a local registry independent of concealed game values."
+  ],
+  "presence_rules": [
+    "The optional Meta avatar seam is an interface only. This assignment neither installs a Meta SDK nor proves an account, entitlement, avatar asset, or device session.",
+    "When the optional adapter is absent, denied, unavailable, or fails, the deterministic fallback is tracked hands or controllers plus nameplate and seat marker.",
+    "No stock human avatar, fixed cast, imitation voice, likeness, costume, caricature, or demographic inference is permitted.",
+    "The adapter receives only the closed presence view and public tracking poses; it never receives a platform credential, authoritative table object, concealed projection, or private card state.",
+    "Platform identifiers and credentials are never serialized, logged, placed in telemetry, copied into nameplates, or exposed through Blueprint."
+  ],
+  "environment_rules": [
+    "MixedReality supports bounded table placement, recentering, anchor-loss recovery, and deterministic fallback to VirtualReality when the required capability is unavailable.",
+    "VirtualReality provides functionally equivalent table reach, semantic interaction, comfort controls, nameplate, seat marker, and confirmation feedback.",
+    "Runtime geometry, materials, icons, sounds, and haptics are original code-native placeholders only.",
+    "Environmental warmth and hospitality may be expressed through original lighting, wood, fabric-color, table-spacing, and arrival cues without costumes, stereotypes, fixed human characters, or imitation voices.",
+    "Bundled, uploaded, streamed, recorded, rebroadcast, or sampled jazz, blues, voice, image, likeness, or archival content is prohibited.",
+    "Host music remains an external, user-controlled facility and is off inside the plugin."
+  ],
+  "privacy_and_safety_rules": [
+    "Privacy is enforced by closed types, explicit construction, variant-specific decoding, and byte-level counterfactual tests only.",
+    "Regex, blacklist, keyword, substring, redaction, scanning, best-effort filtering, inference, and concealed-object-then-delete designs are prohibited as privacy, disclosure, authorization, logging, or provider-routing controls.",
+    "The plugin has no network, credential, filesystem-upload, microphone, recording, music-stream, moderation, purchase, account, license-acceptance, store, or deployment authority.",
+    "NullRHI and Win64 automation cannot prove Android packaging, Quest performance, hand tracking, controller tracking, passthrough, anchors, Meta presence, multiplayer, accessibility comfort, human acceptance, cultural acceptance, rights clearance, or store readiness."
+  ],
+  "required_automation": [
+    "LongTable.XR.SemanticParity",
+    "LongTable.XR.ModalitySwitchCancelsTransient",
+    "LongTable.XR.ConfirmEdgeIdempotency",
+    "LongTable.XR.SourceLossFailsClosed",
+    "LongTable.XR.TargetHandleConcealmentCounterfactual",
+    "LongTable.XR.PresenceFallback",
+    "LongTable.XR.PresenceClosedStructure",
+    "LongTable.XR.ComfortBounds",
+    "LongTable.XR.AnchorRecoveryFallback",
+    "LongTable.XR.RightsCleanInventory"
+  ],
+  "integration_boundary": {
+    "current_assignment": "The plugin is independently buildable and testable and exports only its closed public types, subsystem, capability seams, and semantic-event delegate.",
+    "later_assignment": "After Claude and robot-dealer candidates are independently accepted, a separate Cursor integration packet may bind this plugin's semantic delegate to accepted authority and public cue interfaces from Cursor-owned paths.",
+    "acceptance_limit": "OpenAI may accept the isolated plugin as its own candidate but cannot call the combined game, physical Quest experience, or three-stage product complete before integration and all later gates pass."
+  }
+}
