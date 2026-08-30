@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-001-R1",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "starting_ref": "af199d0d492a8ec8db63a013877af5c4349a30dd",
+  "authority_base_ref": "ce8296cbf52787250b3da0195252f6ec4ea6f908",
+  "objective": "Perform the single allowed Claude revision of the complete native rules, protocol, table-authority and Unreal foundation candidate. Correct every OpenAI P1 privacy, authentication, idempotency, role-binding, local-preview, replay-integrity and Unreal context-isolation finding without widening into XR, Social or HouseCore. Preserve the independently green deterministic behavior, add adversarial regression coverage, run the full TypeScript and Unreal gates, create one local revision commit, and return exactly one Director model-result-packet-v1 JSON document as the terminal response.",
+  "non_goals": [
+    "No edits to Cursor-owned LongTableXR or Input, Presence and Environment content",
+    "No edits to Grok-owned session-gateway, LongTableSocial or Social content",
+    "No implementation or import of the quarantined Antigravity LongTableHouseCore candidate",
+    "No Meta account, avatar, voice, SDK, networking deployment, store or physical-device success claims",
+    "No WebXR or Horizon Worlds companion product",
+    "No unlicensed music, voice, sample, likeness, image or archival content",
+    "No changes made only to weaken, skip or relabel an OpenAI acceptance test"
+  ],
+  "authority_snapshot": [
+    {"path": "director/native-program/README.md", "commit_sha": "ce8296cbf52787250b3da0195252f6ec4ea6f908", "blob_sha": "1befa61db83cd027ddd46bcb1558ce36cfab6be2"},
+    {"path": "director/native-program/manual-provider-overlay.md", "commit_sha": "ce8296cbf52787250b3da0195252f6ec4ea6f908", "blob_sha": "d0de9548c127675b65bff367d9f95efc3048befa"},
+    {"path": "director/native-program/provider-workload.yaml", "commit_sha": "ce8296cbf52787250b3da0195252f6ec4ea6f908", "blob_sha": "b0899b14235e0613c7aaa1d65b2a274766015097"},
+    {"path": "director/native-program/roles-and-responsibilities.md", "commit_sha": "ce8296cbf52787250b3da0195252f6ec4ea6f908", "blob_sha": "33801a64c8c1b924bb2cc79d7bcb11891a370c78"},
+    {"path": "director/native-program/stage-gates.md", "commit_sha": "ce8296cbf52787250b3da0195252f6ec4ea6f908", "blob_sha": "4c7ad8f29442004a3cbfc27c1bf0d22c7503e65a"},
+    {"path": "director/privacy-control-policy.md", "commit_sha": "ce8296cbf52787250b3da0195252f6ec4ea6f908", "blob_sha": "a31ce14bdaed03f3028480b7572cd9ccf7c0f859"}
+  ],
+  "authority_snapshot_digest": "sha256:3dc06e2fe70bfc33728c995b993cbf2cecb3f0fa64964e876d43f53baeec336c",
+  "dependencies": [],
+  "owned_paths": [
+    "Unreal/LongTable.uproject",
+    "Unreal/Config/**",
+    "Unreal/Source/LongTable.Target.cs",
+    "Unreal/Source/LongTableEditor.Target.cs",
+    "Unreal/Source/LongTable/**",
+    "Unreal/Source/LongTableProtocol/**",
+    "Unreal/Source/LongTableTable/**",
+    "packages/rules-core/**",
+    "packages/protocol/**",
+    "services/table-authority/**",
+    "fixtures/protocol/**",
+    "scripts/native/**",
+    ".github/workflows/native-ci.yml"
+  ],
+  "prohibited_paths": [
+    "sources/**",
+    "director/**",
+    "Unreal/Source/LongTableXR/**",
+    "Unreal/Content/Input/**",
+    "Unreal/Content/Presence/**",
+    "Unreal/Content/Environment/**",
+    "services/session-gateway/**",
+    "Unreal/Source/LongTableSocial/**",
+    "Unreal/Content/Social/**",
+    "Unreal/Plugins/LongTableHouseCore/**",
+    "Unreal/Plugins/MetaXR/**",
+    "Unreal/Plugins/MetaXRInteraction/**"
+  ],
+  "constraints": [
+    "Use the verified Unreal Engine 5.7.4 editor at C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+    "Start from and preserve provenance to exact candidate af199d0d492a8ec8db63a013877af5c4349a30dd",
+    "When a seat is rebound, atomically revoke or re-entitle existing connections; every snapshot, replay, broadcast and disconnect must revalidate current participant, role, table and seat ownership before reading or mutating presence",
+    "Require participant-kind credentials for player, host and public participant roles; a dealer credential can never obtain a player, host or public projection even when its participantId collides with an entitled identity",
+    "Keep preview, toggle and cancel state player-local: it must not advance the shared table version, enter public replay history or change host/public canonical bytes; committed confirm remains authoritative",
+    "A processed intent identity that affected authoritative state cannot expire or become reusable through bounded-ledger eviction or rejected-intent flooding",
+    "Remove blacklist, keyword, substring, regex and redaction privacy checks; replace them with exact closed-schema field inventories, role-specific construction, decode rejection and counterfactual byte-equivalence tests",
+    "Reset cached projections, session, seat, version, resume and in-flight state whenever the authenticated Unreal authority context changes; retry only within the same context using the original expected version",
+    "Validate configured role, table and envelope/inner version coherence before any Unreal welcome, projection or replay frame is applied; do not expose a cached projection for an inactive role",
+    "Make the Unreal role projection dependency boundary typed so host/public consumers cannot access a physically embedded player-hand projection",
+    "Validate a replay record's manifest identity and digest before replay; a changed manifest binding must fail closed even when actions are unchanged",
+    "Construct role projections field by field from closed schemas; concealed members must not exist in host, public, dealer, receipt, error, telemetry or provider-facing types",
+    "Robot dealer remains presenter-only and consumes allowlisted cues; human host cannot deserialize, request or mutate concealed or committed play",
+    "Use original code-native placeholders only; host music remains external and off",
+    "Do not modify the original packet or fabricate the original provider result; this revision returns its own exact result envelope",
+    "Preserve unrelated user work and all existing contribution tags"
+  ],
+  "prohibited_actions": [
+    "Do not edit another provider's path",
+    "Do not push, merge, deploy, publish, open or mutate PRs/issues, post Slack/Linear, purchase, change credentials or permissions",
+    "Do not install or download Meta SDKs, accept licenses or create external accounts",
+    "Do not claim physical Quest, multiplayer-on-device, human, cultural, rights, store or project completion",
+    "Do not retry or duplicate an ambiguous provider or external dispatch"
+  ],
+  "allowed_tools": [
+    "local filesystem and repository tools within the named worktree",
+    "existing Node, TypeScript and test toolchain",
+    "UnrealBuildTool, UnrealEditor-Cmd and compiler for local builds/tests",
+    "the same authenticated Claude Code session f0d909ff-0700-4846-b6d0-65f75598d745"
+  ],
+  "allowed_external_effects": [
+    "Create and edit only owned repository paths",
+    "Run local builds and tests",
+    "Create one local revision commit and return its exact SHA",
+    "Return one JSON result packet in the authenticated terminal response"
+  ],
+  "acceptance_checks": [
+    "Exact starting SHA af199d0d492a8ec8db63a013877af5c4349a30dd is verified and the revision handoff has one exact head and tree SHA",
+    "Seat rebinding cannot leak the new occupant's hand to an old socket or let an old disconnect change the new occupant's presence",
+    "Dealer-kind credential collisions fail closed for player, host and public roles",
+    "Preview, toggle and cancel leave host/public canonical bytes, shared version and public replay history unchanged",
+    "A previously processed committed intent remains idempotent after more than 512 later rejected and accepted intent identifiers",
+    "Privacy enforcement uses closed structure and counterfactual construction only; no blacklist, keyword, substring, regex or redaction control remains",
+    "Unreal authority-context changes clear inactive role projections and prevent cross-role, cross-table and cross-token resume or in-flight replay",
+    "Unreal rejects role, table and envelope/inner-version incoherence before changing any client-visible state",
+    "Replay fails closed when manifest identity or digest differs",
+    "Full existing and new TypeScript tests, strict native typecheck, fixture-current check and production build pass from the exact candidate",
+    "UnrealBuildTool compiles LongTableEditor and LongTable Win64 Development and headless LongTable automation has zero failures",
+    "No file outside corrected owned paths changes and no generated build or log artifact is committed",
+    "Terminal output is exactly one JSON document valid against model-result-packet-v1 and repeats this packet's identity and complete correlation object"
+  ],
+  "evidence_requirements": [
+    "Authenticated Claude session f0d909ff-0700-4846-b6d0-65f75598d745 and model/effort label",
+    "Starting SHA, exact revision head SHA, tree SHA and changed-file allowlist comparison",
+    "Adversarial regression names and results for all OpenAI findings",
+    "Full test, strict typecheck, fixture, production build, both Unreal target and Unreal automation results",
+    "Known limitations including absent Meta plugins, account, headset, Android package and human evidence",
+    "A schema-valid model-result-packet-v1 with status, checks, acceptance, risks, blockers, decisions, side effects and revision recommendation"
+  ],
+  "approval_requirements": [
+    "OpenAI QA must reproduce and accept the exact revision candidate before any integration or direct-production credit",
+    "No further Claude revision is authorized under this assignment",
+    "Owner separately authorizes merge, release, spending, credential, license and external-account effects"
+  ],
+  "limits": {"budget_usd": 0, "timeout_seconds": 7200, "max_hops": 0, "max_revisions": 0},
+  "idempotency_key": "LT-NATIVE-CLAUDE-001-R1-af199d0",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-001-R1",
+    "source_event_id": "openai-qa-revision-20260830",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}

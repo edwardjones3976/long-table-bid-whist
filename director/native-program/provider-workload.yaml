@@ -100,7 +100,7 @@ canonical_assignment_ledger:
     provider: claude
     size: long
     canonical_points: 8
-    status: "PROVIDER_RUNNING"
+    status: "OPENAI_CHANGES_REQUIRED_SUPERSEDED_BY_R1"
     accepted_direct_production_points: 0
     packet_digest: "sha256:e0ab5ba72479d912e8b4eb5f01b03c321b2c952682346ed051d4ab84d740caef"
     accepted_outcome_digest: null
@@ -110,11 +110,22 @@ canonical_assignment_ledger:
     provider: gemini_antigravity
     size: long
     canonical_points: 8
-    status: "OPENAI_CHANGES_REQUIRED_PROVIDER_RECOVERY_RUNNING"
+    status: "OPENAI_CHANGES_REQUIRED_REVISION_EXHAUSTED_QUARANTINED"
     accepted_direct_production_points: 0
     packet_digest: null
     accepted_outcome_digest: null
     manual_overlay_reason: "closed public synthetic sandbox contract predates the PR76 result envelope"
+  - sequence: 3
+    assignment_id: "LT-NATIVE-CLAUDE-001-R1"
+    provider: claude
+    size: long
+    canonical_points: 8
+    status: "PRESTAGED"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:55ce945cbe277c3ac93066db2fc9b33c813ff8270d9da675b5e49ddecfb62a3e"
+    work_packet_digest: "sha256:801ae362d21ce3dbc8b880db1d29cf652899815e8a1595a7d8d2943dc42c0279"
+    accepted_outcome_digest: null
+    manual_overlay_reason: "single Claude correction and cumulative revalidation; superseded sequence 1 can never receive production credit"
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
