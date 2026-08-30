@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CURSOR-XRCORE-002-R1",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "starting_ref": "72fb778a9536b4e5dda74d73451244d069d53713",
+  "objective": "Perform the single final source-only Cursor recovery for LongTableXR. Correct every consolidated OpenAI UE5.7 compile, transactional decode, overflow atomicity, modality/source-loss, placement/recenter, persistence, adversarial-test and structural-rights finding on exact candidate 72fb778. Do not use Shell; edit only the plugin with Cursor file tools, return one schema-valid result, and let OpenAI mechanically freeze the exact bytes and run every build and test gate.",
+  "non_goals": [
+    "No edit outside Unreal/Plugins/LongTableXR/**",
+    "No rule, card, scoring, host, networking, HouseCore, robot-dealer or other-provider implementation",
+    "No Shell, Git, Unreal, TypeScript, browser, MCP, network, device, account, license or external-service action from Cursor",
+    "No regex, blacklist, keyword, substring, prefix, redaction, scanning or serialize-then-delete privacy or rights control",
+    "No physical Quest, Android, human, cultural, rights, store, release or combined-product claim"
+  ],
+  "authority_snapshot": [
+    {"path":"director/native-program/README.md","commit_sha":"296a51f162b1bb87b64634c00ca9f98f5a7bac00","blob_sha":"63b4dec665c6b1d4ceb0ed65434bb2337080b876"},
+    {"path":"director/native-program/manual-provider-overlay.md","commit_sha":"296a51f162b1bb87b64634c00ca9f98f5a7bac00","blob_sha":"3f8646f1e42d3de22c5b03060b565f6a03b2291e"},
+    {"path":"director/native-program/provider-workload.yaml","commit_sha":"296a51f162b1bb87b64634c00ca9f98f5a7bac00","blob_sha":"cf64e6436b18f072d97ab970b8d74a1f3e634dc9"},
+    {"path":"director/native-program/roles-and-responsibilities.md","commit_sha":"296a51f162b1bb87b64634c00ca9f98f5a7bac00","blob_sha":"aff99b3c915085b9b8cf3b43797c2f8882a89a4e"},
+    {"path":"director/native-program/stage-gates.md","commit_sha":"296a51f162b1bb87b64634c00ca9f98f5a7bac00","blob_sha":"4c7ad8f29442004a3cbfc27c1bf0d22c7503e65a"},
+    {"path":"director/privacy-control-policy.md","commit_sha":"296a51f162b1bb87b64634c00ca9f98f5a7bac00","blob_sha":"a31ce14bdaed03f3028480b7572cd9ccf7c0f859"},
+    {"path":"director/native-program/contracts/long-table-xr-public-v1.json","commit_sha":"296a51f162b1bb87b64634c00ca9f98f5a7bac00","blob_sha":"e2eea682d0dee913c8d21d791211ad2bd6573792"},
+    {"path":"director/native-program/contracts/model-result-packet-v1.schema.json","commit_sha":"296a51f162b1bb87b64634c00ca9f98f5a7bac00","blob_sha":"3f68e59136c422ce84d79f874c0343fd5ffc0a9e"},
+    {"path":"director/native-program/packets/LT-NATIVE-CURSOR-XRCORE-002.json","commit_sha":"296a51f162b1bb87b64634c00ca9f98f5a7bac00","blob_sha":"f49e0800e0e27653dec0b3eead62cffde7cd9cd0"},
+    {"path":"director/native-program/packets/LT-NATIVE-CURSOR-XRCORE-002-SHELL-DELTA.json","commit_sha":"296a51f162b1bb87b64634c00ca9f98f5a7bac00","blob_sha":"d0d62cbac1e24fcd3236803143c7d19fda5f4f9f"}
+  ],
+  "authority_snapshot_digest": "sha256:19d907be304f9cbd8569d710802ec54752d63e50e519607d01a9cb0483b4698b",
+  "dependencies": [],
+  "constraints": [
+    "Resume authenticated Cursor session a0bf5116c-ce93-4fa7-880a-a35b652f3476 with composer-2.5 in C:\\Users\\edwar\\.codex\\worktrees\\long-table-cursor-xr on branch codex/cursor-xr-core at exact clean head 72fb778a9536b4e5dda74d73451244d069d53713 and tree 156070468946e0f3092830857dc6077a1564ce8c",
+    "Use Cursor read/edit tools only. Do not invoke Shell or create a provider commit; report every local command and check NOT_RUN with null exit_code",
+    "LongTableXRTests.cpp must call UGameInstance::InitializeStandalone as void, construct the test game instance with a valid engine outer such as GEngine, verify an observable initialized state and perform proper teardown",
+    "Decode every closed JSON record into a local candidate; assign the caller's Out value only after every field, enum, finite integral number, bound, missing/extra/wrong-type condition passes",
+    "Never evaluate a signed or unsigned increment at its maximum. Handle exhausted target handles, interaction IDs, transition generations, placement generations and recenter generations with explicit preflight checks before any state mutation or event emission",
+    "RequestModality must preflight generation capacity and every other failure before cancelling or clearing transient ownership; a rejection preserves state and emits nothing",
+    "Source-loss cancellation must allocate a valid nonzero identity or use a contract-valid existing identity before clearing state; allocator exhaustion cannot publish InteractionId zero or partially mutate",
+    "PlaceMRTable must preflight generation capacity before changing mode, placement or anchor state; Recenter must validate current anchor and every precondition before generation mutation",
+    "Add table-driven exact-minimum, exact-maximum, below/above, missing-field and wrong-type cases for every relevant JSON field and closed enum/range seam",
+    "Source-loss tests must prove exactly one matching cancel event. Persistence must save through one properly initialized subsystem and reload through a distinct properly initialized subsystem; a same-instance readback is insufficient",
+    "Replace every StartsWith, Contains, substring, regex or other pattern-based rights classification with exact structural inventories and exact declared-set/physical-set equality",
+    "Preserve the already-correct self-contained/exported headers, supported surrogate-pair validation, Default loading phase, closed presence construction, live-handle provenance, stable confirm identity, core-only dependency boundary and ten exact automation names",
+    "Do not weaken, delete, invert, relabel, skip or make tautological any test or acceptance property to obtain a pass",
+    "Return exactly one JSON object valid against model-result-packet-v1 with this packet identity and honest NOT_RUN local checks"
+  ],
+  "prohibited_actions": [
+    "Do not edit, stage or commit any path outside Unreal/Plugins/LongTableXR/**",
+    "Do not invoke Shell, Git, Unreal, TypeScript, a browser, MCP, network or another provider",
+    "Do not inspect or use HouseCore, RobotDealer, Claude, Grok or Antigravity source or artifacts",
+    "Do not add pattern-based privacy or rights controls",
+    "Do not push, merge, deploy, publish, release, purchase, change permissions or contact external services"
+  ],
+  "allowed_tools": [
+    "same authenticated Cursor session and composer-2.5",
+    "Cursor repository read and edit tools restricted to the exact LongTableXR plugin"
+  ],
+  "allowed_external_effects": [
+    "Edit only Unreal/Plugins/LongTableXR/**",
+    "Return one raw JSON result object in the authenticated terminal response"
+  ],
+  "acceptance_checks": [
+    "Only the exact owned plugin paths change and all production bytes are Cursor-authored",
+    "The UE5.7 InitializeStandalone compile and engine-outer failures are corrected with valid teardown",
+    "All JSON decoders are transactional and leave caller output byte-equivalent on every rejection",
+    "Every maximum-value path fails closed before arithmetic, mutation or emission",
+    "Modality, source-loss, placement and recenter rejections are atomic and never emit invalid identity zero",
+    "Adversarial automation covers exact bounds, missing/wrong types, exactly-one cancellation and true cross-instance persistence",
+    "Rights inventory uses exact structure only and contains no pattern-based classification",
+    "All prior accepted static corrections remain intact and no forbidden dependency, media, provider module or generated file enters",
+    "Terminal output is one schema-valid result with honest NOT_RUN local gates and revision_recommended false only if the source correction is complete"
+  ],
+  "evidence_requirements": [
+    "Authenticated Cursor session/request and composer-2.5 identity",
+    "Complete changed-file allowlist and concise mapping from each OpenAI finding to source/test changes",
+    "Known limits: OpenAI has not yet compiled, run automation, packaged Android, used a headset, run two devices or completed human/cultural/rights/store gates",
+    "One schema-valid model-result-packet-v1 object with no fabricated command result"
+  ],
+  "approval_requirements": [
+    "OpenAI mechanically freezes the exact Cursor bytes, independently runs every ordered build/test gate and alone accepts or rejects the revision",
+    "No further Cursor revision or transport retry is authorized after this packet",
+    "Integration, merge, release, device, human, rights, cultural and store claims remain separate gates"
+  ],
+  "limits": {"budget_usd": 0, "timeout_seconds": 3600, "max_hops": 0, "max_revisions": 0},
+  "idempotency_key": "LT-NATIVE-CURSOR-XRCORE-002-R1-72fb778",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CURSOR-XRCORE-002-R1",
+    "source_event_id": "openai-qa-cursor-xr-rescue-recovery-20260830",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}
