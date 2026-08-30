@@ -129,7 +129,7 @@ accepted direct-production credit.
 
 ## Cursor XR test-only exhausted-route transfer
 
-After Claude R1 is terminal, one new medium/5 Claude assignment may start from
+After the foundation-final assignment is OpenAI-QA terminal, one new medium/5 Claude assignment may start from
 exact Cursor base `33aca6106603342efcf43fb813482cb18fd4b18c`. Its sole
 writable file is
 `Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp`.
@@ -142,7 +142,7 @@ route, not simultaneous cross-writing and not another Cursor revision.
 
 ## Robot-dealer exhausted-route transfer
 
-After the XR fallback is frozen and OpenAI-QA terminal, one separate medium/5
+After the foundation-final and XR fallback are both frozen and OpenAI-QA terminal, one separate medium/5
 Claude clean-room assignment may own
 `Unreal/Plugins/LongTableRobotDealer/**`. Its authority is the frozen
 `contracts/long-table-robot-dealer-public-v1.json` plus exact accepted Claude
@@ -152,6 +152,32 @@ never readable dependencies. The fresh packet must bind an exact clean base,
 closed cue ABI, one writer, one result envelope and full UE5.7 automation.
 Neither rejected Antigravity bytes nor OpenAI corrections may seed the new
 plugin.
+
+## Claude R1 terminal rejection and final foundation lease
+
+The single same-session R1 recovery reached a terminal schema-valid provider
+result and exact candidate `816824ef85037caac11e90e34c090b54a1c3a7a1`, tree
+`df89b69458fb90c58e619540bd7069445a23b461`. Independent OpenAI QA reproduced
+184 of 184 TypeScript tests, both UE5.7 Windows target builds and complete
+headless automation without failures. Three separate non-writing source reviews
+nevertheless found twelve blocking defects in processed-intent reuse, session
+replacement, role/projection coherence, validate-before-replay, counterfactual
+non-vacuity and Unreal authenticated-context/resync handling.
+
+R1 is therefore immutable overall effort only, not accepted production.
+Those findings did not exist when its final provider recovery was dispatched,
+so they satisfy the Director third-attempt exception for materially new
+information. `LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001` is a new medium/5 packet,
+not R2 and not a duplicate transport. It starts from the frozen R1 candidate,
+owns only audited code and regression paths, permits no revision, and must pass
+new exact-candidate OpenAI source/build/test QA before integration.
+
+The projected Claude overall share is 35.59% if that assignment terminates,
+40.63% after the XR fallback and 44.93% after RobotDealer. Because the canonical
+window is still warming up, exact PR76 enforcement remains advisory; the last
+projection exceeds the stricter project 41% planning ceiling and must be
+reported as a useful-work warm-up variance, never disguised with filler or
+called compliant.
 
 ## Warm-up variance after the Grok route
 

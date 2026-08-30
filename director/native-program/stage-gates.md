@@ -39,6 +39,13 @@ Device acceptance: Android package/install/launch, hands, controllers,
 switching, haptics, placement, anchor recovery and two-headset privacy evidence
 pass on the unchanged candidate.
 
+Current stop: Claude R1 candidate `816824e` has green local code gates but is
+OpenAI-rejected on source review. No XR, RobotDealer, integration, Android or
+device gate may treat it as an accepted dependency. First run the exact
+`LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001` correction and independent QA; then run
+the XR test-only and RobotDealer clean-room fallbacks sequentially. A green
+browser, Windows or headless gate never substitutes for physical Quest evidence.
+
 ## Chunk B — Private Game Night
 
 - Full strict Bid Whist match, validated house-rules manifest, scoring, replay,

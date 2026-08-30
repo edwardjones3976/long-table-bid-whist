@@ -99,3 +99,28 @@ access accounts, claim device/human/store completion, or relax one-writer,
 privacy, security, exact-candidate or OpenAI QA gates.
 
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 09:00 UTC | END]] -->
+
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 11:30 UTC | BEGIN]] -->
+## Terminal addendum
+
+Claude R1 is now terminal at exact candidate `816824e`, tree `df89b69`, after
+its one temporary same-session recovery. The provider returned a schema-valid
+`SUCCEEDED` result; OpenAI independently reproduced green TypeScript and Unreal
+gates and then rejected twelve source-review defects. Sequence 3 therefore
+enters the completed overall-effort window at long/8 and remains zero accepted
+direct-production credit.
+
+The current completed window is 9 of 20 and 54 points: Claude 16 (29.63%),
+Cursor 20 (37.04%), Grok 8 (14.81%), Gemini Antigravity 10 (18.52%), OpenAI 0
+and Perplexity 0. Exact PR76 enforcement still reports warm-up; this is not a
+rolling compliance pass.
+
+One separately identified medium/5 Claude foundation assignment is permitted
+only because the terminal review supplied materially new information. It is
+followed sequentially by the already-frozen XR test-only and RobotDealer
+fallback packets. Projected Claude shares are 35.59%, 40.63% and 44.93%
+respectively. The final projection exceeds the project's stricter 41% planning
+ceiling during warm-up; execute only genuine dependency work, record the
+variance honestly, and never create filler or duplicate research to alter the
+denominator.
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 11:30 UTC | END]] -->

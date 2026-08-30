@@ -10,7 +10,7 @@ with no activation path.
 | Participant | Native-program responsibility | Production credit | Prohibited authority |
 | --- | --- | --- | --- |
 | OpenAI Director | Intake, scope freeze, routing, packets, workload enforcement, cross-module QA, synthesis, evidence binding, midpoint/final reports, kickback and owner gates | No; control-plane QA is excluded | No product-code lane, self-approval, fabricated participation, external-account assumption or gate-free completion |
-| Claude / FABLE 5 ULTRA/MAX | TypeScript authority, protocol, C++ table/runtime and composition root across all three chunks; after its current R1 is terminal, the two explicit exhausted-route fallback leases below | 48 scope-forecast units only; each terminal packet earns immutable overall-effort points and each OpenAI-accepted packet separately earns direct-production points | No edits outside the active packet's owned paths, simultaneous cross-lane lease, self-review, merge/release, spending, credential change or final acceptance |
+| Claude / FABLE 5 ULTRA/MAX | TypeScript authority, protocol, C++ table/runtime and composition root across all three chunks; one final bounded foundation correction, then the two explicit exhausted-route fallback leases below | 48 scope-forecast units only; each terminal packet earns immutable overall-effort points and each OpenAI-accepted packet separately earns direct-production points | No edits outside the active packet's owned paths, simultaneous cross-lane lease, self-review, merge/release, spending, credential change or final acceptance |
 | Cursor | Self-registering LongTableXR project plugin for hands/controllers, optional-presence seam/fallback, accessibility and MR/VR state; later separately gated integration | 4 scope-forecast units only; isolated core packet is medium/5 and production credit still requires OpenAI acceptance | No edits outside the plugin subtree, cross-lane edits, self-review, merge/deploy/publish, spending or permissions |
 | Grok | Clean-room HouseCore, session gateway, social/private-room, reconnect, host and voice-off/safety adapters | 17 scope-forecast units only; actual canonical packets earn credit after OpenAI acceptance | No edits outside owned paths, cross-lane edits, self-review, merge/deploy/publish, credentials, concealed data, or access to the quarantined Antigravity HouseCore artifact |
 | Gemini Antigravity | Historical rejected HouseCore attempt plus the terminal public-synthetic robot-dealer presentation attempt | Both attempts earn zero direct-production credit; the final robot recovery produced exact candidate `0ae3269`, which OpenAI rejected for sequence monotonicity, delegate-compilation, pause-state and evidence defects | No active writer lease, private repository context, credentials, concealed state, cross-lane edits, self-review, merge, external writes or acceptance |
@@ -52,18 +52,25 @@ auxiliary paths listed in `LT-NATIVE-CLAUDE-001-R1.json`: `Unreal/LongTable.upro
 `fixtures/protocol/**`, `scripts/native/**`, and `.github/workflows/native-ci.yml`.
 No later provider may edit those accepted dependencies.
 
+Claude R1 is terminal at exact candidate `816824ef85037caac11e90e34c090b54a1c3a7a1`:
+provider and independent build/test gates passed, but OpenAI rejected twelve
+newly evidenced source defects. It earns long/8 overall-effort points and zero
+direct-production points. The only active foundation lease is now
+`LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001`; its exact owned paths are frozen in
+that packet and it has no revision authority.
+
 ## Sequential exhausted-route fallback leases
 
 These are new assignments, not extra revisions or transport retries. They may
-start only after `LT-NATIVE-CLAUDE-001-R1` is terminal and may never overlap one
-another.
+start only after `LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001` is OpenAI-QA terminal
+and may never overlap that lease or one another.
 
 1. `LT-NATIVE-CLAUDE-XRTEST-001` transfers from terminal Cursor to Claude only
    `Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp`
    at exact base `33aca6106603342efcf43fb813482cb18fd4b18c`. The rest of
    that exact XR plugin is a readable immutable dependency. No production XR
    decoder or other file is writable.
-2. After the XR packet is frozen and OpenAI-QA terminal, assignment
+2. After both the foundation-final and XR packets are frozen and OpenAI-QA terminal, assignment
    `LT-NATIVE-CLAUDE-ROBOT-001` transfers the clean-room destination
    `Unreal/Plugins/LongTableRobotDealer/**` from terminal Antigravity to Claude.
    Claude may read only the new frozen public contract, its own accepted public

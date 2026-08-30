@@ -1,4 +1,4 @@
-# [[OpenAI Director | Codex | 2026-08-30 | 09:58 UTC | BEGIN]]
+# [[OpenAI Director | Codex | 2026-08-30 | 11:30 UTC | BEGIN]]
 schema_version: "long-table-provider-workload/v2"
 
 policy_binding:
@@ -10,7 +10,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_8_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists"
+  rolling_compliance_status: "WARMING_UP_9_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists; the project target-plus-five ceilings remain the stricter planning constraint"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -140,12 +140,15 @@ overall_effort_ledger:
     assignment_id: "LT-NATIVE-CLAUDE-001-R1"
     provider: claude
     size: long
-    canonical_points: 0
-    completed: false
-    terminal_status: "PROVIDER_EXECUTION_PARTIAL_SESSION_CAP_NO_SOURCE_MUTATION"
-    authenticated_run: "claude-session:f0d909ff-0700-4846-b6d0-65f75598d745; partial provider execution at 2026-08-30T06:58:24Z"
+    canonical_points: 8
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_FINAL_RECOVERY_REJECTED"
+    authenticated_run: "claude-session:f0d909ff-0700-4846-b6d0-65f75598d745;candidate:816824ef85037caac11e90e34c090b54a1c3a7a1"
     direct_production_points: 0
-    exclusion_reason: "Claude executed two read-only preflight tools and then hit its temporary session cap before any source mutation; the same assignment is unfinished and receives no completed-window or direct-production points until its single recovery reaches a terminal outcome"
+    candidate_sha: "816824ef85037caac11e90e34c090b54a1c3a7a1"
+    candidate_tree: "df89b69458fb90c58e619540bd7069445a23b461"
+    terminal_result_digest: "sha256:4ad0c54178a6484bb525ddacf1b8df824281090409e89a5195be9a97c637b588"
+    exclusion_reason: "authenticated Claude completed the single same-session recovery and returned one schema-valid SUCCEEDED result for exact candidate 816824e; OpenAI independently reproduced green TypeScript and Unreal gates but rejected twelve P1/P2 source defects in idempotency, session replacement, role-projection privacy, replay ordering, counterfactual evidence and Unreal context/resync coherence; overall effort is recorded once and direct-production credit remains zero"
   - sequence: 4
     assignment_id: "LT-NATIVE-GROK-HOUSE-001"
     provider: grok
@@ -210,12 +213,12 @@ overall_effort_ledger:
 accepted_direct_production_ledger: []
 
 rolling_window_projection:
-  completed_assignments: 8
+  completed_assignments: 9
   window_size: 20
-  current_canonical_points: {claude: 8, cursor: 20, grok: 8, openai: 0, gemini_antigravity: 10, perplexity: 0}
-  current_partial_shares_percent: {claude: 17.39, cursor: 43.48, grok: 17.39, openai: 0, gemini_antigravity: 21.74, perplexity: 0}
-  enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
-  next_route: "resume the exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; after that terminal outcome dispatch schema-valid LT-NATIVE-CLAUDE-XRTEST-001, freeze and QA it, then dispatch separate clean-room LT-NATIVE-CLAUDE-ROBOT-001; never overlap these leases"
+  current_canonical_points: {claude: 16, cursor: 20, grok: 8, openai: 0, gemini_antigravity: 10, perplexity: 0}
+  current_partial_shares_percent: {claude: 29.63, cursor: 37.04, grok: 14.81, openai: 0, gemini_antigravity: 18.52, perplexity: 0}
+  enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
+  next_route: "dispatch one medium/5 LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 from exact rejected candidate 816824e using only materially new OpenAI source findings; after exact OpenAI QA is terminal, run the already frozen XR-test fallback and then the separate clean-room RobotDealer fallback; never overlap these leases"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -243,12 +246,15 @@ canonical_assignment_ledger:
     provider: claude
     size: long
     canonical_points: 8
-    status: "PROVIDER_EXECUTION_PARTIAL_TEMPORARY_SESSION_CAP_NO_CODE"
+    status: "OPENAI_CHANGES_REQUIRED_FINAL_RECOVERY_REJECTED"
     accepted_direct_production_points: 0
     packet_digest: "sha256:55ce945cbe277c3ac93066db2fc9b33c813ff8270d9da675b5e49ddecfb62a3e"
     work_packet_digest: "sha256:801ae362d21ce3dbc8b880db1d29cf652899815e8a1595a7d8d2943dc42c0279"
     accepted_outcome_digest: null
-    manual_overlay_reason: "single Claude correction and cumulative revalidation; authenticated Claude executed two read-only inspection tools before the temporary session cap, made no source change and remains the same unfinished assignment; one transient same-session recovery is queued for the exact reset"
+    candidate_sha: "816824ef85037caac11e90e34c090b54a1c3a7a1"
+    candidate_tree: "df89b69458fb90c58e619540bd7069445a23b461"
+    terminal_result_digest: "sha256:4ad0c54178a6484bb525ddacf1b8df824281090409e89a5195be9a97c637b588"
+    manual_overlay_reason: "the single same-session Claude recovery completed and returned an exact candidate with green provider and independent build/test gates; three independent OpenAI source reviews rejected twelve newly evidenced safety and privacy defects, so R1 is immutable overall effort only and receives zero direct-production credit"
   - sequence: 4
     assignment_id: "LT-NATIVE-GROK-HOUSE-001"
     provider: grok
@@ -332,11 +338,24 @@ canonical_assignment_ledger:
     candidate_tree: "04f65bc3c72202977312cb38bc039460545daeec"
     manual_overlay_reason: "the final schema-valid source-only recovery remained Cursor-authored and produced a compilable plugin, but exact OpenAI automation failed one test and independent review confirmed a stale-oracle defect plus missing boundary coverage; no further Cursor revision or direct-production credit is permitted"
   - sequence: 10
+    assignment_id: "LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001"
+    provider: claude
+    size: medium
+    canonical_points: 5
+    status: "QUEUED_MATERIALLY_NEW_OPENAI_FINDINGS"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:2314ec2d04333ddf97e7b4f7c7096fa7d2947c145377189402e5a035916e86df"
+    work_packet_digest: "sha256:9bd9b846a9f8f42a9d149b77ad13c7b57a85fbef605a9a28e8163665ef68c144"
+    accepted_outcome_digest: null
+    starting_ref: "816824ef85037caac11e90e34c090b54a1c3a7a1"
+    starting_tree: "df89b69458fb90c58e619540bd7069445a23b461"
+    manual_overlay_reason: "one final bounded medium assignment is justified by twelve materially new independent OpenAI source findings discovered only after the R1 terminal provider result; this is not R2, a transport retry or a duplicate dispatch, has no revision budget, and pending packets do not enter completed effort totals"
+  - sequence: 11
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
     provider: claude
     size: medium
     canonical_points: 5
-    status: "QUEUED_AFTER_CLAUDE_R1_TERMINAL"
+    status: "QUEUED_AFTER_FOUNDATION_FINAL_QA_TERMINAL"
     accepted_direct_production_points: 0
     packet_digest: "sha256:2818b0cb6ff9fa507934a0b8a5a1d6b57a734886085c96c5864204d4c8a5db38"
     work_packet_digest: "sha256:06ea0377d7abc6d7a1fb41a104ac051929820e884c8494caff2c6db3309a9d58"
@@ -344,12 +363,12 @@ canonical_assignment_ledger:
     starting_ref: "33aca6106603342efcf43fb813482cb18fd4b18c"
     starting_tree: "04f65bc3c72202977312cb38bc039460545daeec"
     manual_overlay_reason: "new owner-authorized sequential ownership transfer after terminal Cursor; sole writable path is the XR transactional-decode test and no production decoder change is authorized; pending packets do not enter completed effort totals"
-  - sequence: 11
+  - sequence: 12
     assignment_id: "LT-NATIVE-CLAUDE-ROBOT-001"
     provider: claude
     size: medium
     canonical_points: 5
-    status: "QUEUED_AFTER_XR_FALLBACK_QA_TERMINAL"
+    status: "QUEUED_AFTER_FOUNDATION_AND_XR_QA_TERMINAL"
     accepted_direct_production_points: 0
     packet_digest: "sha256:4cd8d536d1500f776310e0814956b988cb03abe21cc670449c8658b7cad33cba"
     work_packet_digest: "sha256:5b7078b5d4c760609726f3a2f3fe2d9abbe36a581f3023337e385b159b17d750"
@@ -370,6 +389,7 @@ credit_rules:
   - "Provider identity never grants merge, deploy, publication, spending, permissions, store or final-acceptance authority."
   - "Pre-PR76 legacy units remain visible but are excluded from canonical rolling and direct-production ledgers until assignment ID, immutable points, order, authentication and outcome binding are all proven."
   - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
+  - "Projected Claude share is 35.59% after the final foundation assignment, 40.63% after XR and 44.93% after RobotDealer; the final projection exceeds the stricter project 41% planning ceiling during warm-up, so it requires an explicit useful-work variance and cannot be called compliant or repaired with filler."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
@@ -378,4 +398,4 @@ action_reduction:
   duplicate_validation_reduction_percent: 70
   total_action_reduction_percent: 60
 
-# [[OpenAI Director | Codex | 2026-08-30 | 09:58 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-30 | 11:30 UTC | END]]

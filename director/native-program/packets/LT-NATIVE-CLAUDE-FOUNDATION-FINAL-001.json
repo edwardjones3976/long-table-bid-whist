@@ -1,0 +1,137 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "starting_ref": "816824ef85037caac11e90e34c090b54a1c3a7a1",
+  "authority_base_ref": "e939d7dbe66f2aad1dd56d0ca513af45e492cf74",
+  "objective": "Apply one final bounded correction to the exact Claude R1 foundation candidate using only the materially new OpenAI source-audit findings. Repair processed-intent replay defense, connection replacement and presence retirement, role-discriminated welcome privacy, validate-before-replay behavior, concealed-state counterfactual evidence, and Unreal authenticated-context, welcome, resync and dealer-cue coherence. Add adversarial regression coverage, preserve all independently green behavior, run the complete TypeScript and Unreal gates, create one local candidate commit, and return exactly one Director model-result-packet-v1 JSON document as the terminal response.",
+  "non_goals": [
+    "No XR production or XR test edits",
+    "No RobotDealer, Social, HouseCore, session-gateway, Meta SDK, avatar, voice, store or deployment work",
+    "No WebXR or Horizon Worlds companion product",
+    "No new game rules, visual content, audio, music, likeness, archival or cultural assets",
+    "No weakening, deleting, skipping or relabeling an existing acceptance assertion",
+    "No broad refactor outside the exact audited defect paths"
+  ],
+  "authority_snapshot": [
+    {"path": "director/native-program/README.md", "commit_sha": "e939d7dbe66f2aad1dd56d0ca513af45e492cf74", "blob_sha": "63b4dec665c6b1d4ceb0ed65434bb2337080b876"},
+    {"path": "director/native-program/manual-provider-overlay.md", "commit_sha": "e939d7dbe66f2aad1dd56d0ca513af45e492cf74", "blob_sha": "38d370c6399651ea4bc994e7c0991cfc8b25e872"},
+    {"path": "director/native-program/provider-workload.yaml", "commit_sha": "e939d7dbe66f2aad1dd56d0ca513af45e492cf74", "blob_sha": "3b6e725fab7721f66e421c0630a06bd52ff78842"},
+    {"path": "director/native-program/roles-and-responsibilities.md", "commit_sha": "e939d7dbe66f2aad1dd56d0ca513af45e492cf74", "blob_sha": "3f87dde87a312f3601d956fad324677a3f769253"},
+    {"path": "director/native-program/stage-gates.md", "commit_sha": "e939d7dbe66f2aad1dd56d0ca513af45e492cf74", "blob_sha": "c513d1e251c6602e83a8d096032bbd15b63c6b0a"},
+    {"path": "director/privacy-control-policy.md", "commit_sha": "e939d7dbe66f2aad1dd56d0ca513af45e492cf74", "blob_sha": "a31ce14bdaed03f3028480b7572cd9ccf7c0f859"}
+  ],
+  "authority_snapshot_digest": "sha256:ea848c6793680cd104817b522664a40232107417ad3d9e8d8abd083a1f78c6a6",
+  "dependencies": [],
+  "owned_paths": [
+    "services/table-authority/src/table.ts",
+    "services/table-authority/src/session.ts",
+    "services/table-authority/tests/idempotency-flood.test.ts",
+    "services/table-authority/tests/session.test.ts",
+    "services/table-authority/tests/websocket.test.ts",
+    "services/table-authority/tests/projections.test.ts",
+    "packages/protocol/src/wire.ts",
+    "packages/protocol/src/invariants.ts",
+    "packages/rules-core/src/replay.ts",
+    "packages/rules-core/tests/replay.test.ts",
+    "scripts/native/generate-fixtures.ts",
+    "scripts/native/tests/fixtures.test.ts",
+    "fixtures/protocol/rejections.json",
+    "fixtures/protocol/counterfactual.json",
+    "Unreal/Source/LongTableProtocol/Private/LongTableJson.cpp",
+    "Unreal/Source/LongTableTable/Public/LongTableAuthorityClient.h",
+    "Unreal/Source/LongTableTable/Private/LongTableAuthorityClient.cpp",
+    "Unreal/Source/LongTableTable/Private/Tests/LongTableTableTests.cpp"
+  ],
+  "prohibited_paths": [
+    "sources/**",
+    "director/**",
+    "Unreal/Plugins/LongTableXR/**",
+    "Unreal/Plugins/LongTableRobotDealer/**",
+    "Unreal/Plugins/LongTableHouseCore/**",
+    "Unreal/Source/LongTableSocial/**",
+    "Unreal/Content/**",
+    "services/session-gateway/**",
+    "Unreal/Plugins/MetaXR/**",
+    "Unreal/Plugins/MetaXRInteraction/**"
+  ],
+  "constraints": [
+    "Use the verified Unreal Engine 5.7.4 editor at C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+    "Verify exact clean base 816824ef85037caac11e90e34c090b54a1c3a7a1 and preserve its sole-parent provenance",
+    "This is the retry-policy third assignment justified only by materially new independent OpenAI source findings after the R1 terminal result; there is no revision or duplicate-dispatch authority",
+    "Make every processed intent identity non-reusable across authoritative, local and rejected outcomes for the table lifetime, or use an equivalent per-actor monotonic identity scheme; no bounded-ledger eviction may turn an old request into a fresh request that consumes a later preview",
+    "Reject and policy-close a second hello on an already-bound connection before it can overwrite that connection or leave ghost presence; when the same entitled participant reconnects on a new connection, atomically retire presence/binding and emit closeAfter for the replaced raw socket",
+    "Define WelcomeMessage as a closed role-discriminated shape: player requires a seat and PlayerProjection, host forbids a seat and requires HostProjection, public forbids a seat and requires PublicProjection, and dealer forbids a seat and requires null projection; TypeScript and Unreal decoding both fail closed on every crossover",
+    "Validate replay manifest identity and digest before openHand or any state reconstruction; a mismatch outcome carries no reconstructed state",
+    "Generate separate counterfactuals: player retains only the entitled hand while host and public replace all four hands; assert concealed source inputs differ before asserting canonical byte equality",
+    "Replace delimiter-concatenated Unreal context identity with structural comparison or unambiguous serialization so no token, role, table or endpoint pair can collide",
+    "Stage and atomically commit a complete Unreal welcome before broadcasting callbacks; after every synchronous callback, abort continuation of the old frame when context generation changed, including in-flight resend",
+    "A welcome in the same authenticated context cannot reduce LastAppliedVersion, cached projection or resume position",
+    "Resync may become Ready only after coherent newer state was applied; reject stale or empty resync, gaps, disorder, truncation or FromVersion/ToVersion/frame coverage incoherence without silently leaving the client stale",
+    "Non-player welcomes carrying a seat fail closed and a dealer cue inner Frame.TableId must equal its outer cue/envelope table and configured table",
+    "Preserve closed structural privacy controls; regex, blacklist, keyword, substring, scanning, redaction and concealed-object-then-delete controls remain prohibited",
+    "Preserve unrelated user work, existing contribution tags, deterministic build identity and every previously green assertion"
+  ],
+  "prohibited_actions": [
+    "Do not edit outside owned_paths or read prohibited_paths",
+    "Do not push, merge, deploy, publish, open or mutate PRs/issues, post Slack/Linear, purchase, change credentials, permissions or licenses",
+    "Do not install or download Meta SDKs, create accounts, browse unrelated sources or contact another provider",
+    "Do not claim physical Quest, Android package, multiplayer-on-device, human, cultural, rights, store, release or project completion",
+    "Do not repeat or fork this assignment after an ambiguous or terminal provider result"
+  ],
+  "allowed_tools": [
+    "local filesystem and repository tools within the named worktree",
+    "existing Node, TypeScript and test toolchain",
+    "UnrealBuildTool, UnrealEditor-Cmd and compiler for local builds and tests",
+    "authenticated Claude Code FABLE 5 session"
+  ],
+  "allowed_external_effects": [
+    "Create and edit only owned repository paths in the named provider worktree",
+    "Run local builds and tests",
+    "Create one local candidate commit and return its exact SHA",
+    "Return one JSON result packet in the authenticated terminal response"
+  ],
+  "acceptance_checks": [
+    "Exact starting SHA and clean tree are verified; candidate handoff has one exact head, tree and sole parent",
+    "A rejected intent remains terminal after more than 512 rejected IDs and 4096 local IDs and can never consume a later same-version preview",
+    "A repeated hello on one connection creates no ghost seat or presence, and a same-identity new-socket reconnect closes the replaced raw socket",
+    "Every role/seat/projection welcome mismatch is rejected by TypeScript and Unreal before any concealed or client-visible state is applied",
+    "Manifest mismatch is detected before replay and returns no reconstructed state",
+    "Host/public counterfactuals change all four source hands, player changes every non-entitled hand, assert non-vacuity, and preserve canonical entitled bytes",
+    "Previously colliding authenticated context tuples reset independently",
+    "A reentrant welcome callback cannot contaminate a newly configured context; callbacks observe one fully committed context",
+    "Older same-context welcomes cannot roll version, projection or resume position backwards",
+    "Empty, stale, gapped, disordered, truncated or range-incoherent resync remains fail-closed; only coherent newer coverage exits Resyncing",
+    "Non-player welcomes with seats and dealer cues with mismatched inner table IDs fail closed",
+    "Focused adversarial TypeScript tests, strict native typecheck, fixture-current check and production build pass",
+    "UnrealBuildTool compiles LongTableEditor and LongTable Win64 Development; LongTable.Protocol, LongTable.Table and complete headless LongTable automation report zero failures and zero not-run tests",
+    "No executable privacy control uses regex, blacklist, keyword, substring, scanning or redaction and no concealed member exists in host/public/dealer output shapes",
+    "Only owned paths changed; no generated build, cache or log artifact is committed",
+    "Terminal output is exactly one JSON document valid against model-result-packet-v1 and repeats this packet identity and complete correlation object"
+  ],
+  "evidence_requirements": [
+    "Authenticated Claude session identifier, FABLE 5 model and MAX effort label",
+    "Exact starting SHA, candidate SHA, tree SHA, parent and clean changed-file allowlist comparison",
+    "Named adversarial regression results for every acceptance check",
+    "Focused and full TypeScript tests, strict typecheck, fixture-current check and production build results",
+    "Both Unreal target builds plus scoped and complete Unreal automation reports with exact test counts",
+    "Known limitations including absent Meta plugins, account, headset, Android package and human evidence",
+    "One schema-valid model-result-packet-v1 with status, checks, acceptance, risks, blockers, decisions, side effects and revision recommendation"
+  ],
+  "approval_requirements": [
+    "OpenAI QA must independently review, build and accept the exact candidate before integration or direct-production credit",
+    "No further Claude revision, transport duplicate or other-provider correction is authorized for these paths",
+    "Owner separately authorizes merge, release, spending, credential, license, external-account, device, human and store effects"
+  ],
+  "limits": {"budget_usd": 0, "timeout_seconds": 7200, "max_hops": 0, "max_revisions": 0},
+  "idempotency_key": "LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001-816824e",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001",
+    "source_event_id": "openai-final-source-audit-20260830",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}

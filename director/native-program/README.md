@@ -57,22 +57,37 @@ physical headset, external account, human cohort, or owner gate.
 
 ## Provider code ownership
 
-- Claude: TypeScript authority, protocol, core table/runtime, composition root.
+- Claude: TypeScript authority, protocol, core table/runtime, composition root;
+  the one final foundation correction and the two sequential exhausted-route
+  fallback leases described in the bound packets.
 - Cursor: the self-registering `Unreal/Plugins/LongTableXR/**` project plugin
   for hands/controllers, presence fallback, accessibility and MR/VR adapters.
 - Grok: private-session, host, reconnect, voice/safety and social adapters,
   plus the prospective clean-room in-repository HouseCore fallback.
-- Gemini Antigravity: the isolated source-only robot-dealer presentation lane
-  driven by a closed public cue. Its current run ended unavailable because the
-  configured sandbox denied writes and commands; its historical Long Table
-  House core attempt remains quarantined and is not an integration dependency.
+- Gemini Antigravity: no active writer lease. Its final source-only robot-dealer
+  candidate and historical Long Table House core attempt are both rejected and
+  quarantined; neither is an integration dependency or a fallback input.
 - OpenAI: cross-module QA, evidence binding, findings, kickback and acceptance;
   no product-code ownership.
 
-Cursor may later bind the accepted robot-dealer interface from Cursor-owned XR
-paths, but it does not implement or edit the Antigravity plugin. Grok may emit
+Cursor may later bind an independently accepted robot-dealer interface from
+Cursor-owned XR paths, but it does not implement or edit that plugin. Grok may emit
 closed public dealer cues from its own surfaces, but it likewise cannot edit the
 presenter.
+
+## Current foundation gate
+
+Claude R1 produced exact candidate
+`816824ef85037caac11e90e34c090b54a1c3a7a1`. Independent TypeScript and UE5.7
+build/test gates are green, but three OpenAI source reviews rejected twelve
+idempotency, session, structural-privacy, replay and Unreal context/resync
+defects. The candidate is not accepted and cannot be integrated.
+
+`LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001` is one bounded medium/5 assignment
+created from that materially new evidence. It owns only the audited correction
+and regression paths, has no revision budget, and must become OpenAI-QA terminal
+before the already-frozen XR test-only fallback and clean-room RobotDealer
+fallback run sequentially.
 
 The dependency-independent Grok fallback is frozen by
 `contracts/long-table-house-public-v1.json`. That contract is the entire
