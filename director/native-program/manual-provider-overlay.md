@@ -300,6 +300,35 @@ disclosure remains part of its evidence. OpenAI still verifies both target
 files, the complete changed-file set, UBT recognition, and the exact candidate
 before any acceptance credit.
 
+## Claude foundation-final rejection and Grok safety transfer
+
+The preserved Cowork task resumed after its explicit plan reset and returned one
+authenticated terminal archive. The archive and result packet validated, but
+its patch was relative to the provider's partial checkpoint rather than exact
+packet base `816824e`. OpenAI authored no product correction: it mechanically
+composed the provider checkpoint and digest-verified final overlay into exact
+sole-parent candidate `a6742a04a384a88e7342530041a1f0d3ab71db2c`, tree
+`0489b183e70da5751c31e9b80ed40a8b631ba55a`.
+
+OpenAI reproduced `45/45` focused tests, `193/193` full tests under
+CI-equivalent line endings, strict typing, fixture-current, production build
+and both UE5.7 Windows target builds. Independent source QA nevertheless found
+two P1s and one P2: a policy-closed WebSocket can continue dispatching
+coalesced frames and resurrect a dead session, an Unreal multicast can deliver
+an old-context event to later listeners after listener-one reconfiguration, and
+the table-lifetime processed-intent `Map` permits authenticated unbounded heap
+growth. Complete Unreal automation was not run after this fail-fast rejection.
+
+The no-revision Claude packet is terminal at medium/5 overall-effort points and
+zero direct-production credit. Its heartbeat was deleted. The owner's current
+instruction to fix and complete everything authorizes one new medium/5
+sequential fallback, `LT-NATIVE-GROK-AUTHORITY-SAFETY-001`, from exact
+`a6742a0`. Grok is under target and receives only seven exact defect/regression
+paths. This is not another Claude attempt, not a HouseCore retry, not concurrent
+cross-writing and not filler. One primary Grok dispatch is permitted; one
+recovery exists only for substantive OpenAI kickback or a genuinely temporary
+transport failure. OpenAI remains the sole acceptance authority.
+
 ## Acceptance
 
 Manual routing never weakens acceptance. Each provider candidate still requires:

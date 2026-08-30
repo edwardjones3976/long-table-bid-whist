@@ -1,4 +1,4 @@
-# [[OpenAI Director | Codex | 2026-08-30 | 11:30 UTC | BEGIN]]
+# [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]]
 schema_version: "long-table-provider-workload/v2"
 
 policy_binding:
@@ -10,7 +10,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_9_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists; the project target-plus-five ceilings remain the stricter planning constraint"
+  rolling_compliance_status: "WARMING_UP_10_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists; the project target-plus-five ceilings remain the stricter planning constraint"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -87,10 +87,10 @@ native_code_assignments:
     allocation: {native_foundation_first_deal: 2, private_game_night: 1, long_table_house: 1}
     owned_surfaces: ["Unreal/Plugins/LongTableXR/**"]
   grok:
-    scope_forecast_units: 17
+    scope_forecast_units: 22
     credit_rule: "forecast is not credit; HouseCore and later social work use separate actual packets"
-    allocation: {native_foundation_first_deal: 5, private_game_night: 6, long_table_house: 6}
-    owned_surfaces: ["services/session-gateway", "Unreal/Source/LongTableSocial", "Unreal/Content/Social", "Unreal/Plugins/LongTableHouseCore"]
+    allocation: {native_foundation_first_deal: 10, private_game_night: 6, long_table_house: 6}
+    owned_surfaces: ["sequential authority-safety fallback paths in the active packet", "services/session-gateway", "Unreal/Source/LongTableSocial", "Unreal/Content/Social", "Unreal/Plugins/LongTableHouseCore"]
     house_core_authority: "Grok clean-room CLI and final browser fallback are terminal unavailable with no complete downloadable bundle; quarantined Antigravity source remains prohibited and any later HouseCore route requires a new packet"
   gemini_antigravity:
     scope_forecast_units: 8
@@ -108,13 +108,13 @@ native_code_assignments:
     responsibility: "reuse accepted public research; no duplicate paid query"
 
 non_credit_scope_forecast_mix:
-  total: 122
-  claude: {units: 72, percent: 59.02}
-  cursor: {units: 20, percent: 16.39}
-  grok: {units: 17, percent: 13.93}
-  gemini_antigravity: {units: 8, percent: 6.56}
-  perplexity: {units: 4, percent: 3.28}
-  external_openai_codex: {units: 1, percent: 0.82}
+  total: 127
+  claude: {units: 72, percent: 56.69}
+  cursor: {units: 20, percent: 15.75}
+  grok: {units: 22, percent: 17.32}
+  gemini_antigravity: {units: 8, percent: 6.30}
+  perplexity: {units: 4, percent: 3.15}
+  external_openai_codex: {units: 1, percent: 0.79}
   disposition: "scope arithmetic only; prohibited as rolling evidence, dispatch authority, accepted credit, or completion evidence"
 
 overall_effort_ledger:
@@ -209,16 +209,29 @@ overall_effort_ledger:
     authenticated_run: "cursor-session:a0bf5116c-ce93-4fa7-880a-a35b652f3476;request:a6b7b6dd-01da-4709-9e2b-99c7a23e9d9d;candidate:33aca6106603342efcf43fb813482cb18fd4b18c"
     direct_production_points: 0
     exclusion_reason: "Cursor completed the final source-only recovery; OpenAI mechanically froze candidate 33aca61, verified a green UE5.7 editor build, then reproduced focused XR automation at 9 pass / 1 fail. The remaining failures are stale-baseline test-oracle defects and ConfirmGeneration above-max coverage is missing; revision authority is exhausted and production credit remains zero"
+  - sequence: 10
+    assignment_id: "LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001"
+    provider: claude
+    size: medium
+    canonical_points: 5
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_FINAL_REJECTED_SEQUENTIAL_GROK_TRANSFER"
+    authenticated_run: "claude-cowork:cse_01J1WZXZMbRcQgYj3nS2dFJb;candidate:a6742a04a384a88e7342530041a1f0d3ab71db2c"
+    direct_production_points: 0
+    candidate_sha: "a6742a04a384a88e7342530041a1f0d3ab71db2c"
+    candidate_tree: "0489b183e70da5751c31e9b80ed40a8b631ba55a"
+    terminal_result_digest: "sha256:f8c3248f22e91ba055091a9a90a85dc8d1433741e222ddf2dae004b833362dd7"
+    exclusion_reason: "Claude resumed the single authenticated Cowork recovery and returned a schema-valid result archive. OpenAI composed the preserved provider checkpoint and final overlay onto the exact base, reproduced 45/45 focused tests, 193/193 full tests under CI-equivalent LF checkout, strict typing, fixture-current, production build and both UE5.7 Windows target builds, then rejected two P1 source defects and one P2 safety defect: coalesced frames continue after policy close, Unreal multicast reentrancy leaks an old-context event to later listeners, and the processed-intent Map permits authenticated unbounded heap growth. The packet has no revision budget, direct-production credit remains zero, and the owner-authorized sequential fallback transfers only seven exact paths to Grok."
 
 accepted_direct_production_ledger: []
 
 rolling_window_projection:
-  completed_assignments: 9
+  completed_assignments: 10
   window_size: 20
-  current_canonical_points: {claude: 16, cursor: 20, grok: 8, openai: 0, gemini_antigravity: 10, perplexity: 0}
-  current_partial_shares_percent: {claude: 29.63, cursor: 37.04, grok: 14.81, openai: 0, gemini_antigravity: 18.52, perplexity: 0}
+  current_canonical_points: {claude: 21, cursor: 20, grok: 8, openai: 0, gemini_antigravity: 10, perplexity: 0}
+  current_partial_shares_percent: {claude: 35.59, cursor: 33.90, grok: 13.56, openai: 0, gemini_antigravity: 16.95, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "resume the existing authenticated Cowork task once at or after 2026-08-30T10:42:00-07:00 following the live 10:12 recheck that superseded the earlier 10:10 reset with 10:40; this is the same assignment and transport, not a new dispatch, retry, row or credit; if the existing task cannot resume, mark the route unavailable; only after exact OpenAI QA is terminal may the already frozen XR-test fallback and separate clean-room RobotDealer fallback run sequentially"
+  next_route: "dispatch the new owner-authorized medium/5 Grok authority-safety fallback once from exact rejected candidate a6742a0; it is a sequential lease for seven exact paths and materially new OpenAI findings, not a Claude retry, HouseCore retry, concurrent writer or filler. Only after exact OpenAI QA accepts that foundation may the already frozen XR-test and RobotDealer fallbacks run sequentially"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -342,7 +355,7 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "PAUSED_AFTER_LIVE_USAGE_CAP_RESUME_NOT_BEFORE_2026-08-30T10:42:00-07:00"
+    status: "OPENAI_CHANGES_REQUIRED_FINAL_REJECTED_SEQUENTIAL_GROK_TRANSFER"
     accepted_direct_production_points: 0
     packet_digest: "sha256:2314ec2d04333ddf97e7b4f7c7096fa7d2947c145377189402e5a035916e86df"
     work_packet_digest: "sha256:9bd9b846a9f8f42a9d149b77ad13c7b57a85fbef605a9a28e8163665ef68c144"
@@ -350,6 +363,10 @@ canonical_assignment_ledger:
     transport_delta_file_sha256: "sha256:867c415cbceb4188e28c174411428b27fcd64383e8bef5699963779edfd554ea"
     transport_delta_digest: "sha256:397b66b2bf80755741089a803fb2f31092a2d1c01e08b643a4edc03b99085dd5"
     accepted_outcome_digest: null
+    candidate_sha: "a6742a04a384a88e7342530041a1f0d3ab71db2c"
+    candidate_tree: "0489b183e70da5751c31e9b80ed40a8b631ba55a"
+    terminal_result_digest: "sha256:f8c3248f22e91ba055091a9a90a85dc8d1433741e222ddf2dae004b833362dd7"
+    deliverable_archive_digest: "sha256:ae5a01386fc3e09f31fbcae41849f09639e8b0987ae23cc49be7610e9123241b"
     starting_ref: "816824ef85037caac11e90e34c090b54a1c3a7a1"
     starting_tree: "df89b69458fb90c58e619540bd7069445a23b461"
     cli_checkpoint_sha: "bf277215f296593ff1ac092becba1d65f0453de3"
@@ -359,17 +376,31 @@ canonical_assignment_ledger:
     browser_code_preflight: "UNAVAILABLE_BEFORE_PROMPT_100_PERCENT_5_HOUR_LIMIT"
     cowork_input_archive_sha256: "sha256:b5936893cb0e6c2fc3c1b072e9921dccc90db8c60a8299c682dabf0345c6a849"
     cowork_task_url: "https://claude.ai/cowork/cse_01J1WZXZMbRcQgYj3nS2dFJb"
-    cowork_status: "PAUSED_EXPLICIT_USAGE_RESET_NO_OUTPUT"
+    cowork_status: "TERMINAL_SUCCEEDED_PROVIDER_RESULT_OPENAI_REJECTED"
     cowork_prior_usage_reset_superseded: "2026-08-30T10:10:00-07:00"
     cowork_latest_usage_observed_at: "2026-08-30T10:12:56-07:00"
     cowork_usage_reset: "2026-08-30T10:40:00-07:00"
     cowork_resume_not_before: "2026-08-30T10:42:00-07:00"
     cowork_same_task_continuation_is_retry: false
     resume_heartbeat_id: "resume-claude-foundation-correction"
-    resume_heartbeat_status: "ACTIVE_ONE_SHOT_RESCHEDULED_AFTER_LIVE_RESET_CHANGE"
+    resume_heartbeat_status: "DELETED_AFTER_SUCCESSFUL_RESUME_AND_ARTIFACT_MATERIALIZATION"
     provider_evidence: "artifacts/native-program/providers/2026-08-30-claude-foundation-final.md"
-    manual_overlay_reason: "one final bounded medium assignment is justified by twelve materially new independent OpenAI source findings discovered only after the R1 terminal provider result; its primary Claude CLI route stopped explicitly at a temporary 429 after writing ten owned files, Claude Code web was unavailable before prompt at the same 100 percent cap, and the authenticated Cowork recovery accepted the sanitized archive but returned no work because the account reached its explicit plan limit; the live 10:12 recheck still showed the cap and superseded the earlier 10:10 reset with 10:40, so no prompt was sent and the same Cowork task is planned to resume once after 10:42 with no new dispatch, retry, row or credit; no purchase is authorized under budget_usd zero, this is not R2, has no revision budget, and remains pending"
+    manual_overlay_reason: "the same Cowork task resumed after its explicit reset and produced one authenticated archive. OpenAI found the bundled patch was relative to the preserved partial checkpoint, then mechanically composed that checkpoint and the digest-verified final overlay into one sole-parent candidate on 816824e. Executable gates were green, but independent source review reproduced three safety blockers. This no-revision packet is immutable overall effort only; the owner-authorized useful fallback is a new Grok packet for seven exact paths, not another Claude attempt."
   - sequence: 11
+    assignment_id: "LT-NATIVE-GROK-AUTHORITY-SAFETY-001"
+    provider: grok
+    size: medium
+    canonical_points: 5
+    status: "READY_FOR_SINGLE_PRIMARY_DISPATCH"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:4dc2923a48df2bdbe452c8576f9c6bce84c998782a148e109521483337aed0c1"
+    work_packet_digest: "sha256:47268f714722a19a783b5ebe47a4137a5abaf4b55f68d1363ff1cb576691ff6e"
+    accepted_outcome_digest: null
+    starting_ref: "a6742a04a384a88e7342530041a1f0d3ab71db2c"
+    starting_tree: "0489b183e70da5751c31e9b80ed40a8b631ba55a"
+    sanitized_input_archive_digest: "sha256:126dd95b8628638d89b12ce25173dcede2fc0f54652f3235d23aedf01fa73d4c"
+    manual_overlay_reason: "new owner-authorized sequential fallback for three materially new independent OpenAI safety findings after the terminal Claude packet; Grok is under target, owns only seven exact paths, receives one primary attempt, cannot read rejected-provider evidence as authority, and earns no direct-production credit before exact OpenAI acceptance"
+  - sequence: 12
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
     provider: claude
     size: medium
@@ -382,7 +413,7 @@ canonical_assignment_ledger:
     starting_ref: "33aca6106603342efcf43fb813482cb18fd4b18c"
     starting_tree: "04f65bc3c72202977312cb38bc039460545daeec"
     manual_overlay_reason: "new owner-authorized sequential ownership transfer after terminal Cursor; sole writable path is the XR transactional-decode test and no production decoder change is authorized; pending packets do not enter completed effort totals"
-  - sequence: 12
+  - sequence: 13
     assignment_id: "LT-NATIVE-CLAUDE-ROBOT-001"
     provider: claude
     size: medium
@@ -408,7 +439,7 @@ credit_rules:
   - "Provider identity never grants merge, deploy, publication, spending, permissions, store or final-acceptance authority."
   - "Pre-PR76 legacy units remain visible but are excluded from canonical rolling and direct-production ledgers until assignment ID, immutable points, order, authentication and outcome binding are all proven."
   - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
-  - "Projected Claude share is 35.59% after the final foundation assignment, 40.63% after XR and 44.93% after RobotDealer; the final projection exceeds the stricter project 41% planning ceiling during warm-up, so it requires an explicit useful-work variance and cannot be called compliant or repaired with filler."
+  - "Claude's share is 35.59% after its terminal foundation assignment; after the Grok fallback it projects to 32.81%, after XR to 37.68% and after RobotDealer to 41.89%. The final projection exceeds the stricter project 41% planning ceiling during warm-up, so it requires an explicit useful-work variance and cannot be called compliant or repaired with filler."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
@@ -417,4 +448,4 @@ action_reduction:
   duplicate_validation_reduction_percent: 70
   total_action_reduction_percent: 60
 
-# [[OpenAI Director | Codex | 2026-08-30 | 11:30 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]]

@@ -154,3 +154,28 @@ OpenAI sent no provider prompt and performed no product mutation. The same
 heartbeat was moved to one 10:42 Pacific occurrence; sequence 10 remains pending
 with zero completed-window and direct-production points.
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 17:13 UTC | END]] -->
+
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]] -->
+## Foundation-final terminal rejection and sequential fallback
+
+Sequence 10 is terminal. Authenticated Claude Cowork returned one valid result
+archive; OpenAI mechanically composed the provider-authored checkpoint and final
+overlay into exact candidate `a6742a0`, then reproduced the focused/full
+TypeScript, typing, fixture, production-build and two Windows UE5.7 target-build
+gates. Independent source QA rejected two P1 defects and one P2 safety defect,
+so Claude receives medium/5 overall-effort points and zero direct-production
+credit. Its no-revision lease and continuation heartbeat are closed.
+
+The completed window is now 10 of 20 and 59 points: Claude 21 (35.59%), Cursor
+20 (33.90%), Grok 8 (13.56%), Gemini Antigravity 10 (16.95%), OpenAI 0 and
+Perplexity 0. This remains an exact PR76 warm-up advisory, not a compliance
+pass.
+
+Sequence 11 is the new owner-authorized medium/5
+`LT-NATIVE-GROK-AUTHORITY-SAFETY-001` fallback. It transfers only seven exact
+paths after terminal Claude, starts from `a6742a0`, and addresses materially new
+OpenAI findings. Pending work earns no points. If Grok terminates, the projected
+share is Claude 32.81%, Cursor 31.25%, Grok 20.31%, Gemini Antigravity 15.63%.
+The queued Claude XR and RobotDealer assignments move to sequences 12 and 13 and
+remain closed until the foundation is OpenAI-accepted.
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]] -->

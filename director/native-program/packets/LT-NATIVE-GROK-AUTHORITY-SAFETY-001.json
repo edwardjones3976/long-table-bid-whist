@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-GROK-AUTHORITY-SAFETY-001",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "starting_ref": "a6742a04a384a88e7342530041a1f0d3ab71db2c",
+  "authority_base_ref": "4c5bd583ebdba8825f40e047971cfc86982e833c",
+  "objective": "Perform one bounded sequential fallback correction of the three newly reproduced OpenAI safety defects in the terminal Claude foundation candidate. Stop WebSocket frame dispatch immediately after a policy close even when multiple frames are coalesced in one TCP write; replace the table-lifetime unbounded processed-intent Map with a memory-bounded non-reuse design that cannot let old authoritative, local or rejected identities become fresh or let an unauthorized spectator exhaust the table; and make Unreal client event dispatch reentrancy-safe so no listener observes an old-context event while the client is already configured for a new context. Add adversarial regression coverage, preserve every green foundation behavior and structural privacy invariant, run all available gates, create one sole-parent candidate, and return one model-result-packet-v1 JSON document.",
+  "non_goals": [
+    "No XR, RobotDealer, Social, HouseCore, session-gateway, Meta SDK, avatar, voice, store or deployment work",
+    "No rules, protocol vocabulary, projection shape, fixture, visual, audio, music, likeness, archival or cultural-content changes",
+    "No broad refactor outside the three reproduced defects",
+    "No weakening, deletion, skipping or relabeling of any existing acceptance assertion",
+    "No physical Quest, Android package, human, cultural, rights, store, release or project-completion claim"
+  ],
+  "authority_snapshot": [
+    {"path": "director/native-program/README.md", "commit_sha": "4c5bd583ebdba8825f40e047971cfc86982e833c", "blob_sha": "7a15fd21a623b34d7245dd55d63cb3376f9ccc63"},
+    {"path": "director/native-program/manual-provider-overlay.md", "commit_sha": "4c5bd583ebdba8825f40e047971cfc86982e833c", "blob_sha": "0b185d01cf7b2fd373daed814f7792c31476333c"},
+    {"path": "director/native-program/provider-workload.yaml", "commit_sha": "4c5bd583ebdba8825f40e047971cfc86982e833c", "blob_sha": "494b71d3b9bf9e3409aab1c472f4bc3d5e515d10"},
+    {"path": "director/native-program/roles-and-responsibilities.md", "commit_sha": "4c5bd583ebdba8825f40e047971cfc86982e833c", "blob_sha": "567c83b4aa8dfe29fe4a48410d4885963f90ccc4"},
+    {"path": "director/native-program/stage-gates.md", "commit_sha": "4c5bd583ebdba8825f40e047971cfc86982e833c", "blob_sha": "2eb89fb168388a43dab0baed99f4a73427fc4289"},
+    {"path": "director/privacy-control-policy.md", "commit_sha": "4c5bd583ebdba8825f40e047971cfc86982e833c", "blob_sha": "a31ce14bdaed03f3028480b7572cd9ccf7c0f859"}
+  ],
+  "authority_snapshot_digest": "sha256:051e276acc878ff2a22d6ff69902c5fe0e192922c70f60ab2cb273b9b8f2d22e",
+  "dependencies": [],
+  "owned_paths": [
+    "services/table-authority/src/table.ts",
+    "services/table-authority/src/websocket-server.ts",
+    "services/table-authority/tests/idempotency-flood.test.ts",
+    "services/table-authority/tests/websocket.test.ts",
+    "Unreal/Source/LongTableTable/Public/LongTableAuthorityClient.h",
+    "Unreal/Source/LongTableTable/Private/LongTableAuthorityClient.cpp",
+    "Unreal/Source/LongTableTable/Private/Tests/LongTableTableTests.cpp"
+  ],
+  "prohibited_paths": [
+    "sources/**",
+    "director/**",
+    "Unreal/Plugins/**",
+    "Unreal/Source/LongTableSocial/**",
+    "Unreal/Content/**",
+    "services/session-gateway/**"
+  ],
+  "constraints": [
+    "Verify exact clean base a6742a04a384a88e7342530041a1f0d3ab71db2c and preserve it as the sole parent",
+    "This is a new owner-authorized sequential fallback after the Claude lease became terminal; Grok is the only writer for the seven owned paths during this packet",
+    "After finish or policy-close sets the WebSocket connection closed, no later frame already buffered in the same data event may reach session dispatch, mutate presence or replace a live connection",
+    "Processed-intent memory must have a fixed demonstrable upper bound independent of attacker-chosen unique IDs, with no eviction or rollover that makes an old identity fresh; a public or otherwise unauthorized participant cannot consume unbounded memory or exhaust legitimate player progress",
+    "A hard shared cap that an unauthorized spectator can trivially exhaust is not sufficient; the design must remain fail-closed and preserve legitimate bounded table progress",
+    "Unreal callback dispatch must define one atomic context epoch: a reentrant Configure from the first listener may be deferred or may abort remaining old-frame work, but a later listener must never observe an old event while the client exposes the new authenticated context",
+    "Use the verified Unreal Engine 5.7.4 editor at C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Binaries\\Win64\\UnrealEditor.exe when available",
+    "Preserve closed structural privacy controls; regex, blacklist, keyword, substring, scanning, redaction and concealed-object-then-delete controls remain prohibited",
+    "Preserve deterministic build identity, all contribution tags, every independently green test, and unrelated user work"
+  ],
+  "prohibited_actions": [
+    "Do not edit outside owned_paths or read prohibited_paths",
+    "Do not push, merge, deploy, publish, mutate PRs/issues, post Slack/Linear, purchase, change credentials, permissions or licenses",
+    "Do not contact another provider or use rejected provider output as review authority",
+    "Do not add a regex, blacklist, keyword, substring, scanning or redaction privacy control",
+    "Do not claim completion from provider self-review"
+  ],
+  "allowed_tools": [
+    "local filesystem and repository tools inside the isolated Grok worktree or sanitized browser bundle",
+    "existing Node, TypeScript and test toolchain",
+    "UnrealBuildTool, UnrealEditor-Cmd and compiler when available",
+    "authenticated Grok Build or Grok Chrome coding surface"
+  ],
+  "allowed_external_effects": [
+    "Create and edit only the seven owned repository paths in the isolated provider workspace",
+    "Run local builds and tests",
+    "Create one local candidate commit or return one exact changed-file bundle for OpenAI mechanical materialization",
+    "Return one JSON result packet in the authenticated terminal response"
+  ],
+  "acceptance_checks": [
+    "Exact starting SHA and clean tree are verified; candidate handoff has one exact head, tree and sole parent",
+    "A real loopback test sends at least three masked hello frames in one TCP write; the policy-closing frame stops consumption, server and session connection counts both reach zero, presence is disconnected, and no buffered or post-close frame can resurrect or displace a session",
+    "Processed-intent state has a code-level fixed memory bound independent of unique rejected, local and authoritative IDs while an old ID can never consume a later same-version preview",
+    "An unauthorized public participant flood cannot grow the ledger without bound or exhaust the legitimate player budget; the test proves both the attack rejection and non-vacuous continued player progress",
+    "A two-listener Unreal automation test reconfigures from listener one and proves listener two never observes an old Ready/projection event while the client exposes the new authenticated context",
+    "Ordinary same-identity socket replacement, role-discriminated welcomes, replay-before-open validation, counterfactual non-vacuity, resync coherence and dealer-cue table binding remain green",
+    "Focused adversarial TypeScript tests, full tests, strict native typecheck, fixture-current check and production build pass",
+    "UnrealBuildTool compiles LongTableEditor and LongTable Win64 Development; LongTable.Protocol, LongTable.Table and complete headless LongTable automation report zero failures and zero not-run tests",
+    "No executable privacy control uses regex, blacklist, keyword, substring, scanning or redaction and no concealed member enters host/public/dealer output shapes",
+    "Only owned paths changed; no generated build, cache or log artifact is committed",
+    "Terminal output is exactly one JSON document valid against model-result-packet-v1 and repeats this packet identity and complete correlation object"
+  ],
+  "evidence_requirements": [
+    "Authenticated Grok run identifier, exact model/surface and terminal status",
+    "Exact starting SHA, candidate SHA, tree SHA, sole parent and clean changed-file allowlist comparison",
+    "The coalesced-frame reproduction before and after correction, including server/session connection and presence values",
+    "A static memory-bound explanation plus adversarial unique-ID and unauthorized-spectator evidence with non-vacuous legitimate progress",
+    "Two-listener reentrant Unreal automation evidence",
+    "Focused and full TypeScript tests, strict typecheck, fixture-current check, production build, both Unreal target builds and scoped/complete automation results",
+    "Known limitations including absent Meta plugins, account, headset, Android package and human evidence",
+    "One schema-valid model-result-packet-v1 with checks, acceptance, risks, blockers, side effects and revision recommendation"
+  ],
+  "approval_requirements": [
+    "OpenAI QA must independently review, build and accept the exact candidate before integration or direct-production credit",
+    "One consolidated Grok revision is permitted only for substantive OpenAI QA kickback or a genuinely temporary transport failure; never repeat an ambiguous paid dispatch",
+    "Owner separately authorizes merge, release, spending, credential, license, external-account, device, human and store effects"
+  ],
+  "limits": {"budget_usd": 0, "timeout_seconds": 7200, "max_hops": 0, "max_revisions": 1},
+  "idempotency_key": "LT-NATIVE-GROK-AUTHORITY-SAFETY-001-a6742a0",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-GROK-AUTHORITY-SAFETY-001",
+    "source_event_id": "owner-authorized-complete-everything-20260830",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}

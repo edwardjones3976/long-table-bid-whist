@@ -1,4 +1,4 @@
-<!-- [[OpenAI Director | Codex | 2026-08-30 | 05:27 UTC | BEGIN]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]] -->
 # The Long Table native program — canonical overlay
 
 This directory is the current Director record for the complete native Meta
@@ -57,13 +57,14 @@ physical headset, external account, human cohort, or owner gate.
 
 ## Provider code ownership
 
-- Claude: TypeScript authority, protocol, core table/runtime, composition root;
-  the one final foundation correction and the two sequential exhausted-route
+- Claude: terminal TypeScript authority/protocol/core-table foundation output;
+  no active foundation lease, plus two later sequential exhausted-route
   fallback leases described in the bound packets.
 - Cursor: the self-registering `Unreal/Plugins/LongTableXR/**` project plugin
   for hands/controllers, presence fallback, accessibility and MR/VR adapters.
-- Grok: private-session, host, reconnect, voice/safety and social adapters,
-  plus the prospective clean-room in-repository HouseCore fallback.
+- Grok: the active seven-path authority-safety fallback, then separately gated
+  private-session, host, reconnect, voice/safety and social adapters plus the
+  prospective clean-room in-repository HouseCore fallback.
 - Gemini Antigravity: no active writer lease. Its final source-only robot-dealer
   candidate and historical Long Table House core attempt are both rejected and
   quarantined; neither is an integration dependency or a fallback input.
@@ -77,27 +78,21 @@ presenter.
 
 ## Current foundation gate
 
-Claude R1 produced exact candidate
-`816824ef85037caac11e90e34c090b54a1c3a7a1`. Independent TypeScript and UE5.7
-build/test gates are green, but three OpenAI source reviews rejected twelve
-idempotency, session, structural-privacy, replay and Unreal context/resync
-defects. The candidate is not accepted and cannot be integrated.
+Claude foundation-final produced exact sole-parent candidate
+`a6742a04a384a88e7342530041a1f0d3ab71db2c`. OpenAI reproduced `45/45` focused
+tests, `193/193` full tests under CI-equivalent line endings, strict typing,
+fixture-current, production build and both UE5.7 Windows target builds. Source
+QA nevertheless reproduced two P1s and one P2: coalesced frames continue after
+policy close, later Unreal listeners can observe an old-context callback after
+reentrant configuration, and the processed-intent Map grows without bound.
+The no-revision Claude packet is terminal, unaccepted and worth zero production
+credit.
 
-`LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001` is one bounded medium/5 assignment
-created from that materially new evidence. It owns only the audited correction
-and regression paths, has no revision budget, and must become OpenAI-QA terminal
-before the already-frozen XR test-only fallback and clean-room RobotDealer
-fallback run sequentially.
-
-The authenticated CLI run stopped at a temporary usage limit after ten owned
-file edits; OpenAI preserved those bytes as an unaccepted mechanical checkpoint.
-The materially different Cowork transport accepted the sanitized checkpoint but
-returned no output when the same account reached its explicit plan limit. The
-existing Cowork task remained paused during the live 10:12 recheck, when the
-current usage banner superseded its earlier 10:10 reset with `2026-08-30 10:40
-America/Los_Angeles`. No prompt was sent. The same task is planned to resume once
-after 10:42. This pause adds no assignment, retry, workload credit or permission
-to buy credits, and it does not open any downstream provider lease.
+`LT-NATIVE-GROK-AUTHORITY-SAFETY-001` is the new owner-authorized medium/5
+sequential fallback. It starts from `a6742a0`, gives under-target Grok one writer
+lease for seven exact defect/regression paths, and requires real loopback,
+bounded-memory and two-listener Unreal evidence. It is not a Claude or HouseCore
+retry. XR-test and RobotDealer remain queued until exact OpenAI acceptance.
 
 The dependency-independent Grok fallback is frozen by
 `contracts/long-table-house-public-v1.json`. That contract is the entire
@@ -122,4 +117,4 @@ accepted authority and robot-cue contracts.
 - Director policy source: `director-orchestrator@cc791364e2f1ff1ac4c72e01c7122296e4ff7362`
   (merged PR #76 semantics; local service activation is a separate gate).
 
-<!-- [[OpenAI Director | Codex | 2026-08-30 | 05:27 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]] -->

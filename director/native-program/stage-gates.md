@@ -1,4 +1,4 @@
-<!-- [[OpenAI Director | Codex | 2026-08-30 | 05:27 UTC | BEGIN]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]] -->
 # Three large native chunks and release gates
 
 ## Architecture boundary
@@ -39,18 +39,14 @@ Device acceptance: Android package/install/launch, hands, controllers,
 switching, haptics, placement, anchor recovery and two-headset privacy evidence
 pass on the unchanged candidate.
 
-Current stop: Claude R1 candidate `816824e` has green local code gates but is
-OpenAI-rejected on source review. No XR, RobotDealer, integration, Android or
-device gate may treat it as an accepted dependency. First run the exact
-`LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001` correction and independent QA; then run
-the XR test-only and RobotDealer clean-room fallbacks sequentially. A green
-browser, Windows or headless gate never substitutes for physical Quest evidence.
-The correction is currently paused at Claude's explicit plan limit after its
-Cowork transport returned no output. A live 10:12 recheck still showed the cap
-and moved the current reset to 10:40; no prompt was sent. The same task is
-planned to resume once at or after `2026-08-30 10:42
-America/Los_Angeles`. No downstream lease opens during this pause and the frozen
-partial checkpoint remains unaccepted.
+Current stop: Claude foundation-final candidate `a6742a0` has green TypeScript
+and Windows target-build evidence but is OpenAI-rejected on two P1 and one P2
+source defects. No XR, RobotDealer, integration, Android or device gate may use
+it as an accepted dependency. Run the exact seven-path
+`LT-NATIVE-GROK-AUTHORITY-SAFETY-001` sequential fallback and independent QA;
+only after foundation acceptance run the XR test-only and RobotDealer clean-room
+fallbacks. A green browser, Windows or headless gate never substitutes for
+physical Quest evidence.
 
 ## Chunk B — Private Game Night
 
@@ -121,4 +117,4 @@ identity/avatar misuse; regex privacy; unlicensed media; fixed stereotyped human
 characters; unsafe voice/moderation behavior; credential or paid-dispatch
 ambiguity; unrelated mutation; failed exact-SHA binding; or cultural harm.
 
-<!-- [[OpenAI Director | Codex | 2026-08-30 | 05:27 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]] -->

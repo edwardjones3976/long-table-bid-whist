@@ -93,3 +93,80 @@ The reply records the exact control commit, checkpoint, reset time, zero-budget
 rule, unchanged workload, closed downstream gates, and the superseding Grok and
 Antigravity dispositions. It makes no device, human, rights, store, release or
 completion claim.
+
+## Terminal provider result and materialization
+
+After the plan reset, the preserved Cowork task resumed without a duplicate
+prompt and reached the authenticated terminal state `Claude finished the
+response`. It returned `LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001.zip`:
+
+- Archive bytes: `83935`
+- Archive SHA-256:
+  `ae5a01386fc3e09f31fbcae41849f09639e8b0987ae23cc49be7610e9123241b`
+- Result-packet SHA-256:
+  `f8c3248f22e91ba055091a9a90a85dc8d1433741e222ddf2dae004b833362dd7`
+- Result contract: valid `model-result-packet-v1`, status `SUCCEEDED`
+- Declared changed files: `11`; every digest matched and every path was owned
+- Unsafe, missing, extra or out-of-lease archive entries: `0`
+
+The bundled `PROVIDER.patch` did not apply to exact packet base `816824e`; it
+was a delta from Claude's preserved partial checkpoint. OpenAI did not author a
+repair. It mechanically composed the ten provider-authored checkpoint files
+from `bf27721` and the eleven digest-verified final overlay files onto exact base
+`816824e`, producing one 18-owned-path sole-parent candidate:
+
+- Candidate: `a6742a04a384a88e7342530041a1f0d3ab71db2c`
+- Tree: `0489b183e70da5751c31e9b80ed40a8b631ba55a`
+- Sole parent: `816824ef85037caac11e90e34c090b54a1c3a7a1`
+- Worktree status at QA start and finish: clean
+
+The one-shot continuation heartbeat
+`resume-claude-foundation-correction` was deleted after successful resume and
+artifact materialization.
+
+## Independent OpenAI QA and rejection
+
+Executable evidence was strong but not sufficient for acceptance:
+
+- Focused adversarial TypeScript: `45/45` passed.
+- Full repository suite under CI-equivalent LF checkout: `193/193` passed.
+- Strict native typecheck, fixture-current (`11` files), project build and
+  production Vite build: passed.
+- UE5.7 `LongTableEditor Win64 Development`: passed.
+- UE5.7 `LongTable Win64 Development`: passed.
+- Complete Unreal automation: not run after fail-fast source QA found blocking
+  defects; no automation pass is inferred.
+
+Three independent, non-writing OpenAI source lanes then rejected the candidate:
+
+1. **P1 — coalesced post-close dispatch.**
+   `services/table-authority/src/websocket-server.ts` continues its parsed-frame
+   loop after `finish()` policy-closes and disconnects the socket. A real
+   loopback write containing three masked hello frames reproduced a dead server
+   socket with a resurrected session binding and false connected presence:
+   `{"sessionConnections":1,"serverConnections":0,"connected":true,"version":4}`.
+2. **P1 — Unreal multi-listener reentrancy.**
+   `LongTableAuthorityClient` checks `ContextGeneration` only after an entire
+   multicast broadcast. If listener one calls `Configure`, later listeners can
+   receive the old Ready/projection event while the public client state already
+   exposes the new context. The one-listener regression cannot detect this.
+3. **P2 — authenticated unbounded heap growth.**
+   The processed-intent correction retains every authoritative, local and
+   rejected ID in a table-lifetime `Map`. An unauthorized public participant
+   can submit unlimited unique IDs; no static memory bound, actor budget or
+   lifecycle guard exists. The regression intentionally retains 4,801 entries.
+
+The protocol/replay/fixture/privacy lane reported no findings and confirmed the
+regex/blacklist/substring/scanning/redaction prohibition remained intact. The
+foundation packet has no revision budget, so its terminal result earns one
+medium/5 overall-effort record and zero direct-production credit. The candidate
+is not integrated, merged, deployed or accepted.
+
+## Sequential fallback disposition
+
+The owner's instruction to fix and complete everything authorizes a new useful
+fallback, not another Claude attempt. `LT-NATIVE-GROK-AUTHORITY-SAFETY-001`
+starts from exact rejected candidate `a6742a0` and transfers a sequential lease
+for only seven defect and regression paths to under-target Grok. Claude is
+terminal and no longer has a writer lease. OpenAI remains the sole acceptance
+authority.
