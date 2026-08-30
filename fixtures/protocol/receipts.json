@@ -1,0 +1,110 @@
+{
+  "bidOutsideManifest": {
+    "canonical": "{\"intentId\":\"fixture-intent-1\",\"intentKind\":\"preview\",\"outcome\":\"rejected\",\"code\":\"bid-outside-manifest\",\"message\":\"Not included in Alpha 0.1; available after the published-rules stage.\",\"committed\":false,\"version\":2}",
+    "value": {
+      "intentId": "fixture-intent-1",
+      "intentKind": "preview",
+      "outcome": "rejected",
+      "code": "bid-outside-manifest",
+      "message": "Not included in Alpha 0.1; available after the published-rules stage.",
+      "committed": false,
+      "version": 2
+    }
+  },
+  "unauthorizedRole": {
+    "canonical": "{\"intentId\":\"fixture-intent-2\",\"intentKind\":\"confirm\",\"outcome\":\"rejected\",\"code\":\"unauthorized-role\",\"message\":\"Your role cannot do that at this table.\",\"committed\":false,\"version\":2}",
+    "value": {
+      "intentId": "fixture-intent-2",
+      "intentKind": "confirm",
+      "outcome": "rejected",
+      "code": "unauthorized-role",
+      "message": "Your role cannot do that at this table.",
+      "committed": false,
+      "version": 2
+    }
+  },
+  "nothingToConfirm": {
+    "canonical": "{\"intentId\":\"fixture-intent-3\",\"intentKind\":\"confirm\",\"outcome\":\"rejected\",\"code\":\"nothing-to-confirm\",\"message\":\"There is nothing to confirm.\",\"committed\":false,\"version\":2}",
+    "value": {
+      "intentId": "fixture-intent-3",
+      "intentKind": "confirm",
+      "outcome": "rejected",
+      "code": "nothing-to-confirm",
+      "message": "There is nothing to confirm.",
+      "committed": false,
+      "version": 2
+    }
+  },
+  "notBetweenHands": {
+    "canonical": "{\"intentId\":\"fixture-intent-4\",\"intentKind\":\"host-pause\",\"outcome\":\"rejected\",\"code\":\"not-between-hands\",\"message\":\"That is only available between hands.\",\"committed\":false,\"version\":2}",
+    "value": {
+      "intentId": "fixture-intent-4",
+      "intentKind": "host-pause",
+      "outcome": "rejected",
+      "code": "not-between-hands",
+      "message": "That is only available between hands.",
+      "committed": false,
+      "version": 2
+    }
+  },
+  "acceptedPreview": {
+    "canonical": "{\"intentId\":\"fixture-preview-1\",\"intentKind\":\"preview\",\"outcome\":\"accepted\",\"code\":null,\"message\":\"\",\"committed\":false,\"version\":3}",
+    "value": {
+      "intentId": "fixture-preview-1",
+      "intentKind": "preview",
+      "outcome": "accepted",
+      "code": null,
+      "message": "",
+      "committed": false,
+      "version": 3
+    }
+  },
+  "duplicate": {
+    "canonical": "{\"intentId\":\"fixture-preview-1\",\"intentKind\":\"preview\",\"outcome\":\"duplicate\",\"code\":\"duplicate-input-id\",\"message\":\"That input was already handled.\",\"committed\":false,\"version\":3}",
+    "value": {
+      "intentId": "fixture-preview-1",
+      "intentKind": "preview",
+      "outcome": "duplicate",
+      "code": "duplicate-input-id",
+      "message": "That input was already handled.",
+      "committed": false,
+      "version": 3
+    }
+  },
+  "staleVersion": {
+    "canonical": "{\"intentId\":\"fixture-intent-7\",\"intentKind\":\"confirm\",\"outcome\":\"rejected\",\"code\":\"stale-version\",\"message\":\"Your view of the table is out of date. Resyncing.\",\"committed\":false,\"version\":3}",
+    "value": {
+      "intentId": "fixture-intent-7",
+      "intentKind": "confirm",
+      "outcome": "rejected",
+      "code": "stale-version",
+      "message": "Your view of the table is out of date. Resyncing.",
+      "committed": false,
+      "version": 3
+    }
+  },
+  "committedConfirm": {
+    "canonical": "{\"intentId\":\"fixture-intent-8\",\"intentKind\":\"confirm\",\"outcome\":\"accepted\",\"code\":null,\"message\":\"\",\"committed\":true,\"version\":4}",
+    "value": {
+      "intentId": "fixture-intent-8",
+      "intentKind": "confirm",
+      "outcome": "accepted",
+      "code": null,
+      "message": "",
+      "committed": true,
+      "version": 4
+    }
+  },
+  "hostAnnounce": {
+    "canonical": "{\"intentId\":\"fixture-intent-9\",\"intentKind\":\"host-announce\",\"outcome\":\"accepted\",\"code\":null,\"message\":\"\",\"committed\":false,\"version\":5}",
+    "value": {
+      "intentId": "fixture-intent-9",
+      "intentKind": "host-announce",
+      "outcome": "accepted",
+      "code": null,
+      "message": "",
+      "committed": false,
+      "version": 5
+    }
+  }
+}

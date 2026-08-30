@@ -1,0 +1,91 @@
+# [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | BEGIN]]
+name: Native CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      run_unreal:
+        description: "Also compile and run Unreal automation on a self-hosted UE 5.7 Windows runner"
+        type: boolean
+        default: false
+
+concurrency:
+  group: native-ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  typescript-authority:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Run the full test suite (browser oracle, rules-core, protocol, authority, fixtures)
+        run: npm test
+
+      - name: Type-check native packages and services
+        run: npx tsc -p scripts/native/tsconfig.native.json
+
+      - name: Verify golden protocol fixtures are current
+        run: node scripts/native/run-ts.mjs scripts/native/generate-fixtures.ts --check
+
+      - name: Record fixture digests
+        run: |
+          set -euo pipefail
+          {
+            echo "## Protocol fixture digests"
+            echo
+            echo '```'
+            (cd fixtures/protocol && find . -type f -name '*.json' -print0 | LC_ALL=C sort -z | xargs -0 sha256sum)
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+  # GitHub-hosted runners have no Unreal Engine 5.7.4. This job runs only when
+  # dispatched with run_unreal=true on a self-hosted Windows runner that has the
+  # engine installed at C:\Program Files\Epic Games\UE_5.7.
+  unreal-windows:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_unreal
+    runs-on: [self-hosted, windows, ue-5.7]
+    timeout-minutes: 90
+    permissions:
+      contents: read
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@v4
+
+      - name: Compile LongTableEditor with the commit sha as build identity
+        shell: pwsh
+        run: pwsh scripts/native/build-unreal.ps1 -BuildSha ${{ github.sha }}
+
+      - name: Run headless LongTable automation
+        shell: pwsh
+        run: pwsh scripts/native/run-unreal-automation.ps1
+
+      - name: Upload build and automation logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unreal-logs
+          path: |
+            scripts/native/logs/**
+            Unreal/Saved/Logs/**
+# [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

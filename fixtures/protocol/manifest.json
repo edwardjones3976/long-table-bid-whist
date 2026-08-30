@@ -1,0 +1,395 @@
+{
+  "protocolVersion": "long-table-protocol/1",
+  "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
+  "manifestDigest": "bc5f1e39",
+  "rulesManifest": {
+    "id": "RESTRICTED_TABLE_SLICE_0_1",
+    "deckSize": 54,
+    "jokers": "big-and-little",
+    "cardsPerSeat": 12,
+    "kittySize": 6,
+    "discardCount": 6,
+    "tricksPerHand": 12,
+    "bidLevels": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "contractModes": [
+      "high",
+      "low"
+    ],
+    "contractTarget": "six-plus-level",
+    "scoring": "level-made-or-set",
+    "forcedDealerAfterThreePasses": true,
+    "openingLead": "bidder-after-kitty",
+    "exclusionNotice": "Not included in Alpha 0.1; available after the published-rules stage."
+  },
+  "vocabulary": {
+    "seats": [
+      "south",
+      "west",
+      "north",
+      "east"
+    ],
+    "seatLabels": {
+      "south": "South",
+      "west": "West",
+      "north": "North",
+      "east": "East"
+    },
+    "suits": [
+      "clubs",
+      "diamonds",
+      "hearts",
+      "spades"
+    ],
+    "contractModes": [
+      "high",
+      "low",
+      "no-trump-high",
+      "no-trump-low"
+    ],
+    "phases": [
+      "auction",
+      "declaration",
+      "kitty",
+      "play",
+      "summary"
+    ],
+    "roles": [
+      "player",
+      "host",
+      "public",
+      "dealer"
+    ],
+    "occupants": [
+      "human",
+      "ai",
+      "open"
+    ],
+    "choiceKinds": [
+      "pass",
+      "bid",
+      "declare",
+      "discard",
+      "play",
+      "next-hand"
+    ],
+    "selectionTypes": [
+      "pass",
+      "bid",
+      "declaration",
+      "play"
+    ],
+    "intentKinds": [
+      "preview",
+      "toggle-discard",
+      "cancel",
+      "confirm",
+      "next-hand",
+      "host-pause",
+      "host-resume",
+      "host-announce",
+      "host-substitute",
+      "host-transfer",
+      "host-end-event"
+    ],
+    "intentAuthority": {
+      "preview": [
+        "player"
+      ],
+      "toggle-discard": [
+        "player"
+      ],
+      "cancel": [
+        "player"
+      ],
+      "confirm": [
+        "player"
+      ],
+      "next-hand": [
+        "player",
+        "host"
+      ],
+      "host-pause": [
+        "host"
+      ],
+      "host-resume": [
+        "host"
+      ],
+      "host-announce": [
+        "host"
+      ],
+      "host-substitute": [
+        "host"
+      ],
+      "host-transfer": [
+        "host"
+      ],
+      "host-end-event": [
+        "host"
+      ]
+    },
+    "hostControls": [
+      "next-hand",
+      "host-pause",
+      "host-resume",
+      "host-announce",
+      "host-substitute",
+      "host-transfer",
+      "host-end-event"
+    ],
+    "hostAnnouncementCues": [
+      "welcome",
+      "hand-starting",
+      "pause-shortly",
+      "resuming",
+      "last-hand",
+      "thanks"
+    ],
+    "outcomes": [
+      "accepted",
+      "duplicate",
+      "rejected"
+    ],
+    "rejectionCodes": [
+      "duplicate-input-id",
+      "table-paused",
+      "not-your-turn",
+      "wrong-phase",
+      "bid-outside-manifest",
+      "illegal-bid",
+      "illegal-declaration",
+      "illegal-card",
+      "card-not-in-hand",
+      "discard-limit-reached",
+      "discard-incomplete",
+      "nothing-to-confirm",
+      "engine-rejected",
+      "stale-version",
+      "unauthorized-role",
+      "seat-not-bound",
+      "unknown-table",
+      "not-between-hands",
+      "seat-not-substitutable",
+      "unknown-participant",
+      "event-ended"
+    ],
+    "rejectionMessages": {
+      "duplicate-input-id": "That input was already handled.",
+      "table-paused": "The table is paused.",
+      "not-your-turn": "Wait for your turn.",
+      "wrong-phase": "That is not available in this phase.",
+      "bid-outside-manifest": "Not included in Alpha 0.1; available after the published-rules stage.",
+      "illegal-bid": "That bid is not legal now.",
+      "illegal-declaration": "That declaration is not legal now.",
+      "illegal-card": "Follow suit.",
+      "card-not-in-hand": "That card is not in your hand.",
+      "discard-limit-reached": "Six discards are already selected. Unpick one first.",
+      "discard-incomplete": "Select exactly six cards to discard.",
+      "nothing-to-confirm": "There is nothing to confirm.",
+      "engine-rejected": "The rules engine refused that action.",
+      "stale-version": "Your view of the table is out of date. Resyncing.",
+      "unauthorized-role": "Your role cannot do that at this table.",
+      "seat-not-bound": "You are not seated at this table.",
+      "unknown-table": "That table does not exist.",
+      "not-between-hands": "That is only available between hands.",
+      "seat-not-substitutable": "That seat cannot be substituted now.",
+      "unknown-participant": "That participant is not at this table.",
+      "event-ended": "This event has ended."
+    },
+    "dealerCues": [
+      "hand-opens",
+      "auction-turn",
+      "contract-set",
+      "kitty-taken",
+      "play-opens",
+      "trick-taken",
+      "hand-scored",
+      "table-paused",
+      "table-resumed",
+      "seat-substituted",
+      "host-announcement",
+      "next-hand-ready",
+      "event-ended"
+    ],
+    "wireErrorCodes": [
+      "schema-rejected",
+      "protocol-version",
+      "unauthenticated",
+      "not-welcomed",
+      "unknown-table",
+      "role-unavailable"
+    ]
+  },
+  "keys": {
+    "publicCore": [
+      "protocolVersion",
+      "manifestId",
+      "tableId",
+      "version",
+      "handNumber",
+      "phase",
+      "turn",
+      "turnLabel",
+      "dealer",
+      "dealerLabel",
+      "contract",
+      "auction",
+      "publicTrick",
+      "completedTricks",
+      "booksNorthSouth",
+      "booksEastWest",
+      "scoreNorthSouth",
+      "scoreEastWest",
+      "seats",
+      "statusLine",
+      "summaryLine",
+      "paused",
+      "eventEnded"
+    ],
+    "playerProjection": [
+      "role",
+      "protocolVersion",
+      "manifestId",
+      "tableId",
+      "version",
+      "handNumber",
+      "phase",
+      "turn",
+      "turnLabel",
+      "dealer",
+      "dealerLabel",
+      "contract",
+      "auction",
+      "publicTrick",
+      "completedTricks",
+      "booksNorthSouth",
+      "booksEastWest",
+      "scoreNorthSouth",
+      "scoreEastWest",
+      "seats",
+      "statusLine",
+      "summaryLine",
+      "paused",
+      "eventEnded",
+      "seat",
+      "hand",
+      "legalChoices",
+      "previewLabel",
+      "discardPicked",
+      "discardTarget",
+      "feedbackCode",
+      "feedbackLine",
+      "disabledNotices"
+    ],
+    "hostProjection": [
+      "role",
+      "protocolVersion",
+      "manifestId",
+      "tableId",
+      "version",
+      "handNumber",
+      "phase",
+      "turn",
+      "turnLabel",
+      "dealer",
+      "dealerLabel",
+      "contract",
+      "auction",
+      "publicTrick",
+      "completedTricks",
+      "booksNorthSouth",
+      "booksEastWest",
+      "scoreNorthSouth",
+      "scoreEastWest",
+      "seats",
+      "statusLine",
+      "summaryLine",
+      "paused",
+      "eventEnded",
+      "betweenHands",
+      "hostControls",
+      "lastAnnouncement"
+    ],
+    "publicProjection": [
+      "role",
+      "protocolVersion",
+      "manifestId",
+      "tableId",
+      "version",
+      "handNumber",
+      "phase",
+      "turn",
+      "turnLabel",
+      "dealer",
+      "dealerLabel",
+      "contract",
+      "auction",
+      "publicTrick",
+      "completedTricks",
+      "booksNorthSouth",
+      "booksEastWest",
+      "scoreNorthSouth",
+      "scoreEastWest",
+      "seats",
+      "statusLine",
+      "summaryLine",
+      "paused",
+      "eventEnded"
+    ],
+    "dealerCueFrame": [
+      "protocolVersion",
+      "tableId",
+      "version",
+      "handNumber",
+      "phase",
+      "cue",
+      "seat",
+      "seatLabel",
+      "announcement"
+    ],
+    "intentReceipt": [
+      "intentId",
+      "intentKind",
+      "outcome",
+      "code",
+      "message",
+      "committed",
+      "version"
+    ]
+  },
+  "concealedKeys": [
+    "hand",
+    "hands",
+    "kitty",
+    "discardPile",
+    "seed",
+    "events",
+    "legalChoices",
+    "previewLabel",
+    "discardPicked",
+    "discardTarget",
+    "discardIds",
+    "preview",
+    "processedInputIds",
+    "processedIntentIds",
+    "token",
+    "participantId"
+  ],
+  "limits": {
+    "id": 64,
+    "label": 80,
+    "line": 240,
+    "glyph": 4,
+    "rankText": 4,
+    "displayName": 32,
+    "token": 128,
+    "detail": 120,
+    "maxListLength": 64,
+    "maxHandLength": 18,
+    "maxVersion": 2147483647
+  }
+}
