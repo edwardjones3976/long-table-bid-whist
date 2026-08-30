@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-PERPLEXITY-QUEST-PLATFORM-001",
+  "provider": "Perplexity",
+  "project": "Public Quest platform evidence for a seated social card application",
+  "status": "PRESTAGED",
+  "workload": {
+    "sequence": 13,
+    "size": "medium",
+    "canonical_points_on_terminal_execution": 5,
+    "reason": "A current official compatibility matrix is required before freezing the native foundation toolchain and physical-device gate; this does not repeat the accepted audience, comfort, culture, comparable-product or music-rights research."
+  },
+  "public_research_query": "Using only current official public primary sources from Meta, Epic Games, Khronos, and Android, produce a dated compatibility and implementation evidence matrix for building and physically validating a native Unreal Engine 5.7.4 seated social card application on Meta Quest 3 and Quest 3S. Cover: supported Meta XR/Interaction SDK and OpenXR paths; controller and hand-tracking coexistence/live switching; passthrough mixed reality, Scene API, spatial anchors, room placement and recovery; Meta Avatars or presence integration and fallback constraints; Android SDK/NDK/JDK/Gradle/API-level requirements; package/sign/install/launch/device-log steps; multiplayer/two-headset concealed-state verification; performance, haptics, spatial audio, accessibility and store/device limitations. For each row give the official URL, document title, publisher, publication/update date if shown, exact version or limitation stated, confidence, and any contradiction. Prefer at most 10 sources and say NOT ESTABLISHED when official evidence is absent. Do not use private data, repositories, code, forums, blogs, social media, or third-party tutorials, and do not make product, legal, security, or store-approval conclusions.",
+  "public_research_query_sha256": "sha256:314b6865f5a27c72b1dd127a623ec0a56278b4cccebb6c448e5e0630c065f5af",
+  "objective": "Return one bounded, cited, current primary-source evidence packet that resolves the implementation and physical-validation matrix needed for the native Quest foundation.",
+  "non_goals": [
+    "No repository, source-code, architecture, private-project, credential, account, Slack, Linear, provider-output or concealed-gameplay context",
+    "No duplicate research on audience culture, Bid Whist history, general older-adult comfort, comparable products, host music rights or product direction",
+    "No programming, voting, committee verdict, security acceptance, legal conclusion, store approval, implementation authority or external write"
+  ],
+  "constraints": [
+    "Execute the exact query text and digest once through the official Perplexity API/connector lane",
+    "Use at most 10 official primary sources from Meta, Epic Games, Khronos or Android",
+    "Record source URL, title, publisher, visible date, exact version/limitation, confidence and contradictions",
+    "Mark any unsupported fact NOT ESTABLISHED instead of inferring it",
+    "Do not browse or cite private, account-scoped, forum, social-media, third-party tutorial or repository material",
+    "Do not expose API keys, cookies, tokens, environment values, browsing history or personal data"
+  ],
+  "allowed_tools": [
+    "Official Perplexity Search API through the configured Director adapter"
+  ],
+  "allowed_external_effects": [
+    "One exact-digest public research request",
+    "Return one authenticated terminal research response with citations"
+  ],
+  "acceptance_checks": [
+    "Authenticated Perplexity run identity and terminal status are recorded",
+    "The executed query digest equals sha256:314b6865f5a27c72b1dd127a623ec0a56278b4cccebb6c448e5e0630c065f5af",
+    "No private or repository context was transmitted",
+    "All material claims have direct official primary-source citations or are marked NOT ESTABLISHED",
+    "No more than 10 sources are used and contradictions/unknowns are explicit",
+    "OpenAI and Firecrawl independently verify the cited official pages before any implementation decision"
+  ],
+  "evidence_requirements": [
+    "Provider/model/API surface and authenticated run or request identifier",
+    "Exact query text and SHA-256",
+    "Raw terminal response retained without secrets",
+    "Normalized source matrix with direct URLs and retrieval dates",
+    "Independent Firecrawl verification status per source",
+    "Known gaps and a clear no-verdict/no-authority disclaimer"
+  ],
+  "approval_requirements": [
+    "Owner has authorized bounded provider use and asked the Director to use best judgment",
+    "Any revised Perplexity query is a new assignment and requires a new exact packet; never silently rerun this query",
+    "OpenAI synthesis may accept evidence, but Perplexity cannot issue the product or implementation verdict"
+  ],
+  "limits": {
+    "budget_usd": 0,
+    "timeout_seconds": 1200,
+    "max_hops": 0,
+    "max_revisions": 0,
+    "max_sources": 10
+  },
+  "idempotency_key": "LT-NATIVE-PERPLEXITY-QUEST-PLATFORM-001-314b6865",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-PERPLEXITY-QUEST-PLATFORM-001",
+    "source_event_id": "owner-authorized-next-major-milestone-20260830",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}

@@ -105,7 +105,7 @@ native_code_assignments:
     responsibility: "cross-module QA, exact-candidate acceptance, findings and kickback; Director work is excluded from production credit"
   perplexity:
     program_capacity_units: 0
-    responsibility: "reuse accepted public research; no duplicate paid query"
+    responsibility: "sequence 13 is one genuinely new current official UE5.7.4/Quest platform-compatibility query; it must not repeat the accepted audience, comfort, culture, comparable-product or music-rights research"
 
 non_credit_scope_forecast_mix:
   total: 127
@@ -260,7 +260,13 @@ rolling_window_projection:
   current_canonical_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0}
   current_partial_shares_percent: {claude: 37.68, cursor: 28.99, grok: 18.84, openai: 0, gemini_antigravity: 14.49, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "No production dispatch is authorized. Sequence 12 and its final transport are terminal OpenAI-rejected, and no fourth provider contact or delivery retry is permitted. The rejected candidate remains local-only and unpushed. XR-test, RobotDealer, integration, Android and physical-Quest work remain closed until a new explicit Director assignment and authority decision replaces the rejected foundation route."
+  next_route: "Sequence 13 may run once from its immutable packet as genuinely new public official-platform research. Firecrawl verification is a tool action and earns no workforce credit. Sequence 14 remains dependency-closed until the research evidence exists; sequence 15 remains dependency-closed until both useful rebalance assignments are terminal and new repair-seed authority is frozen. Sequence 12 stays terminal, its owner retry reproduced identical rejected bytes, and no fourth sequence-12 provider contact or delivery retry is permitted."
+  prestage_projection:
+    sequence_13_perplexity_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 5, total: 74}
+    sequence_14_grok_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 14, openai: 0, gemini_antigravity: 10, perplexity: 5, total: 75}
+    sequence_15_claude_medium_after_terminal_points: {claude: 31, cursor: 20, grok: 14, openai: 0, gemini_antigravity: 10, perplexity: 5, total: 80}
+    projected_sequence_15_shares_percent: {claude: 38.75, cursor: 25.0, grok: 17.5, openai: 0.0, gemini_antigravity: 12.5, perplexity: 6.25}
+    authority: "projection only; useful assignment completion and fresh exact packet validation are required before each next dispatch; no filler, duplicate query or denominator-only work"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -504,6 +510,40 @@ canonical_assignment_ledger:
     retry_after_final_transport: false
     manual_overlay_reason: "Fresh exhausted-route assignment based on materially new OpenAI authority analysis. The authenticated primary and local recovery stopped before accepted edits. The materially different final Claude Code browser transport then produced an exact 35-path provider commit and schema-valid result. OpenAI mechanically materialized candidate 623ca52, reproduced 42/42 focused and 208/208 full TypeScript tests plus the real-socket convergence probe, and terminally rejected source, UE5.7 compile, acceptance-evidence and provenance failures. This same sequence-12 row earns medium/5 overall effort once and zero direct-production credit. The candidate remains local-only and unpushed; no product PR, fourth contact or delivery retry is authorized."
   - sequence: 13
+    assignment_id: "LT-NATIVE-PERPLEXITY-QUEST-PLATFORM-001"
+    provider: perplexity
+    size: medium
+    canonical_points: 5
+    status: "PRESTAGED_READY_FOR_ONE_EXACT_PUBLIC_QUERY"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:f27925cbb656812a160a8c3c8a5ff829f82fb961bc7e20dc1391ead2f6aaed8d"
+    accepted_outcome_digest: null
+    packet_file: "director/native-program/packets/LT-NATIVE-PERPLEXITY-QUEST-PLATFORM-001.json"
+    public_query_sha256: "sha256:314b6865f5a27c72b1dd127a623ec0a56278b4cccebb6c448e5e0630c065f5af"
+    manual_overlay_reason: "Current official UE5.7.4 and Quest 3/3S compatibility, Android packaging and unchanged-device validation requirements are not established by the accepted broad audience/culture/comfort/rights packet. This one public-primary-source query is a genuine missing dependency, not a duplicate or workload filler. Pending packets do not enter completed effort totals."
+  - sequence: 14
+    assignment_id: "LT-NATIVE-GROK-QUEST-EVIDENCE-CRITIQUE-001"
+    provider: grok
+    size: simple
+    canonical_points: 1
+    status: "DEPENDENCY_CLOSED_REQUIRES_TERMINAL_PERPLEXITY_AND_FIRECRAWL_EVIDENCE_AND_EXACT_PACKET"
+    accepted_direct_production_points: 0
+    packet_digest: null
+    accepted_outcome_digest: null
+    manual_overlay_reason: "A separate public-only dissent check will challenge contradictions and unsupported platform assumptions in the finished primary-source matrix. It receives no repository or rejected-provider code, does not reopen Grok sequence 11, and cannot run until an exact sanitized payload and packet exist. Pending packets do not enter completed effort totals."
+  - sequence: 15
+    assignment_id: "LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003"
+    provider: claude
+    size: medium
+    canonical_points: 5
+    status: "DEPENDENCY_CLOSED_REQUIRES_SEQUENCES_13_14_TERMINAL_REPAIR_SEED_AUTHORITY_EXACT_PACKET_AND_WORKLOAD_RECHECK"
+    accepted_direct_production_points: 0
+    packet_digest: null
+    accepted_outcome_digest: null
+    repair_seed_candidate: "623ca52c5679b5348630f86eb88ecd48c9db82a1"
+    final_product_parent_if_authorized: "a6742a04a384a88e7342530041a1f0d3ab71db2c"
+    manual_overlay_reason: "Reserved genuinely new replacement-foundation assignment. Rejected candidate 623ca52 may be reused only as an explicitly authorized exact repair seed; it is never an accepted dependency. OpenAI must mechanically materialize retained provider blobs plus exact repair blobs onto sole parent a6742a0 before final gates. No provider contact is authorized until the full 17-path repair contract, provenance, contribution-marker and acceptance packet is immutable."
+  - sequence: 16
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
     provider: claude
     size: medium
@@ -516,7 +556,7 @@ canonical_assignment_ledger:
     starting_ref: "33aca6106603342efcf43fb813482cb18fd4b18c"
     starting_tree: "04f65bc3c72202977312cb38bc039460545daeec"
     manual_overlay_reason: "frozen future sequential ownership transfer after terminal Cursor; sole writable path is the XR transactional-decode test and no production decoder change is authorized. Rejected foundation candidate 623ca52 cannot satisfy its dependency, so this row has no current dispatch authority and requires an accepted replacement foundation plus explicit Director reauthorization; pending packets do not enter completed effort totals"
-  - sequence: 14
+  - sequence: 17
     assignment_id: "LT-NATIVE-CLAUDE-ROBOT-001"
     provider: claude
     size: medium
