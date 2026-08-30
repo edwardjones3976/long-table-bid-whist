@@ -160,22 +160,22 @@ overall_effort_ledger:
     assignment_id: "LT-NATIVE-ANTIGRAVITY-002"
     provider: gemini_antigravity
     size: short
-    canonical_points: 0
-    completed: false
-    terminal_status: "PRESTAGED_READY_MANUAL_WARMUP_VARIANCE"
-    authenticated_run: null
+    canonical_points: 2
+    completed: true
+    terminal_status: "UNAVAILABLE_USER_PERMISSION_DENY_ZERO_CODE"
+    authenticated_run: "antigravity-conversation:4eaec0f1-1092-44a2-b5e9-bdb4574018db;run:LT-NATIVE-ANTIGRAVITY-002-74f856fd8042"
     direct_production_points: 0
-    exclusion_reason: "pre-dispatch preparation earns no effort or production credit"
+    exclusion_reason: "directly observed provider effort earns overall assignment points once; zero code and unavailable status earn no accepted production credit"
 
 accepted_direct_production_ledger: []
 
 rolling_window_projection:
-  completed_assignments: 2
+  completed_assignments: 3
   window_size: 20
-  current_canonical_points: {claude: 8, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 8, perplexity: 0}
-  current_partial_shares_percent: {claude: 50, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 50, perplexity: 0}
+  current_canonical_points: {claude: 8, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 10, perplexity: 0}
+  current_partial_shares_percent: {claude: 44.44, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 55.56, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
-  next_route: "dispatch LT-NATIVE-ANTIGRAVITY-002 once under the signed warm-up variance because Grok was routed first and is blocked, Claude is reset-capped, and Cursor requires the robot interface"
+  next_route: "resume exact Claude R1 at its confirmed 2026-08-30T10:30:00Z reset; do not retry early; Grok and Antigravity require explicit human account/permission actions and Cursor remains dependency-gated"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -225,7 +225,7 @@ canonical_assignment_ledger:
     provider: gemini_antigravity
     size: short
     canonical_points: 2
-    status: "PRESTAGED_READY_MANUAL_WARMUP_VARIANCE"
+    status: "UNAVAILABLE_USER_PERMISSION_DENY_ZERO_CODE"
     accepted_direct_production_points: 0
     packet_digest: "sha256:5d8e25b68bbfd18e029c7953dca27c95ef238587824bb256a58dfcf1004bbd16"
     work_packet_digest: "sha256:7e8436fe9c1a203de2a266e90cab224520b38b1b2e5d94451d270f60e21d59fd"
