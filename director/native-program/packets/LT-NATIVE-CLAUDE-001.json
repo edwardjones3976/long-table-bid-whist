@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-001",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "starting_ref": "72d2fd7224e58dee58f2c3d36d4d890ce9ede0bb",
+  "authority_base_ref": "72d2fd7224e58dee58f2c3d36d4d890ce9ede0bb",
+  "objective": "Implement Claude's complete non-overlapping native surface across Native Foundation, Private Game Night, and Long Table House: bootstrap the UE5.7.4 C++ project; preserve and modularize the deterministic TypeScript authority; define closed player, host, public, AI and dealer protocol types; implement the authoritative table service; implement LongTableProtocol, LongTableTable and the LongTable composition root; provide automation, build and fixture evidence. Use FABLE 5 ULTRA/MAX. Do not implement XR, Social or HouseCore provider-owned modules.",
+  "non_goals": [
+    "No edits to Cursor-owned LongTableXR or Input, Presence and Environment content",
+    "No edits to Grok-owned session-gateway, LongTableSocial or Social content",
+    "No implementation of Antigravity-owned LongTableHouseCore",
+    "No Meta account, avatar, voice, networking deployment, store or physical-device success claims",
+    "No WebXR or Horizon Worlds companion product",
+    "No unlicensed music, voice, sample, likeness, image or archival content"
+  ],
+  "authority_snapshot": [
+    {"path": "director/native-program/README.md", "commit_sha": "72d2fd7224e58dee58f2c3d36d4d890ce9ede0bb", "blob_sha": "1befa61db83cd027ddd46bcb1558ce36cfab6be2"},
+    {"path": "director/native-program/provider-workload.yaml", "commit_sha": "72d2fd7224e58dee58f2c3d36d4d890ce9ede0bb", "blob_sha": "718d027961659be534408b0de26492daaf3dae18"},
+    {"path": "director/native-program/roles-and-responsibilities.md", "commit_sha": "72d2fd7224e58dee58f2c3d36d4d890ce9ede0bb", "blob_sha": "33801a64c8c1b924bb2cc79d7bcb11891a370c78"},
+    {"path": "director/native-program/stage-gates.md", "commit_sha": "72d2fd7224e58dee58f2c3d36d4d890ce9ede0bb", "blob_sha": "4c7ad8f29442004a3cbfc27c1bf0d22c7503e65a"},
+    {"path": "director/privacy-control-policy.md", "commit_sha": "72d2fd7224e58dee58f2c3d36d4d890ce9ede0bb", "blob_sha": "a31ce14bdaed03f3028480b7572cd9ccf7c0f859"}
+  ],
+  "authority_snapshot_digest": "sha256:ba8c1efb692573371ec2d28890f67dad3650662d53c655115ea5eda64926e7fd",
+  "dependencies": [],
+  "owned_paths": [
+    "Unreal/LongTable.uproject",
+    "Unreal/Config/**",
+    "Unreal/Source/LongTable/**",
+    "Unreal/Source/LongTableProtocol/**",
+    "Unreal/Source/LongTableTable/**",
+    "Unreal/LongTable.Target.cs",
+    "Unreal/LongTableEditor.Target.cs",
+    "packages/rules-core/**",
+    "packages/protocol/**",
+    "services/table-authority/**",
+    "fixtures/protocol/**",
+    "scripts/native/**",
+    ".github/workflows/native-ci.yml"
+  ],
+  "prohibited_paths": [
+    "sources/**",
+    "director/**",
+    "Unreal/Source/LongTableXR/**",
+    "Unreal/Content/Input/**",
+    "Unreal/Content/Presence/**",
+    "Unreal/Content/Environment/**",
+    "services/session-gateway/**",
+    "Unreal/Source/LongTableSocial/**",
+    "Unreal/Content/Social/**",
+    "Unreal/Plugins/LongTableHouseCore/**",
+    "Unreal/Plugins/MetaXR/**",
+    "Unreal/Plugins/MetaXRInteraction/**"
+  ],
+  "constraints": [
+    "Use the verified Unreal Engine 5.7.4 editor at C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+    "Use one UE C++ project with Blueprint presentation boundaries; do not port rule adjudication into Blueprint or physics",
+    "Keep existing deterministic rules behavior and tests passing; extract or wrap rather than duplicate game truth",
+    "Construct role projections field by field from closed schemas; concealed members must not exist in host, public, dealer, telemetry or provider types",
+    "Implement preview, cancel, confirm, idempotency, stale-version rejection, reconnect and replay at the authoritative boundary",
+    "Robot dealer is presenter-only and consumes allowlisted cues",
+    "Human host cannot deserialize, request or mutate concealed or committed play",
+    "No regex, blacklist, keyword or redaction-based privacy control",
+    "Use original code-native placeholders only; host music remains external/off",
+    "Preserve unrelated user work and all existing contribution tags",
+    "Credit is provisional until OpenAI QA accepts the authenticated artifact"
+  ],
+  "prohibited_actions": [
+    "Do not edit another provider's path",
+    "Do not push, merge, deploy, publish, open or mutate PRs/issues, post Slack/Linear, purchase, change credentials or permissions",
+    "Do not install or download Meta SDKs, accept licenses or create external accounts",
+    "Do not claim physical Quest, multiplayer, human, cultural, rights, store or project completion",
+    "Do not retry an ambiguous provider or external dispatch"
+  ],
+  "allowed_tools": [
+    "local filesystem and repository tools within the named worktree",
+    "existing Node, TypeScript and test toolchain",
+    "UnrealBuildTool, UnrealEditor-Cmd and compiler for local builds/tests",
+    "Claude Code local authenticated subscription transport"
+  ],
+  "allowed_external_effects": [
+    "Create and edit only owned repository paths",
+    "Run local builds and tests",
+    "Create one local assignment commit and return its exact SHA"
+  ],
+  "acceptance_checks": [
+    "The exact starting SHA is verified before editing and the handoff has one exact head SHA",
+    "UnrealBuildTool recognizes the UE5.7.4 project and compiles all Claude-owned modules available at this stage",
+    "Existing tests plus new rules/protocol/authority tests pass",
+    "Golden protocol fixtures deserialize consistently in TypeScript and Unreal headless automation",
+    "Counterfactual concealed-state changes leave host and public serialized projections byte-equivalent",
+    "Preview/cancel/confirm, stale version, duplicate intent, reconnect, AI view and dealer cue tests pass",
+    "No file outside owned paths changes",
+    "Handoff reports exact commands/results, files, SHA, limits and assignment-only status"
+  ],
+  "evidence_requirements": [
+    "Authenticated Claude session or run identifier and model/effort label",
+    "Base SHA and exact local head SHA",
+    "Changed-file allowlist comparison",
+    "Full existing test result and focused new test result",
+    "Unreal build and automation logs, or exact blocker evidence if the engine/toolchain prevents a run",
+    "Known limitations including absent Meta plugins, account, headsets and human evidence"
+  ],
+  "approval_requirements": [
+    "OpenAI QA must accept code before integration credit",
+    "Any required change is kicked back to Claude and creates a new exact candidate",
+    "Owner separately authorizes merge, release, spending, credential, license and external-account effects"
+  ],
+  "limits": {"budget_usd": 0, "timeout_seconds": 7200, "max_hops": 0, "max_revisions": 1},
+  "idempotency_key": "LT-NATIVE-CLAUDE-001-72d2fd7",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-001",
+    "source_event_id": "owner-native-all-providers-code-20260830",
+    "slack_thread_ts": null,
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}
