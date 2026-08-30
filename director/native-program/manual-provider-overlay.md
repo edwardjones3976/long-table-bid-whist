@@ -179,6 +179,17 @@ projection exceeds the stricter project 41% planning ceiling and must be
 reported as a useful-work warm-up variance, never disguised with filler or
 called compliant.
 
+The primary Fable 5/MAX CLI transport later stopped explicitly at a temporary
+429 session limit after writing ten owned TypeScript paths but before Unreal,
+fixtures, tests, commit or terminal result. OpenAI mechanically froze those
+exact bytes at `bf27721` with no acceptance. The owner-authorized materially
+different recovery is authenticated Claude Code in Chrome, bound by the
+separate browser delta. Its GitHub transport branch omits workflow and control
+paths only because the OAuth token cannot create workflow changes; it is not a
+candidate. Only Claude-authored owned-path deltas may be materialized back onto
+the exact local `816824e` lineage, after which OpenAI runs all missing Windows
+and Unreal gates.
+
 ## Warm-up variance after the Grok route
 
 The required under-target Grok HouseCore lane was routed first. Its immutable

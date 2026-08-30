@@ -1,0 +1,86 @@
+{
+  "schema_version": "long-table-transport-delta/v1",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001",
+  "base_work_packet": "director/native-program/packets/LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001.json",
+  "base_work_packet_file_sha256": "sha256:2314ec2d04333ddf97e7b4f7c7096fa7d2947c145377189402e5a035916e86df",
+  "base_work_packet_digest": "sha256:9bd9b846a9f8f42a9d149b77ad13c7b57a85fbef605a9a28e8163665ef68c144",
+  "authority_snapshot_digest": "sha256:ea848c6793680cd104817b522664a40232107417ad3d9e8d8abd083a1f78c6a6",
+  "starting_ref": "816824ef85037caac11e90e34c090b54a1c3a7a1",
+  "starting_tree": "df89b69458fb90c58e619540bd7069445a23b461",
+  "owner_authorization": {
+    "recorded_at_utc": "2026-08-30T11:55:00Z",
+    "scope": "I agree and authorize it all. Fix and complete everything, including the exact Grok terms acknowledgement, Antigravity sandbox permissions and fresh provider assignments; use Claude in Chrome when other formats are unavailable.",
+    "claude_chrome_recovery_authorized": true
+  },
+  "recovery_classification": {
+    "attempt": 2,
+    "basis": "authenticated Claude Code in Chrome is a materially different transport after the sole CLI provider run terminated with an explicit 429 session limit and reset time",
+    "ambiguous_paid_dispatch": false,
+    "prior_cli_route": "terminal api_error 429 after partial owned-path edits; no terminal result envelope and no local provider commit",
+    "retry_after_this_transport": false
+  },
+  "authenticated_cli_terminal": {
+    "provider": "Claude Code",
+    "model": "claude-fable-5",
+    "effort": "max",
+    "session_id": "c59226c5-2582-4236-8930-584c08d8322f",
+    "resumed_from_session_id": "f0d909ff-0700-4846-b6d0-65f75598d745",
+    "status": "API_ERROR_429_SESSION_LIMIT",
+    "reset": "2026-08-30T08:30:00-07:00",
+    "usage": {
+      "input_tokens": 320,
+      "output_tokens": 90521,
+      "cache_read_input_tokens": 1833239,
+      "cache_creation_input_tokens": 957047,
+      "list_cost_usd": 25.503429
+    }
+  },
+  "frozen_cli_checkpoint": {
+    "mechanical_commit": "bf277215f296593ff1ac092becba1d65f0453de3",
+    "tree": "3e5ee41436e783649da45e200f8443752c51f044",
+    "parent": "816824ef85037caac11e90e34c090b54a1c3a7a1",
+    "binary_diff_git_hash_object": "2b59ad8721fdc5b263a46397ab33fb884a9ae390",
+    "changed_path_count": 10,
+    "all_paths_owned": true,
+    "provider_authorship": "exact bytes were written by the authenticated Claude CLI run; OpenAI only froze the terminal filesystem state after the 429",
+    "acceptance": "none; this checkpoint is incomplete and untested"
+  },
+  "transport": {
+    "provider": "Claude",
+    "surface": "authenticated Claude Code at claude.ai in owner-selected Chrome",
+    "model_label": "Fable 5",
+    "effort_label": "highest available Code-surface effort",
+    "repository": "edwardjones3976/long-table-bid-whist",
+    "branch": "codex/claude-foundation-web-sandbox",
+    "transport_head": "2f2a18765e25289ff42cc5740de5d07a7c4d6ea8",
+    "transport_tree": "5a486cab48e6cc88cf6c04b3da736865bdd0b7e5",
+    "web_search": false,
+    "subagents": false
+  },
+  "transport_sanitization": {
+    "basis": "the GitHub OAuth token cannot create a branch containing workflow-file changes",
+    "method": "materialize the exact product tree and frozen Claude checkpoint as one transport commit on origin/main while omitting .github/workflows, director, artifacts and sources",
+    "final_candidate_rule": "the browser provider may change only base-packet owned paths; OpenAI later applies only those exact provider-authored path deltas onto the exact local 816824e lineage, preserving every omitted workflow and governance byte",
+    "transport_commit_is_not_candidate": true
+  },
+  "delivery_contract_delta": {
+    "provider_delivery": "one committed Claude Code branch state plus one model-result-packet-v1 JSON object in the terminal task response",
+    "mechanical_materialization": "OpenAI may fetch and mechanically apply only exact Claude-authored owned-path changes onto the local checkpoint, then freeze one exact candidate tree; OpenAI may not alter production code",
+    "provider_checks": "Claude runs focused and full TypeScript checks available in the Chrome Code environment; Windows UE5.7 builds and automation are NOT_RUN if that environment lacks the verified engine",
+    "openai_qa": "OpenAI independently reviews exact source and runs the complete TypeScript, fixture, production build, UE5.7 editor/game and scoped/full automation gates on the mechanically frozen exact candidate",
+    "revision_budget": "none after this authenticated browser recovery"
+  },
+  "unchanged_boundaries": [
+    "All objective, non-goal, owned-path, prohibited-path, closed-structure privacy, rights, budget and final-acceptance clauses in the base packet remain unchanged.",
+    "No provider may read director, artifacts, sources, another provider's implementation, credentials, cookies, Slack, Linear or concealed gameplay data.",
+    "No PR, merge, release, deployment, account, license, device, human, cultural, rights or store authority is added.",
+    "This is one transport continuation of the same assignment and earns no additional workload row or duplicate credit."
+  ],
+  "idempotency_key": "LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001-816824e",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001",
+    "source_event_id": "owner-authorized-claude-browser-recovery-20260830",
+    "slack_thread_ts": "1788068481.517609"
+  }
+}
