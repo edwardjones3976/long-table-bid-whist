@@ -61,6 +61,12 @@ budget, direct-production credit or acceptance. Cowork and CLI must never run
 concurrently. If the existing Cowork task cannot resume, this route is terminal
 unavailable and OpenAI must not author or transfer the production correction.
 
+One active, one-shot thread heartbeat is bound to this continuation:
+`resume-claude-foundation-correction`. It will wake this same Codex task at
+10:12 AM local time. It does not create a provider assignment or provider call;
+the resumed turn must still verify the reset before touching Cowork. An earlier
+rendered suggestion card is not active and requires no user action.
+
 Downstream Claude XR-test, RobotDealer, integration, Android and physical Quest
 gates remain closed until a complete provider-authored foundation candidate is
 materialized on the exact local lineage and passes independent OpenAI source,

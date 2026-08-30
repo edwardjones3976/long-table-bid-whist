@@ -84,6 +84,8 @@
     "new_workload_row": false,
     "new_provider_dispatch": false,
     "additional_effort_credit": false,
+    "heartbeat_id": "resume-claude-foundation-correction",
+    "heartbeat_status": "ACTIVE_ONE_SHOT",
     "resume_rule": "resume the existing Cowork task once after the explicit usage reset; never run Cowork and CLI concurrently",
     "fallback_if_task_cannot_resume": "record the route unavailable and stop this assignment without authoring or transferring production fixes"
   },

@@ -347,8 +347,8 @@ canonical_assignment_ledger:
     packet_digest: "sha256:2314ec2d04333ddf97e7b4f7c7096fa7d2947c145377189402e5a035916e86df"
     work_packet_digest: "sha256:9bd9b846a9f8f42a9d149b77ad13c7b57a85fbef605a9a28e8163665ef68c144"
     transport_delta_file: "director/native-program/packets/LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001-BROWSER-DELTA.json"
-    transport_delta_file_sha256: "sha256:d39410c979b025f2f8c5cd758d686d597065c66ac0ec681c867bed2ce9a325e1"
-    transport_delta_digest: "sha256:a62ea957b1acbb35bbb88180afab944ca3f20c4d88406fc634e4e3050a7b5c67"
+    transport_delta_file_sha256: "sha256:8442a0859aac6816a4592686311be87654f8218d0399fcb13511724e21a74fc1"
+    transport_delta_digest: "sha256:511fb3167fb8cbb6bd514a2b2d5a11ee281b74633670b40eb2329fc70177e156"
     accepted_outcome_digest: null
     starting_ref: "816824ef85037caac11e90e34c090b54a1c3a7a1"
     starting_tree: "df89b69458fb90c58e619540bd7069445a23b461"
@@ -363,6 +363,8 @@ canonical_assignment_ledger:
     cowork_usage_reset: "2026-08-30T10:10:00-07:00"
     cowork_resume_not_before: "2026-08-30T10:12:00-07:00"
     cowork_same_task_continuation_is_retry: false
+    resume_heartbeat_id: "resume-claude-foundation-correction"
+    resume_heartbeat_status: "ACTIVE_ONE_SHOT"
     provider_evidence: "artifacts/native-program/providers/2026-08-30-claude-foundation-final.md"
     manual_overlay_reason: "one final bounded medium assignment is justified by twelve materially new independent OpenAI source findings discovered only after the R1 terminal provider result; its primary Claude CLI route stopped explicitly at a temporary 429 after writing ten owned files, Claude Code web was unavailable before prompt at the same 100 percent cap, and the authenticated Cowork recovery accepted the sanitized archive but returned no work because the account reached its explicit plan limit; the same Cowork task is planned to resume once after the observed 10:10 Pacific reset with no new dispatch, row or credit, and no purchase is authorized under budget_usd zero; this is not R2, has no revision budget, and remains pending"
   - sequence: 11
