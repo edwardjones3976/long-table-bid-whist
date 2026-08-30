@@ -1,0 +1,61 @@
+{
+  "schema_version": "long-table-transport-delta/v1",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CURSOR-XRCORE-002",
+  "base_work_packet": "director/native-program/packets/LT-NATIVE-CURSOR-XRCORE-002.json",
+  "base_work_packet_file_sha256": "sha256:cc133adf74b0f2a41694d7bae8b88ce7643e4d2483a9c66a5d72ccfae2995ee4",
+  "base_work_packet_digest": "sha256:5d3c880b2841d7e9edc584bfa627e9f30c1500d654db4e977d83f01aba77c2de",
+  "authority_snapshot_digest": "sha256:5c8b6a7f53dbc02317368ba2938ff24b3cf9f9b05ea97fefec60cc3f85de3124",
+  "starting_ref": "de02a26d57065dfc52d5639ac6e2e5ae2baa0029",
+  "starting_tree": "1faab10219e3197e2e3b8db06814ab3674298812",
+  "owner_authorization": {
+    "scope": "One genuinely new Cursor XR correction assignment after the exhausted prior revision, with OpenAI as QA and completion authority.",
+    "source_event_id": "owner-authorized-cursor-xr-rescue-20260830"
+  },
+  "authenticated_terminal": {
+    "provider": "Cursor",
+    "model": "composer-2.5",
+    "session_id": "a0bf5116c-ce93-4fa7-880a-a35b652f3476",
+    "request_id": "7f0233d0-b391-4ca5-a09a-6b73faad5eefd",
+    "status": "FAILED",
+    "reason": "Cursor authored plugin-only corrections, but every Shell invocation was rejected with no exit code, so provider checks and the local commit were NOT_RUN.",
+    "usage": {
+      "input_tokens": 97388,
+      "output_tokens": 28802,
+      "cache_read_tokens": 1808381,
+      "cost_usd_reported": 0
+    }
+  },
+  "frozen_working_tree": {
+    "base_ref": "de02a26d57065dfc52d5639ac6e2e5ae2baa0029",
+    "binary_diff_git_hash_object": "0915cbe0bf8443dbeb80d12bb805a22a2bfabd97",
+    "changed_paths": [
+      "Unreal/Plugins/LongTableXR/LongTableXR.uplugin",
+      "Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/LongTableXRCodec.cpp",
+      "Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/LongTableXRInteractionCore.cpp",
+      "Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/LongTableXRPresenceCore.cpp",
+      "Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/LongTableXRRightsInventory.cpp",
+      "Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/LongTableXRSubsystem.cpp",
+      "Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/LongTableXRValidation.cpp",
+      "Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp",
+      "Unreal/Plugins/LongTableXR/Source/LongTableXR/Public/LongTableXRCodec.h",
+      "Unreal/Plugins/LongTableXR/Source/LongTableXR/Public/LongTableXRRightsInventory.h",
+      "Unreal/Plugins/LongTableXR/Source/LongTableXR/Public/LongTableXRValidation.h"
+    ],
+    "all_paths_within_owned_root": true,
+    "diff_check": "PASS"
+  },
+  "delivery_contract_delta": {
+    "mechanical_freeze": "OpenAI may stage and commit the exact Cursor-authored bytes with Cursor Agent as author and OpenAI as committer; OpenAI may not alter production code.",
+    "provider_checks": "All Cursor shell, Unreal, automation, TypeScript and Git checks remain NOT_RUN and confer no acceptance.",
+    "openai_qa": "OpenAI must verify exact head, tree, parent and allowlist, then independently run the ordered UE 5.7 editor build, focused LongTable.XR automation, game build, full automation and TypeScript gates.",
+    "revision_budget": "One recovery remains only for a substantive OpenAI QA kickback or a materially corrected Cursor command transport; no duplicate shell-only dispatch is authorized."
+  },
+  "unchanged_prohibitions": [
+    "no OpenAI production-code edit",
+    "no path outside Unreal/Plugins/LongTableXR/",
+    "no other-provider source or private gameplay data",
+    "no regex, blacklist, keyword, substring, redaction or serialize-then-delete privacy control",
+    "no merge, deployment, release, device claim, human-test claim, purchase or external post"
+  ]
+}
