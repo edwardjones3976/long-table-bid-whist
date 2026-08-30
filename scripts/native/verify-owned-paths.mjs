@@ -1,6 +1,6 @@
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | BEGIN]]
 /**
- * Changed-file allowlist comparison for assignment LT-NATIVE-CLAUDE-001.
+ * Changed-file allowlist comparison for assignment LT-NATIVE-CLAUDE-001 (R1 corrected allowlist).
  *
  *   node scripts/native/verify-owned-paths.mjs [--base <sha>] [--head <ref>]
  *
@@ -17,27 +17,14 @@ export const OWNED_PATHS = [
   "Unreal/Source/LongTable/**",
   "Unreal/Source/LongTableProtocol/**",
   "Unreal/Source/LongTableTable/**",
-  "Unreal/LongTable.Target.cs",
-  "Unreal/LongTableEditor.Target.cs",
+  "Unreal/Source/LongTable.Target.cs",
+  "Unreal/Source/LongTableEditor.Target.cs",
   "packages/rules-core/**",
   "packages/protocol/**",
   "services/table-authority/**",
   "fixtures/protocol/**",
   "scripts/native/**",
   ".github/workflows/native-ci.yml",
-];
-
-/**
- * Documented deviations from the packet's literal allowlist. The packet names
- * Unreal/LongTable.Target.cs and Unreal/LongTableEditor.Target.cs at the
- * project root, but UnrealBuildTool only discovers target rules beneath
- * <Project>/Source and only treats the project as code-based when they sit
- * directly in that folder. The files therefore live one level down, at the
- * engine-required location, and are reported separately here.
- */
-export const DOCUMENTED_DEVIATIONS = [
-  "Unreal/Source/LongTable.Target.cs",
-  "Unreal/Source/LongTableEditor.Target.cs",
 ];
 
 export const PROHIBITED_PATHS = [
@@ -75,7 +62,6 @@ export function matchesPattern(pattern, path) {
 export function classify(path) {
   if (PROHIBITED_PATHS.some((pattern) => matchesPattern(pattern, path))) return "prohibited";
   if (OWNED_PATHS.some((pattern) => matchesPattern(pattern, path))) return "owned";
-  if (DOCUMENTED_DEVIATIONS.includes(path)) return "deviation";
   return "outside";
 }
 
@@ -108,11 +94,8 @@ function main() {
   const paths = changedPaths(base, head);
   const rows = paths.map((path) => ({ path, verdict: classify(path) }));
   for (const row of rows) process.stdout.write(`${row.verdict.padEnd(10)} ${row.path}\n`);
-  const deviations = rows.filter((row) => row.verdict === "deviation");
   const violations = rows.filter((row) => row.verdict === "outside" || row.verdict === "prohibited");
-  process.stdout.write(
-    `\n${rows.length} changed path(s); ${deviations.length} documented deviation(s); ${violations.length} outside the owned allowlist\n`,
-  );
+  process.stdout.write(`\n${rows.length} changed path(s); ${violations.length} outside the owned allowlist\n`);
   if (violations.length > 0) process.exitCode = 1;
 }
 

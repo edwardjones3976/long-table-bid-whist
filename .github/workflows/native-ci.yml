@@ -48,6 +48,11 @@ jobs:
       - name: Verify golden protocol fixtures are current
         run: node scripts/native/run-ts.mjs scripts/native/generate-fixtures.ts --check
 
+      - name: Production build of the browser oracle from the exact candidate
+        env:
+          VITE_BUILD_SHA: ${{ github.sha }}
+        run: npm run build
+
       - name: Record fixture digests
         run: |
           set -euo pipefail
@@ -65,7 +70,7 @@ jobs:
   unreal-windows:
     if: github.event_name == 'workflow_dispatch' && inputs.run_unreal
     runs-on: [self-hosted, windows, ue-5.7]
-    timeout-minutes: 90
+    timeout-minutes: 120
     permissions:
       contents: read
     steps:
@@ -74,7 +79,11 @@ jobs:
 
       - name: Compile LongTableEditor with the commit sha as build identity
         shell: pwsh
-        run: pwsh scripts/native/build-unreal.ps1 -BuildSha ${{ github.sha }}
+        run: pwsh scripts/native/build-unreal.ps1 -Target LongTableEditor -BuildSha ${{ github.sha }}
+
+      - name: Compile the LongTable game target
+        shell: pwsh
+        run: pwsh scripts/native/build-unreal.ps1 -Target LongTable -BuildSha ${{ github.sha }}
 
       - name: Run headless LongTable automation
         shell: pwsh

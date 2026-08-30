@@ -3,7 +3,8 @@
  * Text-frame dispatch: decode through the closed client schema, hand the typed
  * message to the session layer, encode every outbound message canonically. A
  * frame that does not decode is answered with `schema-rejected` and nothing
- * else happens.
+ * else happens. An outbound item may ask the transport to close the connection
+ * after delivery (entitlement revoked).
  */
 import { decodeClientMessage, encodeAuthorityMessage } from "../../../packages/protocol/src";
 import type { AuthoritySessions, Outbound } from "./session";
@@ -11,10 +12,15 @@ import type { AuthoritySessions, Outbound } from "./session";
 export interface OutboundText {
   readonly connectionId: string;
   readonly text: string;
+  readonly closeAfter?: boolean;
 }
 
 export function encodeOutbound(items: readonly Outbound[]): OutboundText[] {
-  return items.map((item) => ({ connectionId: item.connectionId, text: encodeAuthorityMessage(item.message) }));
+  return items.map((item) => ({
+    connectionId: item.connectionId,
+    text: encodeAuthorityMessage(item.message),
+    closeAfter: item.closeAfter === true,
+  }));
 }
 
 export function handleText(sessions: AuthoritySessions, connectionId: string, text: string): OutboundText[] {

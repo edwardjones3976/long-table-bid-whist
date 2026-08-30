@@ -6,9 +6,11 @@ import {
   advanceAiSeats,
   applySeatAction,
   legalSeatActions,
+  manifestDigest,
   newReplayRecord,
   openHand,
   publicDigest,
+  replayManifestError,
   replayMatches,
   replayRecord,
   stateDigest,
@@ -76,5 +78,37 @@ describe("deterministic replay", () => {
     expect(second.stateDigest).toBe(first.stateDigest);
     expect(second.publicDigest).toBe(first.publicDigest);
   });
+
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
+  it("binds a new record to the active manifest identity and digest", () => {
+    const record = newReplayRecord("bound");
+    expect(record.manifestId).toBe("RESTRICTED_TABLE_SLICE_0_1");
+    expect(record.manifestDigest).toBe(manifestDigest());
+    expect(replayManifestError(record)).toBeNull();
+  });
+
+  it("fails closed when the manifest digest differs even though every action is unchanged", () => {
+    const { record, live } = playRecorded("replay-manifest-digest");
+    const rebound: ReplayRecord = { ...structuredClone(record), manifestDigest: "00000000" };
+    expect(replayManifestError(rebound)).not.toBeNull();
+    const outcome = replayRecord(rebound);
+    expect(outcome.failedAt).toBe(0);
+    expect(outcome.error).toContain("manifest digest");
+    // No entry was applied: the outcome is the untouched opening deal.
+    expect(outcome.state.auction).toEqual([]);
+    expect(outcome.state.completedTricks).toEqual([]);
+    expect(replayMatches(rebound, live)).toBe(false);
+  });
+
+  it("fails closed when the manifest identity differs", () => {
+    const { record, live } = playRecorded("replay-manifest-id");
+    const rebound = { ...structuredClone(record), manifestId: "SOME_OTHER_MANIFEST" } as unknown as ReplayRecord;
+    const outcome = replayRecord(rebound);
+    expect(outcome.failedAt).toBe(0);
+    expect(outcome.error).toContain("manifest identity");
+    expect(outcome.state.auction).toEqual([]);
+    expect(replayMatches(rebound, live)).toBe(false);
+  });
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 });
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

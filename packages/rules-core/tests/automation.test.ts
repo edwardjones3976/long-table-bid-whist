@@ -15,12 +15,12 @@ import {
   type Seat,
 } from "../src";
 
-function ghostCards(tag: string, count: number): Card[] {
+function replacementCards(tag: string, count: number): Card[] {
   return Array.from({ length: count }, (_, index) => ({
-    id: `ghost-${tag}-${index}`,
+    id: `other-${tag}-${index}`,
     suit: "clubs" as const,
     rank: 3,
-    label: "GHOST",
+    label: "OTHER",
     glyph: "!",
   }));
 }
@@ -30,26 +30,27 @@ function counterfactualFor(state: GameState, seat: Seat): GameState {
   const variant = structuredClone(state);
   variant.seed = "counterfactual-seed";
   SEATS.filter((other) => other !== seat).forEach((other) => {
-    variant.hands[other] = ghostCards(other, variant.hands[other].length);
+    variant.hands[other] = replacementCards(other, variant.hands[other].length);
   });
-  variant.kitty = ghostCards("kitty", variant.kitty.length);
-  variant.discardPile = ghostCards("discard", variant.discardPile.length);
+  variant.kitty = replacementCards("kitty", variant.kitty.length);
+  variant.discardPile = replacementCards("discard", variant.discardPile.length);
   variant.events = [{ id: 1, text: "private record" }];
   return variant;
 }
 
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
+const AI_VIEW_INVENTORY = ["seat", "phase", "turn", "hand", "dealer", "auction", "contract", "currentTrick", "completedTricks", "tricksWon", "scores"];
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
+
 describe("AI seats", () => {
-  it("receive only their own hand and public history", () => {
+  it("receive exactly the own-hand-plus-public inventory", () => {
     const state = openHand({ seed: "ai-view" });
     const view = buildAiSeatView(state, "west") as unknown as Record<string, unknown>;
-    expect(Object.keys(view).sort()).toEqual(
-      ["seat", "phase", "turn", "hand", "dealer", "auction", "contract", "currentTrick", "completedTricks", "tricksWon", "scores"].sort(),
-    );
+    expect(Object.keys(view)).toEqual(AI_VIEW_INVENTORY);
     expect(view.hand).toEqual(state.hands.west);
-    const serialized = JSON.stringify(view);
-    expect(serialized).not.toContain(state.seed);
-    state.hands.north.forEach((card) => expect(serialized).not.toContain(card.id));
-    state.kitty.forEach((card) => expect(serialized).not.toContain(card.id));
+    // The view is constructed from the seat's own hand and public records only;
+    // the counterfactual below proves no other concealed fact reaches it.
+    expect(buildAiSeatView(counterfactualFor(state, "west"), "west")).toEqual(buildAiSeatView(state, "west"));
   });
 
   it("decide identically when every other concealed card is replaced", () => {

@@ -91,6 +91,8 @@ export interface PlayerProjection extends PublicCore {
   previewLabel: string | null;
   discardPicked: number;
   discardTarget: number;
+  /** Per-seat counter for player-local (uncommitted) changes; the shared version does not move for them. */
+  uncommittedRevision: number;
   feedbackCode: RejectionCode | null;
   feedbackLine: string | null;
   disabledNotices: DisabledNoticeView[];
@@ -172,6 +174,7 @@ export const PLAYER_PROJECTION = s.object<PlayerProjection>({
   previewLabel: s.nullable(s.string({ maxLength: LIMITS.label })),
   discardPicked: s.int({ min: 0, max: LIMITS.maxHandLength }),
   discardTarget: s.int({ min: 0, max: LIMITS.maxHandLength }),
+  uncommittedRevision: s.int({ min: 0, max: LIMITS.maxVersion }),
   feedbackCode: s.nullable(s.enumOf(REJECTION_CODES)),
   feedbackLine: s.nullable(s.string({ maxLength: LIMITS.line })),
   disabledNotices: s.array(DISABLED_NOTICE_VIEW, { maxLength: 8 }),

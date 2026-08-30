@@ -3,13 +3,18 @@
  * The authoritative table.
  *
  * One `TableAuthority` owns one table: the committed `GameState`, the seat
- * bindings, every seat's uncommitted preview, the monotonic table version,
- * the intent-id ledger, the replay record, and a bounded history of the
- * projections emitted at each version.
+ * bindings, every seat's player-local (uncommitted) preview state, the
+ * monotonic table version, the intent-id ledgers, the replay record, and a
+ * bounded history of the projections emitted at each version.
  *
- * Order of checks for every intent: table identity, event ended, duplicate
- * intent id, role authority, seat binding, stale version, then the rules.
- * Nothing after the role check runs for a role that may not submit the kind.
+ * Two kinds of accepted intent exist. Authoritative intents (confirm,
+ * next-hand, host powers) advance the shared version, enter history and are
+ * remembered forever. Player-local intents (preview, toggle-discard, cancel)
+ * change only the acting seat's own projection: the shared version, the host
+ * and public projections and the replay history are untouched.
+ *
+ * Order of checks for every intent: table identity, duplicate intent id,
+ * event ended, role authority, seat ownership, stale version, then the rules.
  */
 import {
   ORACLE_AI_SEATS,
@@ -73,19 +78,30 @@ export interface IntentSubmission {
   readonly intent: TableIntent;
 }
 
-/** Everything emitted at one version. */
+/** Everything emitted at one authoritative version. */
 export interface HistoryFrame {
   readonly version: number;
   readonly player: Partial<Record<Seat, PlayerProjection>>;
+  /** The participant each player projection was built for; replay never crosses owners. */
+  readonly playerOwner: Partial<Record<Seat, string>>;
   readonly host: HostProjection;
   readonly public: PublicProjection;
   readonly cues: readonly DealerCueFrame[];
 }
 
+/** A player-local change for exactly one seat and the participant who owns it. */
+export interface SeatUpdate {
+  readonly seat: Seat;
+  readonly participantId: string;
+  readonly projection: PlayerProjection;
+}
+
 export interface SubmitResult {
   readonly receipt: IntentReceipt;
-  /** Present only when the table version advanced. */
+  /** Present only when the shared table version advanced. */
   readonly frame: HistoryFrame | null;
+  /** Present only for an accepted player-local intent. */
+  readonly seatUpdate: SeatUpdate | null;
 }
 
 export interface ReplayFrames {
@@ -94,18 +110,52 @@ export interface ReplayFrames {
 }
 
 const DEFAULT_RETENTION = 128;
-const INTENT_LEDGER = 512;
+/** Accepted player-local intents remembered for duplicate suppression. Their re-application is harmless. */
+const LOCAL_LEDGER = 4096;
+/** Rejected intents remembered for duplicate suppression. They changed nothing, so eviction is harmless. */
+const REJECTED_LEDGER = 512;
+
+interface SeatLocal {
+  readonly uncommitted: SeatUncommitted;
+  /** Increments on every player-local change, so a client can order same-version projections. */
+  readonly revision: number;
+  readonly lastReceipt: IntentReceipt | null;
+}
+
+function freshLocal(revision = 0): SeatLocal {
+  return { uncommitted: EMPTY_UNCOMMITTED, revision, lastReceipt: null };
+}
 
 function openSeats(): Record<Seat, SeatBinding> {
   return { south: { occupant: "open" }, west: { occupant: "open" }, north: { occupant: "open" }, east: { occupant: "open" } };
 }
 
-function emptyUncommitted(): Record<Seat, SeatUncommitted> {
-  return { south: EMPTY_UNCOMMITTED, west: EMPTY_UNCOMMITTED, north: EMPTY_UNCOMMITTED, east: EMPTY_UNCOMMITTED };
+function emptyLocals(): Record<Seat, SeatLocal> {
+  return { south: freshLocal(), west: freshLocal(), north: freshLocal(), east: freshLocal() };
 }
 
-function emptyReceipts(): Record<Seat, IntentReceipt | null> {
-  return { south: null, west: null, north: null, east: null };
+/** Insertion-ordered ledger with a capacity; the oldest entry is evicted first. */
+class BoundedLedger {
+  private readonly entries = new Map<string, IntentReceipt>();
+  private readonly order: string[] = [];
+  private readonly capacity: number;
+
+  constructor(capacity: number) {
+    this.capacity = capacity;
+  }
+
+  get(intentId: string): IntentReceipt | undefined {
+    return this.entries.get(intentId);
+  }
+
+  set(intentId: string, receipt: IntentReceipt): void {
+    if (!this.entries.has(intentId)) this.order.push(intentId);
+    this.entries.set(intentId, receipt);
+    while (this.order.length > this.capacity) {
+      const evicted = this.order.shift();
+      if (evicted !== undefined) this.entries.delete(evicted);
+    }
+  }
 }
 
 interface Transition {
@@ -122,10 +172,11 @@ export class TableAuthority {
   private version = 0;
   private seats: Record<Seat, SeatBinding>;
   private hostParticipantId: string | null;
-  private uncommitted: Record<Seat, SeatUncommitted> = emptyUncommitted();
-  private lastReceipts: Record<Seat, IntentReceipt | null> = emptyReceipts();
-  private readonly ledger = new Map<string, IntentReceipt>();
-  private readonly ledgerOrder: string[] = [];
+  private locals: Record<Seat, SeatLocal> = emptyLocals();
+  /** Intents that advanced authoritative state. Unbounded for the table's lifetime: they can never become reusable. */
+  private readonly authoritativeLedger = new Map<string, IntentReceipt>();
+  private readonly localLedger = new BoundedLedger(LOCAL_LEDGER);
+  private readonly rejectedLedger = new BoundedLedger(REJECTED_LEDGER);
   private readonly history: HistoryFrame[] = [];
   private readonly retention: number;
   private readonly replay: ReplayRecord;
@@ -148,13 +199,13 @@ export class TableAuthority {
     return this.version;
   }
 
-  /** The most recently emitted frame, including the opening frame's cues. */
-  lastFrame(): HistoryFrame | null {
-    return this.history.length > 0 ? this.history[this.history.length - 1] : null;
-  }
-
   get ended(): boolean {
     return this.eventEnded;
+  }
+
+  /** The most recently emitted authoritative frame, including the opening frame's cues. */
+  lastFrame(): HistoryFrame | null {
+    return this.history.length > 0 ? this.history[this.history.length - 1] : null;
   }
 
   hostOf(): string | null {
@@ -168,14 +219,22 @@ export class TableAuthority {
   /** The human seat bound to `participantId`, if any. */
   seatOf(participantId: string | null): Seat | null {
     if (participantId === null) return null;
-    return SEATS.find((seat) => {
-      const binding = this.seats[seat];
-      return binding.occupant === "human" && binding.participantId === participantId;
-    }) ?? null;
+    return SEATS.find((seat) => this.owns(seat, participantId)) ?? null;
+  }
+
+  /** True when `seat` is a human seat currently bound to `participantId`. */
+  owns(seat: Seat, participantId: string | null): boolean {
+    const binding = this.seats[seat];
+    return participantId !== null && binding.occupant === "human" && binding.participantId === participantId;
   }
 
   seatBinding(seat: Seat): SeatBinding {
     return this.seats[seat];
+  }
+
+  /** The current player-local revision of a seat. */
+  seatRevision(seat: Seat): number {
+    return this.locals[seat].revision;
   }
 
   private isAi(seat: Seat): boolean {
@@ -200,21 +259,42 @@ export class TableAuthority {
     return advanced.state;
   }
 
+  private setLocal(seat: Seat, uncommitted: SeatUncommitted, lastReceipt: IntentReceipt | null): void {
+    const current = this.locals[seat];
+    this.locals = { ...this.locals, [seat]: { uncommitted, revision: current.revision + 1, lastReceipt } };
+  }
+
+  private clearLocals(): void {
+    SEATS.forEach((seat) => {
+      const current = this.locals[seat];
+      this.locals = { ...this.locals, [seat]: { ...current, uncommitted: EMPTY_UNCOMMITTED, revision: current.revision + 1 } };
+    });
+  }
+
+  private playerProjection(seat: Seat): PlayerProjection {
+    const local = this.locals[seat];
+    return buildPlayerProjection(this.view(), seat, local.uncommitted, local.revision, local.lastReceipt);
+  }
+
   private pushFrame(before: GameState, transition: Transition): HistoryFrame {
     this.version += 1;
     this.game = transition.game;
     if (transition.eventEnded) this.eventEnded = true;
     if (transition.announcement) this.lastAnnouncement = transition.announcement;
-    const view = this.view();
     const player: Partial<Record<Seat, PlayerProjection>> = {};
+    const playerOwner: Partial<Record<Seat, string>> = {};
     SEATS.forEach((seat) => {
-      if (this.seats[seat].occupant === "human") {
-        player[seat] = buildPlayerProjection(view, seat, this.uncommitted[seat], this.lastReceipts[seat]);
+      const binding = this.seats[seat];
+      if (binding.occupant === "human") {
+        player[seat] = this.playerProjection(seat);
+        playerOwner[seat] = binding.participantId;
       }
     });
+    const view = this.view();
     const frame: HistoryFrame = {
       version: this.version,
       player,
+      playerOwner,
       host: buildHostProjection(view),
       public: buildPublicProjection(view),
       cues: deriveDealerCues(before, this.game, {
@@ -233,7 +313,8 @@ export class TableAuthority {
 
   /**
    * Seats a human. Allowed while the hand has not started or between hands, on
-   * an open or AI seat. Returns the frame when the table changed.
+   * an open or AI seat, or to re-seat a human seat with a different occupant
+   * between hands. A rebound seat starts with no player-local state.
    */
   bindSeat(seat: Seat, binding: SeatBinding): HistoryFrame | null {
     if (this.eventEnded) return null;
@@ -242,53 +323,57 @@ export class TableAuthority {
     if (!handIdle && current.occupant !== "open") return null;
     if (current.occupant === "human" && binding.occupant !== "human") return null;
     this.seats = { ...this.seats, [seat]: binding };
-    this.uncommitted = { ...this.uncommitted, [seat]: EMPTY_UNCOMMITTED };
+    this.locals = { ...this.locals, [seat]: freshLocal(this.locals[seat].revision + 1) };
     const before = this.game;
     return this.pushFrame(before, { game: this.runAiSeats(this.game) });
   }
 
-  /** Marks a human seat connected or disconnected; a change is a public fact. */
-  setSeatPresence(seat: Seat, connected: boolean, displayName: string | null): HistoryFrame | null {
+  /** Marks a human seat connected or disconnected. Only the seat's current owner may change its presence. */
+  setSeatPresence(seat: Seat, participantId: string, connected: boolean, displayName: string | null): HistoryFrame | null {
     const current = this.seats[seat];
-    if (current.occupant !== "human") return null;
+    if (current.occupant !== "human" || current.participantId !== participantId) return null;
     const nextName = displayName && displayName.length > 0 ? displayName : current.displayName;
     if (current.connected === connected && current.displayName === nextName) return null;
     this.seats = { ...this.seats, [seat]: { ...current, connected, displayName: nextName } };
     return this.pushFrame(this.game, { game: this.game });
   }
 
-  snapshot(role: Role, seat: Seat | null): RoleProjection | null {
-    const view = this.view();
+  /** A fresh projection for `role`. A player projection is built only for the seat's current owner. */
+  snapshot(role: Role, seat: Seat | null, participantId: string | null): RoleProjection | null {
     switch (role) {
       case "player":
-        if (!seat || this.seats[seat].occupant !== "human") return null;
-        return buildPlayerProjection(view, seat, this.uncommitted[seat], this.lastReceipts[seat]);
+        if (!seat || !this.owns(seat, participantId)) return null;
+        return this.playerProjection(seat);
       case "host":
-        return buildHostProjection(view);
+        return buildHostProjection(this.view());
       case "public":
-        return buildPublicProjection(view);
+        return buildPublicProjection(this.view());
       case "dealer":
         return null;
     }
   }
 
-  /** Projections for `role` after `lastVersion`, oldest first, within retention. */
-  replayFrames(role: Role, seat: Seat | null, lastVersion: number): ReplayFrames {
+  /** Projections for `role` after `lastVersion`, oldest first, within retention; player frames only for their owner. */
+  replayFrames(role: Role, seat: Seat | null, participantId: string | null, lastVersion: number): ReplayFrames {
+    // Current ownership is required before any frame is read: a participant who
+    // no longer holds the seat gets nothing, not even frames built for them earlier.
+    if (role === "player" && (!seat || !this.owns(seat, participantId))) return { frames: [], truncated: false };
     const wanted = this.history.filter((frame) => frame.version > lastVersion);
     const oldestRetained = this.history.length > 0 ? this.history[0].version : this.version + 1;
     const truncated = lastVersion + 1 < oldestRetained;
     const frames: { version: number; projection: RoleProjection }[] = [];
     for (const frame of wanted) {
-      const projection = TableAuthority.projectionFromFrame(frame, role, seat);
+      const projection = TableAuthority.projectionFromFrame(frame, role, seat, participantId);
       if (projection) frames.push({ version: frame.version, projection });
     }
     return { frames, truncated };
   }
 
-  static projectionFromFrame(frame: HistoryFrame, role: Role, seat: Seat | null): RoleProjection | null {
+  static projectionFromFrame(frame: HistoryFrame, role: Role, seat: Seat | null, participantId: string | null): RoleProjection | null {
     switch (role) {
       case "player":
-        return seat ? (frame.player[seat] ?? null) : null;
+        if (!seat || participantId === null || frame.playerOwner[seat] !== participantId) return null;
+        return frame.player[seat] ?? null;
       case "host":
         return frame.host;
       case "public":
@@ -325,44 +410,40 @@ export class TableAuthority {
     };
   }
 
-  private remember(seat: Seat | null, receipt: IntentReceipt): void {
-    this.ledger.set(receipt.intentId, receipt);
-    this.ledgerOrder.push(receipt.intentId);
-    if (this.ledgerOrder.length > INTENT_LEDGER) {
-      const evicted = this.ledgerOrder.shift();
-      if (evicted !== undefined) this.ledger.delete(evicted);
-    }
-    if (seat) this.lastReceipts = { ...this.lastReceipts, [seat]: receipt };
+  private findReceipt(intentId: string): IntentReceipt | undefined {
+    return this.authoritativeLedger.get(intentId) ?? this.localLedger.get(intentId) ?? this.rejectedLedger.get(intentId);
+  }
+
+  private rejected(seat: Seat | null, submission: IntentSubmission, code: RejectionCode): SubmitResult {
+    const receipt = this.receipt(submission, "rejected", code, false);
+    this.rejectedLedger.set(receipt.intentId, receipt);
+    if (seat) this.locals = { ...this.locals, [seat]: { ...this.locals[seat], lastReceipt: receipt } };
+    return { receipt, frame: null, seatUpdate: null };
   }
 
   submitIntent(actor: Actor, submission: IntentSubmission): SubmitResult {
     const seat = actor.role === "player" ? actor.seat : null;
-    const rejected = (code: RejectionCode): SubmitResult => {
-      const receipt = this.receipt(submission, "rejected", code, false);
-      this.remember(seat, receipt);
-      return { receipt, frame: null };
-    };
 
-    if (submission.tableId !== this.tableId) return rejected("unknown-table");
+    if (submission.tableId !== this.tableId) return this.rejected(seat, submission, "unknown-table");
 
-    // Idempotency first: a replayed intent id is answered from the ledger and
+    // Idempotency first: a replayed intent id is answered from the ledgers and
     // never re-evaluated, whatever the version has become since.
-    if (this.ledger.has(submission.intentId)) {
+    if (this.findReceipt(submission.intentId)) {
       const receipt = this.receipt(submission, "duplicate", "duplicate-input-id", false);
-      if (seat) this.lastReceipts = { ...this.lastReceipts, [seat]: receipt };
-      return { receipt, frame: null };
+      if (seat) this.locals = { ...this.locals, [seat]: { ...this.locals[seat], lastReceipt: receipt } };
+      return { receipt, frame: null, seatUpdate: null };
     }
 
-    if (this.eventEnded) return rejected("event-ended");
+    if (this.eventEnded) return this.rejected(seat, submission, "event-ended");
 
     const allowed = INTENT_AUTHORITY[submission.intent.kind];
-    if (!allowed.includes(actor.role)) return rejected("unauthorized-role");
-    if (actor.role === "host" && !this.isHost(actor.participantId)) return rejected("unauthorized-role");
-    if (actor.role === "player") {
-      if (!seat || this.seatOf(actor.participantId) !== seat) return rejected("seat-not-bound");
+    if (!allowed.includes(actor.role)) return this.rejected(seat, submission, "unauthorized-role");
+    if (actor.role === "host" && !this.isHost(actor.participantId)) return this.rejected(seat, submission, "unauthorized-role");
+    if (actor.role === "player" && (!seat || !this.owns(seat, actor.participantId))) {
+      return this.rejected(seat, submission, "seat-not-bound");
     }
 
-    if (submission.expectedVersion !== this.version) return rejected("stale-version");
+    if (submission.expectedVersion !== this.version) return this.rejected(seat, submission, "stale-version");
 
     const intent = submission.intent;
     switch (intent.kind) {
@@ -373,28 +454,28 @@ export class TableAuthority {
       case "next-hand":
         return this.handlePlayerIntent(actor, seat, submission, intent);
       case "host-pause":
-        if (this.game.phase !== "summary") return rejected("not-between-hands");
-        if (this.game.paused) return rejected("wrong-phase");
-        return this.accept(seat, submission, { game: setPaused(this.game, true) });
+        if (this.game.phase !== "summary") return this.rejected(seat, submission, "not-between-hands");
+        if (this.game.paused) return this.rejected(seat, submission, "wrong-phase");
+        return this.acceptAuthoritative(seat, submission, { game: setPaused(this.game, true) }, false);
       case "host-resume":
-        if (!this.game.paused) return rejected("wrong-phase");
-        return this.accept(seat, submission, { game: this.runAiSeats(setPaused(this.game, false)) });
+        if (!this.game.paused) return this.rejected(seat, submission, "wrong-phase");
+        return this.acceptAuthoritative(seat, submission, { game: this.runAiSeats(setPaused(this.game, false)) }, false);
       case "host-announce":
-        return this.accept(seat, submission, { game: this.game, announcement: intent.cue });
+        return this.acceptAuthoritative(seat, submission, { game: this.game, announcement: intent.cue }, false);
       case "host-substitute": {
-        if (this.game.phase !== "summary") return rejected("not-between-hands");
-        if (this.seats[intent.seat].occupant !== "human") return rejected("seat-not-substitutable");
+        if (this.game.phase !== "summary") return this.rejected(seat, submission, "not-between-hands");
+        if (this.seats[intent.seat].occupant !== "human") return this.rejected(seat, submission, "seat-not-substitutable");
         this.seats = { ...this.seats, [intent.seat]: { occupant: "ai" } };
-        this.uncommitted = { ...this.uncommitted, [intent.seat]: EMPTY_UNCOMMITTED };
-        return this.accept(seat, submission, { game: this.game, substitutedSeat: intent.seat });
+        this.locals = { ...this.locals, [intent.seat]: freshLocal(this.locals[intent.seat].revision + 1) };
+        return this.acceptAuthoritative(seat, submission, { game: this.game, substitutedSeat: intent.seat }, false);
       }
       case "host-transfer": {
-        if (this.seatOf(intent.participantId) === null) return rejected("unknown-participant");
+        if (this.seatOf(intent.participantId) === null) return this.rejected(seat, submission, "unknown-participant");
         this.hostParticipantId = intent.participantId;
-        return this.accept(seat, submission, { game: this.game });
+        return this.acceptAuthoritative(seat, submission, { game: this.game }, false);
       }
       case "host-end-event":
-        return this.accept(seat, submission, { game: this.game, eventEnded: true });
+        return this.acceptAuthoritative(seat, submission, { game: this.game, eventEnded: true }, false);
     }
   }
 
@@ -406,47 +487,50 @@ export class TableAuthority {
   ): SubmitResult {
     // A host may call the next hand (pacing) without holding a seat.
     const actingSeat: Seat = seat ?? "south";
-    if (actor.role === "host" && intent.kind !== "next-hand") {
-      const receipt = this.receipt(submission, "rejected", "unauthorized-role", false);
-      this.remember(null, receipt);
-      return { receipt, frame: null };
-    }
-    const current = seat ? this.uncommitted[seat] : EMPTY_UNCOMMITTED;
+    if (actor.role === "host" && intent.kind !== "next-hand") return this.rejected(null, submission, "unauthorized-role");
+    const current = seat ? this.locals[seat].uncommitted : EMPTY_UNCOMMITTED;
     const outcome = routePlayerIntent(this.game, actingSeat, current, intent);
-    if ("code" in outcome) {
-      const receipt = this.receipt(submission, "rejected", outcome.code, false);
-      this.remember(seat, receipt);
-      return { receipt, frame: null };
-    }
+    if ("code" in outcome) return this.rejected(seat, submission, outcome.code);
 
     if (!outcome.commit) {
-      if (seat) this.uncommitted = { ...this.uncommitted, [seat]: outcome.uncommitted };
-      return this.accept(seat, submission, { game: this.game });
+      if (!seat) return this.rejected(null, submission, "unauthorized-role");
+      return this.acceptLocal(seat, submission, outcome.uncommitted);
     }
 
     const result = applySeatAction(this.game, actingSeat, outcome.commit);
-    if (result.error) {
-      const receipt = this.receipt(submission, "rejected", "engine-rejected", false);
-      this.remember(seat, receipt);
-      return { receipt, frame: null };
-    }
+    if (result.error) return this.rejected(seat, submission, "engine-rejected");
     this.replay.entries.push({ seat: actingSeat, action: outcome.commit });
     // A commit invalidates every seat's pointing state; the table has moved on.
-    this.uncommitted = emptyUncommitted();
-    return this.accept(seat, submission, { game: this.runAiSeats(result.state) }, true);
+    this.clearLocals();
+    return this.acceptAuthoritative(seat, submission, { game: this.runAiSeats(result.state) }, true);
   }
 
-  private accept(seat: Seat | null, submission: IntentSubmission, transition: Transition, committed = false): SubmitResult {
+  /** Accepts a player-local change: no shared version, no history, no host/public change. */
+  private acceptLocal(seat: Seat, submission: IntentSubmission, uncommitted: SeatUncommitted): SubmitResult {
+    const receipt = this.receipt(submission, "accepted", null, false);
+    this.localLedger.set(receipt.intentId, receipt);
+    this.setLocal(seat, uncommitted, receipt);
+    const binding = this.seats[seat];
+    if (binding.occupant !== "human") return { receipt, frame: null, seatUpdate: null };
+    return {
+      receipt,
+      frame: null,
+      seatUpdate: { seat, participantId: binding.participantId, projection: this.playerProjection(seat) },
+    };
+  }
+
+  /** Accepts an authoritative change: the version advances, a frame enters history, the id is remembered forever. */
+  private acceptAuthoritative(seat: Seat | null, submission: IntentSubmission, transition: Transition, committed: boolean): SubmitResult {
     const before = this.game;
     // The receipt is remembered before the frame is built so the seat's own
     // projection reflects an accepted (feedback-free) last receipt.
     const provisional = this.receipt(submission, "accepted", null, committed);
-    this.remember(seat, provisional);
+    if (seat) this.locals = { ...this.locals, [seat]: { ...this.locals[seat], lastReceipt: provisional } };
     const frame = this.pushFrame(before, transition);
     const receipt: IntentReceipt = { ...provisional, version: this.version };
-    this.ledger.set(receipt.intentId, receipt);
-    if (seat) this.lastReceipts = { ...this.lastReceipts, [seat]: receipt };
-    return { receipt, frame };
+    this.authoritativeLedger.set(receipt.intentId, receipt);
+    if (seat) this.locals = { ...this.locals, [seat]: { ...this.locals[seat], lastReceipt: receipt } };
+    return { receipt, frame, seatUpdate: null };
   }
 }
 

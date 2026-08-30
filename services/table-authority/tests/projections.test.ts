@@ -1,42 +1,44 @@
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | BEGIN]]
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
 /**
- * Structural isolation of the role projections: closed keys, decodability,
- * counterfactual byte-equivalence for host and public, and no reachable
- * reference back into the authoritative state.
+ * Structural isolation of the role projections: exact key inventories,
+ * decodability, counterfactual byte-equivalence for host, public and the
+ * player's own projection, and no reachable reference back into the
+ * authoritative state. Nothing here scans text for forbidden content; the
+ * evidence is the closed structure and the counterfactual construction.
  */
 import { describe, expect, it } from "vitest";
 
 import { SEATS, type Card, type GameState, type Seat } from "../../../packages/rules-core/src";
 import {
   HOST_PROJECTION,
-  HOST_PROJECTION_KEYS,
+  HOST_PROJECTION_INVENTORY,
   PLAYER_PROJECTION,
-  PLAYER_PROJECTION_KEYS,
+  PLAYER_PROJECTION_INVENTORY,
   PUBLIC_PROJECTION,
-  PUBLIC_PROJECTION_KEYS,
+  PUBLIC_PROJECTION_INVENTORY,
   canonicalJson,
-  concealedKeyViolations,
+  inventoryViolations,
+  matchesInventory,
 } from "../../../packages/protocol/src";
 import { buildHostProjection, buildPlayerProjection, buildPublicProjection, type TableView } from "../src/projections";
 import { EMPTY_UNCOMMITTED } from "../src/seat-interaction";
 import { createTable, driveUntil, human } from "./support";
 
-const GHOST = "GHOSTCARD";
-
-function ghostCards(tag: string, count: number): Card[] {
-  return Array.from({ length: count }, (_, index) => ({ id: `ghost-${tag}-${index}`, suit: "spades" as const, rank: 2, label: GHOST, glyph: "!" }));
+function replacementCards(tag: string, count: number): Card[] {
+  return Array.from({ length: count }, (_, index) => ({ id: `other-${tag}-${index}`, suit: "spades" as const, rank: 2, label: "OTHER", glyph: "!" }));
 }
 
-/** Same public facts; every fact South cannot see replaced. */
+/** Same public facts; every fact the kept seat cannot see replaced by different cards, a different seed and a different private log. */
 function concealedCounterfactual(game: GameState, keep: Seat): GameState {
   const variant = structuredClone(game);
   variant.seed = "counterfactual-seed";
   SEATS.filter((seat) => seat !== keep).forEach((seat) => {
-    variant.hands[seat] = ghostCards(seat, variant.hands[seat].length);
+    variant.hands[seat] = replacementCards(seat, variant.hands[seat].length);
   });
-  variant.kitty = ghostCards("kitty", variant.kitty.length);
-  variant.discardPile = ghostCards("discard", variant.discardPile.length);
-  variant.events = [{ id: 1, text: `private host record ${GHOST}` }];
+  variant.kitty = replacementCards("kitty", variant.kitty.length);
+  variant.discardPile = replacementCards("discard", variant.discardPile.length);
+  variant.events = [{ id: 1, text: "private host record" }];
   return variant;
 }
 
@@ -65,59 +67,59 @@ function reachableObjects(value: unknown, seen = new Set<object>()): Set<object>
   return seen;
 }
 
-describe("role projections — closed structure", () => {
-  it("publish exactly the allowlisted keys and decode through their schemas", () => {
+describe("role projections — exact inventories", () => {
+  it("publish exactly the declared inventory for each role and decode through their schemas", () => {
+    expect(inventoryViolations()).toEqual([]);
     const view = viewOf(midPlayGame("closed-keys"));
-    const player = buildPlayerProjection(view, "south", EMPTY_UNCOMMITTED, null);
+    const player = buildPlayerProjection(view, "south", EMPTY_UNCOMMITTED, 0, null);
     const host = buildHostProjection(view);
     const pub = buildPublicProjection(view);
-    expect(Object.keys(player).sort()).toEqual([...PLAYER_PROJECTION_KEYS].sort());
-    expect(Object.keys(host).sort()).toEqual([...HOST_PROJECTION_KEYS].sort());
-    expect(Object.keys(pub).sort()).toEqual([...PUBLIC_PROJECTION_KEYS].sort());
+    expect(Object.keys(player)).toEqual([...PLAYER_PROJECTION_INVENTORY]);
+    expect(Object.keys(host)).toEqual([...HOST_PROJECTION_INVENTORY]);
+    expect(Object.keys(pub)).toEqual([...PUBLIC_PROJECTION_INVENTORY]);
+    expect(matchesInventory("PlayerProjection", player)).toBe(true);
+    expect(matchesInventory("HostProjection", host)).toBe(true);
+    expect(matchesInventory("PublicProjection", pub)).toBe(true);
     expect(PLAYER_PROJECTION.decode(player, "player").ok).toBe(true);
     expect(HOST_PROJECTION.decode(host, "host").ok).toBe(true);
     expect(PUBLIC_PROJECTION.decode(pub, "public").ok).toBe(true);
-    expect(concealedKeyViolations()).toEqual([]);
   });
 
-  it("declare no concealed member on host and public, and reject one if injected", () => {
-    expect(HOST_PROJECTION_KEYS).not.toContain("hand");
-    expect(HOST_PROJECTION_KEYS).not.toContain("legalChoices");
-    expect(PUBLIC_PROJECTION_KEYS).not.toContain("hand");
+  it("host and public inventories are the public core plus role fields and nothing else", () => {
+    expect([...HOST_PROJECTION_INVENTORY]).toEqual(["role", ...PUBLIC_PROJECTION_INVENTORY.slice(1), "betweenHands", "hostControls", "lastAnnouncement"]);
+    expect(PUBLIC_PROJECTION_INVENTORY.length).toBe(24);
+    expect(HOST_PROJECTION_INVENTORY.length).toBe(27);
+    expect(PLAYER_PROJECTION_INVENTORY.length).toBe(34);
+  });
+
+  it("rejects a member injected into a host or public projection", () => {
     const view = viewOf(midPlayGame("inject"));
     const host = buildHostProjection(view) as unknown as Record<string, unknown>;
-    const injected = { ...host, hand: [] };
-    const result = HOST_PROJECTION.decode(injected, "host");
-    expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.rejection).toEqual({ code: "unknown-field", path: "host.hand" });
+    const pub = buildPublicProjection(view) as unknown as Record<string, unknown>;
+    const injectedHost = HOST_PROJECTION.decode({ ...host, hand: [] }, "host");
+    expect(injectedHost.ok).toBe(false);
+    if (!injectedHost.ok) expect(injectedHost.rejection).toEqual({ code: "unknown-field", path: "host.hand" });
+    const injectedPublic = PUBLIC_PROJECTION.decode({ ...pub, legalChoices: [] }, "public");
+    expect(injectedPublic.ok).toBe(false);
+    if (!injectedPublic.ok) expect(injectedPublic.rejection).toEqual({ code: "unknown-field", path: "public.legalChoices" });
   });
 
-  it("give every seat a card count and never a concealed card identity", () => {
+  it("gives every seat a card count built from the hand length alone", () => {
     const game = midPlayGame("card-counts");
     const view = viewOf(game);
-    const host = JSON.stringify(buildHostProjection(view));
-    const pub = JSON.stringify(buildPublicProjection(view));
-    const south = JSON.stringify(buildPlayerProjection(view, "south", EMPTY_UNCOMMITTED, null));
-    SEATS.forEach((seat) => {
-      game.hands[seat].forEach((card) => {
-        expect(host).not.toContain(card.id);
-        expect(pub).not.toContain(card.id);
-        if (seat !== "south") expect(south).not.toContain(card.id);
-      });
-    });
-    game.kitty.forEach((card) => expect(host + pub + south).not.toContain(card.id));
-    game.discardPile.forEach((card) => expect(host + pub + south).not.toContain(card.id));
-    expect(host + pub + south).not.toContain(game.seed);
     const occupancy = buildPublicProjection(view).seats;
     expect(occupancy.map((seat) => seat.cardCount)).toEqual(SEATS.map((seat) => game.hands[seat].length));
     expect(occupancy.map((seat) => seat.occupant)).toEqual(["human", "human", "ai", "open"]);
+    expect(occupancy.map((seat) => Object.keys(seat))).toEqual(
+      SEATS.map(() => ["seat", "seatLabel", "occupant", "displayName", "connected", "cardCount"]),
+    );
   });
 
   it("retain no reference back into the authoritative state", () => {
     const game = midPlayGame("no-reference");
     const view = viewOf(game);
     const projections = [
-      buildPlayerProjection(view, "south", EMPTY_UNCOMMITTED, null),
+      buildPlayerProjection(view, "south", EMPTY_UNCOMMITTED, 0, null),
       buildHostProjection(view),
       buildPublicProjection(view),
     ];
@@ -144,7 +146,7 @@ describe("role projections — closed structure", () => {
 });
 
 describe("role projections — counterfactual concealed state", () => {
-  it("leaves host and public projections byte-identical when every concealed fact changes", () => {
+  it("leaves host, public and the seat's own projection byte-identical when every concealed fact changes", () => {
     for (const seed of ["cf-a", "cf-b", "cf-c"]) {
       const game = midPlayGame(seed);
       const actual = viewOf(game);
@@ -156,12 +158,9 @@ describe("role projections — counterfactual concealed state", () => {
       expect(canonicalJson(PUBLIC_PROJECTION, buildPublicProjection(counterfactual))).toBe(
         canonicalJson(PUBLIC_PROJECTION, buildPublicProjection(actual)),
       );
-      // South's own projection sees only South's hand, so it is unchanged as well.
-      expect(canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(counterfactual, "south", EMPTY_UNCOMMITTED, null))).toBe(
-        canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(actual, "south", EMPTY_UNCOMMITTED, null)),
+      expect(canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(counterfactual, "south", EMPTY_UNCOMMITTED, 0, null))).toBe(
+        canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(actual, "south", EMPTY_UNCOMMITTED, 0, null)),
       );
-      expect(JSON.stringify(buildHostProjection(counterfactual))).not.toContain(GHOST);
-      expect(JSON.stringify(buildHostProjection(counterfactual))).not.toContain("counterfactual-seed");
     }
   });
 
@@ -169,9 +168,10 @@ describe("role projections — counterfactual concealed state", () => {
     const game = midPlayGame("cf-control");
     const actual = viewOf(game);
     const counterfactual = viewOf(concealedCounterfactual(game, "south"));
-    expect(canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(counterfactual, "west", EMPTY_UNCOMMITTED, null))).not.toBe(
-      canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(actual, "west", EMPTY_UNCOMMITTED, null)),
+    expect(canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(counterfactual, "west", EMPTY_UNCOMMITTED, 0, null))).not.toBe(
+      canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(actual, "west", EMPTY_UNCOMMITTED, 0, null)),
     );
   });
 });
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

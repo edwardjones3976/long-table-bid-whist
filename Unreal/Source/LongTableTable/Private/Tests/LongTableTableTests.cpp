@@ -1,8 +1,10 @@
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | BEGIN]]
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
 /**
  * Loopback automation for the authority client: hello/welcome, intent
  * serialization, duplicate suppression, stale-version resync, reconnect with
- * resume and replay, and fail-closed handling of a non-schema frame.
+ * resume and replay, fail-closed handling of a non-schema frame, authority
+ * context isolation, coherence rejection and original-version retry.
  */
 #include "Misc/AutomationTest.h"
 #include "Misc/FileHelper.h"
@@ -17,6 +19,8 @@
 
 namespace LongTableTableTests
 {
+	const TCHAR* const FixtureTableId = TEXT("table-fixture-1");
+
 	FString FixtureDir()
 	{
 		return FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT(".."), TEXT("fixtures"), TEXT("protocol")));
@@ -50,16 +54,68 @@ namespace LongTableTableTests
 		return FLongTableProtocolCodec::DecodePlayerProjection(Fixture->TryGetField(TEXT("value")), TEXT("player"), Out, Rejection);
 	}
 
+	bool LoadHostProjection(FAutomationTestBase& Test, FLongTableHostProjection& Out)
+	{
+		const TSharedPtr<FJsonObject> Fixture = LoadFixtureObject(Test, TEXT("host-projection.json"));
+		if (!Fixture.IsValid()) { return false; }
+		FLongTableSchemaRejection Rejection;
+		return FLongTableProtocolCodec::DecodeHostProjection(Fixture->TryGetField(TEXT("value")), TEXT("host"), Out, Rejection);
+	}
+
+	FString ProjectionMessage(FLongTablePlayerProjection Base, int32 EnvelopeVersion, int32 InnerVersion, const FString& EnvelopeTableId = FixtureTableId)
+	{
+		FLongTableAuthorityMessage Message;
+		Message.Type = ELongTableAuthorityMessageType::Projection;
+		Message.Projection.TableId = EnvelopeTableId;
+		Message.Projection.Version = EnvelopeVersion;
+		Base.Version = InnerVersion;
+		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message, { FLongTableProtocolCodec::EncodePlayerProjection(Base) });
+	}
+
 	FString ProjectionMessage(const FLongTablePlayerProjection& Base, int32 Version)
+	{
+		return ProjectionMessage(Base, Version, Version);
+	}
+
+	FString HostProjectionMessage(FLongTableHostProjection Base, int32 Version)
 	{
 		FLongTableAuthorityMessage Message;
 		Message.Type = ELongTableAuthorityMessageType::Projection;
 		Message.Projection.TableId = Base.TableId;
 		Message.Projection.Version = Version;
-		Message.Projection.Projection.Role = ELongTableRole::Player;
-		Message.Projection.Projection.Player = Base;
-		Message.Projection.Projection.Player.Version = Version;
-		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message);
+		Base.Version = Version;
+		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message, { FLongTableProtocolCodec::EncodeHostProjection(Base) });
+	}
+
+	FString PlayerWelcomeText(FLongTablePlayerProjection Base, int32 Version, bool bHasSeat = true, ELongTableSeat WelcomeSeat = ELongTableSeat::South, const FString& TableId = FixtureTableId)
+	{
+		FLongTableAuthorityMessage Message;
+		Message.Type = ELongTableAuthorityMessageType::Welcome;
+		Message.Welcome.SessionId = TEXT("session-crafted");
+		Message.Welcome.Role = ELongTableRole::Player;
+		Message.Welcome.bHasSeat = bHasSeat;
+		Message.Welcome.Seat = WelcomeSeat;
+		Message.Welcome.TableId = TableId;
+		Message.Welcome.Version = Version;
+		Message.Welcome.bHasProjection = true;
+		Base.Version = Version;
+		Base.TableId = TableId;
+		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message, { FLongTableProtocolCodec::EncodePlayerProjection(Base) });
+	}
+
+	FString HostWelcomeText(FLongTableHostProjection Base, int32 Version, const FString& TableId = FixtureTableId)
+	{
+		FLongTableAuthorityMessage Message;
+		Message.Type = ELongTableAuthorityMessageType::Welcome;
+		Message.Welcome.SessionId = TEXT("session-host");
+		Message.Welcome.Role = ELongTableRole::Host;
+		Message.Welcome.bHasSeat = false;
+		Message.Welcome.TableId = TableId;
+		Message.Welcome.Version = Version;
+		Message.Welcome.bHasProjection = true;
+		Base.Version = Version;
+		Base.TableId = TableId;
+		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message, { FLongTableProtocolCodec::EncodeHostProjection(Base) });
 	}
 
 	FString ReceiptMessage(const FString& TableId, const FString& IntentId, ELongTableIntentKind Kind, ELongTableOutcome Outcome, bool bHasCode, ELongTableRejectionCode Code, bool bCommitted, int32 Version)
@@ -75,7 +131,18 @@ namespace LongTableTableTests
 		Message.Receipt.Receipt.Message = bHasCode ? TEXT("rejected") : TEXT("");
 		Message.Receipt.Receipt.bCommitted = bCommitted;
 		Message.Receipt.Receipt.Version = Version;
-		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message);
+		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message, {});
+	}
+
+	FLongTableClientConfig PlayerConfig()
+	{
+		FLongTableClientConfig Config;
+		Config.AuthorityUrl = TEXT("ws://127.0.0.1:1");
+		Config.Token = TEXT("fixture-token-south");
+		Config.Role = ELongTableRole::Player;
+		Config.TableId = FixtureTableId;
+		Config.DisplayName = TEXT("Ada");
+		return Config;
 	}
 
 	struct FClientHarness
@@ -84,23 +151,27 @@ namespace LongTableTableTests
 		TSharedPtr<FLongTableLoopbackTransport> Transport;
 		FLongTableClientConfig Config;
 
-		explicit FClientHarness(ELongTableRole Role = ELongTableRole::Player)
+		explicit FClientHarness(const FLongTableClientConfig& InConfig = PlayerConfig())
+			: Config(InConfig)
 		{
 			Client = NewObject<ULongTableAuthorityClient>();
 			Client->AddToRoot();
-			Client->SetIdentityNonceForTests(TEXT("test-nonce"));
 			Transport = MakeShared<FLongTableLoopbackTransport>();
-			Config.AuthorityUrl = TEXT("ws://127.0.0.1:1");
-			Config.Token = TEXT("fixture-token-south");
-			Config.Role = Role;
-			Config.TableId = TEXT("table-fixture-1");
-			Config.DisplayName = TEXT("Ada");
 			Client->Configure(Config, Transport);
+			Client->SetIdentityNonceForTests(TEXT("test-nonce"));
 		}
 
 		~FClientHarness()
 		{
 			Client->RemoveFromRoot();
+		}
+
+		/** Rebinds a fresh transport under `NewConfig`; the client decides whether the context changed. */
+		void Reconfigure(const FLongTableClientConfig& NewConfig)
+		{
+			Config = NewConfig;
+			Transport = MakeShared<FLongTableLoopbackTransport>();
+			Client->Configure(Config, Transport);
 		}
 
 		bool DecodeSent(int32 Index, FLongTableClientMessage& Out) const
@@ -160,6 +231,7 @@ bool FLongTableCommitMachineTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("begin preview"), Machine.Begin(TEXT("a:1"), PassPreview(), 3));
 	TestFalse(TEXT("second intent refused while in flight"), Machine.Begin(TEXT("a:2"), ConfirmIntent(), 3));
 	TestTrue(TEXT("in flight"), Machine.HasInFlight());
+	TestEqual(TEXT("original expected version kept"), Machine.InFlightVersion(), 3);
 
 	FLongTableIntentReceipt Unrelated;
 	Unrelated.IntentId = TEXT("someone-else");
@@ -193,6 +265,8 @@ bool FLongTableCommitMachineTest::RunTest(const FString& Parameters)
 	Committed.bCommitted = true;
 	Machine.OnReceipt(Committed);
 	TestFalse(TEXT("commit clears the local preview"), Machine.HasLocalPreview());
+	Machine.Reset();
+	TestFalse(TEXT("reset clears in-flight"), Machine.HasInFlight());
 	return true;
 }
 
@@ -209,7 +283,7 @@ bool FLongTableClientHelloTest::RunTest(const FString& Parameters)
 	if (!TestTrue(TEXT("hello sent and decodes"), Harness.DecodeSent(0, Hello))) { return false; }
 	TestEqual(TEXT("hello type"), Hello.Type, ELongTableClientMessageType::Hello);
 	TestEqual(TEXT("hello role"), Hello.Hello.Role, ELongTableRole::Player);
-	TestEqual(TEXT("hello table"), Hello.Hello.TableId, FString(TEXT("table-fixture-1")));
+	TestEqual(TEXT("hello table"), Hello.Hello.TableId, FString(FixtureTableId));
 	TestEqual(TEXT("hello display name"), Hello.Hello.DisplayName, FString(TEXT("Ada")));
 	TestFalse(TEXT("fresh hello does not resume"), Hello.Hello.bResume);
 	TestEqual(TEXT("fresh hello canonical form"), Harness.Transport->Sent[0],
@@ -225,6 +299,8 @@ bool FLongTableClientHelloTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("one frame applied"), Harness.Client->AppliedFrameCount(), 1);
 	TestEqual(TEXT("player projection role seat"), Harness.Client->PlayerProjection().Seat, ELongTableSeat::South);
 	TestTrue(TEXT("player projection version matches"), Harness.Client->PlayerProjection().Version == Harness.Client->GetLastAppliedVersion());
+	TestTrue(TEXT("uncommitted revision tracked"), Harness.Client->GetLastUncommittedRevision() >= 0);
+	TestTrue(TEXT("host projection is empty for a player client"), Harness.Client->GetHostProjection().TableId.IsEmpty());
 	return true;
 }
 
@@ -251,10 +327,24 @@ bool FLongTableClientIntentTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("second intent suppressed"), Harness.Client->SubmitIntent(ConfirmIntent()).IsEmpty());
 	TestEqual(TEXT("still two frames sent"), Harness.Transport->Sent.Num(), 2);
 
-	Harness.Transport->Inject(ReceiptMessage(Harness.Config.TableId, IntentId, ELongTableIntentKind::Preview, ELongTableOutcome::Accepted, false, ELongTableRejectionCode::EngineRejected, false, Version + 1));
+	// A player-local preview is acknowledged at the same shared version.
+	Harness.Transport->Inject(ReceiptMessage(Harness.Config.TableId, IntentId, ELongTableIntentKind::Preview, ELongTableOutcome::Accepted, false, ELongTableRejectionCode::EngineRejected, false, Version));
 	TestFalse(TEXT("receipt clears in-flight"), Harness.Client->HasIntentInFlight());
 	TestTrue(TEXT("local preview held"), Harness.Client->HasLocalPreview());
 	TestEqual(TEXT("last receipt outcome"), Harness.Client->GetLastReceipt().Outcome, ELongTableOutcome::Accepted);
+
+	// The seat's own projection arrives at the same version with a higher uncommitted revision and is applied.
+	FLongTablePlayerProjection Base;
+	if (!LoadPlayerProjection(*this, Base)) { return false; }
+	Base.UncommittedRevision = Harness.Client->GetLastUncommittedRevision() + 1;
+	Base.bHasPreviewLabel = true;
+	Base.PreviewLabel = TEXT("Pass");
+	const int32 Applied = Harness.Client->AppliedFrameCount();
+	Harness.Transport->Inject(ProjectionMessage(Base, Version));
+	TestEqual(TEXT("same-version player-local projection applied"), Harness.Client->AppliedFrameCount(), Applied + 1);
+	TestTrue(TEXT("preview label reached the cache"), Harness.Client->PlayerProjection().bHasPreviewLabel);
+	Harness.Transport->Inject(ProjectionMessage(Base, Version));
+	TestEqual(TEXT("replayed same revision ignored"), Harness.Client->AppliedFrameCount(), Applied + 1);
 
 	const FString ConfirmId = Harness.Client->SubmitIntent(ConfirmIntent());
 	TestEqual(TEXT("confirm id"), ConfirmId, FString(TEXT("test-nonce:2")));
@@ -323,26 +413,180 @@ bool FLongTableClientReconnectTest::RunTest(const FString& Parameters)
 	if (!TestTrue(TEXT("in-flight intent resent"), Harness.DecodeLastSent(Resent))) { return false; }
 	TestEqual(TEXT("one frame resent"), Harness.Transport->Sent.Num(), SentBefore + 1);
 	TestEqual(TEXT("resent id unchanged"), Resent.Intent.IntentId, InFlight);
-	TestEqual(TEXT("resent expected version is current"), Resent.Intent.ExpectedVersion, Harness.Client->GetLastAppliedVersion());
+	TestEqual(TEXT("resent expected version is the original"), Resent.Intent.ExpectedVersion, Version);
 
 	FLongTableAuthorityMessage Replay;
 	Replay.Type = ELongTableAuthorityMessageType::Replay;
 	Replay.Replay.TableId = Harness.Config.TableId;
 	Replay.Replay.FromVersion = Version;
 	Replay.Replay.ToVersion = Version + 2;
+	TArray<FString> Texts;
 	for (int32 Offset = 1; Offset <= 2; ++Offset)
 	{
-		FLongTableReplayFrame& Frame = Replay.Replay.Frames.AddDefaulted_GetRef();
+		Replay.Replay.FrameVersions.Add(Version + Offset);
+		FLongTablePlayerProjection Frame = Base;
 		Frame.Version = Version + Offset;
-		Frame.Projection.Role = ELongTableRole::Player;
-		Frame.Projection.Player = Base;
-		Frame.Projection.Player.Version = Version + Offset;
+		Texts.Add(FLongTableProtocolCodec::EncodePlayerProjection(Frame));
 	}
 	const int32 Applied = Harness.Client->AppliedFrameCount();
-	Harness.Transport->Inject(FLongTableProtocolCodec::EncodeAuthorityMessage(Replay));
+	Harness.Transport->Inject(FLongTableProtocolCodec::EncodeAuthorityMessage(Replay, Texts));
 	TestEqual(TEXT("replay frames applied in order"), Harness.Client->AppliedFrameCount(), Applied + 2);
 	TestEqual(TEXT("replay advanced the version"), Harness.Client->GetLastAppliedVersion(), Version + 2);
 	TestEqual(TEXT("projection carries the replayed version"), Harness.Client->PlayerProjection().Version, Version + 2);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableClientRetryOriginalVersionTest, "LongTable.Table.Client.RetryUsesOriginalExpectedVersion", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FLongTableClientRetryOriginalVersionTest::RunTest(const FString& Parameters)
+{
+	FClientHarness Harness;
+	Harness.Client->Connect();
+	Harness.Transport->Inject(WelcomeText(*this));
+	const int32 Version = Harness.Client->GetLastAppliedVersion();
+	FLongTablePlayerProjection Base;
+	if (!LoadPlayerProjection(*this, Base)) { return false; }
+
+	const FString InFlight = Harness.Client->SubmitIntent(PassPreview());
+	TestEqual(TEXT("in-flight expected version recorded"), Harness.Client->InFlightExpectedVersion(), Version);
+	Harness.Transport->Inject(ProjectionMessage(Base, Version + 3));
+	TestEqual(TEXT("table moved on"), Harness.Client->GetLastAppliedVersion(), Version + 3);
+
+	Harness.Transport->Drop();
+	Harness.Client->Connect();
+	Harness.Transport->Inject(PlayerWelcomeText(Base, Version + 7));
+	TestEqual(TEXT("welcomed at the newer version"), Harness.Client->GetLastAppliedVersion(), Version + 7);
+	FLongTableClientMessage Resent;
+	if (!TestTrue(TEXT("in-flight intent resent"), Harness.DecodeLastSent(Resent))) { return false; }
+	TestEqual(TEXT("resent id unchanged"), Resent.Intent.IntentId, InFlight);
+	TestEqual(TEXT("retry carries the original expected version, not the current one"), Resent.Intent.ExpectedVersion, Version);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableClientContextIsolationTest, "LongTable.Table.Client.ContextIsolation", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FLongTableClientContextIsolationTest::RunTest(const FString& Parameters)
+{
+	FClientHarness Harness;
+	Harness.Client->Connect();
+	Harness.Transport->Inject(WelcomeText(*this));
+	const int32 Version = Harness.Client->GetLastAppliedVersion();
+	const FString InFlight = Harness.Client->SubmitIntent(PassPreview());
+	TestTrue(TEXT("intent in flight before the context change"), Harness.Client->HasIntentInFlight());
+	TestTrue(TEXT("player projection cached"), Harness.Client->PlayerProjection().Hand.Num() > 0);
+	FLongTableHostProjection HostBase;
+	if (!LoadHostProjection(*this, HostBase)) { return false; }
+
+	// A different token and role on the same table is a different authority context.
+	FLongTableClientConfig HostConfig = PlayerConfig();
+	HostConfig.Token = TEXT("fixture-token-host");
+	HostConfig.Role = ELongTableRole::Host;
+	HostConfig.DisplayName.Reset();
+	Harness.Reconfigure(HostConfig);
+	TestEqual(TEXT("disconnected after reconfigure"), Harness.Client->GetState(), ELongTableConnectionState::Disconnected);
+	TestEqual(TEXT("version reset"), Harness.Client->GetLastAppliedVersion(), -1);
+	TestFalse(TEXT("in-flight intent dropped"), Harness.Client->HasIntentInFlight());
+	TestFalse(TEXT("resume marker cleared"), Harness.Client->IsWelcomed());
+	TestTrue(TEXT("session cleared"), Harness.Client->GetSessionId().IsEmpty());
+	TestFalse(TEXT("seat cleared"), Harness.Client->HasSeat());
+	TestEqual(TEXT("player projection cleared"), Harness.Client->GetPlayerProjection().Hand.Num(), 0);
+	TestEqual(TEXT("player projection version cleared"), Harness.Client->GetPlayerProjection().Version, 0);
+	TestEqual(TEXT("applied frames reset"), Harness.Client->AppliedFrameCount(), 0);
+	TestNotEqual(TEXT("intent identity renewed"), Harness.Client->IdentityNonce(), FString(TEXT("test-nonce")));
+
+	Harness.Client->Connect();
+	FLongTableClientMessage Hello;
+	if (!TestTrue(TEXT("hello sent"), Harness.DecodeLastSent(Hello))) { return false; }
+	TestEqual(TEXT("hello role is host"), Hello.Hello.Role, ELongTableRole::Host);
+	TestFalse(TEXT("no cross-context resume"), Hello.Hello.bResume);
+	Harness.Transport->Inject(HostWelcomeText(HostBase, 9));
+	TestEqual(TEXT("host welcomed"), Harness.Client->GetState(), ELongTableConnectionState::Ready);
+	TestEqual(TEXT("host version"), Harness.Client->GetLastAppliedVersion(), 9);
+	TestEqual(TEXT("host projection cached"), Harness.Client->GetHostProjection().Version, 9);
+	TestEqual(TEXT("no player projection for a host client"), Harness.Client->GetPlayerProjection().Version, 0);
+	TestEqual(TEXT("no cross-context in-flight replay"), Harness.Transport->Sent.Num(), 1);
+
+	// The same context on a fresh transport keeps its state and resumes.
+	Harness.Reconfigure(HostConfig);
+	TestEqual(TEXT("same context keeps the version"), Harness.Client->GetLastAppliedVersion(), 9);
+	TestTrue(TEXT("same context keeps the resume marker"), Harness.Client->IsWelcomed());
+	Harness.Client->Connect();
+	if (!TestTrue(TEXT("resume hello sent"), Harness.DecodeLastSent(Hello))) { return false; }
+	TestTrue(TEXT("same context resumes"), Hello.Hello.bResume);
+	TestEqual(TEXT("resume version"), Hello.Hello.LastVersion, 9);
+
+	// A different table is a different context even with the same token and role.
+	FLongTableClientConfig OtherTable = HostConfig;
+	OtherTable.TableId = TEXT("table-other");
+	Harness.Reconfigure(OtherTable);
+	TestEqual(TEXT("other table resets the version"), Harness.Client->GetLastAppliedVersion(), -1);
+	TestEqual(TEXT("other table clears the host cache"), Harness.Client->GetHostProjection().Version, 0);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableClientIncoherentFramesTest, "LongTable.Table.Client.RejectsIncoherentFrames", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FLongTableClientIncoherentFramesTest::RunTest(const FString& Parameters)
+{
+	FClientHarness Harness;
+	Harness.Client->Connect();
+	Harness.Transport->Inject(WelcomeText(*this));
+	const int32 Version = Harness.Client->GetLastAppliedVersion();
+	const int32 Applied = Harness.Client->AppliedFrameCount();
+	const FString Session = Harness.Client->GetSessionId();
+	FLongTablePlayerProjection Base;
+	FLongTableHostProjection HostBase;
+	if (!LoadPlayerProjection(*this, Base) || !LoadHostProjection(*this, HostBase)) { return false; }
+
+	auto Unchanged = [&](const TCHAR* What)
+	{
+		TestEqual(FString::Printf(TEXT("%s: version unchanged"), What), Harness.Client->GetLastAppliedVersion(), Version);
+		TestEqual(FString::Printf(TEXT("%s: nothing applied"), What), Harness.Client->AppliedFrameCount(), Applied);
+		TestEqual(FString::Printf(TEXT("%s: session unchanged"), What), Harness.Client->GetSessionId(), Session);
+		TestEqual(FString::Printf(TEXT("%s: still ready"), What), Harness.Client->GetState(), ELongTableConnectionState::Ready);
+		TestEqual(FString::Printf(TEXT("%s: no host cache"), What), Harness.Client->GetHostProjection().Version, 0);
+	};
+
+	Harness.Transport->Inject(HostWelcomeText(HostBase, Version + 1));
+	Unchanged(TEXT("welcome for another role"));
+
+	Harness.Transport->Inject(PlayerWelcomeText(Base, Version + 1, true, ELongTableSeat::South, TEXT("table-other")));
+	Unchanged(TEXT("welcome for another table"));
+
+	Harness.Transport->Inject(PlayerWelcomeText(Base, Version + 1, false));
+	Unchanged(TEXT("player welcome without a seat"));
+
+	Harness.Transport->Inject(PlayerWelcomeText(Base, Version + 1, true, ELongTableSeat::West));
+	Unchanged(TEXT("welcome whose projection seat differs from the welcomed seat"));
+
+	Harness.Transport->Inject(ProjectionMessage(Base, Version + 5, Version + 5, TEXT("table-other")));
+	Unchanged(TEXT("projection for another table"));
+
+	Harness.Transport->Inject(ProjectionMessage(Base, Version + 5, Version + 4));
+	Unchanged(TEXT("envelope version differs from projection version"));
+
+	HostBase.TableId = FixtureTableId;
+	Harness.Transport->Inject(HostProjectionMessage(HostBase, Version + 5));
+	Unchanged(TEXT("host payload on a player connection"));
+
+	FLongTablePlayerProjection WestBase = Base;
+	WestBase.Seat = ELongTableSeat::West;
+	Harness.Transport->Inject(ProjectionMessage(WestBase, Version + 5));
+	Unchanged(TEXT("projection for another seat"));
+
+	FLongTableAuthorityMessage Replay;
+	Replay.Type = ELongTableAuthorityMessageType::Replay;
+	Replay.Replay.TableId = FixtureTableId;
+	Replay.Replay.FromVersion = Version;
+	Replay.Replay.ToVersion = Version + 2;
+	Replay.Replay.FrameVersions = { Version + 1, Version + 2 };
+	FLongTablePlayerProjection Good = Base;
+	Good.Version = Version + 1;
+	FLongTablePlayerProjection Bad = Base;
+	Bad.Version = Version + 9;
+	Harness.Transport->Inject(FLongTableProtocolCodec::EncodeAuthorityMessage(Replay, { FLongTableProtocolCodec::EncodePlayerProjection(Good), FLongTableProtocolCodec::EncodePlayerProjection(Bad) }));
+	Unchanged(TEXT("replay with one incoherent frame applies nothing"));
+
+	// A coherent frame still applies afterwards, proving the client was not wedged.
+	Harness.Transport->Inject(ProjectionMessage(Base, Version + 5));
+	TestEqual(TEXT("coherent frame applied"), Harness.Client->GetLastAppliedVersion(), Version + 5);
 	return true;
 }
 
@@ -357,13 +601,24 @@ bool FLongTableClientFailClosedTest::RunTest(const FString& Parameters)
 	FLongTablePlayerProjection Base;
 	if (!LoadPlayerProjection(*this, Base)) { return false; }
 
-	// A projection frame with an extra member is dropped in full, even though it carries a newer version.
+	// A projection envelope with an extra member is dropped in full, even though it carries a newer version.
 	FString Text = ProjectionMessage(Base, Version + 5);
 	Text.InsertAt(Text.Len() - 1, TEXT(",\"kitty\":[]"));
 	Harness.Transport->Inject(Text);
 	TestEqual(TEXT("version unchanged"), Harness.Client->GetLastAppliedVersion(), Version);
 	TestEqual(TEXT("nothing applied"), Harness.Client->AppliedFrameCount(), Applied);
 	TestEqual(TEXT("still ready"), Harness.Client->GetState(), ELongTableConnectionState::Ready);
+
+	// A projection payload with an extra member is dropped at extraction, before any state changes.
+	FString Inner = FLongTableProtocolCodec::EncodePlayerProjection(Base);
+	Inner.InsertAt(Inner.Len() - 1, TEXT(",\"kitty\":[]"));
+	FLongTableAuthorityMessage Message;
+	Message.Type = ELongTableAuthorityMessageType::Projection;
+	Message.Projection.TableId = FixtureTableId;
+	Message.Projection.Version = Version + 6;
+	Harness.Transport->Inject(FLongTableProtocolCodec::EncodeAuthorityMessage(Message, { Inner }));
+	TestEqual(TEXT("payload rejection applies nothing"), Harness.Client->AppliedFrameCount(), Applied);
+	TestEqual(TEXT("payload rejection leaves the version"), Harness.Client->GetLastAppliedVersion(), Version);
 
 	Harness.Transport->Inject(TEXT("{not json"));
 	TestEqual(TEXT("malformed text ignored"), Harness.Client->AppliedFrameCount(), Applied);
@@ -399,4 +654,5 @@ bool FLongTableLocalConfirmGateTest::RunTest(const FString& Parameters)
 }
 
 #endif // WITH_DEV_AUTOMATION_TESTS
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

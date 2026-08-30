@@ -175,6 +175,34 @@ bool FLongTableClosedReader::ReadArray(const TCHAR* Key, int32 MaxLength, TFunct
 	return true;
 }
 
+bool FLongTableClosedReader::ReadProjectionPayload(const TCHAR* Key, TSharedPtr<FJsonValue>& OutJson)
+{
+	if (Failed()) { return false; }
+	const TSharedPtr<FJsonValue>* Found = Field(Key);
+	if (!Found || !Found->IsValid()) { return Reject(TEXT("missing-field"), ChildPath(Key)); }
+	const FString PayloadPath = ChildPath(Key);
+	if ((*Found)->Type != EJson::Object) { return Reject(TEXT("not-an-object"), PayloadPath); }
+	const TSharedPtr<FJsonValue>* RoleField = (*Found)->AsObject()->Values.Find(TEXT("role"));
+	if (!RoleField || !RoleField->IsValid() || (*RoleField)->Type != EJson::String) { return Reject(TEXT("type-mismatch"), PayloadPath + TEXT(".role")); }
+	ELongTableRole Role;
+	if (!TLongTableWire<ELongTableRole>::FromWire((*RoleField)->AsString(), Role) || Role == ELongTableRole::Dealer)
+	{
+		return Reject(TEXT("unknown-variant"), PayloadPath + TEXT(".role"));
+	}
+	OutJson = *Found;
+	return true;
+}
+
+bool FLongTableClosedReader::ReadNullableProjectionPayload(const TCHAR* Key, bool& bOutHas, TSharedPtr<FJsonValue>& OutJson)
+{
+	bOutHas = false;
+	OutJson.Reset();
+	if (Failed()) { return false; }
+	if (IsNullField(Key)) { return true; }
+	bOutHas = true;
+	return ReadProjectionPayload(Key, OutJson);
+}
+
 bool FLongTableClosedReader::ReadDiscriminant(const TCHAR* Key, FString& OutTag)
 {
 	if (Failed()) { return false; }
@@ -267,6 +295,12 @@ void FLongTableCanonicalWriter::Null()
 	Out.Append(TEXT("null"));
 }
 
+void FLongTableCanonicalWriter::Raw(const FString& CanonicalText)
+{
+	Prefix();
+	Out.Append(CanonicalText);
+}
+
 void FLongTableCanonicalWriter::Escape(const FString& Text)
 {
 	Out.AppendChar(TEXT('"'));
@@ -332,10 +366,11 @@ namespace
 	TEXT("dealer"), TEXT("dealerLabel"), TEXT("contract"), TEXT("auction"), TEXT("publicTrick"), TEXT("completedTricks"), TEXT("booksNorthSouth"), \
 	TEXT("booksEastWest"), TEXT("scoreNorthSouth"), TEXT("scoreEastWest"), TEXT("seats"), TEXT("statusLine"), TEXT("summaryLine"), TEXT("paused"), TEXT("eventEnded")
 
+	const TCHAR* const CoreKeys[] = { LONGTABLE_CORE_KEYS };
 	const TCHAR* const PlayerProjectionKeys[] =
 	{
 		TEXT("role"), LONGTABLE_CORE_KEYS, TEXT("seat"), TEXT("hand"), TEXT("legalChoices"), TEXT("previewLabel"), TEXT("discardPicked"),
-		TEXT("discardTarget"), TEXT("feedbackCode"), TEXT("feedbackLine"), TEXT("disabledNotices")
+		TEXT("discardTarget"), TEXT("uncommittedRevision"), TEXT("feedbackCode"), TEXT("feedbackLine"), TEXT("disabledNotices")
 	};
 	const TCHAR* const HostProjectionKeys[] = { TEXT("role"), LONGTABLE_CORE_KEYS, TEXT("betweenHands"), TEXT("hostControls"), TEXT("lastAnnouncement") };
 	const TCHAR* const PublicProjectionKeys[] = { TEXT("role"), LONGTABLE_CORE_KEYS };
@@ -537,6 +572,7 @@ namespace
 			&& R.ReadNullableString(TEXT("previewLabel"), LabelLength, Out.bHasPreviewLabel, Out.PreviewLabel)
 			&& R.ReadInt(TEXT("discardPicked"), 0, MaxHandLength, Out.DiscardPicked)
 			&& R.ReadInt(TEXT("discardTarget"), 0, MaxHandLength, Out.DiscardTarget)
+			&& R.ReadInt(TEXT("uncommittedRevision"), 0, MaxVersion, Out.UncommittedRevision)
 			&& R.ReadNullableEnum(TEXT("feedbackCode"), Out.bHasFeedbackCode, Out.FeedbackCode)
 			&& R.ReadNullableString(TEXT("feedbackLine"), LineLength, Out.bHasFeedbackLine, Out.FeedbackLine)
 			&& R.ReadArray(TEXT("disabledNotices"), 8, [&Out](FReader& Item) { return DecodeDisabledNotice(Item, Out.DisabledNotices.AddDefaulted_GetRef()); });
@@ -559,21 +595,6 @@ namespace
 		return R.BeginObject(MakeArrayView(PublicProjectionKeys))
 			&& R.ReadLiteral(TEXT("role"), TEXT("public"))
 			&& DecodeCoreFields(R, Out);
-	}
-
-	bool DecodeRoleInner(FReader& R, FLongTableRoleProjection& Out)
-	{
-		FString Tag;
-		if (!R.ReadDiscriminant(TEXT("role"), Tag)) { return false; }
-		ELongTableRole Role;
-		if (!TLongTableWire<ELongTableRole>::FromWire(Tag, Role) || Role == ELongTableRole::Dealer) { return R.RejectUnknownVariant(TEXT("role")); }
-		Out.Role = Role;
-		switch (Role)
-		{
-		case ELongTableRole::Player: return DecodePlayerInner(R, Out.Player);
-		case ELongTableRole::Host: return DecodeHostInner(R, Out.Host);
-		default: return DecodePublicInner(R, Out.Public);
-		}
 	}
 
 	bool DecodeDealerCueInner(FReader& R, FLongTableDealerCueFrame& Out)
@@ -646,7 +667,9 @@ namespace
 		switch (Out.Type)
 		{
 		case ELongTableAuthorityMessageType::Welcome:
-			return R.BeginObject(MakeArrayView(WelcomeKeys))
+		{
+			TSharedPtr<FJsonValue> Payload;
+			const bool bOk = R.BeginObject(MakeArrayView(WelcomeKeys))
 				&& R.ReadLiteral(TEXT("type"), TEXT("welcome"))
 				&& R.ReadLiteral(TEXT("protocolVersion"), ProtocolVersion)
 				&& R.ReadString(TEXT("sessionId"), IdLength, false, Out.Welcome.SessionId)
@@ -654,13 +677,31 @@ namespace
 				&& R.ReadNullableEnum(TEXT("seat"), Out.Welcome.bHasSeat, Out.Welcome.Seat)
 				&& R.ReadString(TEXT("tableId"), IdLength, false, Out.Welcome.TableId)
 				&& R.ReadInt(TEXT("version"), 0, MaxVersion, Out.Welcome.Version)
-				&& R.ReadNullableObject(TEXT("projection"), Out.Welcome.bHasProjection, [&Out](FReader& Child) { return DecodeRoleInner(Child, Out.Welcome.Projection); });
+				&& R.ReadNullableProjectionPayload(TEXT("projection"), Out.Welcome.bHasProjection, Payload);
+			if (bOk && Out.Welcome.bHasProjection)
+			{
+				FLongTableProjectionPayload& Retained = Out.Payloads.AddDefaulted_GetRef();
+				Retained.EnvelopeVersion = Out.Welcome.Version;
+				Retained.Json = Payload;
+			}
+			return bOk;
+		}
 		case ELongTableAuthorityMessageType::Projection:
-			return R.BeginObject(MakeArrayView(ProjectionMessageKeys))
+		{
+			TSharedPtr<FJsonValue> Payload;
+			const bool bOk = R.BeginObject(MakeArrayView(ProjectionMessageKeys))
 				&& R.ReadLiteral(TEXT("type"), TEXT("projection"))
 				&& R.ReadString(TEXT("tableId"), IdLength, false, Out.Projection.TableId)
 				&& R.ReadInt(TEXT("version"), 0, MaxVersion, Out.Projection.Version)
-				&& R.ReadObject(TEXT("projection"), [&Out](FReader& Child) { return DecodeRoleInner(Child, Out.Projection.Projection); });
+				&& R.ReadProjectionPayload(TEXT("projection"), Payload);
+			if (bOk)
+			{
+				FLongTableProjectionPayload& Retained = Out.Payloads.AddDefaulted_GetRef();
+				Retained.EnvelopeVersion = Out.Projection.Version;
+				Retained.Json = Payload;
+			}
+			return bOk;
+		}
 		case ELongTableAuthorityMessageType::Receipt:
 			return R.BeginObject(MakeArrayView(ReceiptMessageKeys))
 				&& R.ReadLiteral(TEXT("type"), TEXT("receipt"))
@@ -675,10 +716,19 @@ namespace
 				&& R.ReadBool(TEXT("truncated"), Out.Replay.bTruncated)
 				&& R.ReadArray(TEXT("frames"), MaxReplayFrames, [&Out](FReader& Item)
 				{
-					FLongTableReplayFrame& Frame = Out.Replay.Frames.AddDefaulted_GetRef();
-					return Item.BeginObject(MakeArrayView(ReplayFrameKeys))
-						&& Item.ReadInt(TEXT("version"), 0, MaxVersion, Frame.Version)
-						&& Item.ReadObject(TEXT("projection"), [&Frame](FReader& Child) { return DecodeRoleInner(Child, Frame.Projection); });
+					int32 Version = 0;
+					TSharedPtr<FJsonValue> Payload;
+					const bool bFrameOk = Item.BeginObject(MakeArrayView(ReplayFrameKeys))
+						&& Item.ReadInt(TEXT("version"), 0, MaxVersion, Version)
+						&& Item.ReadProjectionPayload(TEXT("projection"), Payload);
+					if (bFrameOk)
+					{
+						Out.Replay.FrameVersions.Add(Version);
+						FLongTableProjectionPayload& Retained = Out.Payloads.AddDefaulted_GetRef();
+						Retained.EnvelopeVersion = Version;
+						Retained.Json = Payload;
+					}
+					return bFrameOk;
 				});
 		case ELongTableAuthorityMessageType::DealerCue:
 			return R.BeginObject(MakeArrayView(DealerCueMessageKeys))
@@ -851,6 +901,7 @@ namespace
 		W.Key(TEXT("previewLabel")); if (V.bHasPreviewLabel) { W.String(V.PreviewLabel); } else { W.Null(); }
 		W.Key(TEXT("discardPicked")); W.Int(V.DiscardPicked);
 		W.Key(TEXT("discardTarget")); W.Int(V.DiscardTarget);
+		W.Key(TEXT("uncommittedRevision")); W.Int(V.UncommittedRevision);
 		W.Key(TEXT("feedbackCode")); if (V.bHasFeedbackCode) { W.String(Wire(V.FeedbackCode)); } else { W.Null(); }
 		W.Key(TEXT("feedbackLine")); if (V.bHasFeedbackLine) { W.String(V.FeedbackLine); } else { W.Null(); }
 		W.Key(TEXT("disabledNotices")); W.BeginArray();
@@ -885,16 +936,6 @@ namespace
 		W.Key(TEXT("role")); W.String(TEXT("public"));
 		WriteCore(W, V);
 		W.EndObject();
-	}
-
-	void WriteRole(FWriter& W, const FLongTableRoleProjection& V)
-	{
-		switch (V.Role)
-		{
-		case ELongTableRole::Player: WritePlayer(W, V.Player); break;
-		case ELongTableRole::Host: WriteHost(W, V.Host); break;
-		default: WritePublic(W, V.Public); break;
-		}
 	}
 
 	void WriteDealerCue(FWriter& W, const FLongTableDealerCueFrame& V)
@@ -953,8 +994,16 @@ namespace
 		W.EndObject();
 	}
 
-	void WriteAuthority(FWriter& W, const FLongTableAuthorityMessage& V)
+	void WriteProjectionSlot(FWriter& W, const TArray<FString>& Texts, int32& Cursor)
 	{
+		if (Texts.IsValidIndex(Cursor)) { W.Raw(Texts[Cursor]); }
+		else { W.Null(); }
+		++Cursor;
+	}
+
+	void WriteAuthority(FWriter& W, const FLongTableAuthorityMessage& V, const TArray<FString>& Texts)
+	{
+		int32 Cursor = 0;
 		W.BeginObject();
 		W.Key(TEXT("type")); W.String(Wire(V.Type));
 		switch (V.Type)
@@ -966,12 +1015,12 @@ namespace
 			W.Key(TEXT("seat")); if (V.Welcome.bHasSeat) { W.String(Wire(V.Welcome.Seat)); } else { W.Null(); }
 			W.Key(TEXT("tableId")); W.String(V.Welcome.TableId);
 			W.Key(TEXT("version")); W.Int(V.Welcome.Version);
-			W.Key(TEXT("projection")); if (V.Welcome.bHasProjection) { WriteRole(W, V.Welcome.Projection); } else { W.Null(); }
+			W.Key(TEXT("projection")); if (V.Welcome.bHasProjection) { WriteProjectionSlot(W, Texts, Cursor); } else { W.Null(); }
 			break;
 		case ELongTableAuthorityMessageType::Projection:
 			W.Key(TEXT("tableId")); W.String(V.Projection.TableId);
 			W.Key(TEXT("version")); W.Int(V.Projection.Version);
-			W.Key(TEXT("projection")); WriteRole(W, V.Projection.Projection);
+			W.Key(TEXT("projection")); WriteProjectionSlot(W, Texts, Cursor);
 			break;
 		case ELongTableAuthorityMessageType::Receipt:
 			W.Key(TEXT("tableId")); W.String(V.Receipt.TableId);
@@ -983,11 +1032,11 @@ namespace
 			W.Key(TEXT("toVersion")); W.Int(V.Replay.ToVersion);
 			W.Key(TEXT("truncated")); W.Bool(V.Replay.bTruncated);
 			W.Key(TEXT("frames")); W.BeginArray();
-			for (const FLongTableReplayFrame& Frame : V.Replay.Frames)
+			for (const int32 FrameVersion : V.Replay.FrameVersions)
 			{
 				W.BeginObject();
-				W.Key(TEXT("version")); W.Int(Frame.Version);
-				W.Key(TEXT("projection")); WriteRole(W, Frame.Projection);
+				W.Key(TEXT("version")); W.Int(FrameVersion);
+				W.Key(TEXT("projection")); WriteProjectionSlot(W, Texts, Cursor);
 				W.EndObject();
 			}
 			W.EndArray();
@@ -1032,7 +1081,6 @@ TSharedPtr<FJsonValue> FLongTableProtocolCodec::ParseText(const FString& Text)
 LONGTABLE_DECODE_ENTRY(DecodePlayerProjection, FLongTablePlayerProjection, DecodePlayerInner)
 LONGTABLE_DECODE_ENTRY(DecodeHostProjection, FLongTableHostProjection, DecodeHostInner)
 LONGTABLE_DECODE_ENTRY(DecodePublicProjection, FLongTablePublicProjection, DecodePublicInner)
-LONGTABLE_DECODE_ENTRY(DecodeRoleProjection, FLongTableRoleProjection, DecodeRoleInner)
 LONGTABLE_DECODE_ENTRY(DecodeDealerCueFrame, FLongTableDealerCueFrame, DecodeDealerCueInner)
 LONGTABLE_DECODE_ENTRY(DecodeIntentReceipt, FLongTableIntentReceipt, DecodeReceiptInner)
 LONGTABLE_DECODE_ENTRY(DecodeIntent, FLongTableIntent, DecodeIntentInner)
@@ -1065,6 +1113,38 @@ bool FLongTableProtocolCodec::DecodeClientMessageText(const FString& Text, FLong
 	return DecodeClientMessage(Value, TEXT("client"), Out, Rejection);
 }
 
+bool FLongTableProtocolCodec::PayloadRole(const FLongTableProjectionPayload& Payload, ELongTableRole& OutRole)
+{
+	if (!Payload.Json.IsValid() || Payload.Json->Type != EJson::Object) { return false; }
+	const TSharedPtr<FJsonValue>* RoleField = Payload.Json->AsObject()->Values.Find(TEXT("role"));
+	if (!RoleField || !RoleField->IsValid() || (*RoleField)->Type != EJson::String) { return false; }
+	return TLongTableWire<ELongTableRole>::FromWire((*RoleField)->AsString(), OutRole);
+}
+
+bool FLongTableProtocolCodec::ExtractPlayerProjection(const FLongTableProjectionPayload& Payload, const FString& Label, FLongTablePlayerProjection& Out, FLongTableSchemaRejection& Rejection)
+{
+	FLongTablePlayerProjection Candidate;
+	if (!DecodePlayerProjection(Payload.Json, Label, Candidate, Rejection)) { return false; }
+	Out = MoveTemp(Candidate);
+	return true;
+}
+
+bool FLongTableProtocolCodec::ExtractHostProjection(const FLongTableProjectionPayload& Payload, const FString& Label, FLongTableHostProjection& Out, FLongTableSchemaRejection& Rejection)
+{
+	FLongTableHostProjection Candidate;
+	if (!DecodeHostProjection(Payload.Json, Label, Candidate, Rejection)) { return false; }
+	Out = MoveTemp(Candidate);
+	return true;
+}
+
+bool FLongTableProtocolCodec::ExtractPublicProjection(const FLongTableProjectionPayload& Payload, const FString& Label, FLongTablePublicProjection& Out, FLongTableSchemaRejection& Rejection)
+{
+	FLongTablePublicProjection Candidate;
+	if (!DecodePublicProjection(Payload.Json, Label, Candidate, Rejection)) { return false; }
+	Out = MoveTemp(Candidate);
+	return true;
+}
+
 #define LONGTABLE_ENCODE_ENTRY(FunctionName, StructType, WriteFunction) \
 	FString FLongTableProtocolCodec::FunctionName(const StructType& Value) \
 	{ \
@@ -1076,14 +1156,36 @@ bool FLongTableProtocolCodec::DecodeClientMessageText(const FString& Text, FLong
 LONGTABLE_ENCODE_ENTRY(EncodePlayerProjection, FLongTablePlayerProjection, WritePlayer)
 LONGTABLE_ENCODE_ENTRY(EncodeHostProjection, FLongTableHostProjection, WriteHost)
 LONGTABLE_ENCODE_ENTRY(EncodePublicProjection, FLongTablePublicProjection, WritePublic)
-LONGTABLE_ENCODE_ENTRY(EncodeRoleProjection, FLongTableRoleProjection, WriteRole)
 LONGTABLE_ENCODE_ENTRY(EncodeDealerCueFrame, FLongTableDealerCueFrame, WriteDealerCue)
 LONGTABLE_ENCODE_ENTRY(EncodeIntentReceipt, FLongTableIntentReceipt, WriteReceipt)
 LONGTABLE_ENCODE_ENTRY(EncodeIntent, FLongTableIntent, WriteIntent)
 LONGTABLE_ENCODE_ENTRY(EncodeClientMessage, FLongTableClientMessage, WriteClient)
-LONGTABLE_ENCODE_ENTRY(EncodeAuthorityMessage, FLongTableAuthorityMessage, WriteAuthority)
 
 #undef LONGTABLE_ENCODE_ENTRY
+
+FString FLongTableProtocolCodec::EncodeAuthorityMessage(const FLongTableAuthorityMessage& Value, const TArray<FString>& ProjectionTexts)
+{
+	FLongTableCanonicalWriter Writer;
+	WriteAuthority(Writer, Value, ProjectionTexts);
+	return Writer.Text();
+}
+
+TArray<FString> FLongTableProtocolCodec::WireKeys(const FString& InventoryName)
+{
+	TArrayView<const TCHAR* const> Keys;
+	if (InventoryName == TEXT("PublicCore")) { Keys = MakeArrayView(CoreKeys); }
+	else if (InventoryName == TEXT("PlayerProjection")) { Keys = MakeArrayView(PlayerProjectionKeys); }
+	else if (InventoryName == TEXT("HostProjection")) { Keys = MakeArrayView(HostProjectionKeys); }
+	else if (InventoryName == TEXT("PublicProjection")) { Keys = MakeArrayView(PublicProjectionKeys); }
+	else if (InventoryName == TEXT("DealerCueFrame")) { Keys = MakeArrayView(DealerCueKeys); }
+	else if (InventoryName == TEXT("IntentReceipt")) { Keys = MakeArrayView(ReceiptKeys); }
+	else if (InventoryName == TEXT("WelcomeMessage")) { Keys = MakeArrayView(WelcomeKeys); }
+	else if (InventoryName == TEXT("ErrorMessage")) { Keys = MakeArrayView(ErrorMessageKeys); }
+	else if (InventoryName == TEXT("ReplayFrame")) { Keys = MakeArrayView(ReplayFrameKeys); }
+	TArray<FString> Out;
+	for (const TCHAR* Key : Keys) { Out.Add(FString(Key)); }
+	return Out;
+}
 
 bool FLongTableProtocolCodec::Utf8BytesEqual(const FString& A, const FString& B)
 {

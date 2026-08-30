@@ -1,4 +1,5 @@
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | BEGIN]]
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
 #include "Misc/AutomationTest.h"
 #include "Misc/ConfigCacheIni.h"
 #include "Misc/FileHelper.h"
@@ -80,38 +81,20 @@ bool FLongTableCompositionConfigTest::RunTest(const FString& Parameters)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableRobotDealerPresenterTest, "LongTable.Composition.RobotDealerPresenter", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
 bool FLongTableRobotDealerPresenterTest::RunTest(const FString& Parameters)
 {
-	const TSharedPtr<FJsonObject> Manifest = LoadManifest(*this);
-	if (!Manifest.IsValid()) { return false; }
-	TArray<FString> Concealed;
-	for (const TSharedPtr<FJsonValue>& Key : Manifest->GetArrayField(TEXT("concealedKeys")))
+	// Exact inventory of the presenter's own reflected properties: the last cue frame, its presence flag and a counter. Nothing else.
+	TArray<FString> Actual;
+	for (TFieldIterator<FProperty> It(ULongTableRobotDealerPresenter::StaticClass(), EFieldIteratorFlags::ExcludeSuper); It; ++It)
 	{
-		Concealed.Add(Key->AsString());
-	}
-
-	const UScriptStruct* ProjectionTypes[] =
-	{
-		FLongTablePlayerProjection::StaticStruct(),
-		FLongTableHostProjection::StaticStruct(),
-		FLongTablePublicProjection::StaticStruct(),
-		FLongTableRoleProjection::StaticStruct(),
-		FLongTablePublicCore::StaticStruct(),
-	};
-	for (TFieldIterator<FProperty> It(ULongTableRobotDealerPresenter::StaticClass()); It; ++It)
-	{
-		FString Name = It->GetName();
-		if (It->IsA<FBoolProperty>() && Name.StartsWith(TEXT("b"))) { Name.RightChopInline(1); }
-		for (const FString& Key : Concealed)
-		{
-			TestFalse(FString::Printf(TEXT("presenter declares concealed member %s"), *Key), Name.Equals(Key, ESearchCase::IgnoreCase));
-		}
+		Actual.Add(It->GetName());
 		if (const FStructProperty* StructProperty = CastField<FStructProperty>(*It))
 		{
-			for (const UScriptStruct* Projection : ProjectionTypes)
-			{
-				TestFalse(FString::Printf(TEXT("presenter holds a %s"), *Projection->GetName()), StructProperty->Struct == Projection);
-			}
+			TestTrue(FString::Printf(TEXT("struct property %s is a dealer cue frame"), *It->GetName()), StructProperty->Struct == FLongTableDealerCueFrame::StaticStruct());
 		}
 	}
+	Actual.Sort();
+	TArray<FString> Expected = { TEXT("bHasLastCue"), TEXT("LastCue"), TEXT("CuesPresented") };
+	Expected.Sort();
+	TestEqual(TEXT("presenter property inventory"), FString::Join(Actual, TEXT(",")), FString::Join(Expected, TEXT(",")));
 
 	ULongTableRobotDealerPresenter* Presenter = NewObject<ULongTableRobotDealerPresenter>();
 	Presenter->AddToRoot();
@@ -132,4 +115,5 @@ bool FLongTableRobotDealerPresenterTest::RunTest(const FString& Parameters)
 }
 
 #endif // WITH_DEV_AUTOMATION_TESTS
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

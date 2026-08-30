@@ -1,8 +1,13 @@
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | BEGIN]]
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
 /**
  * Headless automation over the shared golden fixtures in fixtures/protocol.
  *
  *   UnrealEditor-Cmd LongTable.uproject -ExecCmds="Automation RunTests LongTable.Protocol; Quit" -nullrhi -unattended
+ *
+ * Privacy evidence here is structural only: exact reflected property
+ * inventories, exact wire key inventories, decode rejection and counterfactual
+ * byte-equivalence. No test scans text for forbidden content.
  */
 #include "Misc/AutomationTest.h"
 #include "Misc/FileHelper.h"
@@ -54,7 +59,7 @@ namespace LongTableProtocolTests
 	{
 		StructType Decoded;
 		FLongTableSchemaRejection Rejection;
-		if (!Test.TestTrue(FString::Printf(TEXT("%s decodes (%s)"), *What, *Rejection.ToString()), Decode(Value, Label, Decoded, Rejection)))
+		if (!Decode(Value, Label, Decoded, Rejection))
 		{
 			Test.AddError(FString::Printf(TEXT("%s rejected: %s"), *What, *Rejection.ToString()));
 			return;
@@ -63,6 +68,66 @@ namespace LongTableProtocolTests
 		if (!FLongTableProtocolCodec::Utf8BytesEqual(Encoded, Canonical))
 		{
 			Test.AddError(FString::Printf(TEXT("%s canonical mismatch\n expected: %s\n actual:   %s"), *What, *Canonical, *Encoded));
+		}
+	}
+
+	/** Canonical text of a retained payload through the extractor for the role it declares. */
+	bool PayloadText(FAutomationTestBase& Test, const FString& What, const FLongTableProjectionPayload& Payload, FString& OutText)
+	{
+		ELongTableRole Role;
+		if (!FLongTableProtocolCodec::PayloadRole(Payload, Role))
+		{
+			Test.AddError(FString::Printf(TEXT("%s payload declares no projection role"), *What));
+			return false;
+		}
+		FLongTableSchemaRejection Rejection;
+		switch (Role)
+		{
+		case ELongTableRole::Player:
+		{
+			FLongTablePlayerProjection Projection;
+			if (!FLongTableProtocolCodec::ExtractPlayerProjection(Payload, TEXT("projection"), Projection, Rejection)) { Test.AddError(FString::Printf(TEXT("%s player payload rejected: %s"), *What, *Rejection.ToString())); return false; }
+			OutText = FLongTableProtocolCodec::EncodePlayerProjection(Projection);
+			return true;
+		}
+		case ELongTableRole::Host:
+		{
+			FLongTableHostProjection Projection;
+			if (!FLongTableProtocolCodec::ExtractHostProjection(Payload, TEXT("projection"), Projection, Rejection)) { Test.AddError(FString::Printf(TEXT("%s host payload rejected: %s"), *What, *Rejection.ToString())); return false; }
+			OutText = FLongTableProtocolCodec::EncodeHostProjection(Projection);
+			return true;
+		}
+		case ELongTableRole::Public:
+		{
+			FLongTablePublicProjection Projection;
+			if (!FLongTableProtocolCodec::ExtractPublicProjection(Payload, TEXT("projection"), Projection, Rejection)) { Test.AddError(FString::Printf(TEXT("%s public payload rejected: %s"), *What, *Rejection.ToString())); return false; }
+			OutText = FLongTableProtocolCodec::EncodePublicProjection(Projection);
+			return true;
+		}
+		default:
+			Test.AddError(FString::Printf(TEXT("%s payload declares the dealer role"), *What));
+			return false;
+		}
+	}
+
+	TArray<FString> ReflectedProperties(const UStruct* Struct, EFieldIteratorFlags::SuperClassFlags SuperFlags)
+	{
+		TArray<FString> Names;
+		for (TFieldIterator<FProperty> It(Struct, SuperFlags); It; ++It)
+		{
+			Names.Add(It->GetName());
+		}
+		Names.Sort();
+		return Names;
+	}
+
+	void CheckInventory(FAutomationTestBase& Test, const TCHAR* What, const UStruct* Struct, EFieldIteratorFlags::SuperClassFlags SuperFlags, TArray<FString> Expected)
+	{
+		Expected.Sort();
+		const TArray<FString> Actual = ReflectedProperties(Struct, SuperFlags);
+		if (Actual != Expected)
+		{
+			Test.AddError(FString::Printf(TEXT("%s property inventory differs\n expected: %s\n actual:   %s"), What, *FString::Join(Expected, TEXT(",")), *FString::Join(Actual, TEXT(","))));
 		}
 	}
 }
@@ -117,6 +182,7 @@ bool FLongTableProtocolFixturesTest::RunTest(const FString& Parameters)
 			TestTrue(TEXT("player holds cards"), Player.Hand.Num() > 0);
 			TestEqual(TEXT("four seats"), Player.Seats.Num(), 4);
 			TestEqual(TEXT("two withheld notices"), Player.DisabledNotices.Num(), 2);
+			TestTrue(TEXT("uncommitted revision present"), Player.UncommittedRevision >= 0);
 		}
 	}
 	if (const TSharedPtr<FJsonObject> Fixture = LoadFixtureObject(*this, TEXT("host-projection.json")))
@@ -168,8 +234,28 @@ bool FLongTableProtocolFixturesTest::RunTest(const FString& Parameters)
 		TestTrue(TEXT("authority examples cover every message type"), Messages.Num() >= 9);
 		for (int32 Index = 0; Index < FMath::Min(Messages.Num(), Canonical.Num()); ++Index)
 		{
-			CheckRoundTrip<FLongTableAuthorityMessage>(*this, FString::Printf(TEXT("authority-message[%d]"), Index), Messages[Index], Canonical[Index]->AsString(), TEXT("authority"),
-				&FLongTableProtocolCodec::DecodeAuthorityMessage, &FLongTableProtocolCodec::EncodeAuthorityMessage);
+			const FString What = FString::Printf(TEXT("authority-message[%d]"), Index);
+			FLongTableAuthorityMessage Message;
+			FLongTableSchemaRejection Rejection;
+			if (!FLongTableProtocolCodec::DecodeAuthorityMessage(Messages[Index], TEXT("authority"), Message, Rejection))
+			{
+				AddError(FString::Printf(TEXT("%s rejected: %s"), *What, *Rejection.ToString()));
+				continue;
+			}
+			TArray<FString> Texts;
+			bool bPayloadsOk = true;
+			for (const FLongTableProjectionPayload& Payload : Message.Payloads)
+			{
+				FString Text;
+				if (!PayloadText(*this, What, Payload, Text)) { bPayloadsOk = false; break; }
+				Texts.Add(Text);
+			}
+			if (!bPayloadsOk) { continue; }
+			const FString Encoded = FLongTableProtocolCodec::EncodeAuthorityMessage(Message, Texts);
+			if (!FLongTableProtocolCodec::Utf8BytesEqual(Encoded, Canonical[Index]->AsString()))
+			{
+				AddError(FString::Printf(TEXT("%s canonical mismatch\n expected: %s\n actual:   %s"), *What, *Canonical[Index]->AsString(), *Encoded));
+			}
 		}
 	}
 	return true;
@@ -225,11 +311,8 @@ bool FLongTableProtocolCounterfactualTest::RunTest(const FString& Parameters)
 	FLongTableSchemaRejection Rejection;
 	TestTrue(TEXT("host actual decodes"), FLongTableProtocolCodec::DecodeHostProjection(HostPair->TryGetField(TEXT("actual")), TEXT("host"), HostActual, Rejection));
 	TestTrue(TEXT("host counterfactual decodes"), FLongTableProtocolCodec::DecodeHostProjection(HostPair->TryGetField(TEXT("counterfactual")), TEXT("host"), HostCounterfactual, Rejection));
-	const FString HostA = FLongTableProtocolCodec::EncodeHostProjection(HostActual);
-	const FString HostB = FLongTableProtocolCodec::EncodeHostProjection(HostCounterfactual);
-	TestTrue(TEXT("host projections byte-identical under concealed counterfactual"), FLongTableProtocolCodec::Utf8BytesEqual(HostA, HostB));
-	TestFalse(TEXT("host projection carries no ghost card"), HostB.Contains(TEXT("GHOSTCARD")));
-	TestFalse(TEXT("host projection carries no seed"), HostB.Contains(TEXT("counterfactual-seed")));
+	TestTrue(TEXT("host projections byte-identical under concealed counterfactual"),
+		FLongTableProtocolCodec::Utf8BytesEqual(FLongTableProtocolCodec::EncodeHostProjection(HostActual), FLongTableProtocolCodec::EncodeHostProjection(HostCounterfactual)));
 
 	const TSharedPtr<FJsonObject> PublicPair = Fixture->GetObjectField(TEXT("public"));
 	FLongTablePublicProjection PublicActual, PublicCounterfactual;
@@ -243,50 +326,62 @@ bool FLongTableProtocolCounterfactualTest::RunTest(const FString& Parameters)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableProtocolClosedTypesTest, "LongTable.Protocol.ClosedTypes", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
 bool FLongTableProtocolClosedTypesTest::RunTest(const FString& Parameters)
 {
+	// Exact reflected property inventories: the public core plus each role's own members, and nothing else.
+	const TArray<FString> Core =
+	{
+		TEXT("TableId"), TEXT("Version"), TEXT("HandNumber"), TEXT("Phase"), TEXT("Turn"), TEXT("TurnLabel"), TEXT("Dealer"), TEXT("DealerLabel"),
+		TEXT("bHasContract"), TEXT("Contract"), TEXT("Auction"), TEXT("PublicTrick"), TEXT("CompletedTricks"), TEXT("BooksNorthSouth"), TEXT("BooksEastWest"),
+		TEXT("ScoreNorthSouth"), TEXT("ScoreEastWest"), TEXT("Seats"), TEXT("StatusLine"), TEXT("bHasSummaryLine"), TEXT("SummaryLine"), TEXT("bPaused"), TEXT("bEventEnded")
+	};
+	TArray<FString> Host = Core;
+	Host.Append({ TEXT("bBetweenHands"), TEXT("HostControls"), TEXT("bHasLastAnnouncement"), TEXT("LastAnnouncement") });
+	TArray<FString> Player = Core;
+	Player.Append({ TEXT("Seat"), TEXT("Hand"), TEXT("LegalChoices"), TEXT("bHasPreviewLabel"), TEXT("PreviewLabel"), TEXT("DiscardPicked"), TEXT("DiscardTarget"),
+		TEXT("UncommittedRevision"), TEXT("bHasFeedbackCode"), TEXT("FeedbackCode"), TEXT("bHasFeedbackLine"), TEXT("FeedbackLine"), TEXT("DisabledNotices") });
+
+	CheckInventory(*this, TEXT("FLongTablePublicCore"), FLongTablePublicCore::StaticStruct(), EFieldIteratorFlags::IncludeSuper, Core);
+	CheckInventory(*this, TEXT("FLongTablePublicProjection"), FLongTablePublicProjection::StaticStruct(), EFieldIteratorFlags::IncludeSuper, Core);
+	CheckInventory(*this, TEXT("FLongTableHostProjection"), FLongTableHostProjection::StaticStruct(), EFieldIteratorFlags::IncludeSuper, Host);
+	CheckInventory(*this, TEXT("FLongTablePlayerProjection"), FLongTablePlayerProjection::StaticStruct(), EFieldIteratorFlags::IncludeSuper, Player);
+	CheckInventory(*this, TEXT("FLongTableDealerCueFrame"), FLongTableDealerCueFrame::StaticStruct(), EFieldIteratorFlags::IncludeSuper,
+		{ TEXT("TableId"), TEXT("Version"), TEXT("HandNumber"), TEXT("Phase"), TEXT("Cue"), TEXT("bHasSeat"), TEXT("Seat"), TEXT("bHasSeatLabel"), TEXT("SeatLabel"), TEXT("bHasAnnouncement"), TEXT("Announcement") });
+	CheckInventory(*this, TEXT("FLongTableIntentReceipt"), FLongTableIntentReceipt::StaticStruct(), EFieldIteratorFlags::IncludeSuper,
+		{ TEXT("IntentId"), TEXT("IntentKind"), TEXT("Outcome"), TEXT("bHasCode"), TEXT("Code"), TEXT("Message"), TEXT("bCommitted"), TEXT("Version") });
+	CheckInventory(*this, TEXT("FLongTableErrorMessage"), FLongTableErrorMessage::StaticStruct(), EFieldIteratorFlags::IncludeSuper, { TEXT("Code"), TEXT("Detail") });
+	CheckInventory(*this, TEXT("FLongTableWelcome"), FLongTableWelcome::StaticStruct(), EFieldIteratorFlags::IncludeSuper,
+		{ TEXT("SessionId"), TEXT("Role"), TEXT("bHasSeat"), TEXT("Seat"), TEXT("TableId"), TEXT("Version"), TEXT("bHasProjection") });
+	CheckInventory(*this, TEXT("FLongTableProjectionMessage"), FLongTableProjectionMessage::StaticStruct(), EFieldIteratorFlags::IncludeSuper, { TEXT("TableId"), TEXT("Version") });
+	CheckInventory(*this, TEXT("FLongTableReplayMessage"), FLongTableReplayMessage::StaticStruct(), EFieldIteratorFlags::IncludeSuper,
+		{ TEXT("TableId"), TEXT("FromVersion"), TEXT("ToVersion"), TEXT("bTruncated"), TEXT("FrameVersions") });
+	CheckInventory(*this, TEXT("FLongTableAuthorityMessage"), FLongTableAuthorityMessage::StaticStruct(), EFieldIteratorFlags::IncludeSuper,
+		{ TEXT("Type"), TEXT("Welcome"), TEXT("Projection"), TEXT("Receipt"), TEXT("Replay"), TEXT("DealerCue"), TEXT("Error") });
+
+	// Exact wire key inventories: the codec's ordered key lists equal the manifest's inventories.
 	const TSharedPtr<FJsonObject> Manifest = LoadFixtureObject(*this, TEXT("manifest.json"));
 	if (!Manifest.IsValid()) { return false; }
-	TArray<FString> Concealed;
-	for (const TSharedPtr<FJsonValue>& Key : Manifest->GetArrayField(TEXT("concealedKeys")))
+	const TSharedPtr<FJsonObject>* Inventories = nullptr;
+	if (!Manifest->TryGetObjectField(TEXT("inventories"), Inventories))
 	{
-		Concealed.Add(Key->AsString());
+		AddError(TEXT("manifest.json has no inventories"));
+		return false;
 	}
-	TestTrue(TEXT("concealed key list present"), Concealed.Num() > 5);
-
-	const UScriptStruct* NonPlayerTypes[] =
+	int32 Compared = 0;
+	for (const TPair<FString, TSharedPtr<FJsonValue>>& Pair : (*Inventories)->Values)
 	{
-		FLongTableHostProjection::StaticStruct(),
-		FLongTablePublicProjection::StaticStruct(),
-		FLongTableDealerCueFrame::StaticStruct(),
-		FLongTableIntentReceipt::StaticStruct(),
-		FLongTableErrorMessage::StaticStruct(),
-		FLongTableWelcome::StaticStruct(),
-	};
-	for (const UScriptStruct* Struct : NonPlayerTypes)
-	{
-		for (TFieldIterator<FProperty> It(Struct); It; ++It)
+		const TArray<FString> Keys = FLongTableProtocolCodec::WireKeys(Pair.Key);
+		const TArray<TSharedPtr<FJsonValue>>& Expected = Pair.Value->AsArray();
+		TestEqual(FString::Printf(TEXT("%s wire key count"), *Pair.Key), Keys.Num(), Expected.Num());
+		for (int32 Index = 0; Index < FMath::Min(Keys.Num(), Expected.Num()); ++Index)
 		{
-			FString Name = It->GetName();
-			if (It->IsA<FBoolProperty>() && Name.StartsWith(TEXT("b"))) { Name.RightChopInline(1); }
-			for (const FString& Key : Concealed)
-			{
-				TestFalse(FString::Printf(TEXT("%s declares concealed member %s"), *Struct->GetName(), *Key), Name.Equals(Key, ESearchCase::IgnoreCase));
-			}
-			// A welcome may carry a projection, but never a player projection member of its own.
-			if (const FStructProperty* StructProperty = CastField<FStructProperty>(*It))
-			{
-				TestFalse(FString::Printf(TEXT("%s embeds a player projection"), *Struct->GetName()), StructProperty->Struct == FLongTablePlayerProjection::StaticStruct());
-			}
+			TestEqual(FString::Printf(TEXT("%s wire key[%d]"), *Pair.Key, Index), Keys[Index], Expected[Index]->AsString());
 		}
+		++Compared;
 	}
-
-	bool bPlayerHasHand = false;
-	for (TFieldIterator<FProperty> It(FLongTablePlayerProjection::StaticStruct()); It; ++It)
-	{
-		if (It->GetName() == TEXT("Hand")) { bPlayerHasHand = true; }
-	}
-	TestTrue(TEXT("player projection declares its own hand (check is not vacuous)"), bPlayerHasHand);
+	TestEqual(TEXT("manifest inventories compared"), Compared, 8);
+	TestEqual(TEXT("no unknown inventory name is answered"), FLongTableProtocolCodec::WireKeys(TEXT("Nonexistent")).Num(), 0);
 	return true;
 }
 
 #endif // WITH_DEV_AUTOMATION_TESTS
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

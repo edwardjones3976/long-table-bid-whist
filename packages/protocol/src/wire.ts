@@ -59,18 +59,27 @@ export const WIRE_ERROR_CODES = [
 ] as const;
 export type WireErrorCode = (typeof WIRE_ERROR_CODES)[number];
 
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
+export interface WelcomeMessage {
+  type: "welcome";
+  protocolVersion: ProtocolVersion;
+  sessionId: string;
+  role: Role;
+  seat: Seat | null;
+  tableId: string;
+  version: number;
+  /** Null only for the dealer role, which receives cues alone. */
+  projection: RoleProjection | null;
+}
+
+export interface ErrorMessage {
+  type: "error";
+  code: WireErrorCode;
+  detail: string;
+}
+
 export type AuthorityMessage =
-  | {
-      type: "welcome";
-      protocolVersion: ProtocolVersion;
-      sessionId: string;
-      role: Role;
-      seat: Seat | null;
-      tableId: string;
-      version: number;
-      /** Null only for the dealer role, which receives cues alone. */
-      projection: RoleProjection | null;
-    }
+  | WelcomeMessage
   | { type: "projection"; tableId: string; version: number; projection: RoleProjection }
   | { type: "receipt"; tableId: string; receipt: IntentReceipt }
   | {
@@ -83,7 +92,8 @@ export type AuthorityMessage =
       frames: ReplayFrame[];
     }
   | { type: "dealer-cue"; tableId: string; frame: DealerCueFrame }
-  | { type: "error"; code: WireErrorCode; detail: string };
+  | ErrorMessage;
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 
 const ID = s.string({ maxLength: LIMITS.id });
 const VERSION = s.int({ min: 0, max: LIMITS.maxVersion });
@@ -114,17 +124,27 @@ export const CLIENT_MESSAGE = s.union<"type", ClientMessage>("type", {
 
 export const REPLAY_FRAME = s.object<ReplayFrame>({ version: VERSION, projection: ROLE_PROJECTION });
 
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
+export const WELCOME_MESSAGE = s.object<WelcomeMessage>({
+  type: s.literal("welcome"),
+  protocolVersion: s.literal(PROTOCOL_VERSION),
+  sessionId: ID,
+  role: s.enumOf(ROLES),
+  seat: s.nullable(s.enumOf(SEATS)),
+  tableId: ID,
+  version: VERSION,
+  projection: s.nullable(ROLE_PROJECTION),
+});
+
+export const ERROR_MESSAGE = s.object<ErrorMessage>({
+  type: s.literal("error"),
+  code: s.enumOf(WIRE_ERROR_CODES),
+  detail: s.string({ maxLength: LIMITS.detail, allowEmpty: true }),
+});
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
+
 export const AUTHORITY_MESSAGE = s.union<"type", AuthorityMessage>("type", {
-  welcome: s.object<Extract<AuthorityMessage, { type: "welcome" }>>({
-    type: s.literal("welcome"),
-    protocolVersion: s.literal(PROTOCOL_VERSION),
-    sessionId: ID,
-    role: s.enumOf(ROLES),
-    seat: s.nullable(s.enumOf(SEATS)),
-    tableId: ID,
-    version: VERSION,
-    projection: s.nullable(ROLE_PROJECTION),
-  }),
+  welcome: WELCOME_MESSAGE,
   projection: s.object<Extract<AuthorityMessage, { type: "projection" }>>({
     type: s.literal("projection"),
     tableId: ID,
@@ -149,11 +169,7 @@ export const AUTHORITY_MESSAGE = s.union<"type", AuthorityMessage>("type", {
     tableId: ID,
     frame: DEALER_CUE_FRAME,
   }),
-  error: s.object<Extract<AuthorityMessage, { type: "error" }>>({
-    type: s.literal("error"),
-    code: s.enumOf(WIRE_ERROR_CODES),
-    detail: s.string({ maxLength: LIMITS.detail, allowEmpty: true }),
-  }),
+  error: ERROR_MESSAGE,
 });
 
 export function encodeClientMessage(message: ClientMessage): string {

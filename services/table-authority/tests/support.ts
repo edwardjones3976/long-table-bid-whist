@@ -7,8 +7,8 @@
 import { expect } from "vitest";
 
 import type { GameState, Seat } from "../../../packages/rules-core/src";
-import type { DealerCueFrame, IntentReceipt, TableIntent } from "../../../packages/protocol/src";
-import { TableAuthority, type Actor, type HistoryFrame, type SeatBinding } from "../src/table";
+import type { DealerCueFrame, IntentReceipt, PlayerProjection, TableIntent } from "../../../packages/protocol/src";
+import { TableAuthority, type Actor, type HistoryFrame, type SeatBinding, type SeatUpdate } from "../src/table";
 
 export const PARTICIPANTS = {
   south: "p-south",
@@ -69,7 +69,7 @@ export function submit(
   actor: Actor,
   intent: TableIntent,
   options: SubmitOptions = {},
-): { receipt: IntentReceipt; frame: HistoryFrame | null } {
+): { receipt: IntentReceipt; frame: HistoryFrame | null; seatUpdate: SeatUpdate | null } {
   counter += 1;
   return table.submitIntent(actor, {
     tableId: table.tableId,
@@ -77,6 +77,13 @@ export function submit(
     expectedVersion: options.expectedVersion ?? table.currentVersion,
     intent,
   });
+}
+
+/** The seat's own projection as its current owner would receive it. */
+export function playerSnapshot(table: TableAuthority, seat: Seat): PlayerProjection {
+  const projection = table.snapshot("player", seat, PARTICIPANTS[seat]);
+  if (!projection || projection.role !== "player") throw new Error(`no player projection for ${seat}`);
+  return projection;
 }
 
 /** Commits one legal move for `seat` through preview/confirm or the kitty picks. Returns collected cues. */
@@ -94,9 +101,7 @@ export function takeTurn(table: TableAuthority, seat: Seat, prefer: "bid" | "pas
     cues.push(...(confirmed.frame?.cues ?? []));
     return cues;
   }
-  const projection = table.snapshot("player", seat);
-  if (!projection || projection.role !== "player") throw new Error("no player projection");
-  const choices = projection.legalChoices;
+  const choices = playerSnapshot(table, seat).legalChoices;
   const bids = choices.filter((choice) => choice.kind === "bid");
   const pass = choices.find((choice) => choice.kind === "pass");
   const choice =

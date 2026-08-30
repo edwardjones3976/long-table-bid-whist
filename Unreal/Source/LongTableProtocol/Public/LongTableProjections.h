@@ -3,10 +3,11 @@
  * Closed projection types mirroring packages/protocol/src/{views,intents,
  * receipts,dealer,projections}.ts. A nullable wire member is a `bHas…` flag
  * plus a value. `FLongTableHostProjection`, `FLongTablePublicProjection`,
- * `FLongTableDealerCueFrame` and `FLongTableIntentReceipt` declare no hand,
- * legal-choice, preview, discard, kitty, seed or event member: those members
- * do not exist on these types, and LongTable.Protocol.ClosedTypes checks the
- * reflected property lists against fixtures/protocol/manifest.json.
+ * `FLongTableDealerCueFrame` and `FLongTableIntentReceipt` declare exactly
+ * the inventory of their schema and nothing else; LongTable.Protocol.ClosedTypes
+ * compares the reflected property lists against explicit inventories and the
+ * wire key lists against fixtures/protocol/manifest.json. There is no shared
+ * container that embeds a player projection beside a host or public one.
  */
 #pragma once
 
@@ -201,6 +202,8 @@ struct LONGTABLEPROTOCOL_API FLongTablePlayerProjection : public FLongTablePubli
 	UPROPERTY(BlueprintReadOnly, Category = "Long Table") FString PreviewLabel;
 	UPROPERTY(BlueprintReadOnly, Category = "Long Table") int32 DiscardPicked = 0;
 	UPROPERTY(BlueprintReadOnly, Category = "Long Table") int32 DiscardTarget = 6;
+	/** Per-seat counter for player-local changes; the shared Version does not move for them. */
+	UPROPERTY(BlueprintReadOnly, Category = "Long Table") int32 UncommittedRevision = 0;
 	UPROPERTY(BlueprintReadOnly, Category = "Long Table") bool bHasFeedbackCode = false;
 	UPROPERTY(BlueprintReadOnly, Category = "Long Table") ELongTableRejectionCode FeedbackCode = ELongTableRejectionCode::EngineRejected;
 	UPROPERTY(BlueprintReadOnly, Category = "Long Table") bool bHasFeedbackLine = false;
@@ -223,28 +226,6 @@ USTRUCT(BlueprintType)
 struct LONGTABLEPROTOCOL_API FLongTablePublicProjection : public FLongTablePublicCore
 {
 	GENERATED_BODY()
-};
-
-/** The projection a connection received, tagged by role. Exactly one member is meaningful. */
-USTRUCT(BlueprintType)
-struct LONGTABLEPROTOCOL_API FLongTableRoleProjection
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadOnly, Category = "Long Table") ELongTableRole Role = ELongTableRole::Public;
-	UPROPERTY(BlueprintReadOnly, Category = "Long Table") FLongTablePlayerProjection Player;
-	UPROPERTY(BlueprintReadOnly, Category = "Long Table") FLongTableHostProjection Host;
-	UPROPERTY(BlueprintReadOnly, Category = "Long Table") FLongTablePublicProjection Public;
-
-	int32 Version() const
-	{
-		switch (Role)
-		{
-		case ELongTableRole::Player: return Player.Version;
-		case ELongTableRole::Host: return Host.Version;
-		default: return Public.Version;
-		}
-	}
 };
 
 /** The only input the robot dealer presenter receives. Carries no card member. */

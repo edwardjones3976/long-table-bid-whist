@@ -2,7 +2,8 @@
 /**
  * Golden fixtures: committed files equal a fresh generation, every value
  * decodes through its closed schema, canonical re-encoding is byte-identical,
- * and every rejection example is rejected with the expected code and path.
+ * every rejection example is rejected with the expected code and path, and the
+ * manifest's inventories equal the protocol's exact inventories.
  */
 import { describe, expect, it } from "vitest";
 
@@ -17,8 +18,10 @@ import {
   PLAYER_PROJECTION,
   PUBLIC_PROJECTION,
   REJECTION_CODES,
+  SCHEMA_INVENTORIES,
   canonicalJson,
-  concealedKeyViolations,
+  inventoryViolations,
+  matchesInventory,
   type Schema,
 } from "../../../packages/protocol/src";
 import { buildFixtures, readCommittedFixtures, staleFixtures } from "../generate-fixtures";
@@ -54,14 +57,17 @@ describe("golden protocol fixtures", () => {
     const player = committed["player-projection.json"] as ProjectionFixture;
     const host = committed["host-projection.json"] as ProjectionFixture;
     const pub = committed["public-projection.json"] as ProjectionFixture;
-    for (const [fixture, schema] of [
-      [player, PLAYER_PROJECTION],
-      [host, HOST_PROJECTION],
-      [pub, PUBLIC_PROJECTION],
+    for (const [fixture, schema, name] of [
+      [player, PLAYER_PROJECTION, "PlayerProjection"],
+      [host, HOST_PROJECTION, "HostProjection"],
+      [pub, PUBLIC_PROJECTION, "PublicProjection"],
     ] as const) {
       const decoded = (schema as Schema<unknown>).decode(fixture.value, "fixture");
       expect(decoded.ok).toBe(true);
-      if (decoded.ok) expect(canonicalJson(schema as Schema<unknown>, decoded.value)).toBe(fixture.canonical);
+      if (decoded.ok) {
+        expect(canonicalJson(schema as Schema<unknown>, decoded.value)).toBe(fixture.canonical);
+        expect(matchesInventory(name, decoded.value as object)).toBe(true);
+      }
     }
     const cues = committed["dealer-cues.json"] as ListFixture & { frames: unknown[] };
     cues.frames.forEach((frame, index) => {
@@ -70,6 +76,7 @@ describe("golden protocol fixtures", () => {
       if (decoded.ok) {
         expect(canonicalJson(DEALER_CUE_FRAME, decoded.value)).toBe(cues.canonical[index]);
         expect(DEALER_CUES).toContain(decoded.value.cue);
+        expect(matchesInventory("DealerCueFrame", decoded.value)).toBe(true);
       }
     });
     const clients = committed["client-messages.json"] as ListFixture & { messages: unknown[] };
@@ -117,15 +124,26 @@ describe("golden protocol fixtures", () => {
     });
   });
 
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
+  it("publish the exact schema inventories the Unreal mirror is checked against", () => {
+    expect(inventoryViolations()).toEqual([]);
+    const manifest = committed["manifest.json"] as { inventories: Record<string, string[]> };
+    for (const { name, inventory } of SCHEMA_INVENTORIES) {
+      expect(manifest.inventories[name], name).toEqual([...inventory]);
+    }
+    expect(Object.keys(manifest.inventories).sort()).toEqual(SCHEMA_INVENTORIES.map((entry) => entry.name).sort());
+    expect("concealedKeys" in (committed["manifest.json"] as object)).toBe(false);
+  });
+
   it("keep host and public byte-identical under the concealed counterfactual", () => {
     const pair = committed["counterfactual.json"] as { host: { actual: unknown; counterfactual: unknown }; public: { actual: unknown; counterfactual: unknown } };
     const host = canonicalJson(HOST_PROJECTION as Schema<unknown>, pair.host.actual);
     expect(canonicalJson(HOST_PROJECTION as Schema<unknown>, pair.host.counterfactual)).toBe(host);
     const pub = canonicalJson(PUBLIC_PROJECTION as Schema<unknown>, pair.public.actual);
     expect(canonicalJson(PUBLIC_PROJECTION as Schema<unknown>, pair.public.counterfactual)).toBe(pub);
-    expect(host).not.toContain("GHOSTCARD");
-    expect(host).not.toContain("counterfactual-seed");
-    expect(concealedKeyViolations()).toEqual([]);
+    expect(matchesInventory("HostProjection", pair.host.actual as object)).toBe(true);
+    expect(matchesInventory("PublicProjection", pair.public.actual as object)).toBe(true);
   });
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 });
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

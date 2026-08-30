@@ -31,6 +31,8 @@ export interface SocketHandlers {
 export interface OutboundFrame {
   readonly connectionId: string;
   readonly text: string;
+  /** Close the connection after delivery (entitlement revoked). */
+  readonly closeAfter?: boolean;
 }
 
 export interface ServerOptions {
@@ -168,7 +170,7 @@ function headerValue(request: IncomingMessage, name: string): string | null {
 export function startAuthorityServer(options: ServerOptions): Promise<RunningServer> {
   const host = options.host ?? "127.0.0.1";
   const log = options.log ?? (() => undefined);
-  const sockets = new Map<string, Socket>();
+  const sockets = new Map<string, { socket: Socket; finish: () => void }>();
 
   const server: Server = createServer((_request, response) => {
     response.writeHead(426, { "Content-Type": "text/plain" });
@@ -178,7 +180,12 @@ export function startAuthorityServer(options: ServerOptions): Promise<RunningSer
   const deliver = (frames: readonly OutboundFrame[]) => {
     for (const frame of frames) {
       const target = sockets.get(frame.connectionId);
-      if (target && !target.destroyed) target.write(encodeTextFrame(frame.text));
+      if (!target || target.socket.destroyed) continue;
+      target.socket.write(encodeTextFrame(frame.text));
+      if (frame.closeAfter) {
+        target.socket.write(encodeCloseFrame(1008));
+        target.finish();
+      }
     }
   };
 
@@ -202,7 +209,6 @@ export function startAuthorityServer(options: ServerOptions): Promise<RunningSer
     );
 
     const connectionId = randomBytes(8).toString("hex");
-    sockets.set(connectionId, socket);
     const parser = new FrameParser();
     let closed = false;
 
@@ -213,6 +219,7 @@ export function startAuthorityServer(options: ServerOptions): Promise<RunningSer
       deliver(options.handlers.onClose(connectionId));
       if (!socket.destroyed) socket.end();
     };
+    sockets.set(connectionId, { socket, finish });
 
     const consume = (chunk: Buffer) => {
       const { frames, failure } = parser.push(chunk);
@@ -254,7 +261,7 @@ export function startAuthorityServer(options: ServerOptions): Promise<RunningSer
         connectionCount: () => sockets.size,
         close: () =>
           new Promise<void>((done) => {
-            for (const socket of sockets.values()) socket.destroy();
+            for (const entry of sockets.values()) entry.socket.destroy();
             sockets.clear();
             server.close(() => done());
           }),

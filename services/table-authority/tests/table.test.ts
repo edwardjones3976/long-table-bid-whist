@@ -2,39 +2,48 @@
 import { describe, expect, it } from "vitest";
 
 import { SEATS, replayMatches, stateDigest } from "../../../packages/rules-core/src";
-import { DEALER_CUES, DEALER_CUE_FRAME, INTENT_RECEIPT, REJECTION_MESSAGES } from "../../../packages/protocol/src";
-import { PARTICIPANTS, PUBLIC_ACTOR, createTable, driveHand, driveUntil, hostActor, playerActor, submit, takeTurn } from "./support";
+import { DEALER_CUES, DEALER_CUE_FRAME, INTENT_RECEIPT, REJECTION_MESSAGES, matchesInventory } from "../../../packages/protocol/src";
+import { PARTICIPANTS, PUBLIC_ACTOR, createTable, driveHand, driveUntil, hostActor, playerActor, playerSnapshot, submit, takeTurn } from "./support";
 
 describe("authoritative boundary — preview, cancel, confirm", () => {
-  it("treats a preview as pointing: the version moves, committed play does not", () => {
+  it("treats a preview as pointing: the shared version stays, only the seat's own projection moves", () => {
     const table = createTable({ seed: "preview" });
     const before = stateDigest(table.committedState());
     const version = table.currentVersion;
+    const revision = table.seatRevision("south");
 
-    const receipt = submit(table, playerActor("south"), {
+    const result = submit(table, playerActor("south"), {
       kind: "preview",
       selection: { type: "bid", bid: { level: 4, mode: "low" } },
-    }).receipt;
+    });
 
-    expect(receipt.outcome).toBe("accepted");
-    expect(receipt.committed).toBe(false);
-    expect(receipt.version).toBe(version + 1);
+    expect(result.receipt.outcome).toBe("accepted");
+    expect(result.receipt.committed).toBe(false);
+    expect(result.receipt.version).toBe(version);
+    expect(table.currentVersion).toBe(version);
+    expect(result.frame).toBeNull();
+    expect(result.seatUpdate?.seat).toBe("south");
+    expect(result.seatUpdate?.participantId).toBe(PARTICIPANTS.south);
+    expect(result.seatUpdate?.projection.previewLabel).toBe("4 Low");
+    expect(result.seatUpdate?.projection.uncommittedRevision).toBe(revision + 1);
     expect(stateDigest(table.committedState())).toBe(before);
-    const projection = table.snapshot("player", "south");
-    expect(projection?.role === "player" && projection.previewLabel).toBe("4 Low");
+    expect(playerSnapshot(table, "south").previewLabel).toBe("4 Low");
   });
 
   it("commits only on confirm, then advances the AI seats", () => {
     const table = createTable({ seed: "confirm" });
+    const version = table.currentVersion;
     submit(table, playerActor("south"), { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } });
     const confirmed = submit(table, playerActor("south"), { kind: "confirm" });
     expect(confirmed.receipt.committed).toBe(true);
+    expect(confirmed.receipt.version).toBe(version + 1);
+    expect(confirmed.frame?.version).toBe(version + 1);
+    expect(confirmed.seatUpdate).toBeNull();
     const game = table.committedState();
-    expect(game.auction.length).toBeGreaterThanOrEqual(1);
     expect(game.auction[0]).toEqual({ seat: "south", bid: { level: 3, mode: "high" } });
     // The three AI seats answered; play returned to South or the phase moved on.
     expect(game.turn === "south" || game.phase !== "auction").toBe(true);
-    expect(table.snapshot("player", "south")?.role === "player" && table.snapshot("player", "south")!.role === "player" ? true : false).toBe(true);
+    expect(playerSnapshot(table, "south").previewLabel).toBeNull();
   });
 
   it("rejects a confirm after cancel and a fresh double confirm after a commit", () => {
@@ -62,8 +71,7 @@ describe("authoritative boundary — preview, cancel, confirm", () => {
     expect(noTrump.receipt.code).toBe("bid-outside-manifest");
     expect(seven.receipt.message).toBe(REJECTION_MESSAGES["bid-outside-manifest"]);
     expect(seven.receipt.message).toBe("Not included in Alpha 0.1; available after the published-rules stage.");
-    const projection = table.snapshot("player", "south");
-    expect(projection?.role === "player" && projection.feedbackCode).toBe("bid-outside-manifest");
+    expect(playerSnapshot(table, "south").feedbackCode).toBe("bid-outside-manifest");
   });
 
   it("holds six discard picks, refuses a seventh, and needs all six to confirm", () => {
@@ -72,16 +80,17 @@ describe("authoritative boundary — preview, cancel, confirm", () => {
     if (table.committedState().contract?.bidder !== "south") return;
     driveUntil(table, ["south"], (game) => game.phase === "kitty");
     const hand = table.committedState().hands.south;
+    const version = table.currentVersion;
     hand.slice(0, 6).forEach((card) => {
       expect(submit(table, playerActor("south"), { kind: "toggle-discard", cardId: card.id }).receipt.outcome).toBe("accepted");
     });
+    expect(table.currentVersion).toBe(version);
     const seventh = submit(table, playerActor("south"), { kind: "toggle-discard", cardId: hand[6].id });
     expect(seventh.receipt.code).toBe("discard-limit-reached");
     submit(table, playerActor("south"), { kind: "toggle-discard", cardId: hand[0].id });
     const incomplete = submit(table, playerActor("south"), { kind: "confirm" });
     expect(incomplete.receipt.code).toBe("discard-incomplete");
-    const projection = table.snapshot("player", "south");
-    expect(projection?.role === "player" && projection.discardPicked).toBe(5);
+    expect(playerSnapshot(table, "south").discardPicked).toBe(5);
   });
 });
 
@@ -90,19 +99,20 @@ describe("authoritative boundary — idempotency and versions", () => {
     const table = createTable({ seed: "idempotent" });
     const first = submit(table, playerActor("south"), { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } }, { intentId: "controller-7" });
     expect(first.receipt.outcome).toBe("accepted");
-    const version = table.currentVersion;
+    const revision = table.seatRevision("south");
 
     const replay = table.submitIntent(playerActor("south"), {
       tableId: table.tableId,
       intentId: "controller-7",
-      expectedVersion: version,
+      expectedVersion: table.currentVersion,
       intent: { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } },
     });
     expect(replay.receipt.outcome).toBe("duplicate");
     expect(replay.receipt.code).toBe("duplicate-input-id");
     expect(replay.receipt.committed).toBe(false);
     expect(replay.frame).toBeNull();
-    expect(table.currentVersion).toBe(version);
+    expect(replay.seatUpdate).toBeNull();
+    expect(table.seatRevision("south")).toBe(revision);
   });
 
   it("never commits a replayed confirm, even after the version has moved on", () => {
@@ -111,7 +121,7 @@ describe("authoritative boundary — idempotency and versions", () => {
     const confirmed = submit(table, playerActor("south"), { kind: "confirm" }, { intentId: "trigger-1" });
     expect(confirmed.receipt.committed).toBe(true);
     const digest = stateDigest(table.committedState());
-    submit(table, playerActor("south"), { kind: "preview", selection: { type: "pass" } });
+    submit(table, hostActor(), { kind: "host-announce", cue: "welcome" });
 
     const replay = submit(table, playerActor("south"), { kind: "confirm" }, { intentId: "trigger-1" });
     expect(replay.receipt.outcome).toBe("duplicate");
@@ -123,24 +133,29 @@ describe("authoritative boundary — idempotency and versions", () => {
     const table = createTable({ seed: "stale" });
     const stale = table.currentVersion;
     submit(table, playerActor("south"), { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } });
+    expect(submit(table, playerActor("south"), { kind: "confirm" }).receipt.committed).toBe(true);
     expect(table.currentVersion).toBe(stale + 1);
 
-    const rejected = submit(table, playerActor("south"), { kind: "confirm" }, { expectedVersion: stale });
+    const rejected = submit(table, playerActor("south"), { kind: "cancel" }, { expectedVersion: stale });
     expect(rejected.receipt.outcome).toBe("rejected");
     expect(rejected.receipt.code).toBe("stale-version");
     expect(rejected.receipt.version).toBe(stale + 1);
     expect(rejected.receipt.committed).toBe(false);
 
-    const fresh = submit(table, playerActor("south"), { kind: "confirm" }, { expectedVersion: stale + 1 });
-    expect(fresh.receipt.committed).toBe(true);
+    const fresh = submit(table, playerActor("south"), { kind: "cancel" }, { expectedVersion: stale + 1 });
+    expect(fresh.receipt.outcome).toBe("accepted");
   });
 
-  it("increments the version by exactly one per accepted intent", () => {
+  it("increments the shared version by exactly one per accepted authoritative intent", () => {
     const table = createTable({ seed: "monotonic" });
     const start = table.currentVersion;
     submit(table, playerActor("south"), { kind: "preview", selection: { type: "pass" } });
     submit(table, playerActor("south"), { kind: "cancel" });
+    submit(table, playerActor("south"), { kind: "preview", selection: { type: "pass" } });
+    expect(table.currentVersion).toBe(start);
     submit(table, playerActor("south"), { kind: "confirm" });
+    expect(table.currentVersion).toBe(start + 1);
+    submit(table, hostActor(), { kind: "host-announce", cue: "welcome" });
     expect(table.currentVersion).toBe(start + 2);
   });
 });
@@ -168,6 +183,8 @@ describe("authoritative boundary — roles", () => {
     expect(wrongSeat.receipt.code).toBe("seat-not-bound");
     const unknown = submit(table, { role: "player", participantId: "nobody", seat: "south" }, { kind: "preview", selection: { type: "pass" } });
     expect(unknown.receipt.code).toBe("seat-not-bound");
+    expect(table.snapshot("player", "south", "nobody")).toBeNull();
+    expect(table.snapshot("player", "west", PARTICIPANTS.south)).toBeNull();
   });
 });
 
@@ -185,7 +202,7 @@ describe("authoritative boundary — host session powers", () => {
     expect(table.committedState().paused).toBe(true);
     expect(table.committedState().scores).toEqual(summary.scores);
     expect(submit(table, playerActor("south"), { kind: "next-hand" }).receipt.code).toBe("table-paused");
-    const host = table.snapshot("host", null);
+    const host = table.snapshot("host", null, PARTICIPANTS.host);
     expect(host?.role === "host" && host.hostControls).toContain("host-resume");
     expect(host?.role === "host" && host.hostControls).not.toContain("host-pause");
 
@@ -212,6 +229,7 @@ describe("authoritative boundary — host session powers", () => {
     expect(substituted.frame?.cues.some((cue) => cue.cue === "seat-substituted" && cue.seat === "north")).toBe(true);
     expect(table.seatBinding("north").occupant).toBe("ai");
     expect(table.seatOf(PARTICIPANTS.north)).toBeNull();
+    expect(table.snapshot("player", "north", PARTICIPANTS.north)).toBeNull();
 
     submit(table, hostActor(), { kind: "next-hand" });
     driveHand(table, ["south"]);
@@ -237,28 +255,29 @@ describe("authoritative boundary — host session powers", () => {
 });
 
 describe("authoritative boundary — reconnect, replay and evidence", () => {
-  it("replays the retained projections after a last-known version", () => {
+  it("replays the retained authoritative projections after a last-known version", () => {
     const table = createTable({ seed: "reconnect", historyRetention: 6 });
     const lastSeen = table.currentVersion;
     submit(table, playerActor("south"), { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } });
     submit(table, playerActor("south"), { kind: "confirm" });
-    // Cancel is accepted in every phase, so it always advances the version.
+    submit(table, hostActor(), { kind: "host-announce", cue: "welcome" });
     submit(table, playerActor("south"), { kind: "cancel" });
 
-    const replay = table.replayFrames("player", "south", lastSeen);
+    const replay = table.replayFrames("player", "south", PARTICIPANTS.south, lastSeen);
     expect(replay.truncated).toBe(false);
-    expect(replay.frames.map((frame) => frame.version)).toEqual([lastSeen + 1, lastSeen + 2, lastSeen + 3]);
+    expect(replay.frames.map((frame) => frame.version)).toEqual([lastSeen + 1, lastSeen + 2]);
     replay.frames.forEach((frame) => {
       expect(frame.projection.role).toBe("player");
       expect(frame.projection.version).toBe(frame.version);
     });
-    expect(table.replayFrames("host", null, lastSeen).frames.every((frame) => frame.projection.role === "host")).toBe(true);
-    expect(table.replayFrames("dealer", null, lastSeen).frames).toEqual([]);
+    expect(table.replayFrames("host", null, PARTICIPANTS.host, lastSeen).frames.every((frame) => frame.projection.role === "host")).toBe(true);
+    expect(table.replayFrames("dealer", null, PARTICIPANTS.dealer, lastSeen).frames).toEqual([]);
+    expect(table.replayFrames("player", "south", "someone-else", lastSeen).frames).toEqual([]);
 
     for (let index = 0; index < 8; index += 1) {
-      submit(table, playerActor("south"), { kind: "cancel" });
+      submit(table, hostActor(), { kind: "host-announce", cue: "welcome" });
     }
-    const beyond = table.replayFrames("public", null, lastSeen);
+    const beyond = table.replayFrames("public", null, PARTICIPANTS.spectator, lastSeen);
     expect(beyond.truncated).toBe(true);
     expect(beyond.frames.length).toBe(6);
   });
@@ -273,7 +292,7 @@ describe("authoritative boundary — reconnect, replay and evidence", () => {
     expect(replayMatches(record, table.committedState())).toBe(true);
   });
 
-  it("emits only allowlisted dealer cues with no card member", () => {
+  it("emits only allowlisted dealer cues carrying exactly the cue-frame inventory", () => {
     const table = createTable({ seed: "dealer-cues" });
     const opening = table.lastFrame()?.cues ?? [];
     expect(opening.map((cue) => cue.cue)).toEqual(["hand-opens", "auction-turn"]);
@@ -284,13 +303,10 @@ describe("authoritative boundary — reconnect, replay and evidence", () => {
       expect(kinds.has(expected as (typeof DEALER_CUES)[number]), `missing cue ${expected}`).toBe(true);
     });
     expect(cues.filter((cue) => cue.cue === "trick-taken")).toHaveLength(12);
-    const allIds = SEATS.flatMap((seat) => table.committedState().completedTricks.flatMap((trick) => trick.cards.map((card) => card.card.id)));
     cues.forEach((cue) => {
       expect(DEALER_CUES).toContain(cue.cue);
       expect(DEALER_CUE_FRAME.decode(cue, "cue").ok).toBe(true);
-      const text = JSON.stringify(cue);
-      allIds.forEach((id) => expect(text).not.toContain(id));
-      expect(Object.keys(cue).sort()).toEqual([...DEALER_CUE_FRAME.keys].sort());
+      expect(matchesInventory("DealerCueFrame", cue)).toBe(true);
     });
   });
 
@@ -301,7 +317,10 @@ describe("authoritative boundary — reconnect, replay and evidence", () => {
       submit(table, playerActor("south"), { kind: "confirm" }, { expectedVersion: 0 }).receipt,
       submit(table, hostActor(), { kind: "confirm" }).receipt,
     ];
-    receipts.forEach((receipt) => expect(INTENT_RECEIPT.decode(receipt, "receipt").ok).toBe(true));
+    receipts.forEach((receipt) => {
+      expect(INTENT_RECEIPT.decode(receipt, "receipt").ok).toBe(true);
+      expect(matchesInventory("IntentReceipt", receipt)).toBe(true);
+    });
     expect(receipts.map((receipt) => receipt.code)).toEqual([null, "stale-version", "unauthorized-role"]);
   });
 });

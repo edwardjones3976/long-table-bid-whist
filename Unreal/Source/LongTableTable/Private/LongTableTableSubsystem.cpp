@@ -185,6 +185,7 @@ bool ULongTableTableSubsystem::LocalConfirmGate(const FLongTablePlayerProjection
 
 bool ULongTableTableSubsystem::CanConfirmLocally() const
 {
-	return IsReady() && LocalConfirmGate(Client->PlayerProjection(), Client->HasIntentInFlight());
+	// Only a player-role client holds a player projection; any other role gates to false.
+	return IsReady() && Client->GetRole() == ELongTableRole::Player && LocalConfirmGate(Client->PlayerProjection(), Client->HasIntentInFlight());
 }
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

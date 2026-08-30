@@ -2,11 +2,13 @@
 /**
  * Deterministic replay.
  *
- * A replay record is the table seed, the manifest identity, and every committed
- * action in order — human and AI alike. Replaying it through `applySeatAction`
- * reconstructs the identical state, so the public digest of the live table and
- * of its replay must agree. The seed inside a record is concealed material; a
- * record is authority evidence and is never sent to a role.
+ * A replay record is the table seed, the manifest identity and digest, and
+ * every committed action in order — human and AI alike. Replaying it through
+ * `applySeatAction` reconstructs the identical state, so the public digest of
+ * the live table and of its replay must agree. A record bound to a different
+ * manifest identity or digest fails closed before any action is applied, even
+ * when the actions are unchanged. The seed inside a record is concealed
+ * material; a record is authority evidence and is never sent to a role.
  */
 import { publicDigest, stateDigest } from "./digest";
 import { applySeatAction, openHand } from "./hand";
@@ -38,6 +40,16 @@ export function newReplayRecord(seed: string, firstDealer: Seat = "east"): Repla
   };
 }
 
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
+/** Null when the record is bound to the active manifest; otherwise the reason it must not replay. */
+export function replayManifestError(record: Pick<ReplayRecord, "manifestId" | "manifestDigest">): string | null {
+  if (record.manifestId !== MANIFEST_ID) return `manifest identity ${record.manifestId} is not ${MANIFEST_ID}`;
+  const active = manifestDigest();
+  if (record.manifestDigest !== active) return `manifest digest ${record.manifestDigest} is not ${active}`;
+  return null;
+}
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
+
 export interface ReplayOutcome {
   state: GameState;
   /** Index of the first entry that could not be applied, or -1 when all applied. */
@@ -49,6 +61,13 @@ export interface ReplayOutcome {
 
 export function replayRecord(record: ReplayRecord): ReplayOutcome {
   let state = openHand({ seed: record.seed, dealer: record.firstDealer, scores: record.openingScores });
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
+  const manifestError = replayManifestError(record);
+  if (manifestError) {
+    // Fail closed: no entry is applied when the manifest binding differs.
+    return { state, failedAt: 0, error: manifestError, publicDigest: publicDigest(state), stateDigest: stateDigest(state) };
+  }
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
   for (let index = 0; index < record.entries.length; index += 1) {
     const entry = record.entries[index];
     const result = applySeatAction(state, entry.seat, entry.action);

@@ -20,7 +20,6 @@ import {
   AUTHORITY_MESSAGE,
   CHOICE_KINDS,
   CLIENT_MESSAGE,
-  CONCEALED_KEYS,
   CONTRACT_MODES,
   DEALER_CUES,
   DEALER_CUE_FRAME,
@@ -42,6 +41,7 @@ import {
   REJECTION_CODES,
   REJECTION_MESSAGES,
   ROLES,
+  SCHEMA_INVENTORIES,
   SEAT_LABELS,
   SELECTION_TYPES,
   SUITS,
@@ -87,19 +87,19 @@ interface Drive {
   intentCounter: number;
 }
 
-function ghostCards(tag: string, count: number): Card[] {
-  return Array.from({ length: count }, (_, index) => ({ id: `ghost-${tag}-${index}`, suit: "spades" as const, rank: 2, label: "GHOSTCARD", glyph: "!" }));
+function replacementCards(tag: string, count: number): Card[] {
+  return Array.from({ length: count }, (_, index) => ({ id: `other-${tag}-${index}`, suit: "spades" as const, rank: 2, label: "OTHER", glyph: "!" }));
 }
 
 function concealedCounterfactual(game: GameState): GameState {
   const variant = structuredClone(game);
   variant.seed = "counterfactual-seed";
   SEATS.filter((seat) => seat !== "south").forEach((seat) => {
-    variant.hands[seat] = ghostCards(seat, variant.hands[seat].length);
+    variant.hands[seat] = replacementCards(seat, variant.hands[seat].length);
   });
-  variant.kitty = ghostCards("kitty", variant.kitty.length);
-  variant.discardPile = ghostCards("discard", variant.discardPile.length);
-  variant.events = [{ id: 1, text: "private host record GHOSTCARD" }];
+  variant.kitty = replacementCards("kitty", variant.kitty.length);
+  variant.discardPile = replacementCards("discard", variant.discardPile.length);
+  variant.events = [{ id: 1, text: "private host record" }];
   return variant;
 }
 
@@ -153,10 +153,14 @@ function hello(role: Role, lastVersion: number | null = null): ClientMessage {
   return { type: "hello", protocolVersion: PROTOCOL_VERSION, token: TOKENS[role], role, tableId: TABLE_ID, displayName: role === "player" ? "Ada" : "", lastVersion };
 }
 
-function southChoice(drive: Drive, kind: "bid" | "first") {
-  const projection = drive.table.snapshot("player", "south");
+function southProjection(drive: Drive) {
+  const projection = drive.table.snapshot("player", "south", PARTICIPANTS.player);
   if (!projection || projection.role !== "player") throw new Error("no south projection");
-  const choices = projection.legalChoices;
+  return projection;
+}
+
+function southChoice(drive: Drive, kind: "bid" | "first") {
+  const choices = southProjection(drive).legalChoices;
   if (kind === "bid") {
     const bids = choices.filter((choice) => choice.kind === "bid");
     return bids.length > 0 ? bids[bids.length - 1] : choices[0];
@@ -227,20 +231,21 @@ export function buildFixtures(): FixtureSet {
   receipts.unauthorizedRole = sendIntent(drive, "host", { kind: "confirm" });
   receipts.nothingToConfirm = sendIntent(drive, "player", { kind: "confirm" });
   receipts.notBetweenHands = sendIntent(drive, "host", { kind: "host-pause" });
-  const staleVersion = drive.table.currentVersion;
+  const versionBeforeCommit = drive.table.currentVersion;
   receipts.acceptedPreview = sendIntent(drive, "player", southChoice(drive, "bid").intent, { intentId: "fixture-preview-1" });
   receipts.duplicate = sendIntent(drive, "player", southChoice(drive, "bid").intent, { intentId: "fixture-preview-1" });
-  receipts.staleVersion = sendIntent(drive, "player", { kind: "confirm" }, { expectedVersion: staleVersion });
   receipts.committedConfirm = sendIntent(drive, "player", { kind: "confirm" });
+  // The confirm advanced the shared version; an intent formed against the old view is stale.
+  receipts.staleVersion = sendIntent(drive, "player", { kind: "cancel" }, { expectedVersion: versionBeforeCommit });
   receipts.hostAnnounce = sendIntent(drive, "host", { kind: "host-announce", cue: "welcome" });
 
   driveUntil(drive, (game) => game.phase === "play" && game.completedTricks.length >= 2 && game.currentTrick.length >= 1);
   const midPlayVersion = drive.table.currentVersion;
 
-  const player = drive.table.snapshot("player", "south");
-  const host = drive.table.snapshot("host", null);
-  const pub = drive.table.snapshot("public", null);
-  if (!player || player.role !== "player" || !host || host.role !== "host" || !pub || pub.role !== "public") {
+  const player = southProjection(drive);
+  const host = drive.table.snapshot("host", null, PARTICIPANTS.host);
+  const pub = drive.table.snapshot("public", null, PARTICIPANTS.public);
+  if (!host || host.role !== "host" || !pub || pub.role !== "public") {
     throw new Error("fixture snapshots unavailable");
   }
 
@@ -316,8 +321,10 @@ export function buildFixtures(): FixtureSet {
     { name: "host projection with a hand member", schema: "host-projection", payload: { ...host, hand: [] }, code: "unknown-field", path: "host.hand" },
     { name: "public projection with legal choices", schema: "public-projection", payload: { ...pub, legalChoices: [] }, code: "unknown-field", path: "public.legalChoices" },
     { name: "public projection with a seed", schema: "public-projection", payload: { ...pub, seed: "x" }, code: "unknown-field", path: "public.seed" },
+    { name: "host projection with an uncommitted revision", schema: "host-projection", payload: { ...host, uncommittedRevision: 1 }, code: "unknown-field", path: "host.uncommittedRevision" },
     { name: "player projection missing its hand", schema: "player-projection", payload: (({ hand: _hand, ...rest }) => rest)(player), code: "missing-field", path: "player.hand" },
     { name: "player projection with a string version", schema: "player-projection", payload: { ...player, version: "7" }, code: "type-mismatch", path: "player.version" },
+    { name: "player projection missing its uncommitted revision", schema: "player-projection", payload: (({ uncommittedRevision: _revision, ...rest }) => rest)(player), code: "missing-field", path: "player.uncommittedRevision" },
     { name: "public projection with an unknown phase", schema: "public-projection", payload: { ...pub, phase: "dealing" }, code: "value-out-of-range", path: "public.phase" },
     { name: "public projection with a foreign protocol version", schema: "public-projection", payload: { ...pub, protocolVersion: "long-table-protocol/0" }, code: "value-out-of-range", path: "public.protocolVersion" },
     { name: "client message with an unknown type", schema: "client-message", payload: { type: "steal-cards" }, code: "unknown-variant", path: "client.type" },
@@ -326,9 +333,12 @@ export function buildFixtures(): FixtureSet {
     { name: "dealer cue with a card id", schema: "dealer-cue", payload: { ...cues[0], cardId: "spades-14" }, code: "unknown-field", path: "cue.cardId" },
     { name: "dealer cue with an unknown cue", schema: "dealer-cue", payload: { ...cues[0], cue: "reveal-hands" }, code: "value-out-of-range", path: "cue.cue" },
     { name: "authority error with an unknown code", schema: "authority-message", payload: { type: "error", code: "leak", detail: "" }, code: "value-out-of-range", path: "authority.code" },
+    { name: "welcome carrying a hand beside its projection", schema: "authority-message", payload: { ...welcomes.host, hand: [] }, code: "unknown-field", path: "authority.hand" },
     { name: "receipt with an unknown outcome", schema: "receipt", payload: { ...receipts.committedConfirm, outcome: "maybe" }, code: "value-out-of-range", path: "receipt.outcome" },
     { name: "empty text", schema: "client-message", payload: null, code: "not-an-object", path: "client" },
   ];
+
+  const inventories = Object.fromEntries(SCHEMA_INVENTORIES.map((entry) => [entry.name, [...entry.inventory]]));
 
   return {
     "manifest.json": {
@@ -364,7 +374,7 @@ export function buildFixtures(): FixtureSet {
         dealerCueFrame: DEALER_CUE_FRAME.keys,
         intentReceipt: INTENT_RECEIPT.keys,
       },
-      concealedKeys: CONCEALED_KEYS,
+      inventories,
       limits: LIMITS,
     },
     "player-projection.json": projectionFixture(PLAYER_PROJECTION, player),

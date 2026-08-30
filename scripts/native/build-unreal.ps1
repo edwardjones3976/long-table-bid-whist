@@ -37,6 +37,15 @@ $logDir = Join-Path $PSScriptRoot "logs"
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 $log = Join-Path $logDir "ubt-$Target-$Platform-$Configuration.log"
 
+# UnrealBuildTool caches the target makefile and does not notice a changed
+# LONGTABLE_BUILD_SHA environment value on its own, so the cached makefile is
+# dropped first; unchanged translation units still reuse their objects.
+$makefile = [System.IO.Path]::Combine($repoRoot, "Unreal", "Intermediate", "Build", $Platform, "x64", $Target, $Configuration, "Makefile.bin")
+if (Test-Path $makefile) {
+    Remove-Item -Force $makefile
+    Write-Host "Dropped cached makefile so the build identity is re-evaluated: $makefile"
+}
+
 Write-Host "UnrealBuildTool: $Target $Platform $Configuration"
 Write-Host "Project:         $project"
 Write-Host "Build identity:  $BuildSha"

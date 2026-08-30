@@ -6,6 +6,7 @@ import {
   PROTOCOL_VERSION,
   decodeAuthorityMessage,
   encodeClientMessage,
+  matchesInventory,
   type AuthorityMessage,
   type ClientMessage,
   type Role,
@@ -69,20 +70,21 @@ describe("sessions — authentication and entitlement", () => {
     expect(sessions.handle("c8", hello(TOKENS.dealer, "dealer"))[0].message.type).toBe("welcome");
   });
 
-  it("welcomes each role with its own snapshot and nothing concealed", () => {
+  it("welcomes each role with exactly its own projection inventory", () => {
     const { sessions } = sessionsFor();
     const player = sessions.handle("p", hello(TOKENS.south, "player"))[0].message;
     const host = sessions.handle("h", hello(TOKENS.host, "host"))[0].message;
     const pub = sessions.handle("s", hello(TOKENS.spectator, "public"))[0].message;
     const dealer = sessions.handle("d", hello(TOKENS.dealer, "dealer"))[0].message;
     expect(player.type === "welcome" && player.seat).toBe("south");
-    expect(player.type === "welcome" && player.projection?.role).toBe("player");
-    expect(host.type === "welcome" && host.projection?.role).toBe("host");
-    expect(host.type === "welcome" && host.projection && "hand" in host.projection).toBe(false);
-    expect(pub.type === "welcome" && pub.projection?.role).toBe("public");
-    expect(pub.type === "welcome" && pub.projection && "legalChoices" in pub.projection).toBe(false);
+    expect(player.type === "welcome" && player.projection && matchesInventory("PlayerProjection", player.projection)).toBe(true);
+    expect(host.type === "welcome" && host.projection && matchesInventory("HostProjection", host.projection)).toBe(true);
+    expect(pub.type === "welcome" && pub.projection && matchesInventory("PublicProjection", pub.projection)).toBe(true);
     expect(dealer.type === "welcome" && dealer.projection).toBeNull();
-    [player, host, pub, dealer].forEach((message) => expect(AUTHORITY_MESSAGE.decode(message, "m").ok).toBe(true));
+    [player, host, pub, dealer].forEach((message) => {
+      expect(AUTHORITY_MESSAGE.decode(message, "m").ok).toBe(true);
+      expect(matchesInventory("WelcomeMessage", message)).toBe(true);
+    });
   });
 
   it("refuses intents before hello", () => {
@@ -93,7 +95,7 @@ describe("sessions — authentication and entitlement", () => {
 });
 
 describe("sessions — broadcast, reconnect and replay", () => {
-  it("routes each role its projection and every connection the dealer cues", () => {
+  it("delivers a player-local preview to its seat alone and an authoritative commit to every role", () => {
     const { table, sessions } = sessionsFor();
     sessions.handle("p", hello(TOKENS.south, "player"));
     sessions.handle("n", hello(TOKENS.north, "player"));
@@ -102,11 +104,15 @@ describe("sessions — broadcast, reconnect and replay", () => {
     sessions.handle("d", hello(TOKENS.dealer, "dealer"));
 
     const version = table.currentVersion;
-    sessions.handle("p", intent("table-1", version, { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } }));
-    const out = sessions.handle("p", intent("table-1", version + 1, { kind: "confirm" }));
+    const previewed = sessions.handle("p", intent("table-1", version, { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } }));
+    expect(messagesFor(previewed, "p").map((m) => m.type)).toEqual(["receipt", "projection"]);
+    expect(messagesFor(previewed, "p")[1]).toMatchObject({ type: "projection", version, projection: { role: "player", seat: "south", previewLabel: "3 High" } });
+    ["n", "h", "s", "d"].forEach((other) => expect(messagesFor(previewed, other)).toEqual([]));
+    expect(table.currentVersion).toBe(version);
 
+    const out = sessions.handle("p", intent("table-1", version, { kind: "confirm" }));
     const south = messagesFor(out, "p");
-    expect(south[0]).toMatchObject({ type: "receipt", receipt: { committed: true } });
+    expect(south[0]).toMatchObject({ type: "receipt", receipt: { committed: true, version: version + 1 } });
     expect(south.some((m) => m.type === "projection" && m.projection.role === "player" && m.projection.seat === "south")).toBe(true);
     expect(messagesFor(out, "n").some((m) => m.type === "projection" && m.projection.role === "player" && m.projection.seat === "north")).toBe(true);
     expect(messagesFor(out, "h").some((m) => m.type === "projection" && m.projection.role === "host")).toBe(true);
@@ -162,6 +168,7 @@ describe("sessions — broadcast, reconnect and replay", () => {
     sessions.handle("p", intent("table-1", seen, { kind: "preview", selection: { type: "pass" } }));
     const out = sessions.handle("p", { type: "resync", tableId: "table-1", lastVersion: seen });
     expect(out.map((item) => item.message.type)).toEqual(["replay", "projection"]);
+    expect(out[1].message.type === "projection" && out[1].message.projection.role === "player" && out[1].message.projection.previewLabel).toBe("Pass");
   });
 });
 
@@ -183,6 +190,7 @@ describe("wire — closed decode and canonical encode", () => {
     const out = handleText(sessions, "c", encodeClientMessage(hello(TOKENS.south, "player")));
     const decoded = decodeAuthorityMessage(out[0].text);
     expect(decoded.ok && decoded.value.type).toBe("welcome");
+    expect(out[0].closeAfter).toBe(false);
     expect(handleClose(sessions, "c")).toEqual([]);
     expect(sessions.connectionCount()).toBe(0);
   });

@@ -227,6 +227,7 @@ export function buildPlayerProjection(
   table: TableView,
   seat: Seat,
   uncommitted: SeatUncommitted,
+  revision: number,
   lastReceipt: IntentReceipt | null,
 ): PlayerProjection {
   const game = table.game;
@@ -251,6 +252,7 @@ export function buildPlayerProjection(
     previewLabel: uncommitted.preview?.label ?? null,
     discardPicked: uncommitted.discardIds.length,
     discardTarget: DISCARD_TARGET,
+    uncommittedRevision: revision,
     feedbackCode: feedback?.code ?? null,
     feedbackLine: feedback ? feedback.message : null,
     disabledNotices: MANIFEST_DISABLED_NOTICES.map((notice) => ({
