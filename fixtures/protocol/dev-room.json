@@ -1,0 +1,46 @@
+{
+  "tableId": "table-fixture-1",
+  "seed": "fixture-seed-0",
+  "host": {
+    "participantId": "p-host",
+    "token": "fixture-token-host"
+  },
+  "seats": {
+    "south": {
+      "occupant": "human",
+      "participantId": "p-south",
+      "token": "fixture-token-south",
+      "displayName": "Ada"
+    },
+    "west": {
+      "occupant": "ai",
+      "participantId": null,
+      "token": null,
+      "displayName": ""
+    },
+    "north": {
+      "occupant": "ai",
+      "participantId": null,
+      "token": null,
+      "displayName": ""
+    },
+    "east": {
+      "occupant": "ai",
+      "participantId": null,
+      "token": null,
+      "displayName": ""
+    }
+  },
+  "spectators": [
+    {
+      "participantId": "p-spectator",
+      "token": "fixture-token-public"
+    }
+  ],
+  "dealers": [
+    {
+      "participantId": "robot-dealer",
+      "token": "fixture-token-dealer"
+    }
+  ]
+}
