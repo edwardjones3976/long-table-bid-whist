@@ -1,0 +1,183 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CURSOR-001",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "starting_ref": "PENDING_ACCEPTED_CLAUDE_R1_AND_ANTIGRAVITY_002_INTEGRATED_HEAD_SHA",
+  "authority_base_ref": "PENDING_POST_DEPENDENCY_ACCEPTANCE_AUTHORITY_BASE_SHA",
+  "objective": "Implement the complete Cursor-owned native XR, presence and environment layer across Native Foundation / First Deal, Private Game Night and Long Table House. Deliver first-class hand and Touch-controller interaction through one semantic action vocabulary, safe live modality switching, an optional signed-in Meta avatar adapter with the required non-human fallback, seated accessibility controls, and equivalent MR/VR environments. Consume the accepted Claude authority interfaces read-only and bind the separately accepted Antigravity robot-dealer plugin only through its immutable public cue interface from Cursor-owned paths, then return one exact candidate for independent OpenAI QA.",
+  "non_goals": [
+    "No edits to Claude-owned rules, protocol, table-authority, Unreal foundation, fixtures, scripts, workflow or target-rule paths",
+    "No edits to Grok-owned session-gateway, LongTableSocial, Social content or LongTableHouseCore paths",
+    "No implementation, modification, testing substitution or provenance claim for Unreal/Plugins/LongTableRobotDealer; Antigravity owns that plugin under LT-NATIVE-ANTIGRAVITY-002",
+    "No rules adjudication, session authority, room directory, host policy, queue, standings, voice-safety or moderation implementation",
+    "No access to, reuse of, or provenance claim from the quarantined LT-NATIVE-ANTIGRAVITY-001 sandbox or frozen QA copies",
+    "No installation or bundling of Meta SDK plugins and no acceptance of Meta licenses or creation of Meta accounts",
+    "No claim that a Meta avatar, Android package, physical Quest, multiplayer-on-device, human, cultural, rights, store or release gate passed",
+    "No stock human cast, fixed human avatar, imitation voice, caricature, costume treatment or stereotyped cultural content",
+    "No bundled third-party jazz, blues, voice, recording, sample, likeness, image or archival content; host music remains external and off",
+    "No regex, blacklist, keyword, substring, redaction or best-effort text filtering as a privacy, disclosure or authorization control",
+    "No WebXR or Horizon Worlds companion product and no changes made only to weaken or skip an OpenAI acceptance test"
+  ],
+  "authority_snapshot": [
+    {
+      "path": "director/native-program/README.md",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "director/native-program/manual-provider-overlay.md",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "director/native-program/provider-workload.yaml",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "director/native-program/roles-and-responsibilities.md",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "director/native-program/stage-gates.md",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "director/privacy-control-policy.md",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "Unreal/Plugins/LongTableRobotDealer/Source/LongTableRobotDealer/Public/LongTableRobotDealerCueInterface.h",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    }
+  ],
+  "authority_snapshot_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "dependencies": [
+    {
+      "assignment_id": "LT-NATIVE-CLAUDE-001-R1",
+      "accepted_outcome_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "assignment_id": "LT-NATIVE-ANTIGRAVITY-002",
+      "accepted_outcome_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "owned_paths": [
+    "Unreal/Source/LongTableXR/**",
+    "Unreal/Content/Input/**",
+    "Unreal/Content/Presence/**",
+    "Unreal/Content/Environment/**"
+  ],
+  "prohibited_paths": [
+    "sources/**",
+    "director/**",
+    "services/session-gateway/**",
+    "Unreal/Source/LongTableSocial/**",
+    "Unreal/Content/Social/**",
+    "Unreal/Plugins/LongTableHouseCore/**",
+    "Unreal/Plugins/LongTableRobotDealer/**",
+    "Unreal/Plugins/MetaXR/**",
+    "Unreal/Plugins/MetaXRInteraction/**"
+  ],
+  "constraints": [
+    "NON-DISPATCHABLE TEMPLATE: refuse dispatch until starting_ref and authority_base_ref are exact 40-hex SHAs, every zero commit/blob/digest sentinel is replaced, both dependency outcomes are independently accepted by OpenAI, the exact accepted robot-dealer public header is bound in the authority snapshot, and the final packet is revalidated",
+    "Use the verified Unreal Engine 5.7.4 editor at C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+    "Work only in the isolated Cursor worktree C:\\Users\\edwar\\.codex\\worktrees\\long-table-cursor-xr on branch codex/cursor-native-xr after verifying repository, remote, clean state and exact starting_ref",
+    "Treat accepted Claude protocol headers, closed projection schemas, fixtures, registration interfaces and composition contracts as readable immutable dependencies; if they are insufficient, stop with a structured blocker rather than edit them",
+    "Treat the exact OpenAI-accepted LongTableRobotDealerCueInterface public contract supplied through the authority snapshot as immutable; Cursor may include and bind that contract only from Cursor-owned paths and may not open, traverse, edit, test-substitute or derive implementation from the prohibited plugin tree",
+    "Write only owned_paths; every other repository path is read-only unless prohibited, and tests added by Cursor must remain within the Cursor-owned module or content surfaces",
+    "Normalize hands and Touch controllers into the same semantic actions: point, select, grab, inspect, preview, cancel, confirm, recenter and menu",
+    "Hands and controllers must produce equivalent typed intents and preserve the authority-owned preview/cancel/confirm boundary; physics, animation, Blueprint and presence state never adjudicate Bid Whist",
+    "Live modality switching must be safe and deterministic: cancel or transfer transient local interaction without duplicate confirms, stale grabs, cross-hand ownership or replay of an in-flight intent",
+    "Implement the signed-in Meta avatar only behind an isolated optional presence adapter when a separately licensed and configured platform integration is available; otherwise use tracked hands/controllers, nameplate and seat marker, never a stock human avatar",
+    "Presence, pose, haptic, animation, audio and environment surfaces consume only role-appropriate closed inputs and must not receive, serialize, log, signal or infer another participant's concealed state",
+    "Cursor may request robot presentation only through the accepted fixed-vocabulary public cue interface; it may not implement robot behavior, extend the cue vocabulary, pass credentials or projections, or influence rules, host authority or committed play",
+    "Provide seated calibration plus dominant-hand, reach, interaction scale, contrast, text-size, reduced-motion and no-haptics controls with controller/hand equivalence",
+    "Provide MR table placement and bounded Scene/anchor recovery plus a functionally equivalent VR room, recentering, comfort-safe feedback, haptics and spatial presentation",
+    "Use original code-native geometry, materials, cues and placeholders only; environmental warmth and hospitality may lightly reflect the product direction without costumes, caricature, fixed avatars or imitation voices",
+    "Host music remains external and off; do not upload, stream, record, rebroadcast or bundle music",
+    "Privacy boundaries use exact typed construction and closed schemas only; no pattern-based privacy or disclosure decision is permitted",
+    "Preserve unrelated user work and existing contribution records; commit no generated build, cache, intermediate, saved or log artifact"
+  ],
+  "prohibited_actions": [
+    "Do not edit any path outside owned_paths or write into an accepted Claude or Antigravity dependency",
+    "Do not open, traverse, edit, copy, patch, replace or derive code from Unreal/Plugins/LongTableRobotDealer; only the exact accepted public cue contract supplied through the authority snapshot may be bound from Cursor-owned code",
+    "Do not push, merge, deploy, publish, release, open or mutate a pull request or issue, post to Slack or Linear, purchase anything, or change credentials, permissions or accounts",
+    "Do not install, download or copy Meta SDKs, accept platform licenses, create external accounts or enable production platform services",
+    "Do not access, read, copy, patch, import or derive code from the quarantined LT-NATIVE-ANTIGRAVITY-001 sandbox or its frozen QA copies",
+    "Do not expose authoritative or concealed objects and then redact them; construct role-appropriate XR and presentation inputs field by field",
+    "Do not claim physical headset behavior, device performance, Meta identity/avatar success, multiplayer, human validation, cultural acceptance, rights clearance, store readiness or product completion without exact evidence",
+    "Do not retry or duplicate an ambiguous provider or external dispatch and do not weaken, delete, skip or relabel an acceptance test to obtain a pass"
+  ],
+  "allowed_tools": [
+    "local filesystem and repository tools within the named Cursor worktree",
+    "the authenticated Cursor Agent CLI in the isolated named Cursor worktree",
+    "existing Node, TypeScript and repository test toolchain for read-only dependency and integration checks",
+    "UnrealBuildTool, UnrealEditor-Cmd and the installed compiler for local builds and automation",
+    "existing repository-native asset and Blueprint tooling that does not install plugins, accept licenses or contact external services"
+  ],
+  "allowed_external_effects": [
+    "Create and edit only owned repository paths in the isolated Cursor worktree",
+    "Run local builds, automation and tests",
+    "Create one local Cursor candidate commit and return its exact SHA",
+    "Return one JSON result packet in the authenticated terminal response"
+  ],
+  "acceptance_checks": [
+    "Before dispatch, no pending string or zero-hash sentinel remains, both dependency outcomes are OpenAI-accepted, the exact robot-dealer public header is authority-bound, and the packet validates against model-work-packet-v1",
+    "Exact starting_ref is verified and the handoff has one exact head SHA, tree SHA, parent/base relation and clean changed-path allowlist",
+    "Every changed file is under LongTableXR or Input, Presence and Environment; accepted dependency paths and all other provider paths remain unchanged",
+    "Point, select, grab, inspect, preview, cancel, confirm, recenter and menu have hand and Touch-controller paths that resolve to the same typed semantic actions",
+    "Focused automation proves safe hand/controller live switching without duplicate confirm, stale grab ownership, cross-hand leakage or replay of an in-flight intent",
+    "The 13-card fan supports equivalent reach, selection, inspection, sorting and preview/cancel/confirm interaction while authoritative play remains in the accepted Claude layer",
+    "MR placement, recenter and bounded anchor-loss recovery are implemented alongside a functionally equivalent VR-room path and deterministic fallback behavior",
+    "The optional Meta signed-in-avatar adapter is isolated and absence, failure or lack of configuration cleanly selects tracked hands/controllers, nameplate and seat marker without adding a stock human avatar",
+    "Cursor-owned code compiles against the exact accepted LongTableRobotDealerCueInterface and uses only its fixed public cue vocabulary without modifying, substituting or duplicating plugin implementation",
+    "Counterfactual tests prove that changes to concealed state cannot change a robot cue request and that no cue carries credentials, projections, card identities, bids, plays or private prose",
+    "Dominant-hand, reach, interaction-scale, contrast, text-size, reduced-motion and no-haptics settings are persistent, bounded and equivalent across hands and controllers",
+    "Structural counterfactual tests prove that changes to concealed state for another seat cannot change XR, presence, haptic, animation, audio or environment payload bytes",
+    "No regex, blacklist, keyword, substring, redaction or best-effort filtering participates in privacy, disclosure, authorization, logging or provider routing",
+    "Only original code-native assets and placeholders are introduced; no third-party music, voice, sample, likeness, image or archival content is added and host music remains external/off",
+    "Full accepted-base TypeScript tests, strict native typecheck, fixture-current check and production build remain green",
+    "UnrealBuildTool compiles LongTableEditor and LongTable Win64 Development, and focused plus full headless LongTable automation has zero failures on the exact candidate",
+    "No generated build, cache, intermediate, saved or log artifact is committed and terminal output is exactly one JSON document valid against model-result-packet-v1 with complete identity and correlation linkage"
+  ],
+  "evidence_requirements": [
+    "Authenticated Cursor Agent run reference and model/effort label",
+    "Exact starting SHA, candidate head SHA, tree SHA, parent/base relation, working-tree state and complete changed-file allowlist comparison",
+    "Exact accepted outcome digests for LT-NATIVE-CLAUDE-001-R1 and LT-NATIVE-ANTIGRAVITY-002 plus commit/blob/digest identity for the accepted LongTableRobotDealerCueInterface",
+    "Focused automation names and exact results for semantic hand/controller parity, modality switching, 13-card interaction and preview/cancel/confirm behavior",
+    "Focused automation names and exact results for MR placement, anchor loss/recovery, VR fallback, recentering, settings persistence and accessibility bounds",
+    "Presence-adapter evidence showing the signed-in Meta integration seam, failure/absence fallback and absence of stock human avatars",
+    "Cursor-owned robot cue-binding evidence showing exact public-interface use, fixed vocabulary, no plugin-tree changes and counterfactual concealment isolation",
+    "Exact commands and results for accepted-base tests, strict typecheck, fixture check, production build, both Unreal targets and Unreal automation",
+    "Rights/content inventory for every added asset or placeholder, with origin and license status; use not available rather than infer clearance",
+    "Known limitations including absent or unaccepted Meta SDK/license/account, Android package, headset/device, multiplayer-on-device, human, cultural, rights and store evidence",
+    "A schema-valid model-result-packet-v1 with status, checks, acceptance, risks, blockers, decisions, side effects and revision recommendation"
+  ],
+  "approval_requirements": [
+    "OpenAI QA must independently accept exact outcomes for both LT-NATIVE-CLAUDE-001-R1 and LT-NATIVE-ANTIGRAVITY-002 before Cursor dispatch",
+    "OpenAI QA must reproduce and accept the exact Cursor candidate before integration or direct-production credit",
+    "Every substantive correction returns to Cursor under at most the one authorized revision; OpenAI does not modify Cursor production code",
+    "Meta SDK/license/account activation, device claims, external writes, merge, release, spending, permissions, human/cultural/rights acceptance and store submission require separate owner authorization and evidence"
+  ],
+  "limits": {
+    "budget_usd": 0,
+    "timeout_seconds": 7200,
+    "max_hops": 0,
+    "max_revisions": 1
+  },
+  "idempotency_key": "LT-NATIVE-CURSOR-001-PENDING-ACCEPTED-DEPENDENCY-HEAD",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CURSOR-001",
+    "source_event_id": "owner-native-cursor-code-lane-20260830",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}

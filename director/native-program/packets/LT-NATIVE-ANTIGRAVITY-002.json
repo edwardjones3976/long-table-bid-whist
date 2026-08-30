@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-ANTIGRAVITY-002",
+  "project": "The Long Table - Bid Whist",
+  "repository": "local-synthetic/long-table-robot-dealer",
+  "starting_ref": "74f856fd80429d8b167723c949985040c634e11e",
+  "authority_base_ref": "74f856fd80429d8b167723c949985040c634e11e",
+  "objective": "Produce a bounded source-only Unreal Engine 5.7 robot-dealer presentation plugin in the isolated public-synthetic sandbox. The plugin consumes only a closed fixed-field public cue, produces deterministic non-human presentation state, contains no rules, authority, network, credential, audio, private projection or concealed-card capability, and returns one structured local handoff for independent OpenAI QA and later primary-provider integration.",
+  "non_goals": [
+    "No access to the Long Table repository, its source, diffs, worktrees, branches, provider output, Slack, Linear or private project data",
+    "No Bid Whist adjudication, player intent, host command, credential, session, room, networking, telemetry or concealed-state behavior",
+    "No Meta SDK, avatar, account, license, store, deployment, physical-device or human-event work",
+    "No media, music, voice, samples, models, textures, images, likenesses or third-party assets",
+    "No review, acceptance, merge, release, publication or external-write authority",
+    "No regex, blacklist, keyword, substring, redaction or serialize-then-delete privacy control"
+  ],
+  "authority_snapshot": [
+    {
+      "path": "PUBLIC_CONTRACT.md",
+      "commit_sha": "74f856fd80429d8b167723c949985040c634e11e",
+      "blob_sha": "a7ac9eb4d02734cb3aac32f54317ea14303b5481"
+    },
+    {
+      "path": "RESULT_SCHEMA.json",
+      "commit_sha": "74f856fd80429d8b167723c949985040c634e11e",
+      "blob_sha": "fa90f8ac04d72a92a9438d2b2a6fcc340a6f1b4c"
+    }
+  ],
+  "authority_snapshot_digest": "sha256:db5ada50860e9c78afb913e28591e5140594acafa24ffc952ce424b54f10f52c",
+  "dependencies": [],
+  "owned_paths": [
+    "LongTableRobotDealer/**"
+  ],
+  "prohibited_paths": [
+    "../**",
+    "sources/**",
+    "director/**",
+    "artifacts/**",
+    "Unreal/**",
+    "packages/**",
+    "services/**",
+    ".github/**"
+  ],
+  "constraints": [
+    "Work only in C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-robot-dealer-002 on branch codex/antigravity-robot-dealer at exact starting_ref",
+    "The only provider-visible task authority is the committed public-synthetic PUBLIC_CONTRACT.md and RESULT_SCHEMA.json; do not request, infer or access caller context",
+    "Create only LongTableRobotDealer/** and one local candidate commit; leave the two authority files unchanged",
+    "Use the exact twelve-kind public cue enum and exact six-field cue structure defined in PUBLIC_CONTRACT.md",
+    "Validate all enum and numeric bounds before state mutation or Blueprint event emission",
+    "Use strictly increasing public sequence identity, exact duplicate idempotency, stale/conflicting sequence rejection and a deterministic bounded queue of 64",
+    "Reset cannot make an old sequence fresh",
+    "Build presentation state field by field from the closed public cue; no player, host, card, credential, session, table, transcript or extension field may exist",
+    "The robot dealer is visibly non-human and presentation-only; it cannot adjudicate rules or submit any authoritative command",
+    "Use positive exact structure only; regex, blacklist, keyword, substring, redaction and serialize-then-delete controls are prohibited",
+    "Use original source code only and add no media or third-party dependency",
+    "Report every check actually run and mark unavailable Unreal evidence NOT_RUN rather than infer a pass"
+  ],
+  "prohibited_actions": [
+    "Do not read or enumerate outside the exact sandbox",
+    "Do not access the target repository or any other provider artifact",
+    "Do not push, merge, deploy, publish, open or mutate PRs/issues, post messages, purchase, or change credentials or permissions",
+    "Do not download packages, SDKs, code or assets",
+    "Do not claim integration, physical Quest, human, cultural, rights, store, release or product completion",
+    "Do not retry or duplicate an ambiguous provider dispatch"
+  ],
+  "allowed_tools": [
+    "Gemini Antigravity CLI in sandbox accept-edits mode",
+    "local filesystem and Git restricted to the exact synthetic sandbox",
+    "local compiler or Unreal tools only when already available without downloads"
+  ],
+  "allowed_external_effects": [
+    "Create and edit only LongTableRobotDealer/** in the exact synthetic sandbox",
+    "Run local checks inside the sandbox",
+    "Create one local candidate commit",
+    "Return one JSON result matching RESULT_SCHEMA.json"
+  ],
+  "acceptance_checks": [
+    "Exact starting_ref, branch, clean sandbox and unchanged authority files are verified before work",
+    "Every changed file is below LongTableRobotDealer/** and one local candidate commit contains no generated build, cache or log artifact",
+    "The public cue and presentation state expose exact positive field inventories with no private, concealed, credential, authority, network, audio or extension member",
+    "Valid mapping, exact duplicate idempotency, same-sequence conflict, stale rejection, every numeric bound, invalid enum, capacity 64, overflow no-mutation and reset replay-defense tests exist",
+    "Deterministic state serialization and exact reflected field-inventory tests exist",
+    "The runtime module has no socket, HTTP, file, process, microphone, voice, music, analytics, telemetry, rules-engine, player-intent, host-command or credential dependency",
+    "Privacy and disclosure enforcement is structural with no regex, blacklist, keyword, substring or redaction control",
+    "All actually available local tests pass and unavailable Unreal build evidence is reported as NOT_RUN",
+    "Terminal response is one JSON object valid against RESULT_SCHEMA.json with exact head and tree SHAs"
+  ],
+  "evidence_requirements": [
+    "Authenticated Antigravity run or interaction identity and sandbox mode",
+    "Exact base, candidate head, tree and changed-file allowlist",
+    "Named focused checks with commands, exit codes and PASS, FAIL or NOT_RUN",
+    "Source inventory proving the closed public cue and absence of prohibited dependencies",
+    "Known limitations, side effects and zero external-write claim",
+    "One RESULT_SCHEMA.json-valid terminal object"
+  ],
+  "approval_requirements": [
+    "Director workload and transport gates must pass before dispatch",
+    "OpenAI QA must independently reproduce and accept the exact sandbox candidate before any target-repository integration or workload credit",
+    "A later Cursor assignment must depend on the accepted Antigravity outcome and independently integrate or reject the public cue plugin",
+    "Owner separately authorizes any merge, release, license, account, device, human or external effect"
+  ],
+  "limits": {
+    "budget_usd": 0,
+    "timeout_seconds": 1800,
+    "max_hops": 0,
+    "max_revisions": 1
+  },
+  "idempotency_key": "LT-NATIVE-ANTIGRAVITY-002-74f856fd8042",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-ANTIGRAVITY-002",
+    "source_event_id": "owner-native-all-providers-code-20260830",
+    "slack_thread_ts": null,
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}

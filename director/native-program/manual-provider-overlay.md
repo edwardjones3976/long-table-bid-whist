@@ -44,6 +44,36 @@ retroactively, and filler work is prohibited.
 - OpenAI writes control-plane and QA evidence only. It does not correct provider
   production code.
 
+## Independent HouseCore sequencing
+
+The prospective Grok clean-room HouseCore is useful and does not require the
+Claude R1 implementation. It receives its own exact packet and worktree before
+the later Grok session-gateway/social packet. The HouseCore packet may read only
+the canonical public house contract and governance snapshot; it cannot inspect
+Claude-private state or any quarantined Antigravity artifact. The later social
+packet remains dependency-bound to the exact OpenAI-accepted Claude R1 outcome.
+
+## Robot-dealer ownership amendment
+
+The owner directed Claude, Cursor, Grok and Antigravity each to code a distinct
+section. Antigravity therefore receives a new assignment,
+`LT-NATIVE-ANTIGRAVITY-002`, for a source-only robot-dealer presenter at
+`Unreal/Plugins/LongTableRobotDealer/**`. It runs in a separate public-synthetic
+sandbox and receives no private repository source, provider transcript,
+credential, Slack/Linear content, concealed state or authoritative game object.
+
+This assignment is unrelated to the rejected Antigravity HouseCore artifact.
+Cursor's XR lane excludes the plugin and later depends on its OpenAI-accepted
+outcome only to bind the fixed public cue interface from Cursor-owned paths.
+Grok may emit fixed public cues but cannot edit the presenter. Claude defines
+authoritative public presentation facts but cannot edit the plugin. OpenAI owns
+QA and can accept, reject or kick back the exact artifact; it writes no dealer
+production code.
+
+The packet is prestaged but not dispatched while Antigravity's partial warm-up
+share is high. Useful under-target Grok work routes first, per
+`workload-baseline.md`.
+
 Accepted Claude protocol headers, schemas, fixtures, and registration interfaces
 are readable, immutable dependencies for Cursor and Grok. They must not appear in
 `prohibited_paths`, because Director defines a prohibited path as never read,
@@ -98,6 +128,10 @@ therefore treats these two engine-required paths as Claude-owned:
 
 - `Unreal/Source/LongTable.Target.cs`
 - `Unreal/Source/LongTableEditor.Target.cs`
+
+The same exact two-file correction and all other paths explicitly enumerated in
+`LT-NATIVE-CLAUDE-001-R1.json` carry forward to the single R1 correction. This
+is a continuation of the original writer lease, not a new provider scope.
 
 This is a two-file path correction, not a scope expansion. No other direct
 child of `Unreal/Source`, no XR or Social module, and no provider-owned content

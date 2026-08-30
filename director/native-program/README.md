@@ -61,11 +61,16 @@ physical headset, external account, human cohort, or owner gate.
 - Cursor: native XR hands/controllers, presence, MR/VR environment adapters.
 - Grok: private-session, host, reconnect, voice/safety and social adapters,
   plus the prospective clean-room in-repository HouseCore fallback.
-- Gemini Antigravity: historical isolated Long Table House core attempt from a
-  closed public contract; its rejected artifact is quarantined and is not an
-  integration dependency.
+- Gemini Antigravity: a new isolated source-only robot-dealer presentation
+  plugin driven by a closed public cue. Its historical Long Table House core
+  attempt remains quarantined and is not an integration dependency.
 - OpenAI: cross-module QA, evidence binding, findings, kickback and acceptance;
   no product-code ownership.
+
+Cursor may later bind the accepted robot-dealer interface from Cursor-owned XR
+paths, but it does not implement or edit the Antigravity plugin. Grok may emit
+closed public dealer cues from its own surfaces, but it likewise cannot edit the
+presenter.
 
 ## Bound source and engine
 

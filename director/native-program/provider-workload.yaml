@@ -9,7 +9,8 @@ policy_binding:
   normal_tolerance_percentage_points: 3
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
-  rolling_compliance_status: "UNVERIFIED until an ordered, effort-weighted last-20 accepted assignment ledger exists"
+  workload_baseline: "director/native-program/workload-baseline.md"
+  rolling_compliance_status: "WARMING_UP_2_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -36,7 +37,7 @@ next_20_assignment_plan:
     openai: 10
     gemini_antigravity: 10
     perplexity: 5
-  compliance: "count-share forecast is within normal tolerance; effort-weighted rolling compliance is not yet verified"
+  compliance: "NON_AUTHORITATIVE_FORECAST_ONLY; never used to authorize dispatch or award credit"
 
 direct_production_targets_percent:
   claude: 60
@@ -46,37 +47,57 @@ direct_production_targets_percent:
   perplexity: 4
   external_openai_codex: 1
 
-accepted_direct_production_before_native_program:
-  claude: 24
-  cursor: 16
-  grok: 0
-  gemini_antigravity: 0
-  perplexity: 4
-  external_openai_codex: 1
-  total: 45
-  provenance: "director/providers/2026-08-29-claude-stage1-exact-artifact-assignment.md"
+legacy_direct_production_before_pr76_baseline:
+  aggregate_claimed_units:
+    claude: 24
+    cursor: 16
+    grok: 0
+    gemini_antigravity: 0
+    perplexity: 4
+    external_openai_codex: 1
+    total: 45
+  individually_attributable_legacy_units:
+    claude: 12
+    cursor: 8
+    grok: 0
+    gemini_antigravity: 0
+    perplexity: 4
+    external_openai_codex: 1
+    total: 25
+  unresolved_aggregate_units_excluded_from_canonical_credit:
+    claude: 12
+    cursor: 8
+    total: 20
+  canonical_pr76_points: 0
+  disposition: "retained as legacy evidence only; no legacy unit is converted, split, ordered, or admitted to either canonical PR76 ledger without assignment-level provenance"
+  provenance:
+    - "director/providers/2026-08-29-claude-stage1-exact-artifact-assignment.md"
+    - "director/native-program/workload-baseline.md"
 
 native_code_assignments:
   claude:
-    program_capacity_units: 48
+    scope_forecast_units: 48
+    credit_rule: "each actual accepted packet earns only its immutable canonical effort points"
     allocation: {native_foundation_first_deal: 16, private_game_night: 16, long_table_house: 16}
     owned_surfaces: ["packages/rules-core", "packages/protocol", "services/table-authority", "Unreal/Source/LongTableProtocol", "Unreal/Source/LongTableTable", "Unreal/Source/LongTable"]
     required_model: "FABLE 5 ULTRA/MAX"
   cursor:
-    program_capacity_units: 4
+    scope_forecast_units: 4
+    credit_rule: "forecast is not credit; current broad packet is medium/5 and remains non-dispatchable"
     allocation: {native_foundation_first_deal: 2, private_game_night: 1, long_table_house: 1}
     owned_surfaces: ["Unreal/Source/LongTableXR", "Unreal/Content/Input", "Unreal/Content/Presence", "Unreal/Content/Environment"]
   grok:
-    program_capacity_units: 17
+    scope_forecast_units: 17
+    credit_rule: "forecast is not credit; HouseCore and later social work use separate actual packets"
     allocation: {native_foundation_first_deal: 5, private_game_night: 6, long_table_house: 6}
     owned_surfaces: ["services/session-gateway", "Unreal/Source/LongTableSocial", "Unreal/Content/Social", "Unreal/Plugins/LongTableHouseCore"]
     house_core_authority: "prospective clean-room fallback only; quarantined Antigravity source is prohibited"
   gemini_antigravity:
-    program_capacity_units: 8
-    allocation: {native_foundation_first_deal: 3, private_game_night: 3, long_table_house: 2}
-    owned_surfaces: ["isolated/LongTableHouseCore"]
-    assignment_status: "revision exhausted; quarantined; zero accepted credit"
-    integration_destination: "transferred prospectively to Grok clean-room fallback"
+    scope_forecast_units: 8
+    allocation: {historical_house_core_attempt: 8, prospective_robot_dealer_short_assignment: 2}
+    owned_surfaces: ["isolated historical LongTableHouseCore", "isolated prospective LongTableRobotDealer"]
+    assignment_status: "HouseCore revision exhausted and quarantined at zero credit; robot-dealer packet prestaged but not dispatched"
+    integration_destination: "HouseCore transferred prospectively to Grok clean-room fallback; an accepted robot-dealer artifact must be independently integrated or rejected by Cursor"
     outbound_boundary: "closed public contract, enums, bounded integers, fixed strings and synthetic fixtures only; no private repository context"
   openai:
     program_capacity_units: 0
@@ -86,7 +107,7 @@ native_code_assignments:
     program_capacity_units: 0
     responsibility: "reuse accepted public research; no duplicate paid query"
 
-projected_direct_production_capacity_mix:
+non_credit_scope_forecast_mix:
   total: 122
   claude: {units: 72, percent: 59.02}
   cursor: {units: 20, percent: 16.39}
@@ -94,7 +115,47 @@ projected_direct_production_capacity_mix:
   gemini_antigravity: {units: 8, percent: 6.56}
   perplexity: {units: 4, percent: 3.28}
   external_openai_codex: {units: 1, percent: 0.82}
-  compliance: "capacity-mix arithmetic is within plus or minus 3 percentage points and below target plus 5; this is not PR76 rolling-20 credit"
+  disposition: "scope arithmetic only; prohibited as rolling evidence, dispatch authority, accepted credit, or completion evidence"
+
+overall_effort_ledger:
+  - sequence: 1
+    assignment_id: "LT-NATIVE-CLAUDE-001"
+    provider: claude
+    size: long
+    canonical_points: 8
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_SUPERSEDED_BY_R1"
+    authenticated_run: "claude-session:f0d909ff-0700-4846-b6d0-65f75598d745"
+    direct_production_points: 0
+  - sequence: 2
+    assignment_id: "LT-NATIVE-ANTIGRAVITY-001"
+    provider: gemini_antigravity
+    size: long
+    canonical_points: 8
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_REVISION_EXHAUSTED_QUARANTINED"
+    authenticated_run: "Gemini 3.1 Pro High conversation ae839124-310e-470a-9260-195aa2e1a1d8"
+    direct_production_points: 0
+  - sequence: 3
+    assignment_id: "LT-NATIVE-CLAUDE-001-R1"
+    provider: claude
+    size: long
+    canonical_points: 0
+    completed: false
+    terminal_status: "RECOVERY_TRANSPORT_BLOCKED_BEFORE_PROVIDER_EXECUTION"
+    authenticated_run: null
+    direct_production_points: 0
+    exclusion_reason: "429 session cap occurred before model execution; the immutable packet remains queued for the exact reset"
+
+accepted_direct_production_ledger: []
+
+rolling_window_projection:
+  completed_assignments: 2
+  window_size: 20
+  current_canonical_points: {claude: 8, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 8, perplexity: 0}
+  current_partial_shares_percent: {claude: 50, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 50, perplexity: 0}
+  enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
+  next_route: "LT-NATIVE-GROK-HOUSE-001 clean-room HouseCore, because it is useful, dependency-independent, under-target, and does not overlap another writer"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -138,6 +199,8 @@ credit_rules:
   - "Never repeat an ambiguous paid dispatch."
   - "Each path has one provider writer; no provider reviews or edits another lane."
   - "Provider identity never grants merge, deploy, publication, spending, permissions, store or final-acceptance authority."
+  - "Pre-PR76 legacy units remain visible but are excluded from canonical rolling and direct-production ledgers until assignment ID, immutable points, order, authentication and outcome binding are all proven."
+  - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5

@@ -1,0 +1,228 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-GROK-001",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "starting_ref": "0000000000000000000000000000000000000000",
+  "authority_base_ref": "0000000000000000000000000000000000000000",
+  "objective": "Implement Grok's complete non-overlapping native social and house surface across Private Game Night and Long Table House from the exact OpenAI-accepted Claude R1 head: build the private session gateway, LongTableSocial Unreal module and Social content interfaces, plus a fresh clean-room LongTableHouseCore plugin for events, queues, rotations and standings. Provide deterministic reconnect, host, moderation and voice-off behavior; consume only accepted closed public and role-bound interfaces; run the full lane-appropriate TypeScript and Unreal gates; create one local candidate commit; and return exactly one Director model-result-packet-v1 JSON document as the terminal response.",
+  "non_goals": [
+    "No Bid Whist rules adjudication, table-authority mutation, protocol-schema ownership or concealed-card processing",
+    "No edits to Claude-owned rules, protocol, table authority, Unreal foundation or composition-root paths",
+    "No edits to Cursor-owned LongTableXR or Input, Presence and Environment content",
+    "No implementation or edit of the separately owned prospective Antigravity LongTableRobotDealer plugin",
+    "No reading, copying, patching, importing, adapting or claiming provenance from any quarantined Antigravity source, sandbox, frozen QA copy or handoff",
+    "No live voice capture, transport, recording, transcription, moderation or rebroadcast; implement the voice-off contract and typed adapter boundary only",
+    "No bundled or streamed host music; host music remains external and off",
+    "No Meta account, avatar, SDK, store, deployment, physical-headset, human-event, cultural, rights or release success claim",
+    "No WebXR or Horizon Worlds companion product",
+    "No regex, blacklist, keyword, substring, redaction or best-effort privacy control"
+  ],
+  "authority_snapshot": [
+    {
+      "path": "director/native-program/README.md",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "director/native-program/manual-provider-overlay.md",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "director/native-program/provider-workload.yaml",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "director/native-program/roles-and-responsibilities.md",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "director/native-program/stage-gates.md",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "director/privacy-control-policy.md",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "packages/protocol/src/index.ts",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "packages/protocol/src/schema.ts",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "packages/protocol/src/projections.ts",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "packages/protocol/src/wire.ts",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "services/table-authority/src/session.ts",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "services/table-authority/src/websocket-server.ts",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "Unreal/Source/LongTableProtocol/Public/LongTableProjections.h",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "Unreal/Source/LongTableProtocol/Public/LongTableWire.h",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "Unreal/Source/LongTableTable/Public/LongTableAuthorityClient.h",
+      "commit_sha": "0000000000000000000000000000000000000000",
+      "blob_sha": "0000000000000000000000000000000000000000"
+    }
+  ],
+  "authority_snapshot_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "dependencies": [
+    {
+      "assignment_id": "LT-NATIVE-CLAUDE-001-R1",
+      "accepted_outcome_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "owned_paths": [
+    "services/session-gateway/**",
+    "Unreal/Source/LongTableSocial/**",
+    "Unreal/Content/Social/**",
+    "Unreal/Plugins/LongTableHouseCore/**"
+  ],
+  "prohibited_paths": [
+    "sources/**",
+    "director/**",
+    "artifacts/native-program/providers/2026-08-30-antigravity-001.md",
+    "Unreal/Source/LongTableXR/**",
+    "Unreal/Content/Input/**",
+    "Unreal/Content/Presence/**",
+    "Unreal/Content/Environment/**",
+    "Unreal/Plugins/LongTableRobotDealer/**",
+    "Unreal/Plugins/MetaXR/**",
+    "Unreal/Plugins/MetaXRInteraction/**",
+    "C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-house-core-001\\**",
+    "C:\\Users\\edwar\\.codex\\provider-qa\\lt-house-core-20260830T061149Z\\**",
+    "C:\\Users\\edwar\\.codex\\provider-qa\\lt-house-core-20260830T063200Z\\**"
+  ],
+  "constraints": [
+    "NON-DISPATCHABLE TEMPLATE: every all-zero SHA-1, SHA-256 and accepted-outcome digest is an inert placeholder and must be replaced from one exact OpenAI-accepted Claude R1 baseline before dispatch",
+    "Use the verified Unreal Engine 5.7.4 editor at C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+    "Start from one exact integrated head containing the OpenAI-accepted LT-NATIVE-CLAUDE-001-R1 outcome; verify its head, tree and clean worktree before any edit",
+    "Treat accepted Claude protocol headers, schemas, fixtures, manifest and table-authority registration interfaces in the authority snapshot as readable immutable dependencies; owned_paths is the entire writable surface",
+    "Implement LongTableHouseCore clean-room from this packet, the authority snapshot and accepted Claude public interfaces only; do not inspect or derive from any Antigravity artifact, source, test, handoff, prompt, QA copy or sandbox",
+    "The TypeScript session gateway owns social lifecycle only: private invitations and room codes, four-seat membership, authenticated seat binding, reconnect, suspend/resume, host transfer, between-hand human or AI substitution, event membership and public directory metadata; it never adjudicates a card, bid, trick, score or rules manifest",
+    "Bind every connection and resume capability to participant kind, participant identity, room, table, seat, authenticated context and current entitlement; rebinding atomically revokes stale sockets before snapshot, replay, broadcast or disconnect side effects",
+    "Reconnect and packet-loss recovery resume only from role-appropriate accepted projections and monotonic versions; stale, cross-role, cross-room, cross-table, cross-token and superseded-seat resumes fail closed without revealing whether concealed state exists",
+    "Human Host mode may invite, pace, pause between hands, mute, block, report, moderate, substitute between hands, announce, transfer host and end an event; it cannot deserialize, request, infer or mutate concealed or committed play",
+    "The prospective Antigravity LongTableRobotDealer plugin is separately owned; Grok may emit only closed public dealer cues through its owned social and house interfaces and must not implement, edit or import the dealer presenter",
+    "Voice is off by default. Implement a closed typed safety adapter for availability, mute, block, report and captions state with no audio payload field; no-audio operation must be behaviorally equivalent for room, match, reconnect, queue, rotation and standings state",
+    "Host music remains an external, off-by-default user-space concern; do not upload, ingest, stream, record, rebroadcast, fingerprint or bundle music",
+    "LongTableHouseCore consumes only closed public event, table occupancy, directory, queue, rotation, club or league and standings records plus bounded commands; concealed or player-only fields must be physically absent from its types",
+    "Make event, queue, rotation and standings transitions deterministic, byte-stable and idempotent: duplicate committed command identity is checked before expected-version rejection; read-only snapshots and semantic no-ops do not advance version",
+    "Validate all command identifiers, enum values, fixed strings, counts, priorities, party sizes, score deltas and versions against closed bounds; reject unknown fields and fail closed on arithmetic or version overflow",
+    "Party seating is atomic, stable by declared priority then insertion order, and never partially seats a party; singleton or no-op rotations preserve state bytes and version",
+    "Closing an occupied or playing table must fail closed unless an explicit public-only migration or completed-table transition is authorized; never silently clear seats or continuity",
+    "Queues and rotations preserve deterministic retained order under capacity limits; standings use deterministic tie ordering and cannot expose private match or participant payloads",
+    "Construct private-room, host, public-directory, spectator, moderation, event and standings messages field by field from distinct closed schemas; enforce privacy with positive structure and counterfactual byte-equivalence tests only",
+    "Public spectator and house surfaces receive public projections only; non-player payloads cannot contain a player hand, private invitation capability, resume token, moderation secret, credential or concealed table state",
+    "Unreal Blueprint content may provide layout and presentation bindings only; C++ owns typed permissions, lifecycle, versioning, idempotency and projection application",
+    "Use original code-native placeholders only; do not add unlicensed voice, music, sample, likeness, image or archival content",
+    "Preserve unrelated user work and all existing contribution tags"
+  ],
+  "prohibited_actions": [
+    "Do not dispatch while any all-zero authority, dependency or starting-ref placeholder remains",
+    "Do not read, enumerate, search, open, diff, copy, import or reference a prohibited Antigravity path or artifact",
+    "Do not implement, edit or import the separately owned LongTableRobotDealer plugin",
+    "Do not edit another provider's path or alter an accepted Claude interface to make this lane pass",
+    "Do not push, merge, deploy, publish, open or mutate PRs/issues, post Slack/Linear, purchase, change credentials or permissions",
+    "Do not install or download Meta SDKs, accept licenses, create external accounts or connect a physical device",
+    "Do not enable live voice, music ingestion or any concealed-state logging, telemetry or provider payload",
+    "Do not claim physical Quest, four-headset, human-host, cultural, rights, store, release or product completion",
+    "Do not retry or duplicate an ambiguous provider or external dispatch"
+  ],
+  "allowed_tools": [
+    "local filesystem and repository tools within the named Grok worktree",
+    "existing Node, TypeScript and test toolchain",
+    "UnrealBuildTool, RunUAT BuildPlugin, UnrealEditor-Cmd and compiler for local builds and automation",
+    "the authenticated Grok Build CLI"
+  ],
+  "allowed_external_effects": [
+    "Create and edit only owned repository paths",
+    "Run local builds, tests and headless automation",
+    "Create one local candidate commit and return its exact SHA",
+    "Return one JSON result packet in the authenticated terminal response"
+  ],
+  "acceptance_checks": [
+    "The non-placeholder exact starting SHA equals the integrated OpenAI-accepted Claude R1 baseline; handoff records exact head SHA, tree SHA, origin and clean changed-file allowlist",
+    "No file outside the four Grok-owned path families changes and no generated build, cache, package or log artifact is committed",
+    "Private invitation or room-code join, four-seat binding, stale-socket revocation, reconnect, suspend/resume, host transfer and packet-loss recovery pass adversarial TypeScript integration tests",
+    "Between-hand human or AI substitution succeeds only at an authorized boundary; mid-hand substitution and host attempts to affect committed play fail closed",
+    "A dealer-kind credential collision cannot obtain player, host or public authority, and host credentials cannot obtain player projections",
+    "Human Host permissions are field-by-field allowlisted and cannot request, deserialize, infer or mutate concealed or committed play",
+    "Voice-off and no-audio equivalence tests prove room, match, reconnect, moderation, queue, rotation and standings state is unchanged by voice availability; no audio payload type or capture path exists",
+    "Mute, block, report and captions-state commands are bounded, authenticated, role-appropriate, idempotent and excluded from concealed or public spectator payloads",
+    "Private-room, public-directory, spectator, moderation, event and standings schemas reject unknown fields and contain only their exact positive field inventories; no regex, blacklist, keyword, substring or redaction privacy control exists",
+    "Counterfactual tests vary every concealed or private input and prove public directory, spectator, house, queue, rotation and standings canonical bytes remain unchanged",
+    "HouseCore command tests prove duplicate-before-stale ordering, read-only snapshot no-op behavior, stale-version failure, version and standings overflow failure, bounded identifiers and stable byte serialization",
+    "HouseCore queue and rotation tests prove priority then insertion ordering, retained-order capacity behavior, atomic party seating, singleton and semantic no-op version stability and deterministic rotation",
+    "HouseCore table lifecycle tests prove an occupied or playing table cannot be silently closed or cleared and that continuity is preserved through an explicitly authorized public-only transition",
+    "HouseCore standings tests prove deterministic tie ordering, bounded deltas, stable serialization and the physical absence of private match, credential, invitation, resume and concealed fields",
+    "Concurrent-table event tests cover schedule, invitations, public directory, queues, rotations, clubs or leagues, standings, floor-host announcements, moderation, opening and closing transitions and safe shutdown",
+    "Grok's owned interfaces emit only closed public dealer cues; no LongTableRobotDealer implementation appears in the changed set and emitted cues carry no rules, host, session-token or concealed-state authority",
+    "Host music remains external and off; repository and packaged-content inspection finds no music recording, stream, upload, capture or rebroadcast path",
+    "All Grok-owned TypeScript unit and integration tests, strict typecheck and production build pass from the exact candidate",
+    "UnrealBuildTool compiles LongTableEditor and LongTable Win64 Development, RunUAT builds LongTableHouseCore for Win64, and headless LongTableSocial and LongTableHouseCore automation has zero failures",
+    "Terminal output is exactly one JSON document valid against model-result-packet-v1 and repeats this packet's identity, dependency and complete correlation object"
+  ],
+  "evidence_requirements": [
+    "Authenticated Grok provider, model label, CLI run reference and correlation identity",
+    "Starting SHA, authority-base SHA, accepted Claude R1 outcome digest, authority-snapshot digest, exact candidate head SHA and tree SHA",
+    "Changed-file list and mechanical comparison against the four owned path families",
+    "Named TypeScript adversarial tests and results for room binding, reconnect, host transfer, substitution, moderation, voice-off equivalence, schema rejection and counterfactual privacy",
+    "Named HouseCore automation tests and results for idempotency, snapshots, stale versions, overflow, queues, rotations, party seating, lifecycle, standings and byte stability",
+    "Strict typecheck, production build, both Unreal targets, BuildPlugin and headless Unreal automation commands, exit codes and summarized results",
+    "Static closed-schema inventory proving no player hand, private capability, credential, resume token, moderation secret or audio payload can exist in public or house types",
+    "Known limitations including absent Meta plugins, account, Android package, headsets, live voice service, human event, rights review and cultural review",
+    "A schema-valid model-result-packet-v1 with status, checks, acceptance, risks, blockers, decisions, side effects and revision recommendation"
+  ],
+  "approval_requirements": [
+    "OpenAI must first accept LT-NATIVE-CLAUDE-001-R1 and replace every placeholder with the exact accepted baseline, outcome digest and authority snapshot before dispatch",
+    "OpenAI QA must reproduce and accept this exact Grok candidate before integration or direct-production credit",
+    "Any production-code correction is kicked back to Grok within the packet's revision budget; OpenAI remains QA-only",
+    "Owner separately authorizes merge, release, spending, credentials, Meta license or account effects, live voice, external music and physical-device or human testing"
+  ],
+  "limits": {
+    "budget_usd": 0,
+    "timeout_seconds": 7200,
+    "max_hops": 0,
+    "max_revisions": 1
+  },
+  "idempotency_key": "LT-NATIVE-GROK-001-PENDING-CLAUDE-R1",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-GROK-001",
+    "source_event_id": "claude-r1-accepted-outcome-pending",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}
