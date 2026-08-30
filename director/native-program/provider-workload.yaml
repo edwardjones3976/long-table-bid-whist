@@ -251,16 +251,28 @@ overall_effort_ledger:
     terminal_result_digest: "sha256:6e845927d8f332b089dc0dc2c580737b3d9d8ba32936a177c2131005d3d76d61"
     terminal_evidence: "artifacts/native-program/qa/2026-08-30-claude-foundation-safety-002-terminal-rejection.md"
     exclusion_reason: "Authenticated Claude Code produced one schema-valid SUCCEEDED result and one exact 35-path provider commit. OpenAI mechanically materialized exact candidate 623ca52, reproduced a real-socket convergence probe plus 42/42 focused and 208/208 full TypeScript tests, then rejected terminal source, compile, acceptance-evidence and provenance failures: grant identities can be reused after restart; duplicates mutate player-visible feedback; required engine-rejected and reconnect retries are unproven; the UE5.7 dynamic-delegate adapter does not compile; same-context replacement and reentrant callbacks can continue old operations and credentials; identity/exhaustion state is inconsistent; and eight pre-existing contribution-marker lines were removed. The candidate is local-only and unpushed, no product PR exists, no fourth contact is permitted, and direct-production credit remains zero."
+  - sequence: 14
+    assignment_id: "LT-NATIVE-ANTIGRAVITY-STATE-MACHINE-003"
+    provider: gemini_antigravity
+    size: simple
+    canonical_points: 1
+    completed: true
+    terminal_status: "SUCCEEDED_SUBORDINATE_SCAFFOLD_OVERALL_EFFORT_ONLY"
+    authenticated_run: "antigravity-project:838146d6-6d8e-4770-af16-a3bad5947203;conversation:77080670-8270-40e5-bb25-7a2ded7eff3a;model:gemini-3.1-pro-high"
+    direct_production_points: 0
+    terminal_response_digest: "sha256:5e745c62cb132d0094f4b46e9d4811fc3eeb5670ba8cfeaeae92a13bf4f2c253"
+    terminal_evidence: "artifacts/native-program/providers/2026-08-30-antigravity-state-machine-003.md"
+    exclusion_reason: "One real Antigravity model turn returned the exact fixed-vocabulary generic TypeScript state-machine scaffold. The request carried no Long Table context, repository or private prose; the plan sandbox stayed unchanged; no tool or external execution occurred. It earns simple/1 overall effort and zero direct-production points because it is generic subordinate evidence, not accepted product code."
 
 accepted_direct_production_ledger: []
 
 rolling_window_projection:
-  completed_assignments: 12
+  completed_assignments: 13
   window_size: 20
-  current_canonical_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0}
-  current_partial_shares_percent: {claude: 37.68, cursor: 28.99, grok: 18.84, openai: 0, gemini_antigravity: 14.49, perplexity: 0}
+  current_canonical_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0}
+  current_partial_shares_percent: {claude: 37.14, cursor: 28.57, grok: 18.57, openai: 0, gemini_antigravity: 15.71, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "Sequence 13 stopped before provider submission and earns zero points; its query may not be duplicated. Firecrawl's official matrix closes the evidence dependency without workforce credit. Run fixed-vocabulary Antigravity sequence 14 once, then public-only Grok sequence 15 once, then Claude replacement-foundation sequence 16 only after both terminal results and an exact pre-dispatch workload recheck. Sequence 12 stays terminal and no fourth sequence-12 contact exists."
+  next_route: "Sequence 14 is terminal at one real fixed-vocabulary Antigravity turn. Run public-only Grok sequence 15 once through the exact merged xAI adapter, then Claude replacement-foundation sequence 16 only after the Grok terminal record and an exact pre-dispatch workload recheck. Sequence 13 earns zero because no Perplexity request was submitted; sequence 12 stays terminal with no fourth contact."
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -532,14 +544,18 @@ canonical_assignment_ledger:
     provider: gemini_antigravity
     size: simple
     canonical_points: 1
-    status: "PRESTAGED_READY_FOR_ONE_FIXED_VOCABULARY_PLAN_RUN"
+    status: "SUCCEEDED_SUBORDINATE_SCAFFOLD_OVERALL_EFFORT_ONLY"
     accepted_direct_production_points: 0
+    awarded_overall_effort_points: 1
     packet_digest: "sha256:041bfee6489b03f94c23ceb709d0f033d33a294d6ebde878ac2a21222141a2a1"
     assignment_approval_digest: "sha256:570f43f7f826ebd4ac2f70f0db16990816163acef1a8c1cee2ba88e90c65e512"
     provider_request_digest: "sha256:e70126a93937cfd4a7a7a8a0d5566583a010efc1291f3fe64778e4e449ce982b"
     packet_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-STATE-MACHINE-003.json"
     accepted_outcome_digest: null
-    manual_overlay_reason: "One genuinely new subordinate scaffold uses the exact merged PR76 closed Antigravity request: state_machine_skeleton, TypeScript, one variant, 220 lines. It receives no project prose, acceptance criteria, repository, owner identity, prior provider data or external authority. The generic code scaffold is later adapted or rejected by a primary provider; it is not filler and has no product writer lease."
+    terminal_response_digest: "sha256:5e745c62cb132d0094f4b46e9d4811fc3eeb5670ba8cfeaeae92a13bf4f2c253"
+    authenticated_run: "antigravity-project:838146d6-6d8e-4770-af16-a3bad5947203;conversation:77080670-8270-40e5-bb25-7a2ded7eff3a"
+    terminal_evidence: "artifacts/native-program/providers/2026-08-30-antigravity-state-machine-003.md"
+    manual_overlay_reason: "One real fixed-vocabulary Antigravity turn returned a 93-line generic TypeScript state-machine scaffold. It received no project prose, repository, owner identity, prior provider data or authority; the sandbox stayed unchanged. It earns simple/1 overall effort, zero direct-production points and no product writer lease."
   - sequence: 15
     assignment_id: "LT-NATIVE-GROK-QUEST-ARCHITECTURE-001"
     provider: grok
