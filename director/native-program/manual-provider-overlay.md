@@ -24,9 +24,12 @@ candidate for OpenAI QA. They are not described as live-router-compliant or as a
 live workload-enforcement pass. The owner direction is the explicit manual
 override; implementation work is not relabeled as review or coordination.
 
-Program allocation units in `provider-workload.yaml` remain the workload ledger
-authority. They are aggregate rolling-window units, not the Director v1
-per-assignment size points `1`, `2`, `5`, or `8`.
+Program allocation units in `provider-workload.yaml` are a scope-capacity
+forecast only. They are not rolling assignments and never become production
+credit. The canonical ledger records one ordered entry per actual packet using
+Director v1 size points `1`, `2`, `5`, or `8`; only an authenticated,
+OpenAI-accepted outcome earns those points. A broad response cannot be split
+retroactively, and filler work is prohibited.
 
 ## Provider boundaries
 

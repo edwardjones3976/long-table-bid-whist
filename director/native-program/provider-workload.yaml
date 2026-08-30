@@ -9,6 +9,8 @@ policy_binding:
   normal_tolerance_percentage_points: 3
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
+  rolling_compliance_status: "UNVERIFIED until an ordered, effort-weighted last-20 accepted assignment ledger exists"
+  canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
   claude: 36
@@ -19,6 +21,7 @@ overall_assignment_targets_percent:
   perplexity: 5
 
 next_20_assignment_plan:
+  basis: "unweighted assignment-count forecast; not a PR76 effort-weighted rolling result"
   claude: 7
   cursor: 4
   grok: 4
@@ -33,7 +36,7 @@ next_20_assignment_plan:
     openai: 10
     gemini_antigravity: 10
     perplexity: 5
-  compliance: "all lanes within normal tolerance and below hard ceilings"
+  compliance: "count-share forecast is within normal tolerance; effort-weighted rolling compliance is not yet verified"
 
 direct_production_targets_percent:
   claude: 60
@@ -55,33 +58,33 @@ accepted_direct_production_before_native_program:
 
 native_code_assignments:
   claude:
-    immutable_effort_units: 48
+    program_capacity_units: 48
     allocation: {native_foundation_first_deal: 16, private_game_night: 16, long_table_house: 16}
     owned_surfaces: ["packages/rules-core", "packages/protocol", "services/table-authority", "Unreal/Source/LongTableProtocol", "Unreal/Source/LongTableTable", "Unreal/Source/LongTable"]
     required_model: "FABLE 5 ULTRA/MAX"
   cursor:
-    immutable_effort_units: 4
+    program_capacity_units: 4
     allocation: {native_foundation_first_deal: 2, private_game_night: 1, long_table_house: 1}
     owned_surfaces: ["Unreal/Source/LongTableXR", "Unreal/Content/Input", "Unreal/Content/Presence", "Unreal/Content/Environment"]
   grok:
-    immutable_effort_units: 17
+    program_capacity_units: 17
     allocation: {native_foundation_first_deal: 5, private_game_night: 6, long_table_house: 6}
     owned_surfaces: ["services/session-gateway", "Unreal/Source/LongTableSocial", "Unreal/Content/Social"]
   gemini_antigravity:
-    immutable_effort_units: 8
+    program_capacity_units: 8
     allocation: {native_foundation_first_deal: 3, private_game_night: 3, long_table_house: 2}
     owned_surfaces: ["isolated/LongTableHouseCore"]
     integration_destination: "Unreal/Plugins/LongTableHouseCore"
     outbound_boundary: "closed public contract, enums, bounded integers, fixed strings and synthetic fixtures only; no private repository context"
   openai:
-    immutable_effort_units: 0
+    program_capacity_units: 0
     owned_surfaces: []
     responsibility: "cross-module QA, exact-candidate acceptance, findings and kickback; Director work is excluded from production credit"
   perplexity:
-    immutable_effort_units: 0
+    program_capacity_units: 0
     responsibility: "reuse accepted public research; no duplicate paid query"
 
-projected_direct_production_after_native_assignments:
+projected_direct_production_capacity_mix:
   total: 122
   claude: {units: 72, percent: 59.02}
   cursor: {units: 20, percent: 16.39}
@@ -89,9 +92,33 @@ projected_direct_production_after_native_assignments:
   gemini_antigravity: {units: 8, percent: 6.56}
   perplexity: {units: 4, percent: 3.28}
   external_openai_codex: {units: 1, percent: 0.82}
-  compliance: "all direct-production lanes within plus or minus 3 percentage points and below target plus 5"
+  compliance: "capacity-mix arithmetic is within plus or minus 3 percentage points and below target plus 5; this is not PR76 rolling-20 credit"
+
+canonical_assignment_ledger:
+  - sequence: 1
+    assignment_id: "LT-NATIVE-CLAUDE-001"
+    provider: claude
+    size: long
+    canonical_points: 8
+    status: "PROVIDER_RUNNING"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:e0ab5ba72479d912e8b4eb5f01b03c321b2c952682346ed051d4ab84d740caef"
+    accepted_outcome_digest: null
+    manual_overlay_reason: "broad owner-authorized native scaffold assignment; may earn one long assignment only"
+  - sequence: 2
+    assignment_id: "LT-NATIVE-ANTIGRAVITY-001"
+    provider: gemini_antigravity
+    size: long
+    canonical_points: 8
+    status: "OPENAI_CHANGES_REQUIRED_PROVIDER_RECOVERY_RUNNING"
+    accepted_direct_production_points: 0
+    packet_digest: null
+    accepted_outcome_digest: null
+    manual_overlay_reason: "closed public synthetic sandbox contract predates the PR76 result envelope"
 
 credit_rules:
+  - "Program capacity units forecast scope only and never count as accepted workload credit."
+  - "Canonical workload credit is one ordered packet record at 1, 2, 5 or 8 points; never split a response retroactively or manufacture filler."
   - "Credit only authenticated, attributable code that satisfies its immutable packet, passes OpenAI QA, and is accepted into the candidate."
   - "Tool launch, prompt submission, failed attempt, unavailable route, discarded output, duplicate validation and Director coordination earn zero production credit."
   - "One primary attempt; one recovery only for a plausibly temporary failure; a third only with a materially different transport or new information."
