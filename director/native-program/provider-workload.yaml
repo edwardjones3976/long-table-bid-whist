@@ -391,7 +391,7 @@ canonical_assignment_ledger:
     provider: grok
     size: medium
     canonical_points: 5
-    status: "AWAITING_OWNER_GROK_OAUTH_ALLOW_BEFORE_PRIMARY_DISPATCH"
+    status: "PRIMARY_TERMINAL_PROVIDER_LIMIT_RECOVERY_AVAILABLE"
     accepted_direct_production_points: 0
     packet_digest: "sha256:4dc2923a48df2bdbe452c8576f9c6bce84c998782a148e109521483337aed0c1"
     work_packet_digest: "sha256:47268f714722a19a783b5ebe47a4137a5abaf4b55f68d1363ff1cb576691ff6e"
@@ -399,8 +399,15 @@ canonical_assignment_ledger:
     starting_ref: "a6742a04a384a88e7342530041a1f0d3ab71db2c"
     starting_tree: "0489b183e70da5751c31e9b80ed40a8b631ba55a"
     sanitized_input_archive_digest: "sha256:126dd95b8628638d89b12ce25173dcede2fc0f54652f3235d23aedf01fa73d4c"
-    pre_model_transport_status: "Chrome local-file upload blocked by extension file-URL access; local Grok Build CLI OAuth consent page is waiting at the owner-only Allow action; no provider prompt, model run, workload credit or path mutation occurred"
-    manual_overlay_reason: "new owner-authorized sequential fallback for three materially new independent OpenAI safety findings after the terminal Claude packet; Grok is under target, owns only seven exact paths, receives one primary attempt, cannot read rejected-provider evidence as authority, and earns no direct-production credit before exact OpenAI acceptance"
+    pre_model_transport_status: "Chrome local-file upload was blocked by extension file-URL access and the local Grok Build CLI OAuth route timed out before authentication; neither pre-model stop earned workload or production credit"
+    authenticated_run: "grok-web-build:conversation:7c188d2d-1a1e-4628-86e1-e761277fb211;model:grok-4.6-build-beta;primary:terminal-provider-limit-incomplete"
+    primary_terminal_at: "2026-08-30T12:14:00-07:00"
+    primary_terminal_status: "PROVIDER_USAGE_LIMIT_NO_FINAL_PATCH_RESULT_OR_CANDIDATE"
+    primary_attempt_evidence: "artifacts/native-program/providers/LT-NATIVE-GROK-AUTHORITY-SAFETY-001-primary-attempt.json"
+    partial_provider_artifact: "artifacts/native-program/providers/LT-NATIVE-GROK-AUTHORITY-SAFETY-001.partial-websocket-server.ts.base64"
+    partial_provider_artifact_decoded_sha256: "sha256:9ba1697022ed04fb6ce47ff4d56e8ee0c231053167b87cc07c009b497c7ea6e9"
+    recovery_status: "AVAILABLE_ONLY_AFTER_CONCRETE_GROK_RESET_OR_NEW_PROVIDER_AVAILABILITY_EVIDENCE"
+    manual_overlay_reason: "new owner-authorized sequential fallback for three materially new independent OpenAI safety findings after the terminal Claude packet. Its authenticated primary performed real work but hit a temporary Grok usage limit after only a partial WebSocket file and no result packet. The same assignment retains one bounded recovery; it remains absent from completed totals and earns zero direct-production credit until terminal."
   - sequence: 12
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
     provider: claude

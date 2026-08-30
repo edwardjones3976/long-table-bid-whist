@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "record_kind": "provider-attempt-evidence",
+  "assignment_id": "LT-NATIVE-GROK-AUTHORITY-SAFETY-001",
+  "attempt": {
+    "ordinal": 1,
+    "provider": "grok",
+    "model": "Grok 4.6 Build Beta",
+    "surface": "grok.com Build",
+    "authenticated_conversation_url": "https://grok.com/c/7c188d2d-1a1e-4628-86e1-e761277fb211",
+    "prompt_characters": 151654,
+    "terminal_observed_at": "2026-08-30T12:14:00-07:00",
+    "status": "terminal_incomplete_temporary_provider_limit",
+    "provider_terminal_text": "Free limit reached",
+    "final_response_returned": false,
+    "unified_patch_returned": false,
+    "model_result_packet_returned": false,
+    "candidate_returned": false
+  },
+  "partial_output": {
+    "complete_owned_paths": [],
+    "visible_current_file": "services/table-authority/src/websocket-server.ts",
+    "artifact": "artifacts/native-program/providers/LT-NATIVE-GROK-AUTHORITY-SAFETY-001.partial-websocket-server.ts.base64",
+    "encoding": "base64",
+    "decoded_bytes": 10158,
+    "decoded_sha256": "9ba1697022ed04fb6ce47ff4d56e8ee0c231053167b87cc07c009b497c7ea6e9",
+    "classification": "quarantined_provider_evidence_only"
+  },
+  "product_worktree": {
+    "head": "a6742a04a384a88e7342530041a1f0d3ab71db2c",
+    "tree": "0489b183e70da5751c31e9b80ed40a8b631ba55a",
+    "sole_parent": "816824ef85037caac11e90e34c090b54a1c3a7a1",
+    "clean": true,
+    "provider_bytes_applied": false
+  },
+  "external_effects": {
+    "duplicate_dispatch": false,
+    "purchase_or_upgrade": false,
+    "new_oauth_scope_granted": false
+  },
+  "credit": {
+    "canonical_assignment_terminal": false,
+    "canonical_points_recorded": 0,
+    "direct_production_points": 0
+  },
+  "recovery": {
+    "remaining": 1,
+    "condition": "concrete provider capacity reset or materially new availability evidence",
+    "preferred_transport": "continue the same authenticated conversation",
+    "heartbeat_id": "resume-grok-authority-safety-recovery"
+  }
+}
