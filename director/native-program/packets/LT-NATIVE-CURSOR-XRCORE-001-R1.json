@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CURSOR-XRCORE-001-R1",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "starting_ref": "72a805fd7c8653453253527e68509c7e9a0b2895",
+  "authority_base_ref": "b07cf721ec7b83a9eb3e3fb398d89673a9201a39",
+  "objective": "Perform the single and final Cursor revision of the isolated LongTableXR UE5.7 project plugin. Correct every consolidated OpenAI build, closed-schema, source-loss, idempotency, target-provenance, presence-adapter, dependency/IWYU and test-validity finding against the corrected v1.1 public contract. Preserve the one-plugin ownership boundary, run fresh editor, focused XR, game-target and cumulative automation gates, create one local revision commit, and return exactly one raw model-result-packet-v1 JSON object for OpenAI QA.",
+  "non_goals": [
+    "No edit outside Unreal/Plugins/LongTableXR/** and no helper, result, build or test script outside that subtree",
+    "No integration with or dependency on any Long Table rules, protocol, table, social, HouseCore or robot-dealer provider module",
+    "No Bid Whist authority, session, networking, host, queue, standings, replay or persistence implementation",
+    "No Meta SDK install, license, account, avatar asset, store, deployment, external write or browser action",
+    "No bundled third-party music, voice, image, likeness, sample or archival content and no stock human avatar",
+    "No regex, blacklist, keyword, substring, redaction, scanning or best-effort pattern control for privacy, disclosure, authorization, rights, logging or routing",
+    "No physical Quest, Android, passthrough, anchor, Meta presence, multiplayer, human, cultural, rights, release or combined-product completion claim"
+  ],
+  "authority_snapshot": [
+    {"path": "director/native-program/README.md", "commit_sha": "b07cf721ec7b83a9eb3e3fb398d89673a9201a39", "blob_sha": "63b4dec665c6b1d4ceb0ed65434bb2337080b876"},
+    {"path": "director/native-program/manual-provider-overlay.md", "commit_sha": "b07cf721ec7b83a9eb3e3fb398d89673a9201a39", "blob_sha": "6fdb9a8927d3bdc64321e82a5bc712b43049f5dd"},
+    {"path": "director/native-program/provider-workload.yaml", "commit_sha": "b07cf721ec7b83a9eb3e3fb398d89673a9201a39", "blob_sha": "c8cfb44e72e744f785de43f0897214fe888ba470"},
+    {"path": "director/native-program/roles-and-responsibilities.md", "commit_sha": "b07cf721ec7b83a9eb3e3fb398d89673a9201a39", "blob_sha": "aff99b3c915085b9b8cf3b43797c2f8882a89a4e"},
+    {"path": "director/native-program/stage-gates.md", "commit_sha": "b07cf721ec7b83a9eb3e3fb398d89673a9201a39", "blob_sha": "4c7ad8f29442004a3cbfc27c1bf0d22c7503e65a"},
+    {"path": "director/privacy-control-policy.md", "commit_sha": "b07cf721ec7b83a9eb3e3fb398d89673a9201a39", "blob_sha": "a31ce14bdaed03f3028480b7572cd9ccf7c0f859"},
+    {"path": "director/native-program/contracts/long-table-xr-public-v1.json", "commit_sha": "b07cf721ec7b83a9eb3e3fb398d89673a9201a39", "blob_sha": "e2eea682d0dee913c8d21d791211ad2bd6573792"},
+    {"path": "director/native-program/contracts/model-result-packet-v1.schema.json", "commit_sha": "b07cf721ec7b83a9eb3e3fb398d89673a9201a39", "blob_sha": "3f68e59136c422ce84d79f874c0343fd5ffc0a9e"},
+    {"path": "director/native-program/packets/LT-NATIVE-CURSOR-XRCORE-001.json", "commit_sha": "b07cf721ec7b83a9eb3e3fb398d89673a9201a39", "blob_sha": "270e9bad1b9b1e70318f0e82291e9d71011497f3"},
+    {"path": "artifacts/native-program/providers/2026-08-30-cursor-xrcore-001.md", "commit_sha": "b07cf721ec7b83a9eb3e3fb398d89673a9201a39", "blob_sha": "b146b9bef595d7c951c2eae78be98528f9ba5859"}
+  ],
+  "authority_snapshot_digest": "sha256:392c84e18bd2b56d420ad5e1b9c0534e24f61d21593560f002584451a4680360",
+  "dependencies": [],
+  "owned_paths": [
+    "Unreal/Plugins/LongTableXR/**"
+  ],
+  "prohibited_paths": [
+    "sources/**",
+    "director/**",
+    "artifacts/**",
+    ".github/**",
+    "src/**",
+    "packages/**",
+    "services/**",
+    "fixtures/**",
+    "scripts/**",
+    "Unreal/Config/**",
+    "Unreal/Content/**",
+    "Unreal/Source/**",
+    "Unreal/LongTable.uproject",
+    "Unreal/Plugins/LongTableHouseCore/**",
+    "Unreal/Plugins/LongTableRobotDealer/**",
+    "Unreal/Plugins/MetaXR/**",
+    "Unreal/Plugins/MetaXRInteraction/**"
+  ],
+  "constraints": [
+    "Resume authenticated Cursor chat 2818c90a-0ac8-420e-aa02-beb79cf06bf2 using model composer-2.5 in C:\\Users\\edwar\\.codex\\worktrees\\long-table-cursor-xr on branch codex/cursor-xr-core",
+    "Verify exact clean start 72a805fd7c8653453253527e68509c7e9a0b2895 before editing; do not use provider subagents and do not create any file outside the plugin subtree",
+    "Implement corrected contract long-table-xr-public/v1.1 exactly, including private Json as the only newly allowed standard module dependency",
+    "Use Blueprint-supported signed int64/int32 reflected fields and validate the exact v1.1 nonnegative ranges before every construction, serialization, decode, persistence load or arithmetic increment",
+    "JSON numbers must be present, correctly typed, finite, integral and in range before conversion; never narrow then validate; make all headers IWYU-correct with Json remaining a private dependency",
+    "Validate every enum and required field before serialization; unknown enum, missing field, extra field, wrong type, fractional number, negative number, overflow, invalid InteractionId, overlength nameplate or invalid comfort/environment value fails closed",
+    "All externally supplied phases require a currently available source in the active modality; capability downgrade and source loss cancel a matching transient exactly once even when another same-modality source remains available",
+    "Represent and deduplicate Confirm by stable InteractionId plus ConfirmGeneration, never TargetHandle; repeat edges emit once and the API must carry the stable interaction identity",
+    "Accept a nonzero target handle only when it is currently live in the concealed-independent local registry; arbitrary, released, zero-for-targeted-action and overflowed handles fail closed",
+    "The optional Meta adapter cannot populate the closed presence view. The core alone constructs seat, Unicode-code-point-bounded nameplate and tracking flags; adapter absence, denial, failure or all-untracked state selects the exact v1.1 fallback/unavailable mode without stock avatars or platform/private identifiers",
+    "Replace every pattern, substring and blacklist assertion with exact structure, exact enum, exact field inventory, exact filesystem/inventory equality or counterfactual byte comparison",
+    "SemanticParity must cover all nine actions and compare the v1.1 semantic payload exactly while preserving expected Source identity and a stable InteractionId; it must not mask defects",
+    "TargetHandleConcealmentCounterfactual must construct two genuinely different simulated concealed fixtures and prove separate identical public runs yield identical handles/events; never compare an object to itself",
+    "Confirm, source-loss, presence, comfort persistence and every exact bound, anchor-loss-driven recovery/VR fallback and rights-clean exact inventory must have adversarial non-tautological automation",
+    "Use only original code-native runtime placeholders; host music remains external/off; commit no generated Binaries, Intermediate, Saved, DerivedDataCache, logs or temporary helpers",
+    "Create one local revision commit only; do not push or perform any external write"
+  ],
+  "prohibited_actions": [
+    "Do not edit, stage or commit any path outside Unreal/Plugins/LongTableXR/**",
+    "Do not alter the R1 packet, corrected contract, OpenAI evidence or acceptance scripts",
+    "Do not bypass, weaken, delete, skip, invert, relabel or pattern-match an acceptance property to obtain a pass",
+    "Do not access quarantined Antigravity or Cursor helper artifacts and do not inspect or derive from robot-dealer implementation",
+    "Do not push, merge, deploy, publish, release, contact external services, use browser accounts, purchase, or change credentials, permissions, accounts or licenses",
+    "Do not make device, human, cultural, rights, store, release or combined-product claims"
+  ],
+  "allowed_tools": [
+    "same authenticated Cursor Agent chat and model",
+    "local filesystem and repository tools within the exact named worktree",
+    "Windows interop for the existing Unreal Engine 5.7.4, compiler, UnrealBuildTool, UnrealEditor-Cmd and repository-native scripts used read-only",
+    "standard Git metadata operations needed for one local revision commit"
+  ],
+  "allowed_external_effects": [
+    "Edit only Unreal/Plugins/LongTableXR/**",
+    "Run local builds and automation with generated outputs remaining uncommitted",
+    "Create one local Cursor revision commit",
+    "Return one raw JSON result object in the authenticated terminal response"
+  ],
+  "acceptance_checks": [
+    "Exact start 72a805f, one revision head/tree/parent, clean final status and complete changed-path allowlist are proven",
+    "LongTableEditor Win64 Development and LongTable Win64 Development compile with UE5.7.4 on the exact revision",
+    "Focused LongTable.XR automation has zero failures and all ten exact tests are present, adversarial and non-tautological",
+    "Full LongTable automation has zero failures and the existing TypeScript, strict native typecheck, fixture-current and production-build gates remain green",
+    "Every v1 finding in 2026-08-30-cursor-xrcore-001.md is closed by source and regression evidence",
+    "All public structures and codecs match v1.1 exactly; Blueprint/UHT, JSON numeric safety, IWYU and private dependency boundaries pass",
+    "All phases fail closed on wrong/lost source, Confirm uses InteractionId identity, and only live registry target handles emit",
+    "Presence is core-constructed with exact fallback/unavailable behavior and a 32-Unicode-code-point bound; the optional adapter cannot inject closed fields",
+    "All nine semantic actions have hand/controller parity with expected source identity and no masked field; concealment counterfactuals compare distinct runs",
+    "Comfort persistence and every bound, anchor-loss fallback and exact rights inventory are reproduced without pattern controls",
+    "No forbidden dependency, file, generated artifact, stock avatar or third-party media enters the candidate and host music remains external/off",
+    "Terminal output is exactly one raw JSON object valid against model-result-packet-v1 with complete identity, run, artifacts, checks, acceptance, risks, blockers, decisions, side effects and revision_recommended"
+  ],
+  "evidence_requirements": [
+    "Authenticated Cursor chat/request and composer-2.5 identity",
+    "Exact base, revision head, tree, parent, changed-file allowlist and clean final status",
+    "Exact UBT, focused XR, full Unreal, TypeScript, typecheck, fixture and production-build commands with exit results",
+    "Exact regression names and results mapped to all ten OpenAI findings and corrected v1.1 clauses",
+    "Closed dependency and rights inventories with no pattern-based evidence",
+    "Known limitations including absent Meta SDK/license/account/avatar, Android package, headset, physical hands/controllers/passthrough/anchors, multiplayer, human, cultural, rights and store evidence",
+    "One schema-valid raw model-result-packet-v1 with this packet identity and complete correlation"
+  ],
+  "approval_requirements": [
+    "OpenAI QA must freeze, independently reproduce and accept the exact revision before direct-production credit or integration",
+    "No further Cursor revision is authorized under this assignment",
+    "A later separate integration packet remains required after Claude and robot interfaces are independently accepted",
+    "External writes, Meta activation, device claims, merge, release, spending, permissions, human/cultural/rights acceptance and store submission remain owner-gated"
+  ],
+  "limits": {
+    "budget_usd": 0,
+    "timeout_seconds": 7200,
+    "max_hops": 0,
+    "max_revisions": 0
+  },
+  "idempotency_key": "LT-NATIVE-CURSOR-XRCORE-001-R1-72a805f",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CURSOR-XRCORE-001-R1",
+    "source_event_id": "openai-qa-cursor-xrcore-revision-20260830",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}

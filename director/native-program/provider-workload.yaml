@@ -1,4 +1,4 @@
-# [[OpenAI Director | Codex | 2026-08-30 | 05:27 UTC | BEGIN]]
+# [[OpenAI Director | Codex | 2026-08-30 | 08:44 UTC | BEGIN]]
 schema_version: "long-table-provider-workload/v2"
 
 policy_binding:
@@ -176,6 +176,16 @@ overall_effort_ledger:
     authenticated_run: "cursor-chat:2818c90a-0ac8-420e-aa02-beb79cf06bf2;request:61e1c1d6-36a7-465b-b6da-0ef7b0eb8c25"
     direct_production_points: 0
     exclusion_reason: "authenticated Cursor authored exact candidate 72a805f; OpenAI reproduced an editor-build failure and retained ten revision-blocking findings; overall effort is recorded once and direct-production credit remains zero"
+  - sequence: 7
+    assignment_id: "LT-NATIVE-CURSOR-XRCORE-001-R1"
+    provider: cursor
+    size: medium
+    canonical_points: 0
+    completed: false
+    terminal_status: "PRESTAGED_IMMUTABLE_R1_NOT_YET_DISPATCHED"
+    authenticated_run: null
+    direct_production_points: 0
+    exclusion_reason: "the single final Cursor revision is immutably pre-staged but unfinished; it earns no completed-window or direct-production points until authenticated execution reaches a terminal outcome"
 
 accepted_direct_production_ledger: []
 
@@ -185,7 +195,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 8, cursor: 5, grok: 0, openai: 0, gemini_antigravity: 10, perplexity: 0}
   current_partial_shares_percent: {claude: 34.78, cursor: 21.74, grok: 0, openai: 0, gemini_antigravity: 43.48, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
-  next_route: "dispatch the one consolidated Cursor XR-core R1 after its corrected authority and immutable packet are frozen; resume exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; Grok and Antigravity require explicit human account/permission actions; final Cursor integration remains dependency-gated"
+  next_route: "dispatch the frozen Cursor XR-core R1 once through the authenticated same-chat route; resume exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; Grok and Antigravity require explicit human account/permission actions; final Cursor integration remains dependency-gated"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -254,6 +264,19 @@ canonical_assignment_ledger:
     candidate_sha: "72a805fd7c8653453253527e68509c7e9a0b2895"
     candidate_tree: "099e591fae1316d2a35a4d58e27f3d080decb9ee"
     manual_overlay_reason: "owner-required Cursor coding lane split into a self-registering dependency-independent XR-core plugin; real product scope routed to an under-target provider, never filler"
+  - sequence: 7
+    assignment_id: "LT-NATIVE-CURSOR-XRCORE-001-R1"
+    provider: cursor
+    size: medium
+    canonical_points: 5
+    status: "PRESTAGED_IMMUTABLE_R1_NOT_YET_DISPATCHED"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:5ee54416767b74f2f0eaa98d5b880c5edbef69e9ca393f590ab19646182a0c24"
+    work_packet_digest: "sha256:a10418f66b3dae080b58b68f8f1f3237fde0ebf13a33b9562bd96601e04a5803"
+    accepted_outcome_digest: null
+    candidate_sha: null
+    candidate_tree: null
+    manual_overlay_reason: "one consolidated final revision of the same useful Cursor XR-core lane; no split credit, no completed-window credit before terminal execution, and no further Cursor revision authority"
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -275,4 +298,4 @@ action_reduction:
   duplicate_validation_reduction_percent: 70
   total_action_reduction_percent: 60
 
-# [[OpenAI Director | Codex | 2026-08-30 | 05:27 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-30 | 08:44 UTC | END]]
