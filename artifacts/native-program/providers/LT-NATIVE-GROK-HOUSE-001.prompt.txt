@@ -1,0 +1,183 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-GROK-HOUSE-001",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "starting_ref": "377a4039a9cc46b38497f2be3223ab7533dfe207",
+  "authority_base_ref": "377a4039a9cc46b38497f2be3223ab7533dfe207",
+  "objective": "Implement a fresh clean-room Unreal Engine 5.7 LongTableHouseCore plugin from the exact frozen public contract. Deliver deterministic public-only event, table-assignment, queue, rotation, migration, lifecycle, standings, snapshot, idempotency and restore behavior; a source-only BuildPlugin candidate; complete focused automation evidence; one local candidate commit; and exactly one Director model-result-packet-v1 JSON document as the terminal response.",
+  "non_goals": [
+    "No Bid Whist rules, cards, hands, bids, tricks, scoring adjudication, rules manifest or player projection",
+    "No identity, authentication, credential, capability, invitation, room-code, resume, network, session, host or moderation authority",
+    "No reading, copying, patching, importing, adapting or claiming provenance from any Antigravity HouseCore artifact, sandbox, frozen QA copy, prompt, handoff, source or test",
+    "No Claude, Cursor or other provider source, diff, branch, worktree, artifact or transcript",
+    "No LongTableRobotDealer implementation, edit, import or robot behavior",
+    "No XR, Meta SDK, avatar, hand tracking, controllers, audio, voice, music, media, WebXR, Horizon Worlds, store, deployment or physical-device work",
+    "No bundled or streamed music and no external asset or third-party code",
+    "No regex, blacklist, keyword, substring, redaction, serialize-then-delete or best-effort privacy control",
+    "No merge, push, release, publication, external post, account, permission, purchase or final acceptance authority"
+  ],
+  "authority_snapshot": [
+    {
+      "path": "director/native-program/contracts/long-table-house-public-v1.json",
+      "commit_sha": "377a4039a9cc46b38497f2be3223ab7533dfe207",
+      "blob_sha": "305db509fecae544713b42575ddc2f4c4e7c8dfb"
+    },
+    {
+      "path": "director/native-program/contracts/model-result-packet-v1.schema.json",
+      "commit_sha": "377a4039a9cc46b38497f2be3223ab7533dfe207",
+      "blob_sha": "3f68e59136c422ce84d79f874c0343fd5ffc0a9e"
+    },
+    {
+      "path": "director/native-program/README.md",
+      "commit_sha": "377a4039a9cc46b38497f2be3223ab7533dfe207",
+      "blob_sha": "72c7ddb8eca271ada09a9ea3a2af2ca0d68c8fae"
+    },
+    {
+      "path": "director/native-program/manual-provider-overlay.md",
+      "commit_sha": "377a4039a9cc46b38497f2be3223ab7533dfe207",
+      "blob_sha": "4ce14cbd39899c48db6fadad4959d12602c3e999"
+    },
+    {
+      "path": "director/native-program/provider-workload.yaml",
+      "commit_sha": "377a4039a9cc46b38497f2be3223ab7533dfe207",
+      "blob_sha": "d5ff2ab3abca9692190feb91ca42d7c60ef5159c"
+    },
+    {
+      "path": "director/native-program/roles-and-responsibilities.md",
+      "commit_sha": "377a4039a9cc46b38497f2be3223ab7533dfe207",
+      "blob_sha": "5cb72ff4020517e8219260c9334958c949f7bf68"
+    },
+    {
+      "path": "director/native-program/stage-gates.md",
+      "commit_sha": "377a4039a9cc46b38497f2be3223ab7533dfe207",
+      "blob_sha": "4c7ad8f29442004a3cbfc27c1bf0d22c7503e65a"
+    },
+    {
+      "path": "director/native-program/workload-baseline.md",
+      "commit_sha": "377a4039a9cc46b38497f2be3223ab7533dfe207",
+      "blob_sha": "205e36cd57a4b9933ee93e032e073d5afcbcdbb7"
+    },
+    {
+      "path": "director/privacy-control-policy.md",
+      "commit_sha": "377a4039a9cc46b38497f2be3223ab7533dfe207",
+      "blob_sha": "a31ce14bdaed03f3028480b7572cd9ccf7c0f859"
+    }
+  ],
+  "authority_snapshot_digest": "sha256:b174208d96db02a22153f2848d572856b5ec025743159524a414ca5cdf1efe73",
+  "dependencies": [],
+  "owned_paths": [
+    "Unreal/Plugins/LongTableHouseCore/**"
+  ],
+  "prohibited_paths": [
+    "sources/**",
+    "artifacts/**",
+    "packages/**",
+    "services/**",
+    ".github/**",
+    "Unreal/Source/**",
+    "Unreal/Content/**",
+    "Unreal/Config/**",
+    "Unreal/LongTable.uproject",
+    "Unreal/Plugins/LongTableRobotDealer/**",
+    "Unreal/Plugins/MetaXR/**",
+    "Unreal/Plugins/MetaXRInteraction/**",
+    "C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-house-core-001\\**",
+    "C:\\Users\\edwar\\.codex\\provider-qa\\lt-house-core-20260830T061149Z\\**",
+    "C:\\Users\\edwar\\.codex\\provider-qa\\lt-house-core-20260830T063200Z\\**"
+  ],
+  "constraints": [
+    "Work only in C:\\Users\\edwar\\.codex\\worktrees\\long-table-grok-house-core on branch grok/long-table-house-core at exact starting_ref 377a4039a9cc46b38497f2be3223ab7533dfe207",
+    "Verify exact head 377a4039a9cc46b38497f2be3223ab7533dfe207, tree 566e43ccf6a0642843485e20272ebee93a7b6c10, branch and clean status before any edit",
+    "This immutable packet is injected as the provider prompt outside the provider worktree; within the repository, read only the nine exact authority_snapshot files and do not enumerate or inspect any other path",
+    "Create and edit only Unreal/Plugins/LongTableHouseCore/**; leave all authority files and every other repository path byte-identical",
+    "Treat long-table-house-public-v1.json as the entire product contract; do not widen, reinterpret, add an extension field or invent an integration dependency",
+    "Implement original C++ source, exact closed public types, one runtime module, one automation-test module, a source-only .uplugin and only the minimal plugin-owned test-host files needed to run headless automation",
+    "Use the verified Unreal Engine at C:\\Program Files\\Epic Games\\UE_5.7; do not download, install, update, license or configure another engine, SDK, package, plugin, codebase or asset",
+    "Use exact structural field construction and closed typed variants. Pattern matching may not make a privacy, disclosure, authorization, logging or provider-routing decision",
+    "Validate closed structure, enum, identifier, scalar, capacity, version, sequence, lifecycle and overflow conditions before mutation in the exact contract order",
+    "Persist replay defense through caller-owned deterministic bytes with no file or network I/O; corrupt restore must be atomic and old sequences never become fresh",
+    "Derive occupancy only from explicit non-overlapping seated-party assignments; migration and completed release are the only continuity-preserving move or clear paths",
+    "Return the exact original FHouseMutationResult bytes for a retained duplicate before expected-version evaluation and implement the exact retained-gap, eviction and high-water rules",
+    "Make canonical public bytes, ordering, state digests, queue rotation, migration, standings and restore output byte-stable across repeated processes",
+    "Use no free-form public prose, media, audio, third-party asset, external dependency, network call, rule engine, player intent, credential or robot-dealer reference",
+    "Place all disposable BuildPlugin and automation outputs below C:\\Users\\edwar\\.codex\\provider-builds\\lt-grok-house-001 and commit none of them",
+    "Run every locally available check once, report the exact command and exit code, and mark unavailable evidence NOT_RUN rather than infer a pass",
+    "Create exactly one local candidate commit after checks and return exactly one JSON object valid against model-result-packet-v1.schema.json"
+  ],
+  "prohibited_actions": [
+    "Do not inspect or use any source outside the nine exact authority files and the files you create under the owned path",
+    "Do not read, enumerate, search, open, diff, copy, import or reference any prohibited Antigravity path, frozen artifact or provider handoff",
+    "Do not edit another provider path, governance file, WebXR source or repository configuration",
+    "Do not implement or import LongTableRobotDealer, MetaXR, networking, sessions, cards, rules, voice, music or media",
+    "Do not push, merge, deploy, publish, open or mutate a PR or issue, post Slack or Linear, purchase, change credentials or permissions, or create an external account",
+    "Do not connect a physical device or claim Android, Quest, human, cultural, rights, store, release, integration or product completion",
+    "Do not use regex, blacklists, keywords, substrings, redaction or serialize-then-delete as a privacy or disclosure control",
+    "Do not retry or duplicate an ambiguous provider dispatch"
+  ],
+  "allowed_tools": [
+    "authenticated Grok Build CLI with acceptEdits, no subagents and web search disabled",
+    "local filesystem and Git restricted to the exact named worktree and owned path",
+    "UnrealBuildTool, RunUAT BuildPlugin and UnrealEditor-Cmd from the verified Unreal Engine 5.7 installation",
+    "existing Windows compiler and PowerShell for bounded local checks"
+  ],
+  "allowed_external_effects": [
+    "Create and edit only Unreal/Plugins/LongTableHouseCore/** in the exact named worktree",
+    "Create disposable local build and automation output only below C:\\Users\\edwar\\.codex\\provider-builds\\lt-grok-house-001",
+    "Run local source, compile, BuildPlugin and headless automation checks",
+    "Create one local candidate commit and return its exact SHA",
+    "Return one JSON result packet in the authenticated terminal response"
+  ],
+  "acceptance_checks": [
+    "Starting head, tree, branch and clean worktree exactly match this packet before implementation",
+    "Every changed or committed path is below Unreal/Plugins/LongTableHouseCore/** and no generated build, cache, package, log or binary artifact is committed",
+    "All enums, public records, discriminated payloads, query/result variants, field order and bounds exactly match long-table-house-public-v1.json with no extension, untyped map or unknown-field acceptance",
+    "Public source contains no card, hand, bid, trick, rules, player projection, credential, capability, token, invitation, room code, resume secret, moderation record, voice, audio, transcript, music, media, network address, provider payload or free-form announcement member",
+    "The complete required_test_ids list exists as named automation tests and every test passes headlessly on the exact candidate",
+    "Duplicate-before-stale, conflicting identity, retained gap, receipt eviction, reset and restore replay-defense tests prove no duplicate or old sequence can mutate",
+    "Snapshot success/failure variants, exact canonical bytes and PublicStateDigest tests cover present, absent, latest, exact-version and stale-version queries",
+    "Queue tests prove capacity stability, priority then insertion then byte ordering, unique PartyId and deterministic first-fit without partial seating",
+    "Seated-party tests prove exact assignments, derived occupancy, non-overlap, atomic multi-party migration, completed release and byte-for-byte failure atomicity",
+    "Lifecycle tests prove no caller-supplied occupancy, no silent clear or close, exact event/table transitions and safe empty event closure",
+    "Standing tests prove exact stored and delta bounds, Played equality, checked signed/unsigned arithmetic, deterministic ties and all-or-nothing mutation",
+    "Persistence tests prove deterministic binary round trip, exact replay-defense preservation, corrupt/trailing/unknown/incompatible input rejection and unchanged live bytes on failure",
+    "Counterfactual tests vary every synthetic private-side harness value and prove identical public snapshot and receipt bytes without any private-side field entering HouseCore",
+    "Static dependency inspection finds only permitted Unreal core dependencies and no socket, HTTP, file, process, analytics, telemetry, rules, player-intent, credential, microphone, voice, audio, media or robot-dealer dependency",
+    "RunUAT BuildPlugin produces a Win64 source-plugin package from the exact candidate with exit code 0 in the disposable output path",
+    "UnrealEditor-Cmd runs all House.* automation tests from the plugin-owned minimal test host with zero failures and a process exit code 0",
+    "The final terminal document validates against the exact authority-bound model-result-packet-v1 schema and records the exact candidate head and tree"
+  ],
+  "evidence_requirements": [
+    "Authenticated Grok provider, model grok-4.6, CLI run/session identity, stop reason and packet correlation identity",
+    "Exact packet file SHA-256, canonical work-packet digest, authority-snapshot digest, starting head/tree and candidate head/tree",
+    "Clean-before status, exact changed-file allowlist, one local commit and clean-after status",
+    "Named required automation tests with commands, exit codes, passed/failed counts and log location",
+    "RunUAT BuildPlugin and UnrealEditor-Cmd commands, exit codes and concise results",
+    "Static exact positive field inventory and dependency inventory",
+    "Known limitations including no repository integration, Android package, Meta SDK, account, headset, live session, human event, rights review, cultural review, store review or release evidence",
+    "Usage telemetry when emitted, side effects, blockers, risks, requested decisions and revision recommendation",
+    "One schema-valid model-result-packet-v1 JSON terminal object"
+  ],
+  "approval_requirements": [
+    "Director exact packet, workload warm-up advisory, clean-room transfer and transport preflight must pass before dispatch",
+    "OpenAI QA must independently inspect and reproduce the exact Grok candidate before integration or accepted direct-production credit",
+    "Any code correction is kicked back to Grok within this packet's single revision budget; OpenAI remains QA-only",
+    "Owner separately authorizes integration, merge, release, account, license, device, human, rights, cultural or external effects"
+  ],
+  "limits": {
+    "budget_usd": 0,
+    "timeout_seconds": 7200,
+    "max_hops": 0,
+    "max_revisions": 1
+  },
+  "idempotency_key": "LT-NATIVE-GROK-HOUSE-001-377a4039a9cc",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-GROK-HOUSE-001",
+    "source_event_id": "owner-all-providers-code-nonoverlap-20260830",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}
+

@@ -74,6 +74,22 @@ The packet is prestaged but not dispatched while Antigravity's partial warm-up
 share is high. Useful under-target Grok work routes first, per
 `workload-baseline.md`.
 
+## Warm-up variance after the Grok route
+
+The required under-target Grok HouseCore lane was routed first. Its immutable
+assignment incurred directly observed model effort, but the Grok Build CLI then
+exhausted its rolling allowance and its separate Chrome fallback stopped at an
+account Terms / Acceptable Use acknowledgement that OpenAI cannot accept for the
+owner. No Grok code or accepted production credit exists.
+
+Cursor cannot start until both Claude R1 and the robot-dealer public interface
+are independently accepted. The next useful dependency-reducing assignment is
+therefore the already-frozen short Antigravity robot-presenter sandbox. Exact
+Director policy is still in its fewer-than-20 completed-assignment warm-up, so
+this is recorded as an owner-authorized manual variance—not a rolling-20 pass,
+not filler, and not a relaxation of privacy, QA, budget, source-isolation or
+acceptance. It receives one bounded dispatch and one revision at most.
+
 Accepted Claude protocol headers, schemas, fixtures, and registration interfaces
 are readable, immutable dependencies for Cursor and Grok. They must not appear in
 `prohibited_paths`, because Director defines a prohibited path as never read,

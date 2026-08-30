@@ -150,12 +150,22 @@ overall_effort_ledger:
     assignment_id: "LT-NATIVE-GROK-HOUSE-001"
     provider: grok
     size: long
+    canonical_points: 8
+    completed: false
+    terminal_status: "GROK_BUILD_CLI_UNAVAILABLE_BROWSER_FALLBACK_BLOCKED_LEGAL_ACK"
+    authenticated_run: "grok-session:01a051a1-c92b-7bf2-b28b-2d3d81155d71;request:433d5853-4edc-46ff-914e-e15dd21720a2"
+    direct_production_points: 0
+    exclusion_reason: "direct provider effort is recorded once for the assignment; rolling completed-assignment share waits for the configured browser fallback's terminal outcome"
+  - sequence: 5
+    assignment_id: "LT-NATIVE-ANTIGRAVITY-002"
+    provider: gemini_antigravity
+    size: short
     canonical_points: 0
     completed: false
-    terminal_status: "PRESTAGED_PACKET_SCHEMA_VALID"
+    terminal_status: "PRESTAGED_READY_MANUAL_WARMUP_VARIANCE"
     authenticated_run: null
     direct_production_points: 0
-    exclusion_reason: "pre-dispatch authority preparation is not provider execution or workload credit"
+    exclusion_reason: "pre-dispatch preparation earns no effort or production credit"
 
 accepted_direct_production_ledger: []
 
@@ -165,7 +175,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 8, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 8, perplexity: 0}
   current_partial_shares_percent: {claude: 50, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 50, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
-  next_route: "dispatch the exact LT-NATIVE-GROK-HOUSE-001 clean-room HouseCore packet after schema, digest, starting-ref and clean-worktree preflight"
+  next_route: "dispatch LT-NATIVE-ANTIGRAVITY-002 once under the signed warm-up variance because Grok was routed first and is blocked, Claude is reset-capped, and Cursor requires the robot interface"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -204,12 +214,23 @@ canonical_assignment_ledger:
     provider: grok
     size: long
     canonical_points: 8
-    status: "PRESTAGED_PACKET_SCHEMA_VALID"
+    status: "GROK_BUILD_CLI_UNAVAILABLE_BROWSER_FALLBACK_BLOCKED_LEGAL_ACK"
     accepted_direct_production_points: 0
     packet_digest: "sha256:9991f2b1ff276a40aef598a5023a9fa000edfa99007904f150e0579099a8b89d"
     work_packet_digest: "sha256:bab8d037913238b56f984621a544081b4a63194e0807cba26c08446142e4f208"
     accepted_outcome_digest: null
     manual_overlay_reason: "owner-authorized independent clean-room HouseCore fallback; no Claude dependency; no Antigravity artifact access; exact packet and authenticated execution required before effort credit"
+  - sequence: 5
+    assignment_id: "LT-NATIVE-ANTIGRAVITY-002"
+    provider: gemini_antigravity
+    size: short
+    canonical_points: 2
+    status: "PRESTAGED_READY_MANUAL_WARMUP_VARIANCE"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:5d8e25b68bbfd18e029c7953dca27c95ef238587824bb256a58dfcf1004bbd16"
+    work_packet_digest: "sha256:7e8436fe9c1a203de2a266e90cab224520b38b1b2e5d94451d270f60e21d59fd"
+    accepted_outcome_digest: null
+    manual_overlay_reason: "owner-required isolated robot-presenter lane; dispatched after the required under-target Grok route exhausted and before dependent Cursor; warm-up advisory variance only"
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
