@@ -1,0 +1,111 @@
+{
+  "schema_version": "long-table-transport-delta/v1",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002",
+  "base_work_packet": "director/native-program/packets/LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002.json",
+  "base_work_packet_commit": "e7941c498633e3de903b78ee5024004881d11be1",
+  "base_work_packet_file_sha256": "sha256:8cd89ffc979f8820c5c0c6136b1ae834fc0d18f8afeb9bfd4d64ea8cc154a753",
+  "base_work_packet_digest": "sha256:b65d51c1b716a5eea03ae130c192621c50beca69cae181aa078d058e82b1b051",
+  "authority_snapshot_digest": "sha256:c9d9bd274b110901c25db027a8e28f60c54c8462ced963fd2f93cca6405dd9a4",
+  "starting_ref": "a6742a04a384a88e7342530041a1f0d3ab71db2c",
+  "starting_tree": "0489b183e70da5751c31e9b80ed40a8b631ba55a",
+  "owner_authorization": {
+    "recorded_at_utc": "2026-08-30T21:13:14.4231199Z",
+    "scope": "Use Claude in Chrome if other formats are unavailable; all provider actions are authorized without another ordinary project confirmation; fix and complete everything.",
+    "claude_chrome_fallback_authorized": true,
+    "github_transport_authorized": true
+  },
+  "recovery_classification": {
+    "attempt": 3,
+    "basis": "The local Fable 5 Max recovery was stopped before any write after it read an unrelated Edge Engine memory directory outside the isolated Long Table worktree. Authenticated Claude Code in Chrome over a sanitized GitHub branch is a materially different transport, and the observed clean-room breach is new information. This is the only third attempt permitted by the retry policy.",
+    "prior_primary": "Session 4517d60a-0b4e-451d-8fb9-71a5f458565d stopped pre-write for a Director authority conflict.",
+    "prior_local_recovery": "Session 48fc615d-4fc6-47d9-aab0-e7870952215f stopped pre-write after unrelated persistent-memory access; no tracked edit, candidate or result was accepted.",
+    "ambiguous_paid_dispatch": false,
+    "new_assignment": false,
+    "new_workload_row": false,
+    "additional_effort_credit": false,
+    "retry_after_this_transport": false
+  },
+  "local_recovery_terminal": {
+    "surface": "Claude Code 2.1.251",
+    "model": "claude-fable-5",
+    "effort": "max",
+    "session_id": "48fc615d-4fc6-47d9-aab0-e7870952215f",
+    "status": "TERMINAL_SCOPE_VIOLATION_STOPPED_BY_OPENAI",
+    "off_scope_read_at_utc": "2026-08-30T20:58:17.279Z",
+    "off_scope_target": "C:/Users/edwar/.claude/projects/c--Users-edwar-edge-engine/memory",
+    "off_scope_command_sha256": "sha256:32a6a428cb79c75cef1fedaa22d11e38f5126608bc26336d72ecb8e8ad6f7d75",
+    "local_transcript_sha256": "sha256:601f4b985158896724c3c236484c5879530fb0d8995778a5c57c665d686b996b",
+    "transcript_handling": "Local-only evidence because it contains unrelated memory output; never commit, upload or quote its contents.",
+    "provider_changed_paths": [],
+    "provider_commit": null,
+    "provider_terminal_result": null,
+    "clean_base_reverified": true
+  },
+  "transport_source": {
+    "repository": "edwardjones3976/long-table-bid-whist",
+    "branch": "codex/claude-foundation-safety-web-sandbox",
+    "base_commit": "6696731d2647937c8d5c87bc34aa99503defcd4c",
+    "base_tree": "3cef12d37a9ac9f495f0ce295611db1172c369e4",
+    "source_commit": "a6742a04a384a88e7342530041a1f0d3ab71db2c",
+    "source_archive_sha256": "sha256:6331ded68be1da1f9e8aecfd82b83902c6273ddb9c4b82e445f855c848c2779e",
+    "source_archive_bytes": 229500,
+    "archive_entries": 147,
+    "tracked_files": 116,
+    "crc_status": "PASS",
+    "excluded_roots": [
+      ".git",
+      ".github",
+      ".claude",
+      ".codex",
+      "director",
+      "artifacts",
+      "sources",
+      "Unreal/Plugins"
+    ],
+    "line_endings": "The Git transport branch stores the exact source blobs. The separate audit archive contains Windows CRLF working-tree representations that normalize byte-identically to the a6742a0 Git blobs; raw archive bytes are not Git-blob-identical.",
+    "transport_commit_is_not_candidate": true
+  },
+  "transport": {
+    "provider": "Claude",
+    "surface": "authenticated Claude Code at claude.ai in owner-selected Chrome",
+    "fresh_task": true,
+    "resume_prior_task": false,
+    "model_label": "Fable 5",
+    "effort_label": "High, the highest available Chrome Code effort",
+    "web_search": false,
+    "subagents": false,
+    "connectors": false,
+    "project_knowledge": false,
+    "provider_memory": false,
+    "prior_chat_context": false,
+    "additional_repositories": false,
+    "prompt_sent": false,
+    "status": "FROZEN_READY_FOR_FINAL_THIRD_ATTEMPT"
+  },
+  "packet_clarifications": [
+    "Player and host welcomes expose only their own role-grant sessionId and next counter; public and dealer retain only their raw connection sessionId, expose nextIntentCounter null, and no role leaks another grant.",
+    "LongTableEditor and LongTable Win64 Development must build. One complete LongTable automation run includes the Protocol and Table namespaces and reports zero failures and zero not-run tests; separate scoped automation runs are prohibited as duplicate validation."
+  ],
+  "delivery_contract_delta": {
+    "provider_write_root": "Only the exact 35 provider_writable_paths from the frozen contract may differ from transport base 6696731d2647937c8d5c87bc34aa99503defcd4c.",
+    "provider_git_effect": "Create and push exactly one provider commit whose parent is transport base 6696731d2647937c8d5c87bc34aa99503defcd4c on branch codex/claude-foundation-safety-web-sandbox. Do not create or modify any other branch, pull request, issue, tag or release.",
+    "terminal_response": "Return exactly one model-result-packet-v1 JSON object identifying the transport commit and every check run. No markdown or extra prose.",
+    "browser_check_limit": "Run focused and full TypeScript, fixture-current and production checks available in the web environment. Mark Windows UE5.7 builds and automation NOT_RUN; OpenAI runs them once on the mechanically materialized exact local candidate.",
+    "mechanical_materialization": "OpenAI may mechanically transfer only exact Claude-authored changes under the 35-path lease onto local a6742a0, freeze one sole-parent candidate with Claude as author and OpenAI as committer, and run independent QA. OpenAI may not author a production correction.",
+    "revision_budget": "None. Any hash, schema, source, check, commit or delivery failure is terminal."
+  },
+  "unchanged_boundaries": [
+    "All objective, non-goal, exact path, privacy, rights, budget and final-acceptance clauses in the base work packet and frozen authority remain unchanged.",
+    "No Grok, Cursor, Antigravity, OpenAI production artifact, rejected provider artifact, Director evidence, Slack, Linear, credential, cookie, unrelated memory or private workspace input is permitted.",
+    "No local or cloud Memory, Project knowledge, prior chat, connector, unrelated repository, rejected-provider task or resumed Claude task is an authorized source.",
+    "No merge, deployment, publication, store, account, device, human, cultural, rights, purchase or release authority is added.",
+    "This is the materially different final transport of the same assignment and earns no duplicate workload credit."
+  ],
+  "idempotency_key": "LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002-a6742a0",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002",
+    "source_event_id": "owner-authorized-fix-and-complete-everything-20260830",
+    "slack_thread_ts": "1788068481.517609"
+  }
+}

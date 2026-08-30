@@ -245,7 +245,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 21, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0}
   current_partial_shares_percent: {claude: 32.81, cursor: 31.25, grok: 20.31, openai: 0, gemini_antigravity: 15.63, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "rebind and dispatch the one authorized recovery for the medium/5 Claude foundation-safety assignment from exact base a6742a0 under the corrected server-issued role-grant and monotonic-counter v2 authority. The stopped primary and recovery preflight earn no points, use no Grok implementation artifact, and do not create another workload row. XR-test and RobotDealer remain closed until exact OpenAI acceptance of the new foundation candidate."
+  next_route: "dispatch the final third transport of the same medium/5 Claude foundation-safety assignment through authenticated Claude Code in Chrome on sanitized GitHub branch codex/claude-foundation-safety-web-sandbox at exact transport base 6696731. The local recovery is terminal pre-write after an unrelated persistent-memory scope violation. The materially different browser transport plus new scope information permits this one final attempt; it creates no new row or points and permits no fourth contact or delivery retry. XR-test and RobotDealer remain closed until exact OpenAI acceptance of the new foundation candidate."
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -435,7 +435,7 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "PRIMARY_ABORTED_PREWRITE_DIRECTOR_AUTHORITY_CONFLICT_RECOVERY_PENDING"
+    status: "LOCAL_RECOVERY_TERMINAL_SCOPE_VIOLATION_BROWSER_ATTEMPT_3_READY"
     accepted_direct_production_points: 0
     accepted_outcome_digest: null
     starting_ref: "a6742a04a384a88e7342530041a1f0d3ab71db2c"
@@ -449,8 +449,27 @@ canonical_assignment_ledger:
     primary_changed_paths: []
     primary_clean_base_reverified_at: "2026-08-30T20:40:04Z"
     recovery_preflight: "OPENAI_BLOCKED_BEFORE_DISPATCH_TO_INCLUDE_ALL_PROTOCOL_V2_GENERATED_FIXTURES"
-    recovery_status: "AUTHORIZED_ONLY_AFTER_DIGEST_MAXIMUM_SEMANTICS_AND_35_PATH_LEASE_ARE_REBOUND"
-    manual_overlay_reason: "Fresh exhausted-route assignment based on materially new OpenAI authority analysis. The authenticated primary was stopped before edits when OpenAI found the QA header carried a pre-freeze digest and maximum-counter welcome behavior was ambiguous. The recovery preflight then found that five protocol-v2 generated fixtures were missing from the exact path lease and stopped before dispatch. These Director control faults earn no separate row or credit. One recovery is authorized only after a new exact authority snapshot and packet bind the corrected null/exhaustion semantics and complete 35-path lease."
+    recovery_status: "TERMINAL_STOPPED_PREWRITE_UNRELATED_PERSISTENT_MEMORY_SCOPE_VIOLATION"
+    local_recovery_run: "claude-code:session:48fc615d-4fc6-47d9-aab0-e7870952215f;model:claude-fable-5;effort:max"
+    local_recovery_disposition: "OPENAI_ABORTED_PREWRITE_UNRELATED_PERSISTENT_MEMORY_SCOPE_VIOLATION"
+    local_recovery_scope_event_at: "2026-08-30T20:58:17.279Z"
+    local_recovery_scope_command_sha256: "sha256:32a6a428cb79c75cef1fedaa22d11e38f5126608bc26336d72ecb8e8ad6f7d75"
+    local_recovery_changed_paths: []
+    local_recovery_candidate_sha: null
+    local_recovery_result: null
+    local_recovery_transcript_sha256: "sha256:601f4b985158896724c3c236484c5879530fb0d8995778a5c57c665d686b996b"
+    local_recovery_transcript_committed: false
+    final_transport_delta_file: "director/native-program/packets/LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002-BROWSER-DELTA.json"
+    final_transport_delta_file_sha256: "sha256:a8279e2c6a793f3745d5f1806b1263218516120f8029acc8964ad12ef7154130"
+    final_transport_delta_digest: "sha256:10a4e3d3b83850d7d3c55e09e0cb4542ec6b90625b7bb6bf8bfd44322b6cf496"
+    final_transport_classification: "ATTEMPT_3_MATERIALLY_DIFFERENT_CHROME_CODE_PLUS_NEW_SCOPE_INFORMATION"
+    browser_transport_repository: "edwardjones3976/long-table-bid-whist"
+    browser_transport_branch: "codex/claude-foundation-safety-web-sandbox"
+    browser_transport_base: "6696731d2647937c8d5c87bc34aa99503defcd4c"
+    browser_transport_tree: "3cef12d37a9ac9f495f0ce295611db1172c369e4"
+    browser_transport_status: "READY_NOT_SENT_ATTEMPT_3_FINAL_TRANSPORT"
+    retry_after_final_transport: false
+    manual_overlay_reason: "Fresh exhausted-route assignment based on materially new OpenAI authority analysis. The authenticated primary was stopped before edits for Director control conflicts, and the corrected local recovery was stopped before any tracked edit after it read unrelated persistent Edge Engine memory. The worktree remained clean and neither stop produced accepted bytes. Authenticated Claude Code in Chrome on a sanitized sole-repository GitHub branch is the materially different final transport permitted by the retry rule. It is the same sequence-12 row, earns no duplicate credit, excludes every rejected-provider artifact and unrelated memory source, and permits no fourth contact or delivery retry."
   - sequence: 13
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
     provider: claude
