@@ -152,7 +152,7 @@ overall_effort_ledger:
     size: long
     canonical_points: 0
     completed: false
-    terminal_status: "PRESTAGED_AUTHORITY_CONTRACT_FREEZE"
+    terminal_status: "PRESTAGED_PACKET_SCHEMA_VALID"
     authenticated_run: null
     direct_production_points: 0
     exclusion_reason: "pre-dispatch authority preparation is not provider execution or workload credit"
@@ -204,9 +204,10 @@ canonical_assignment_ledger:
     provider: grok
     size: long
     canonical_points: 8
-    status: "PRESTAGED_AUTHORITY_CONTRACT_FREEZE"
+    status: "PRESTAGED_PACKET_SCHEMA_VALID"
     accepted_direct_production_points: 0
-    packet_digest: null
+    packet_digest: "sha256:9991f2b1ff276a40aef598a5023a9fa000edfa99007904f150e0579099a8b89d"
+    work_packet_digest: "sha256:bab8d037913238b56f984621a544081b4a63194e0807cba26c08446142e4f208"
     accepted_outcome_digest: null
     manual_overlay_reason: "owner-authorized independent clean-room HouseCore fallback; no Claude dependency; no Antigravity artifact access; exact packet and authenticated execution required before effort credit"
 
