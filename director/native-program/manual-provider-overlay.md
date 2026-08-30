@@ -6,7 +6,8 @@
 - Owner direction: Claude, Cursor, Grok, and Antigravity each code a designated,
   non-overlapping section; OpenAI performs QA and kicks corrections back to the
   owning provider.
-- This overlay does not change provider ownership, concealment boundaries,
+- Except for the explicit exhausted-route fallback transfer recorded below,
+  this overlay does not change provider ownership, concealment boundaries,
   release gates, budgets, or the rolling program workload ledger.
 
 ## Why an overlay is required
@@ -36,8 +37,10 @@ retroactively, and filler work is prohibited.
 - Claude writes the rules, protocol, table authority, Unreal scaffold,
   `LongTableProtocol`, `LongTableTable`, and composition root.
 - Cursor writes only `LongTableXR` and Input, Presence, and Environment content.
-- Grok writes only the session gateway, `LongTableSocial`, and Social content.
-- Antigravity writes only the isolated `LongTableHouseCore` plugin.
+- Grok writes the session gateway, `LongTableSocial`, Social content, and—only
+  under the clean-room fallback packet—the in-repository `LongTableHouseCore`.
+- Antigravity's historical writer authority ended when its single revision was
+  rejected; its isolated candidate remains quarantined with zero credit.
 - OpenAI writes control-plane and QA evidence only. It does not correct provider
   production code.
 
@@ -47,8 +50,22 @@ are readable, immutable dependencies for Cursor and Grok. They must not appear i
 written, or referenced. `owned_paths` remains the only writable surface.
 
 Cursor and Grok depend on Claude's OpenAI-accepted outcome only. They do not
-depend on one another. Antigravity output becomes a Grok House adapter input only
-after its own independent OpenAI acceptance; quarantined output is not authority.
+depend on one another. Quarantined Antigravity output is never a Grok input or
+authority dependency.
+
+## HouseCore exhausted-route fallback transfer
+
+OpenAI independently built the Antigravity recovery but its headless automation
+finished 8/11 and source review retained substantive state-machine defects. The
+closed assignment allowed one revision; that budget is exhausted. Its artifact,
+sandbox, frozen QA copies, hashes, and zero-credit history remain immutable.
+
+Prospectively, `Unreal/Plugins/LongTableHouseCore/**` transfers to Grok under one
+new schema-valid clean-room packet. Grok must implement from the public contract
+and accepted Claude interfaces only. It is prohibited from reading, copying,
+patching, importing, or claiming provenance from the Antigravity sandbox or QA
+copies. The transfer creates one active repository writer and does not rewrite
+Antigravity's historical assignment, result, or workload credit.
 
 ## Digest reconciliation
 

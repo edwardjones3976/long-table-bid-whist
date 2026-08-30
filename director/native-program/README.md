@@ -59,9 +59,11 @@ physical headset, external account, human cohort, or owner gate.
 
 - Claude: TypeScript authority, protocol, core table/runtime, composition root.
 - Cursor: native XR hands/controllers, presence, MR/VR environment adapters.
-- Grok: private-session, host, reconnect, voice/safety and social adapters.
-- Gemini Antigravity: isolated Long Table House queue/rotation/standings core
-  produced from a closed public contract without private repository context.
+- Grok: private-session, host, reconnect, voice/safety and social adapters,
+  plus the prospective clean-room in-repository HouseCore fallback.
+- Gemini Antigravity: historical isolated Long Table House core attempt from a
+  closed public contract; its rejected artifact is quarantined and is not an
+  integration dependency.
 - OpenAI: cross-module QA, evidence binding, findings, kickback and acceptance;
   no product-code ownership.
 

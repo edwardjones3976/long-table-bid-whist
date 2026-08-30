@@ -69,12 +69,14 @@ native_code_assignments:
   grok:
     program_capacity_units: 17
     allocation: {native_foundation_first_deal: 5, private_game_night: 6, long_table_house: 6}
-    owned_surfaces: ["services/session-gateway", "Unreal/Source/LongTableSocial", "Unreal/Content/Social"]
+    owned_surfaces: ["services/session-gateway", "Unreal/Source/LongTableSocial", "Unreal/Content/Social", "Unreal/Plugins/LongTableHouseCore"]
+    house_core_authority: "prospective clean-room fallback only; quarantined Antigravity source is prohibited"
   gemini_antigravity:
     program_capacity_units: 8
     allocation: {native_foundation_first_deal: 3, private_game_night: 3, long_table_house: 2}
     owned_surfaces: ["isolated/LongTableHouseCore"]
-    integration_destination: "Unreal/Plugins/LongTableHouseCore"
+    assignment_status: "revision exhausted; quarantined; zero accepted credit"
+    integration_destination: "transferred prospectively to Grok clean-room fallback"
     outbound_boundary: "closed public contract, enums, bounded integers, fixed strings and synthetic fixtures only; no private repository context"
   openai:
     program_capacity_units: 0
