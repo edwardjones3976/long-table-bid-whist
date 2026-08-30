@@ -82,6 +82,26 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLongTableConnectionStateEvent, ELon
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLongTableWireErrorEvent, ELongTableWireError, Code, const FString&, Detail);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLongTableFrameRejectedEvent, ELongTableFrameFault, Fault, const FString&, Detail);
 
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+/**
+ * Single-binding twins of the context-bound events above, used only by the
+ * guarded snapshot adapter: UE5.7's ordinary `Broadcast()` copies the full
+ * invocation list before invoking, so a reentrant Configure inside listener
+ * one could not stop listener two. The adapter instead copies the invocation
+ * list itself and invokes ONE copied binding at a time through these
+ * signatures, re-checking the context generation before each next binding.
+ * The reflected BlueprintAssignable API above is unchanged.
+ */
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLongTablePlayerProjectionSingle, const FLongTablePlayerProjection&, Projection);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLongTableHostProjectionSingle, const FLongTableHostProjection&, Projection);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLongTablePublicProjectionSingle, const FLongTablePublicProjection&, Projection);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLongTableReceiptSingle, const FLongTableIntentReceipt&, Receipt);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLongTableDealerCueSingle, const FLongTableDealerCueFrame&, Frame);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLongTableConnectionStateSingle, ELongTableConnectionState, State);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FLongTableWireErrorSingle, ELongTableWireError, Code, const FString&, Detail);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FLongTableFrameRejectedSingle, ELongTableFrameFault, Fault, const FString&, Detail);
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
+
 UCLASS(BlueprintType)
 class LONGTABLETABLE_API ULongTableAuthorityClient : public UObject
 {
@@ -131,8 +151,16 @@ public:
 	int32 AppliedFrameCount() const { return AppliedFrames; }
 	const FString& InFlightIntentId() const { return Commit.InFlightId(); }
 	int32 InFlightExpectedVersion() const { return Commit.InFlightVersion(); }
-	void SetIdentityNonceForTests(const FString& Nonce) { Identity = FLongTableIntentIdentity(Nonce); }
-	const FString& IdentityNonce() const { return Identity.GetNonce(); }
+
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	/** True while this client can form a v2 intent identity: a welcomed grant with an unexhausted counter domain. */
+	UFUNCTION(BlueprintPure, Category = "Long Table") bool HasIntentIdentity() const { return Identity.CanIssue(); }
+	/** The exact next counter this client would issue under its welcomed grant. */
+	UFUNCTION(BlueprintPure, Category = "Long Table") int64 GetNextIntentCounter() const { return Identity.PeekNextCounter(); }
+	/** True once the table incarnation reported exhaustion (a null welcome counter or the maximum consumed). */
+	UFUNCTION(BlueprintPure, Category = "Long Table") bool IsIntentExhausted() const { return Identity.IsExhausted(); }
+	const FLongTableIntentIdentity& IntentIdentityForTests() const { return Identity; }
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 	UPROPERTY(BlueprintAssignable, Category = "Long Table") FLongTablePlayerProjectionEvent OnPlayerProjection;
 	UPROPERTY(BlueprintAssignable, Category = "Long Table") FLongTableHostProjectionEvent OnHostProjection;
@@ -175,6 +203,19 @@ private:
 	 */
 	bool ApplyStaged(const FStagedPayloads& Staged);
 	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
+
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	/**
+	 * The guarded snapshot adapter behind every context-bound event: copies the
+	 * multicast's invocation list, then invokes one copied binding at a time
+	 * through the matching single-delegate signature, checking the context
+	 * generation before each next binding. Returns false when a reentrant
+	 * context change aborted the fanout, so the caller drops the old frame's
+	 * continuation. Compiles against the reflected dynamic-delegate API alone.
+	 */
+	template <typename MulticastType, typename SingleType, typename... TArgs>
+	bool BroadcastGuarded(const MulticastType& Delegate, TArgs&&... Args);
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 	void ResetContext();
 	void SetState(ELongTableConnectionState NewState);

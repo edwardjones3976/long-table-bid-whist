@@ -1,8 +1,8 @@
 {
   "bidOutsideManifest": {
-    "canonical": "{\"intentId\":\"fixture-intent-1\",\"intentKind\":\"preview\",\"outcome\":\"rejected\",\"code\":\"bid-outside-manifest\",\"message\":\"Not included in Alpha 0.1; available after the published-rules stage.\",\"committed\":false,\"version\":2}",
+    "canonical": "{\"intentId\":\"grant-1:1\",\"intentKind\":\"preview\",\"outcome\":\"rejected\",\"code\":\"bid-outside-manifest\",\"message\":\"Not included in Alpha 0.1; available after the published-rules stage.\",\"committed\":false,\"version\":2}",
     "value": {
-      "intentId": "fixture-intent-1",
+      "intentId": "grant-1:1",
       "intentKind": "preview",
       "outcome": "rejected",
       "code": "bid-outside-manifest",
@@ -12,9 +12,9 @@
     }
   },
   "unauthorizedRole": {
-    "canonical": "{\"intentId\":\"fixture-intent-2\",\"intentKind\":\"confirm\",\"outcome\":\"rejected\",\"code\":\"unauthorized-role\",\"message\":\"Your role cannot do that at this table.\",\"committed\":false,\"version\":2}",
+    "canonical": "{\"intentId\":\"grant-5:1\",\"intentKind\":\"confirm\",\"outcome\":\"rejected\",\"code\":\"unauthorized-role\",\"message\":\"Your role cannot do that at this table.\",\"committed\":false,\"version\":2}",
     "value": {
-      "intentId": "fixture-intent-2",
+      "intentId": "grant-5:1",
       "intentKind": "confirm",
       "outcome": "rejected",
       "code": "unauthorized-role",
@@ -24,9 +24,9 @@
     }
   },
   "nothingToConfirm": {
-    "canonical": "{\"intentId\":\"fixture-intent-3\",\"intentKind\":\"confirm\",\"outcome\":\"rejected\",\"code\":\"nothing-to-confirm\",\"message\":\"There is nothing to confirm.\",\"committed\":false,\"version\":2}",
+    "canonical": "{\"intentId\":\"grant-1:2\",\"intentKind\":\"confirm\",\"outcome\":\"rejected\",\"code\":\"nothing-to-confirm\",\"message\":\"There is nothing to confirm.\",\"committed\":false,\"version\":2}",
     "value": {
-      "intentId": "fixture-intent-3",
+      "intentId": "grant-1:2",
       "intentKind": "confirm",
       "outcome": "rejected",
       "code": "nothing-to-confirm",
@@ -36,9 +36,9 @@
     }
   },
   "notBetweenHands": {
-    "canonical": "{\"intentId\":\"fixture-intent-4\",\"intentKind\":\"host-pause\",\"outcome\":\"rejected\",\"code\":\"not-between-hands\",\"message\":\"That is only available between hands.\",\"committed\":false,\"version\":2}",
+    "canonical": "{\"intentId\":\"grant-5:2\",\"intentKind\":\"host-pause\",\"outcome\":\"rejected\",\"code\":\"not-between-hands\",\"message\":\"That is only available between hands.\",\"committed\":false,\"version\":2}",
     "value": {
-      "intentId": "fixture-intent-4",
+      "intentId": "grant-5:2",
       "intentKind": "host-pause",
       "outcome": "rejected",
       "code": "not-between-hands",
@@ -48,9 +48,9 @@
     }
   },
   "acceptedPreview": {
-    "canonical": "{\"intentId\":\"fixture-preview-1\",\"intentKind\":\"preview\",\"outcome\":\"accepted\",\"code\":null,\"message\":\"\",\"committed\":false,\"version\":2}",
+    "canonical": "{\"intentId\":\"grant-1:3\",\"intentKind\":\"preview\",\"outcome\":\"accepted\",\"code\":null,\"message\":\"\",\"committed\":false,\"version\":2}",
     "value": {
-      "intentId": "fixture-preview-1",
+      "intentId": "grant-1:3",
       "intentKind": "preview",
       "outcome": "accepted",
       "code": null,
@@ -60,9 +60,9 @@
     }
   },
   "duplicate": {
-    "canonical": "{\"intentId\":\"fixture-preview-1\",\"intentKind\":\"preview\",\"outcome\":\"duplicate\",\"code\":\"duplicate-input-id\",\"message\":\"That input was already handled.\",\"committed\":false,\"version\":2}",
+    "canonical": "{\"intentId\":\"grant-1:3\",\"intentKind\":\"preview\",\"outcome\":\"duplicate\",\"code\":\"duplicate-input-id\",\"message\":\"That input was already handled.\",\"committed\":false,\"version\":2}",
     "value": {
-      "intentId": "fixture-preview-1",
+      "intentId": "grant-1:3",
       "intentKind": "preview",
       "outcome": "duplicate",
       "code": "duplicate-input-id",
@@ -72,9 +72,9 @@
     }
   },
   "committedConfirm": {
-    "canonical": "{\"intentId\":\"fixture-intent-7\",\"intentKind\":\"confirm\",\"outcome\":\"accepted\",\"code\":null,\"message\":\"\",\"committed\":true,\"version\":3}",
+    "canonical": "{\"intentId\":\"grant-1:4\",\"intentKind\":\"confirm\",\"outcome\":\"accepted\",\"code\":null,\"message\":\"\",\"committed\":true,\"version\":3}",
     "value": {
-      "intentId": "fixture-intent-7",
+      "intentId": "grant-1:4",
       "intentKind": "confirm",
       "outcome": "accepted",
       "code": null,
@@ -84,9 +84,9 @@
     }
   },
   "staleVersion": {
-    "canonical": "{\"intentId\":\"fixture-intent-8\",\"intentKind\":\"cancel\",\"outcome\":\"rejected\",\"code\":\"stale-version\",\"message\":\"Your view of the table is out of date. Resyncing.\",\"committed\":false,\"version\":3}",
+    "canonical": "{\"intentId\":\"grant-1:5\",\"intentKind\":\"cancel\",\"outcome\":\"rejected\",\"code\":\"stale-version\",\"message\":\"Your view of the table is out of date. Resyncing.\",\"committed\":false,\"version\":3}",
     "value": {
-      "intentId": "fixture-intent-8",
+      "intentId": "grant-1:5",
       "intentKind": "cancel",
       "outcome": "rejected",
       "code": "stale-version",
@@ -96,9 +96,9 @@
     }
   },
   "hostAnnounce": {
-    "canonical": "{\"intentId\":\"fixture-intent-9\",\"intentKind\":\"host-announce\",\"outcome\":\"accepted\",\"code\":null,\"message\":\"\",\"committed\":false,\"version\":4}",
+    "canonical": "{\"intentId\":\"grant-5:3\",\"intentKind\":\"host-announce\",\"outcome\":\"accepted\",\"code\":null,\"message\":\"\",\"committed\":false,\"version\":4}",
     "value": {
-      "intentId": "fixture-intent-9",
+      "intentId": "grant-5:3",
       "intentKind": "host-announce",
       "outcome": "accepted",
       "code": null,

@@ -27,7 +27,10 @@ import {
   HOST_CONTROLS,
   HOST_PROJECTION,
   INTENT_AUTHORITY,
+  INTENT_COUNTER_MAX,
+  INTENT_COUNTER_MIN,
   INTENT_KINDS,
+  INTENT_LANES,
   INTENT_RECEIPT,
   LIMITS,
   MANIFEST_ID,
@@ -51,6 +54,7 @@ import {
   type AuthorityMessage,
   type ClientMessage,
   type DealerCueFrame,
+  type IntentLane,
   type IntentReceipt,
   type Role,
   type Seat,
@@ -157,12 +161,21 @@ function send(drive: Drive, connectionId: string, message: ClientMessage): Outbo
   return out;
 }
 
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+/** The connection's lane identity: its current server-issued grant plus the exact next counter. */
+function laneIntentId(drive: Drive, connectionId: Role): string {
+  const lane: IntentLane = connectionId === "player" ? "south" : "host";
+  const next = drive.table.nextIntentCounter(lane);
+  if (next === null) throw new Error(`fixture lane ${lane} exhausted`);
+  return `${drive.table.laneGrant(lane)}:${next}`;
+}
+
 function sendIntent(drive: Drive, connectionId: Role, intent: TableIntent, overrides: { intentId?: string; expectedVersion?: number } = {}): IntentReceipt {
   drive.intentCounter += 1;
   const out = send(drive, connectionId, {
     type: "intent",
     tableId: TABLE_ID,
-    intentId: overrides.intentId ?? `fixture-intent-${drive.intentCounter}`,
+    intentId: overrides.intentId ?? laneIntentId(drive, connectionId),
     expectedVersion: overrides.expectedVersion ?? drive.table.currentVersion,
     intent,
   });
@@ -170,6 +183,7 @@ function sendIntent(drive: Drive, connectionId: Role, intent: TableIntent, overr
   if (!receipt || receipt.type !== "receipt") throw new Error("no receipt returned");
   return receipt.receipt;
 }
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 function hello(role: Role, lastVersion: number | null = null): ClientMessage {
   return { type: "hello", protocolVersion: PROTOCOL_VERSION, token: TOKENS[role], role, tableId: TABLE_ID, displayName: role === "player" ? "Ada" : "", lastVersion };
@@ -254,8 +268,12 @@ export function buildFixtures(): FixtureSet {
   receipts.nothingToConfirm = sendIntent(drive, "player", { kind: "confirm" });
   receipts.notBetweenHands = sendIntent(drive, "host", { kind: "host-pause" });
   const versionBeforeCommit = drive.table.currentVersion;
-  receipts.acceptedPreview = sendIntent(drive, "player", southChoice(drive, "bid").intent, { intentId: "fixture-preview-1" });
-  receipts.duplicate = sendIntent(drive, "player", southChoice(drive, "bid").intent, { intentId: "fixture-preview-1" });
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+  // The duplicate example resends the exact identity the accepted preview consumed.
+  const previewIdentity = laneIntentId(drive, "player");
+  receipts.acceptedPreview = sendIntent(drive, "player", southChoice(drive, "bid").intent, { intentId: previewIdentity });
+  receipts.duplicate = sendIntent(drive, "player", southChoice(drive, "bid").intent, { intentId: previewIdentity });
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
   receipts.committedConfirm = sendIntent(drive, "player", { kind: "confirm" });
   // The confirm advanced the shared version; an intent formed against the old view is stale.
   receipts.staleVersion = sendIntent(drive, "player", { kind: "cancel" }, { expectedVersion: versionBeforeCommit });
@@ -335,7 +353,7 @@ export function buildFixtures(): FixtureSet {
       { kind: "host-transfer", participantId: "p-north" },
       { kind: "host-end-event" },
     ] as TableIntent[]
-  ).map((intent, index) => ({ type: "intent", tableId: TABLE_ID, intentId: `example-${index + 1}`, expectedVersion: 12, intent }));
+  ).map((intent, index) => ({ type: "intent", tableId: TABLE_ID, intentId: `grant-1:${index + 1}`, expectedVersion: 12, intent }));
 
   const clientMessages: ClientMessage[] = [
     hello("player"),
@@ -392,6 +410,18 @@ export function buildFixtures(): FixtureSet {
     { name: "player welcome with a null projection", schema: "authority-message", payload: { ...welcomes.player, projection: null }, code: "not-an-object", path: "authority.projection" },
     { name: "dealer cue whose inner frame is for another table", schema: "authority-message", payload: { type: "dealer-cue", tableId: TABLE_ID, frame: { ...cues[0], tableId: "table-elsewhere" } }, code: "value-out-of-range", path: "authority.frame.tableId" },
     // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
+    // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+    // Intent-counter crossovers: entitled welcomes carry an exact positive
+    // safe-integer counter or null; public and dealer welcomes accept null and
+    // nothing else. Both decoders reject identically.
+    { name: "player welcome with a zero next counter", schema: "authority-message", payload: { ...welcomes.player, nextIntentCounter: 0 }, code: "value-out-of-range", path: "authority.nextIntentCounter" },
+    { name: "player welcome with a fractional next counter", schema: "authority-message", payload: { ...welcomes.player, nextIntentCounter: 1.5 }, code: "type-mismatch", path: "authority.nextIntentCounter" },
+    { name: "player welcome with a counter past the maximum", schema: "authority-message", payload: { ...welcomes.player, nextIntentCounter: 9007199254740992 }, code: "value-out-of-range", path: "authority.nextIntentCounter" },
+    { name: "host welcome with a string next counter", schema: "authority-message", payload: { ...welcomes.host, nextIntentCounter: "7" }, code: "type-mismatch", path: "authority.nextIntentCounter" },
+    { name: "public welcome with a next counter", schema: "authority-message", payload: { ...welcomes.public, nextIntentCounter: 4 }, code: "value-out-of-range", path: "authority.nextIntentCounter" },
+    { name: "dealer welcome with a next counter", schema: "authority-message", payload: { ...welcomes.dealer, nextIntentCounter: 1 }, code: "value-out-of-range", path: "authority.nextIntentCounter" },
+    { name: "welcome missing its next counter", schema: "authority-message", payload: (({ nextIntentCounter: _next, ...rest }) => rest)(welcomes.player as unknown as Record<string, unknown>), code: "missing-field", path: "authority.nextIntentCounter" },
+    // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
   ];
 
   const inventories = Object.fromEntries(SCHEMA_INVENTORIES.map((entry) => [entry.name, [...entry.inventory]]));
@@ -402,9 +432,18 @@ export function buildFixtures(): FixtureSet {
       manifestId: MANIFEST_ID,
       manifestDigest: manifestDigest(),
       rulesManifest: RULES_MANIFEST,
+      // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+      intentIdentity: {
+        schema: "long-table-intent-idempotency/v2",
+        format: "<server-issued-role-grant-sessionId>:<canonical-decimal-counter>",
+        counterMin: INTENT_COUNTER_MIN,
+        counterMax: INTENT_COUNTER_MAX,
+      },
+      // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
       vocabulary: {
         seats: SEATS,
         seatLabels: SEAT_LABELS,
+        intentLanes: INTENT_LANES,
         suits: SUITS,
         contractModes: CONTRACT_MODES,
         phases: PHASES,

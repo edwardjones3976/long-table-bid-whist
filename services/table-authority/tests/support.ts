@@ -7,7 +7,7 @@
 import { expect } from "vitest";
 
 import type { GameState, Seat } from "../../../packages/rules-core/src";
-import type { DealerCueFrame, IntentReceipt, PlayerProjection, TableIntent } from "../../../packages/protocol/src";
+import type { DealerCueFrame, IntentLane, IntentReceipt, PlayerProjection, TableIntent } from "../../../packages/protocol/src";
 import { TableAuthority, type Actor, type HistoryFrame, type SeatBinding, type SeatUpdate } from "../src/table";
 
 export const PARTICIPANTS = {
@@ -64,20 +64,42 @@ export interface SubmitOptions {
   expectedVersion?: number;
 }
 
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+/** The one preallocated lane an actor's intents consume from, or null for public/dealer. */
+export function laneFor(actor: Actor): IntentLane | null {
+  if (actor.role === "player") return actor.seat;
+  if (actor.role === "host") return "host";
+  return null;
+}
+
+/** The lane's current `<grant>:<exact-next-counter>` identity, exactly as an entitled connection would form it. */
+export function nextIntentId(table: TableAuthority, lane: IntentLane): string {
+  const next = table.nextIntentCounter(lane);
+  if (next === null) throw new Error(`lane ${lane} has no next counter (incarnation exhausted)`);
+  return `${table.laneGrant(lane)}:${next}`;
+}
+
 export function submit(
   table: TableAuthority,
   actor: Actor,
   intent: TableIntent,
   options: SubmitOptions = {},
 ): { receipt: IntentReceipt; frame: HistoryFrame | null; seatUpdate: SeatUpdate | null } {
+  const lane = laneFor(actor);
   counter += 1;
-  return table.submitIntent(actor, {
+  // A public/dealer actor never holds a grant; any identity it submits is
+  // refused before lane lookup, so an arbitrary string exercises that path.
+  const intentId = options.intentId ?? (lane ? nextIntentId(table, lane) : `unentitled-${counter}`);
+  const result = table.submitIntent(actor, {
     tableId: table.tableId,
-    intentId: options.intentId ?? `intent-${counter}`,
+    intentId,
     expectedVersion: options.expectedVersion ?? table.currentVersion,
     intent,
   });
+  if (result.identityViolation) throw new Error(`unexpected identity violation: ${result.identityViolation}`);
+  return { receipt: result.receipt, frame: result.frame, seatUpdate: result.seatUpdate };
 }
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 /** The seat's own projection as its current owner would receive it. */
 export function playerSnapshot(table: TableAuthority, seat: Seat): PlayerProjection {

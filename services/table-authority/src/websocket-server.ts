@@ -221,9 +221,17 @@ export function startAuthorityServer(options: ServerOptions): Promise<RunningSer
     };
     sockets.set(connectionId, { socket, finish });
 
+    // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
     const consume = (chunk: Buffer) => {
       const { frames, failure } = parser.push(chunk);
       for (const frame of frames) {
+        // Every finish path is terminal within the current parsed-frame loop:
+        // once this connection finished — a policy close delivered by the
+        // handlers (`closeAfter`), an echoed close frame, or a raw teardown —
+        // no later frame from the same chunk is dispatched. Without this, a
+        // single write coalescing several frames could bind a fresh session
+        // after its own policy close and resurrect retired presence.
+        if (closed) return;
         if (frame.opcode === OPCODE_TEXT) {
           deliver(options.handlers.onText(connectionId, frame.payload.toString("utf8")));
         } else if (frame.opcode === OPCODE_PING) {
@@ -235,12 +243,13 @@ export function startAuthorityServer(options: ServerOptions): Promise<RunningSer
         }
         // Binary frames and pongs carry nothing the authority accepts.
       }
-      if (failure) {
+      if (failure && !closed) {
         log(`connection ${connectionId} closed: ${failure}`);
         socket.write(encodeCloseFrame(failure === "message-too-large" ? 1009 : 1002));
         finish();
       }
     };
+    // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
     if (head.length > 0) consume(head);
     socket.on("data", consume);

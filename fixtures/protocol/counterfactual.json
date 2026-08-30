@@ -12,7 +12,7 @@
   "host": {
     "actual": {
       "role": "host",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,
@@ -127,7 +127,7 @@
     },
     "counterfactual": {
       "role": "host",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,
@@ -244,7 +244,7 @@
   "public": {
     "actual": {
       "role": "public",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,
@@ -352,7 +352,7 @@
     },
     "counterfactual": {
       "role": "public",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,
@@ -463,7 +463,7 @@
     "seat": "south",
     "actual": {
       "role": "player",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,
@@ -718,7 +718,7 @@
     },
     "counterfactual": {
       "role": "player",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,

@@ -105,6 +105,7 @@ export const INTENT_RECEIPT_INVENTORY = [
   "version",
 ] as const;
 
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
 export const WELCOME_MESSAGE_INVENTORY = [
   "type",
   "protocolVersion",
@@ -113,8 +114,10 @@ export const WELCOME_MESSAGE_INVENTORY = [
   "seat",
   "tableId",
   "version",
+  "nextIntentCounter",
   "projection",
 ] as const;
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 export const ERROR_MESSAGE_INVENTORY = ["type", "code", "detail"] as const;
 

@@ -9,7 +9,7 @@ import { describe, expect, it } from "vitest";
 
 import { PROTOCOL_VERSION, type ClientMessage, type Role } from "../../../packages/protocol/src";
 import { AuthoritySessions, staticDirectory } from "../src/session";
-import { PARTICIPANTS, createTable } from "./support";
+import { PARTICIPANTS, createTable, nextIntentId } from "./support";
 
 const COLLIDING_DEALER_TOKEN = "tok-dealer-as-south";
 const COLLIDING_HOST_DEALER_TOKEN = "tok-dealer-as-host";
@@ -67,14 +67,14 @@ describe("credential kinds", () => {
     const out = sessions.handle("p", {
       type: "intent",
       tableId: "table-1",
-      intentId: "dealer-free-1",
+      intentId: nextIntentId(table, "south"),
       expectedVersion: table.currentVersion,
       intent: { kind: "preview", selection: { type: "pass" } },
     });
     const confirmed = sessions.handle("p", {
       type: "intent",
       tableId: "table-1",
-      intentId: "dealer-free-2",
+      intentId: nextIntentId(table, "south"),
       expectedVersion: table.currentVersion,
       intent: { kind: "confirm" },
     });

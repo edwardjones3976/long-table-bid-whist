@@ -4,7 +4,7 @@
     "schema": "host-projection",
     "payload": {
       "role": "host",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,
@@ -126,7 +126,7 @@
     "schema": "public-projection",
     "payload": {
       "role": "public",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,
@@ -241,7 +241,7 @@
     "schema": "public-projection",
     "payload": {
       "role": "public",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,
@@ -356,7 +356,7 @@
     "schema": "host-projection",
     "payload": {
       "role": "host",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,
@@ -478,7 +478,7 @@
     "schema": "player-projection",
     "payload": {
       "role": "player",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,
@@ -637,7 +637,7 @@
     "schema": "player-projection",
     "payload": {
       "role": "player",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": "7",
@@ -898,7 +898,7 @@
     "schema": "player-projection",
     "payload": {
       "role": "player",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,
@@ -1158,7 +1158,7 @@
     "schema": "public-projection",
     "payload": {
       "role": "public",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
       "tableId": "table-fixture-1",
       "version": 8,
@@ -1417,7 +1417,7 @@
     "schema": "client-message",
     "payload": {
       "type": "hello",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "token": "fixture-token-south",
       "role": "player",
       "tableId": "table-fixture-1",
@@ -1432,7 +1432,7 @@
     "name": "dealer cue with a card id",
     "schema": "dealer-cue",
     "payload": {
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "tableId": "table-fixture-1",
       "version": 3,
       "handNumber": 1,
@@ -1450,7 +1450,7 @@
     "name": "dealer cue with an unknown cue",
     "schema": "dealer-cue",
     "payload": {
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "tableId": "table-fixture-1",
       "version": 3,
       "handNumber": 1,
@@ -1479,15 +1479,16 @@
     "schema": "authority-message",
     "payload": {
       "type": "welcome",
-      "protocolVersion": "long-table-protocol/1",
-      "sessionId": "session-host",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "grant-5",
       "role": "host",
       "seat": null,
       "tableId": "table-fixture-1",
       "version": 2,
+      "nextIntentCounter": 1,
       "projection": {
         "role": "host",
-        "protocolVersion": "long-table-protocol/1",
+        "protocolVersion": "long-table-protocol/2",
         "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
         "tableId": "table-fixture-1",
         "version": 2,
@@ -1560,7 +1561,7 @@
     "name": "receipt with an unknown outcome",
     "schema": "receipt",
     "payload": {
-      "intentId": "fixture-intent-7",
+      "intentId": "grant-1:4",
       "intentKind": "confirm",
       "outcome": "maybe",
       "code": null,
@@ -1583,15 +1584,16 @@
     "schema": "authority-message",
     "payload": {
       "type": "welcome",
-      "protocolVersion": "long-table-protocol/1",
-      "sessionId": "session-host",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "grant-5",
       "role": "host",
       "seat": "south",
       "tableId": "table-fixture-1",
       "version": 2,
+      "nextIntentCounter": 1,
       "projection": {
         "role": "host",
-        "protocolVersion": "long-table-protocol/1",
+        "protocolVersion": "long-table-protocol/2",
         "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
         "tableId": "table-fixture-1",
         "version": 2,
@@ -1664,15 +1666,16 @@
     "schema": "authority-message",
     "payload": {
       "type": "welcome",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "sessionId": "session-public",
       "role": "public",
       "seat": "east",
       "tableId": "table-fixture-1",
       "version": 2,
+      "nextIntentCounter": null,
       "projection": {
         "role": "public",
-        "protocolVersion": "long-table-protocol/1",
+        "protocolVersion": "long-table-protocol/2",
         "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
         "tableId": "table-fixture-1",
         "version": 2,
@@ -1738,12 +1741,13 @@
     "schema": "authority-message",
     "payload": {
       "type": "welcome",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "sessionId": "session-dealer",
       "role": "dealer",
       "seat": "west",
       "tableId": "table-fixture-1",
       "version": 2,
+      "nextIntentCounter": null,
       "projection": null
     },
     "code": "value-out-of-range",
@@ -1754,15 +1758,16 @@
     "schema": "authority-message",
     "payload": {
       "type": "welcome",
-      "protocolVersion": "long-table-protocol/1",
-      "sessionId": "session-player",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "grant-1",
       "role": "player",
       "seat": null,
       "tableId": "table-fixture-1",
       "version": 2,
+      "nextIntentCounter": 1,
       "projection": {
         "role": "player",
-        "protocolVersion": "long-table-protocol/1",
+        "protocolVersion": "long-table-protocol/2",
         "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
         "tableId": "table-fixture-1",
         "version": 2,
@@ -2102,15 +2107,16 @@
     "schema": "authority-message",
     "payload": {
       "type": "welcome",
-      "protocolVersion": "long-table-protocol/1",
-      "sessionId": "session-player",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "grant-1",
       "role": "player",
       "seat": "south",
       "tableId": "table-fixture-1",
       "version": 2,
+      "nextIntentCounter": 1,
       "projection": {
         "role": "public",
-        "protocolVersion": "long-table-protocol/1",
+        "protocolVersion": "long-table-protocol/2",
         "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
         "tableId": "table-fixture-1",
         "version": 8,
@@ -2225,15 +2231,16 @@
     "schema": "authority-message",
     "payload": {
       "type": "welcome",
-      "protocolVersion": "long-table-protocol/1",
-      "sessionId": "session-host",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "grant-5",
       "role": "host",
       "seat": null,
       "tableId": "table-fixture-1",
       "version": 2,
+      "nextIntentCounter": 1,
       "projection": {
         "role": "public",
-        "protocolVersion": "long-table-protocol/1",
+        "protocolVersion": "long-table-protocol/2",
         "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
         "tableId": "table-fixture-1",
         "version": 8,
@@ -2348,15 +2355,16 @@
     "schema": "authority-message",
     "payload": {
       "type": "welcome",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "sessionId": "session-public",
       "role": "public",
       "seat": null,
       "tableId": "table-fixture-1",
       "version": 2,
+      "nextIntentCounter": null,
       "projection": {
         "role": "player",
-        "protocolVersion": "long-table-protocol/1",
+        "protocolVersion": "long-table-protocol/2",
         "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
         "tableId": "table-fixture-1",
         "version": 8,
@@ -2618,15 +2626,16 @@
     "schema": "authority-message",
     "payload": {
       "type": "welcome",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "sessionId": "session-dealer",
       "role": "dealer",
       "seat": null,
       "tableId": "table-fixture-1",
       "version": 2,
+      "nextIntentCounter": null,
       "projection": {
         "role": "public",
-        "protocolVersion": "long-table-protocol/1",
+        "protocolVersion": "long-table-protocol/2",
         "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
         "tableId": "table-fixture-1",
         "version": 8,
@@ -2741,12 +2750,13 @@
     "schema": "authority-message",
     "payload": {
       "type": "welcome",
-      "protocolVersion": "long-table-protocol/1",
-      "sessionId": "session-player",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "grant-1",
       "role": "player",
       "seat": "south",
       "tableId": "table-fixture-1",
       "version": 2,
+      "nextIntentCounter": 1,
       "projection": null
     },
     "code": "not-an-object",
@@ -2759,7 +2769,7 @@
       "type": "dealer-cue",
       "tableId": "table-fixture-1",
       "frame": {
-        "protocolVersion": "long-table-protocol/1",
+        "protocolVersion": "long-table-protocol/2",
         "tableId": "table-elsewhere",
         "version": 3,
         "handNumber": 1,
@@ -2772,5 +2782,1574 @@
     },
     "code": "value-out-of-range",
     "path": "authority.frame.tableId"
+  },
+  {
+    "name": "player welcome with a zero next counter",
+    "schema": "authority-message",
+    "payload": {
+      "type": "welcome",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "grant-1",
+      "role": "player",
+      "seat": "south",
+      "tableId": "table-fixture-1",
+      "version": 2,
+      "nextIntentCounter": 0,
+      "projection": {
+        "role": "player",
+        "protocolVersion": "long-table-protocol/2",
+        "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
+        "tableId": "table-fixture-1",
+        "version": 2,
+        "handNumber": 1,
+        "phase": "auction",
+        "turn": "south",
+        "turnLabel": "South",
+        "dealer": "east",
+        "dealerLabel": "East",
+        "contract": null,
+        "auction": [],
+        "publicTrick": [],
+        "completedTricks": [],
+        "booksNorthSouth": 0,
+        "booksEastWest": 0,
+        "scoreNorthSouth": 0,
+        "scoreEastWest": 0,
+        "seats": [
+          {
+            "seat": "south",
+            "seatLabel": "South",
+            "occupant": "human",
+            "displayName": "Ada",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "west",
+            "seatLabel": "West",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "north",
+            "seatLabel": "North",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "east",
+            "seatLabel": "East",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          }
+        ],
+        "statusLine": "Hand 1. south opens the auction.",
+        "summaryLine": null,
+        "paused": false,
+        "eventEnded": false,
+        "seat": "south",
+        "hand": [
+          {
+            "cardId": "spades-2",
+            "label": "2♠",
+            "glyph": "♠",
+            "rankText": "2",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-4",
+            "label": "4♣",
+            "glyph": "♣",
+            "rankText": "4",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "hearts-6",
+            "label": "6♥",
+            "glyph": "♥",
+            "rankText": "6",
+            "red": true,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "diamonds-6",
+            "label": "6♦",
+            "glyph": "♦",
+            "rankText": "6",
+            "red": true,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-3",
+            "label": "3♣",
+            "glyph": "♣",
+            "rankText": "3",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-5",
+            "label": "5♣",
+            "glyph": "♣",
+            "rankText": "5",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-9",
+            "label": "9♣",
+            "glyph": "♣",
+            "rankText": "9",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "hearts-3",
+            "label": "3♥",
+            "glyph": "♥",
+            "rankText": "3",
+            "red": true,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-12",
+            "label": "Q♣",
+            "glyph": "♣",
+            "rankText": "Q",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "spades-14",
+            "label": "A♠",
+            "glyph": "♠",
+            "rankText": "A",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-6",
+            "label": "6♣",
+            "glyph": "♣",
+            "rankText": "6",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "spades-7",
+            "label": "7♠",
+            "glyph": "♠",
+            "rankText": "7",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          }
+        ],
+        "legalChoices": [
+          {
+            "targetId": "pass",
+            "kind": "pass",
+            "label": "Pass",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "pass"
+              }
+            }
+          },
+          {
+            "targetId": "bid:3:low",
+            "kind": "bid",
+            "label": "3 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 3,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:3:high",
+            "kind": "bid",
+            "label": "3 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 3,
+                  "mode": "high"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:4:low",
+            "kind": "bid",
+            "label": "4 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 4,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:4:high",
+            "kind": "bid",
+            "label": "4 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 4,
+                  "mode": "high"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:5:low",
+            "kind": "bid",
+            "label": "5 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 5,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:5:high",
+            "kind": "bid",
+            "label": "5 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 5,
+                  "mode": "high"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:6:low",
+            "kind": "bid",
+            "label": "6 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 6,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:6:high",
+            "kind": "bid",
+            "label": "6 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 6,
+                  "mode": "high"
+                }
+              }
+            }
+          }
+        ],
+        "previewLabel": null,
+        "discardPicked": 0,
+        "discardTarget": 6,
+        "uncommittedRevision": 0,
+        "feedbackCode": null,
+        "feedbackLine": null,
+        "disabledNotices": [
+          {
+            "id": "level-7",
+            "label": "Level 7",
+            "explanation": "Not included in Alpha 0.1; available after the published-rules stage."
+          },
+          {
+            "id": "no-trump",
+            "label": "No Trump",
+            "explanation": "Not included in Alpha 0.1; available after the published-rules stage."
+          }
+        ]
+      }
+    },
+    "code": "value-out-of-range",
+    "path": "authority.nextIntentCounter"
+  },
+  {
+    "name": "player welcome with a fractional next counter",
+    "schema": "authority-message",
+    "payload": {
+      "type": "welcome",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "grant-1",
+      "role": "player",
+      "seat": "south",
+      "tableId": "table-fixture-1",
+      "version": 2,
+      "nextIntentCounter": 1.5,
+      "projection": {
+        "role": "player",
+        "protocolVersion": "long-table-protocol/2",
+        "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
+        "tableId": "table-fixture-1",
+        "version": 2,
+        "handNumber": 1,
+        "phase": "auction",
+        "turn": "south",
+        "turnLabel": "South",
+        "dealer": "east",
+        "dealerLabel": "East",
+        "contract": null,
+        "auction": [],
+        "publicTrick": [],
+        "completedTricks": [],
+        "booksNorthSouth": 0,
+        "booksEastWest": 0,
+        "scoreNorthSouth": 0,
+        "scoreEastWest": 0,
+        "seats": [
+          {
+            "seat": "south",
+            "seatLabel": "South",
+            "occupant": "human",
+            "displayName": "Ada",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "west",
+            "seatLabel": "West",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "north",
+            "seatLabel": "North",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "east",
+            "seatLabel": "East",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          }
+        ],
+        "statusLine": "Hand 1. south opens the auction.",
+        "summaryLine": null,
+        "paused": false,
+        "eventEnded": false,
+        "seat": "south",
+        "hand": [
+          {
+            "cardId": "spades-2",
+            "label": "2♠",
+            "glyph": "♠",
+            "rankText": "2",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-4",
+            "label": "4♣",
+            "glyph": "♣",
+            "rankText": "4",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "hearts-6",
+            "label": "6♥",
+            "glyph": "♥",
+            "rankText": "6",
+            "red": true,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "diamonds-6",
+            "label": "6♦",
+            "glyph": "♦",
+            "rankText": "6",
+            "red": true,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-3",
+            "label": "3♣",
+            "glyph": "♣",
+            "rankText": "3",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-5",
+            "label": "5♣",
+            "glyph": "♣",
+            "rankText": "5",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-9",
+            "label": "9♣",
+            "glyph": "♣",
+            "rankText": "9",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "hearts-3",
+            "label": "3♥",
+            "glyph": "♥",
+            "rankText": "3",
+            "red": true,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-12",
+            "label": "Q♣",
+            "glyph": "♣",
+            "rankText": "Q",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "spades-14",
+            "label": "A♠",
+            "glyph": "♠",
+            "rankText": "A",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-6",
+            "label": "6♣",
+            "glyph": "♣",
+            "rankText": "6",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "spades-7",
+            "label": "7♠",
+            "glyph": "♠",
+            "rankText": "7",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          }
+        ],
+        "legalChoices": [
+          {
+            "targetId": "pass",
+            "kind": "pass",
+            "label": "Pass",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "pass"
+              }
+            }
+          },
+          {
+            "targetId": "bid:3:low",
+            "kind": "bid",
+            "label": "3 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 3,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:3:high",
+            "kind": "bid",
+            "label": "3 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 3,
+                  "mode": "high"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:4:low",
+            "kind": "bid",
+            "label": "4 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 4,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:4:high",
+            "kind": "bid",
+            "label": "4 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 4,
+                  "mode": "high"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:5:low",
+            "kind": "bid",
+            "label": "5 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 5,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:5:high",
+            "kind": "bid",
+            "label": "5 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 5,
+                  "mode": "high"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:6:low",
+            "kind": "bid",
+            "label": "6 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 6,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:6:high",
+            "kind": "bid",
+            "label": "6 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 6,
+                  "mode": "high"
+                }
+              }
+            }
+          }
+        ],
+        "previewLabel": null,
+        "discardPicked": 0,
+        "discardTarget": 6,
+        "uncommittedRevision": 0,
+        "feedbackCode": null,
+        "feedbackLine": null,
+        "disabledNotices": [
+          {
+            "id": "level-7",
+            "label": "Level 7",
+            "explanation": "Not included in Alpha 0.1; available after the published-rules stage."
+          },
+          {
+            "id": "no-trump",
+            "label": "No Trump",
+            "explanation": "Not included in Alpha 0.1; available after the published-rules stage."
+          }
+        ]
+      }
+    },
+    "code": "type-mismatch",
+    "path": "authority.nextIntentCounter"
+  },
+  {
+    "name": "player welcome with a counter past the maximum",
+    "schema": "authority-message",
+    "payload": {
+      "type": "welcome",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "grant-1",
+      "role": "player",
+      "seat": "south",
+      "tableId": "table-fixture-1",
+      "version": 2,
+      "nextIntentCounter": 9007199254740992,
+      "projection": {
+        "role": "player",
+        "protocolVersion": "long-table-protocol/2",
+        "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
+        "tableId": "table-fixture-1",
+        "version": 2,
+        "handNumber": 1,
+        "phase": "auction",
+        "turn": "south",
+        "turnLabel": "South",
+        "dealer": "east",
+        "dealerLabel": "East",
+        "contract": null,
+        "auction": [],
+        "publicTrick": [],
+        "completedTricks": [],
+        "booksNorthSouth": 0,
+        "booksEastWest": 0,
+        "scoreNorthSouth": 0,
+        "scoreEastWest": 0,
+        "seats": [
+          {
+            "seat": "south",
+            "seatLabel": "South",
+            "occupant": "human",
+            "displayName": "Ada",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "west",
+            "seatLabel": "West",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "north",
+            "seatLabel": "North",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "east",
+            "seatLabel": "East",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          }
+        ],
+        "statusLine": "Hand 1. south opens the auction.",
+        "summaryLine": null,
+        "paused": false,
+        "eventEnded": false,
+        "seat": "south",
+        "hand": [
+          {
+            "cardId": "spades-2",
+            "label": "2♠",
+            "glyph": "♠",
+            "rankText": "2",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-4",
+            "label": "4♣",
+            "glyph": "♣",
+            "rankText": "4",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "hearts-6",
+            "label": "6♥",
+            "glyph": "♥",
+            "rankText": "6",
+            "red": true,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "diamonds-6",
+            "label": "6♦",
+            "glyph": "♦",
+            "rankText": "6",
+            "red": true,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-3",
+            "label": "3♣",
+            "glyph": "♣",
+            "rankText": "3",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-5",
+            "label": "5♣",
+            "glyph": "♣",
+            "rankText": "5",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-9",
+            "label": "9♣",
+            "glyph": "♣",
+            "rankText": "9",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "hearts-3",
+            "label": "3♥",
+            "glyph": "♥",
+            "rankText": "3",
+            "red": true,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-12",
+            "label": "Q♣",
+            "glyph": "♣",
+            "rankText": "Q",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "spades-14",
+            "label": "A♠",
+            "glyph": "♠",
+            "rankText": "A",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-6",
+            "label": "6♣",
+            "glyph": "♣",
+            "rankText": "6",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "spades-7",
+            "label": "7♠",
+            "glyph": "♠",
+            "rankText": "7",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          }
+        ],
+        "legalChoices": [
+          {
+            "targetId": "pass",
+            "kind": "pass",
+            "label": "Pass",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "pass"
+              }
+            }
+          },
+          {
+            "targetId": "bid:3:low",
+            "kind": "bid",
+            "label": "3 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 3,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:3:high",
+            "kind": "bid",
+            "label": "3 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 3,
+                  "mode": "high"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:4:low",
+            "kind": "bid",
+            "label": "4 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 4,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:4:high",
+            "kind": "bid",
+            "label": "4 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 4,
+                  "mode": "high"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:5:low",
+            "kind": "bid",
+            "label": "5 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 5,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:5:high",
+            "kind": "bid",
+            "label": "5 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 5,
+                  "mode": "high"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:6:low",
+            "kind": "bid",
+            "label": "6 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 6,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:6:high",
+            "kind": "bid",
+            "label": "6 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 6,
+                  "mode": "high"
+                }
+              }
+            }
+          }
+        ],
+        "previewLabel": null,
+        "discardPicked": 0,
+        "discardTarget": 6,
+        "uncommittedRevision": 0,
+        "feedbackCode": null,
+        "feedbackLine": null,
+        "disabledNotices": [
+          {
+            "id": "level-7",
+            "label": "Level 7",
+            "explanation": "Not included in Alpha 0.1; available after the published-rules stage."
+          },
+          {
+            "id": "no-trump",
+            "label": "No Trump",
+            "explanation": "Not included in Alpha 0.1; available after the published-rules stage."
+          }
+        ]
+      }
+    },
+    "code": "value-out-of-range",
+    "path": "authority.nextIntentCounter"
+  },
+  {
+    "name": "host welcome with a string next counter",
+    "schema": "authority-message",
+    "payload": {
+      "type": "welcome",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "grant-5",
+      "role": "host",
+      "seat": null,
+      "tableId": "table-fixture-1",
+      "version": 2,
+      "nextIntentCounter": "7",
+      "projection": {
+        "role": "host",
+        "protocolVersion": "long-table-protocol/2",
+        "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
+        "tableId": "table-fixture-1",
+        "version": 2,
+        "handNumber": 1,
+        "phase": "auction",
+        "turn": "south",
+        "turnLabel": "South",
+        "dealer": "east",
+        "dealerLabel": "East",
+        "contract": null,
+        "auction": [],
+        "publicTrick": [],
+        "completedTricks": [],
+        "booksNorthSouth": 0,
+        "booksEastWest": 0,
+        "scoreNorthSouth": 0,
+        "scoreEastWest": 0,
+        "seats": [
+          {
+            "seat": "south",
+            "seatLabel": "South",
+            "occupant": "human",
+            "displayName": "Ada",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "west",
+            "seatLabel": "West",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "north",
+            "seatLabel": "North",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "east",
+            "seatLabel": "East",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          }
+        ],
+        "statusLine": "Hand 1. south opens the auction.",
+        "summaryLine": null,
+        "paused": false,
+        "eventEnded": false,
+        "betweenHands": false,
+        "hostControls": [
+          "host-announce",
+          "host-transfer",
+          "host-end-event"
+        ],
+        "lastAnnouncement": null
+      }
+    },
+    "code": "type-mismatch",
+    "path": "authority.nextIntentCounter"
+  },
+  {
+    "name": "public welcome with a next counter",
+    "schema": "authority-message",
+    "payload": {
+      "type": "welcome",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "session-public",
+      "role": "public",
+      "seat": null,
+      "tableId": "table-fixture-1",
+      "version": 2,
+      "nextIntentCounter": 4,
+      "projection": {
+        "role": "public",
+        "protocolVersion": "long-table-protocol/2",
+        "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
+        "tableId": "table-fixture-1",
+        "version": 2,
+        "handNumber": 1,
+        "phase": "auction",
+        "turn": "south",
+        "turnLabel": "South",
+        "dealer": "east",
+        "dealerLabel": "East",
+        "contract": null,
+        "auction": [],
+        "publicTrick": [],
+        "completedTricks": [],
+        "booksNorthSouth": 0,
+        "booksEastWest": 0,
+        "scoreNorthSouth": 0,
+        "scoreEastWest": 0,
+        "seats": [
+          {
+            "seat": "south",
+            "seatLabel": "South",
+            "occupant": "human",
+            "displayName": "Ada",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "west",
+            "seatLabel": "West",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "north",
+            "seatLabel": "North",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "east",
+            "seatLabel": "East",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          }
+        ],
+        "statusLine": "Hand 1. south opens the auction.",
+        "summaryLine": null,
+        "paused": false,
+        "eventEnded": false
+      }
+    },
+    "code": "value-out-of-range",
+    "path": "authority.nextIntentCounter"
+  },
+  {
+    "name": "dealer welcome with a next counter",
+    "schema": "authority-message",
+    "payload": {
+      "type": "welcome",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "session-dealer",
+      "role": "dealer",
+      "seat": null,
+      "tableId": "table-fixture-1",
+      "version": 2,
+      "nextIntentCounter": 1,
+      "projection": null
+    },
+    "code": "value-out-of-range",
+    "path": "authority.nextIntentCounter"
+  },
+  {
+    "name": "welcome missing its next counter",
+    "schema": "authority-message",
+    "payload": {
+      "type": "welcome",
+      "protocolVersion": "long-table-protocol/2",
+      "sessionId": "grant-1",
+      "role": "player",
+      "seat": "south",
+      "tableId": "table-fixture-1",
+      "version": 2,
+      "projection": {
+        "role": "player",
+        "protocolVersion": "long-table-protocol/2",
+        "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
+        "tableId": "table-fixture-1",
+        "version": 2,
+        "handNumber": 1,
+        "phase": "auction",
+        "turn": "south",
+        "turnLabel": "South",
+        "dealer": "east",
+        "dealerLabel": "East",
+        "contract": null,
+        "auction": [],
+        "publicTrick": [],
+        "completedTricks": [],
+        "booksNorthSouth": 0,
+        "booksEastWest": 0,
+        "scoreNorthSouth": 0,
+        "scoreEastWest": 0,
+        "seats": [
+          {
+            "seat": "south",
+            "seatLabel": "South",
+            "occupant": "human",
+            "displayName": "Ada",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "west",
+            "seatLabel": "West",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "north",
+            "seatLabel": "North",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          },
+          {
+            "seat": "east",
+            "seatLabel": "East",
+            "occupant": "ai",
+            "displayName": "AI seat",
+            "connected": true,
+            "cardCount": 12
+          }
+        ],
+        "statusLine": "Hand 1. south opens the auction.",
+        "summaryLine": null,
+        "paused": false,
+        "eventEnded": false,
+        "seat": "south",
+        "hand": [
+          {
+            "cardId": "spades-2",
+            "label": "2♠",
+            "glyph": "♠",
+            "rankText": "2",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-4",
+            "label": "4♣",
+            "glyph": "♣",
+            "rankText": "4",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "hearts-6",
+            "label": "6♥",
+            "glyph": "♥",
+            "rankText": "6",
+            "red": true,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "diamonds-6",
+            "label": "6♦",
+            "glyph": "♦",
+            "rankText": "6",
+            "red": true,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-3",
+            "label": "3♣",
+            "glyph": "♣",
+            "rankText": "3",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-5",
+            "label": "5♣",
+            "glyph": "♣",
+            "rankText": "5",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-9",
+            "label": "9♣",
+            "glyph": "♣",
+            "rankText": "9",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "hearts-3",
+            "label": "3♥",
+            "glyph": "♥",
+            "rankText": "3",
+            "red": true,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-12",
+            "label": "Q♣",
+            "glyph": "♣",
+            "rankText": "Q",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "spades-14",
+            "label": "A♠",
+            "glyph": "♠",
+            "rankText": "A",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "clubs-6",
+            "label": "6♣",
+            "glyph": "♣",
+            "rankText": "6",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          },
+          {
+            "cardId": "spades-7",
+            "label": "7♠",
+            "glyph": "♠",
+            "rankText": "7",
+            "red": false,
+            "legal": false,
+            "selectedForDiscard": false,
+            "previewed": false
+          }
+        ],
+        "legalChoices": [
+          {
+            "targetId": "pass",
+            "kind": "pass",
+            "label": "Pass",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "pass"
+              }
+            }
+          },
+          {
+            "targetId": "bid:3:low",
+            "kind": "bid",
+            "label": "3 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 3,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:3:high",
+            "kind": "bid",
+            "label": "3 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 3,
+                  "mode": "high"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:4:low",
+            "kind": "bid",
+            "label": "4 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 4,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:4:high",
+            "kind": "bid",
+            "label": "4 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 4,
+                  "mode": "high"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:5:low",
+            "kind": "bid",
+            "label": "5 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 5,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:5:high",
+            "kind": "bid",
+            "label": "5 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 5,
+                  "mode": "high"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:6:low",
+            "kind": "bid",
+            "label": "6 Low",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 6,
+                  "mode": "low"
+                }
+              }
+            }
+          },
+          {
+            "targetId": "bid:6:high",
+            "kind": "bid",
+            "label": "6 High",
+            "intent": {
+              "kind": "preview",
+              "selection": {
+                "type": "bid",
+                "bid": {
+                  "level": 6,
+                  "mode": "high"
+                }
+              }
+            }
+          }
+        ],
+        "previewLabel": null,
+        "discardPicked": 0,
+        "discardTarget": 6,
+        "uncommittedRevision": 0,
+        "feedbackCode": null,
+        "feedbackLine": null,
+        "disabledNotices": [
+          {
+            "id": "level-7",
+            "label": "Level 7",
+            "explanation": "Not included in Alpha 0.1; available after the published-rules stage."
+          },
+          {
+            "id": "no-trump",
+            "label": "No Trump",
+            "explanation": "Not included in Alpha 0.1; available after the published-rules stage."
+          }
+        ]
+      }
+    },
+    "code": "missing-field",
+    "path": "authority.nextIntentCounter"
   }
 ]

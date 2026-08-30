@@ -12,20 +12,47 @@
 #include "LongTableProjections.h"
 #include "LongTableCommitMachine.generated.h"
 
-/** Monotonic intent ids: `<session nonce>:<counter>`, at most 64 characters. */
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+/**
+ * long-table-intent-idempotency/v2 identity: `<server-issued-grant>:<counter>`.
+ *
+ * The grant and the next counter come only from an authenticated welcome. The
+ * client never invents a nonce, never wraps, and never rolls the counter
+ * backwards under the same grant; adopting a different grant restarts the
+ * counter domain and forgets the old one.
+ */
 struct LONGTABLETABLE_API FLongTableIntentIdentity
 {
-	FLongTableIntentIdentity();
-	explicit FLongTableIntentIdentity(const FString& InNonce);
+	/**
+	 * Adopts the welcomed grant and next counter. Under the same grant the
+	 * counter only moves forward; a different grant replaces the domain. A
+	 * welcome without a counter marks the incarnation exhausted.
+	 */
+	void Adopt(const FString& InGrant, bool bInHasNext, int64 InNext);
+	/** Records that the authority consumed `Counter` under the current grant (any receipt outcome). */
+	void MarkConsumed(int64 Counter);
+	void MarkExhausted() { bExhausted = true; }
+	void Reset();
 
-	FString Next();
-	const FString& GetNonce() const { return Nonce; }
-	int32 GetCounter() const { return Counter; }
+	bool IsBound() const { return !Grant.IsEmpty(); }
+	bool IsExhausted() const { return bExhausted; }
+	bool CanIssue() const { return IsBound() && !bExhausted && NextCounter <= MaxCounter(); }
+	/** The next identity, advancing the counter; call only when CanIssue(). */
+	FString Issue();
+
+	const FString& GetGrant() const { return Grant; }
+	int64 PeekNextCounter() const { return NextCounter; }
+	int64 HighestConsumed() const { return LastConsumed; }
+
+	static int64 MaxCounter();
 
 private:
-	FString Nonce;
-	int32 Counter = 0;
+	FString Grant;
+	int64 NextCounter = 1;
+	int64 LastConsumed = 0;
+	bool bExhausted = false;
 };
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 UENUM(BlueprintType)
 enum class ELongTableCommitStage : uint8
@@ -36,11 +63,15 @@ enum class ELongTableCommitStage : uint8
 
 struct LONGTABLETABLE_API FLongTableCommitMachine
 {
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
 	/** Starts tracking an intent. Returns false when one is already in flight; nothing must be sent then. */
-	bool Begin(const FString& IntentId, const FLongTableIntent& Intent, int32 ExpectedVersion);
+	bool Begin(const FString& IntentId, const FLongTableIntent& Intent, int32 ExpectedVersion, int64 IntentCounter);
 	/** Applies a receipt. Returns true when it answered the in-flight intent. */
 	bool OnReceipt(const FLongTableIntentReceipt& Receipt);
+	/** Drops the in-flight intent without touching the local preview (identity refused, or grant changed). */
+	void AbandonInFlight();
 	void Reset();
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 	bool CanSubmit() const { return Stage == ELongTableCommitStage::Idle; }
 	bool HasInFlight() const { return Stage == ELongTableCommitStage::AwaitingReceipt; }
@@ -51,12 +82,14 @@ struct LONGTABLETABLE_API FLongTableCommitMachine
 	const FString& InFlightId() const { return InFlightIntentId; }
 	const FLongTableIntent& InFlight() const { return InFlightIntent; }
 	int32 InFlightVersion() const { return InFlightExpectedVersion; }
+	int64 InFlightCounter() const { return InFlightIntentCounter; }
 
 private:
 	ELongTableCommitStage Stage = ELongTableCommitStage::Idle;
 	FString InFlightIntentId;
 	FLongTableIntent InFlightIntent;
 	int32 InFlightExpectedVersion = 0;
+	int64 InFlightIntentCounter = 0;
 	bool bHasLocalPreview = false;
 	bool bNeedsResync = false;
 };

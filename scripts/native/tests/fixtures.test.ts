@@ -13,12 +13,17 @@ import {
   DEALER_CUES,
   DEALER_CUE_FRAME,
   HOST_PROJECTION,
+  INTENT_COUNTER_MAX,
+  INTENT_COUNTER_MIN,
   INTENT_KINDS,
+  INTENT_LANES,
   INTENT_RECEIPT,
   PLAYER_PROJECTION,
+  PROTOCOL_VERSION,
   PUBLIC_PROJECTION,
   REJECTION_CODES,
   SCHEMA_INVENTORIES,
+  WIRE_ERROR_CODES,
   canonicalJson,
   inventoryViolations,
   matchesInventory,
@@ -178,8 +183,52 @@ describe("golden protocol fixtures", () => {
       "dealer welcome carrying a projection",
       "player welcome with a null projection",
       "dealer cue whose inner frame is for another table",
+      // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+      "player welcome with a zero next counter",
+      "player welcome with a fractional next counter",
+      "player welcome with a counter past the maximum",
+      "host welcome with a string next counter",
+      "public welcome with a next counter",
+      "dealer welcome with a next counter",
+      "welcome missing its next counter",
+      // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
     ].forEach((name) => expect(names, name).toContain(name));
   });
+
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+  it("pins the frozen v2 intent-identity contract for the Unreal mirror", () => {
+    const manifest = committed["manifest.json"] as {
+      protocolVersion: string;
+      intentIdentity: { schema: string; format: string; counterMin: number; counterMax: number };
+      vocabulary: { intentLanes: string[]; wireErrorCodes: string[] };
+      inventories: Record<string, string[]>;
+    };
+    expect(PROTOCOL_VERSION).toBe("long-table-protocol/2");
+    expect(manifest.protocolVersion).toBe(PROTOCOL_VERSION);
+    expect(manifest.intentIdentity).toEqual({
+      schema: "long-table-intent-idempotency/v2",
+      format: "<server-issued-role-grant-sessionId>:<canonical-decimal-counter>",
+      counterMin: INTENT_COUNTER_MIN,
+      counterMax: INTENT_COUNTER_MAX,
+    });
+    expect(INTENT_COUNTER_MIN).toBe(1);
+    expect(INTENT_COUNTER_MAX).toBe(9007199254740991);
+    expect(manifest.vocabulary.intentLanes).toEqual([...INTENT_LANES]);
+    expect(manifest.vocabulary.wireErrorCodes).toEqual([...WIRE_ERROR_CODES]);
+    expect(WIRE_ERROR_CODES).toContain("intent-identity");
+    expect(WIRE_ERROR_CODES).toContain("intent-exhausted");
+    expect(manifest.inventories.WelcomeMessage).toContain("nextIntentCounter");
+    // The entitled welcomes in the golden authority messages carry their own
+    // grant and counter; the public and dealer welcomes carry null.
+    const authority = committed["authority-messages.json"] as { messages: { type: string; role?: string; nextIntentCounter?: number | null }[] };
+    const welcomes = authority.messages.filter((message) => message.type === "welcome");
+    expect(welcomes.map((message) => message.role)).toEqual(["player", "host", "public", "dealer"]);
+    expect(typeof welcomes[0].nextIntentCounter).toBe("number");
+    expect(typeof welcomes[1].nextIntentCounter).toBe("number");
+    expect(welcomes[2].nextIntentCounter).toBeNull();
+    expect(welcomes[3].nextIntentCounter).toBeNull();
+  });
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
   // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
   // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 });

@@ -114,6 +114,7 @@ enum class ELongTableDealerCue : uint8
 	EventEnded
 };
 
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
 UENUM(BlueprintType)
 enum class ELongTableWireError : uint8
 {
@@ -122,8 +123,13 @@ enum class ELongTableWireError : uint8
 	Unauthenticated,
 	NotWelcomed,
 	UnknownTable,
-	RoleUnavailable
+	RoleUnavailable,
+	/** The intent identity was not the lane's current grant and exact next counter (malformed, foreign grant or forward gap). */
+	IntentIdentity,
+	/** The table incarnation consumed its maximum counter; every new intent is refused. */
+	IntentExhausted
 };
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 UENUM(BlueprintType)
 enum class ELongTableClientMessageType : uint8 { Hello, Intent, Resync };
@@ -203,6 +209,17 @@ namespace LongTableProtocol
 	constexpr int32 MaxBidLevel = 7;
 	constexpr int32 TricksPerHand = 12;
 	constexpr int32 MaxReplayFrames = 512;
+
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	/**
+	 * long-table-intent-idempotency/v2: an intent identity is the lane's
+	 * current server-issued grant sessionId plus a canonical decimal counter in
+	 * [IntentCounterMin, IntentCounterMax]. Consuming the maximum counter
+	 * exhausts the entire table incarnation; there is no wrap.
+	 */
+	constexpr int64 IntentCounterMin = 1;
+	constexpr int64 IntentCounterMax = 9007199254740991LL;
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 	/** Every vocabulary list keyed by its manifest.json name. */
 	LONGTABLEPROTOCOL_API TArray<FLongTableVocabularyList> VocabularyLists();

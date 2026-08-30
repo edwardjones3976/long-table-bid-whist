@@ -191,37 +191,65 @@ export class AuthoritySessions {
   }
 
   // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
   /**
    * The role-discriminated welcome, or null when the table no longer entitles
    * the connection. Each variant is constructed in the exact welcome inventory
    * order (type, protocolVersion, sessionId, role, seat, tableId, version,
-   * projection), so a raw welcome value serializes identically to its schema.
+   * nextIntentCounter, projection), so a raw welcome value serializes
+   * identically to its schema.
+   *
+   * A player or host welcome exposes only its own lane's current grant and
+   * exact next counter — read from that one lane and nothing else, so no role
+   * can ever see another lane's grant. A public or dealer welcome carries the
+   * connection identifier only and a null counter.
    */
   private welcomeFor(connection: Connection, table: TableAuthority, protocolVersion: WelcomeMessage["protocolVersion"]): WelcomeMessage | null {
     const type = "welcome" as const;
-    const sessionId = connection.sessionId;
     const tableId = table.tableId;
     const version = table.currentVersion;
     switch (connection.role) {
       case "player": {
         const projection = table.snapshot("player", connection.seat, connection.participantId);
         if (connection.seat === null || !projection || projection.role !== "player") return null;
-        return { type, protocolVersion, sessionId, role: "player", seat: connection.seat, tableId, version, projection };
+        const seat = connection.seat;
+        return {
+          type,
+          protocolVersion,
+          sessionId: table.laneGrant(seat),
+          role: "player",
+          seat,
+          tableId,
+          version,
+          nextIntentCounter: table.nextIntentCounter(seat),
+          projection,
+        };
       }
       case "host": {
         const projection = table.snapshot("host", null, connection.participantId);
         if (!projection || projection.role !== "host") return null;
-        return { type, protocolVersion, sessionId, role: "host", seat: null, tableId, version, projection };
+        return {
+          type,
+          protocolVersion,
+          sessionId: table.laneGrant("host"),
+          role: "host",
+          seat: null,
+          tableId,
+          version,
+          nextIntentCounter: table.nextIntentCounter("host"),
+          projection,
+        };
       }
       case "public": {
         const projection = table.snapshot("public", null, connection.participantId);
         if (!projection || projection.role !== "public") return null;
-        return { type, protocolVersion, sessionId, role: "public", seat: null, tableId, version, projection };
+        return { type, protocolVersion, sessionId: connection.sessionId, role: "public", seat: null, tableId, version, nextIntentCounter: null, projection };
       }
       case "dealer":
-        return { type, protocolVersion, sessionId, role: "dealer", seat: null, tableId, version, projection: null };
+        return { type, protocolVersion, sessionId: connection.sessionId, role: "dealer", seat: null, tableId, version, nextIntentCounter: null, projection: null };
     }
   }
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
   private hello(connectionId: string, message: Extract<ClientMessage, { type: "hello" }>): Outbound[] {
     // A connection binds once. A second hello is refused and the connection is
@@ -324,6 +352,18 @@ export class AuthoritySessions {
       expectedVersion: message.expectedVersion,
       intent: message.intent,
     });
+    // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+    // Identity violations are protocol errors, never receipts: no counter was
+    // consumed and no lane changed. The connection stays open so the client
+    // can rewelcome or resync to learn its lane's current grant and counter.
+    if (result.identityViolation) {
+      const detail = result.identityViolation === "intent-exhausted"
+        ? "table incarnation exhausted"
+        : "intent identity is not the lane's current grant and exact next counter";
+      out.push(this.error(connectionId, result.identityViolation, detail));
+      return out;
+    }
+    // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
     out.push({ connectionId, message: { type: "receipt", tableId: table.tableId, receipt: result.receipt } });
     if (result.frame) out.push(...this.broadcast(table, result.frame));
     if (result.seatUpdate) out.push(...this.deliverSeatUpdate(table, result.seatUpdate));

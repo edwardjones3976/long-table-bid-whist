@@ -6,8 +6,23 @@
  */
 import { MANIFEST_ID } from "../../../src/game/model";
 
-export const PROTOCOL_VERSION = "long-table-protocol/1" as const;
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+export const PROTOCOL_VERSION = "long-table-protocol/2" as const;
 export type ProtocolVersion = typeof PROTOCOL_VERSION;
+
+/**
+ * long-table-intent-idempotency/v2: exactly five preallocated intent lanes per
+ * table — one per seat plus the host lane. An intent identity is the current
+ * server-issued role-grant sessionId of the lane plus an exact canonical
+ * decimal counter: `<grant>:<counter>`.
+ */
+export const INTENT_LANES = ["south", "west", "north", "east", "host"] as const;
+export type IntentLane = (typeof INTENT_LANES)[number];
+
+export const INTENT_COUNTER_MIN = 1;
+/** Consuming this counter exhausts the entire table incarnation; no wrap. */
+export const INTENT_COUNTER_MAX = 9007199254740991;
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 export { MANIFEST_ID };
 export type ManifestId = typeof MANIFEST_ID;

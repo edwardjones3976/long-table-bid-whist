@@ -9,9 +9,10 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { PROTOCOL_VERSION, type AuthorityMessage, type ClientMessage, type Role } from "../../../packages/protocol/src";
+import { PROTOCOL_VERSION, type AuthorityMessage, type ClientMessage, type IntentLane, type Role } from "../../../packages/protocol/src";
 import { AuthoritySessions, staticDirectory, type Outbound } from "../src/session";
-import { PARTICIPANTS, createTable, driveHand } from "./support";
+import type { TableAuthority } from "../src/table";
+import { PARTICIPANTS, createTable, driveHand, nextIntentId } from "./support";
 
 const TOKENS = { south: "tok-south", newcomer: "tok-newcomer", north: "tok-north", host: "tok-host", spectator: "tok-spectator" } as const;
 const NEWCOMER = "p-newcomer";
@@ -31,11 +32,14 @@ function hello(token: string, role: Role, lastVersion: number | null = null): Cl
   return { type: "hello", protocolVersion: PROTOCOL_VERSION, token, role, tableId: "table-1", displayName: "", lastVersion };
 }
 
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
 let counter = 0;
-function intent(expectedVersion: number, body: Extract<ClientMessage, { type: "intent" }>["intent"]): ClientMessage {
+function intent(table: TableAuthority, lane: IntentLane | null, expectedVersion: number, body: Extract<ClientMessage, { type: "intent" }>["intent"]): ClientMessage {
   counter += 1;
-  return { type: "intent", tableId: "table-1", intentId: `rebind-${counter}`, expectedVersion, intent: body };
+  const intentId = lane ? nextIntentId(table, lane) : `rebind-${counter}`;
+  return { type: "intent", tableId: "table-1", intentId, expectedVersion, intent: body };
 }
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 function messagesFor(outbound: Outbound[], connectionId: string): AuthorityMessage[] {
   return outbound.filter((item) => item.connectionId === connectionId).map((item) => item.message);
@@ -61,7 +65,7 @@ describe("seat rebinding", () => {
     expect(messagesFor(out, "h").some((m) => m.type === "projection" && m.projection.role === "host")).toBe(true);
 
     // Anything the old socket still sends is refused; no projection is built for it.
-    const late = sessions.handle("old", intent(table.currentVersion, { kind: "cancel" }));
+    const late = sessions.handle("old", intent(table, null, table.currentVersion, { kind: "cancel" }));
     expect(late.map((item) => item.message)).toEqual([{ type: "error", code: "not-welcomed", detail: "" }]);
     expect(table.snapshot("player", "south", PARTICIPANTS.south)).toBeNull();
 
@@ -129,7 +133,7 @@ describe("seat rebinding", () => {
     sessions.handle("h", hello(TOKENS.host, "host"));
     driveHand(table, ["south", "north"]);
 
-    const out = sessions.handle("h", intent(table.currentVersion, { kind: "host-substitute", seat: "north" }));
+    const out = sessions.handle("h", intent(table, "host", table.currentVersion, { kind: "host-substitute", seat: "north" }));
     const north = out.filter((item) => item.connectionId === "n");
     expect(north).toHaveLength(1);
     expect(north[0].message).toMatchObject({ type: "error", code: "role-unavailable" });
@@ -144,7 +148,7 @@ describe("seat rebinding", () => {
     const { table, sessions } = sessionsFor();
     sessions.handle("p", hello(TOKENS.south, "player"));
     sessions.handle("h", hello(TOKENS.host, "host"));
-    const out = sessions.handle("h", intent(table.currentVersion, { kind: "host-transfer", participantId: PARTICIPANTS.south }));
+    const out = sessions.handle("h", intent(table, "host", table.currentVersion, { kind: "host-transfer", participantId: PARTICIPANTS.south }));
     const host = out.filter((item) => item.connectionId === "h");
     expect(host[0].message.type).toBe("receipt");
     expect(host[host.length - 1].message).toMatchObject({ type: "error", code: "role-unavailable" });
@@ -153,5 +157,69 @@ describe("seat rebinding", () => {
     expect(sessions.handle("h2", hello(TOKENS.host, "host"))[0].message).toMatchObject({ type: "error", code: "role-unavailable" });
     expect(sessions.handle("sh", hello(TOKENS.south, "host"))[0].message.type).toBe("welcome");
   });
+
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+  it("rotates only the rebound seat's grant; the retired grant never becomes current again", () => {
+    const { table, sessions } = sessionsFor();
+    const before = table.intentLanes();
+    sessions.bindSeat("table-1", "south", seatedNewcomer());
+    const after = table.intentLanes();
+
+    expect(after.south.currentGrantSessionId).not.toBe(before.south.currentGrantSessionId);
+    expect(after.south.highestConsumedCounter).toBe(0);
+    (["west", "north", "east", "host"] as const).forEach((lane) => {
+      expect(after[lane]).toEqual(before[lane]);
+    });
+
+    // The retired grant is refused; the new occupant's welcome carries the new grant.
+    const stale = table.submitIntent(
+      { role: "player", participantId: NEWCOMER, seat: "south" },
+      { tableId: "table-1", intentId: `${before.south.currentGrantSessionId}:1`, expectedVersion: table.currentVersion, intent: { kind: "cancel" } },
+    );
+    expect(stale.identityViolation).toBe("intent-identity");
+    const joined = sessions.handle("new", hello(TOKENS.newcomer, "player"));
+    const welcome = messagesFor(joined, "new")[0];
+    expect(welcome.type === "welcome" && welcome.role === "player" && welcome.sessionId).toBe(after.south.currentGrantSessionId);
+    expect(welcome.type === "welcome" && welcome.role === "player" && welcome.nextIntentCounter).toBe(1);
+
+    // Rebinding again issues a strictly newer grant, never a recycled one.
+    sessions.bindSeat("table-1", "south", { occupant: "human", participantId: PARTICIPANTS.south, displayName: "south name", connected: false });
+    const again = table.laneGrant("south");
+    expect(again).not.toBe(before.south.currentGrantSessionId);
+    expect(again).not.toBe(after.south.currentGrantSessionId);
+  });
+
+  it("retires the substituted seat's grant and rotates only the host lane on host transfer, keeping player and host lanes independent", () => {
+    const table = createTable({ seed: "rebinding-grants", humans: ["south", "north"], host: PARTICIPANTS.south });
+    const { sessions } = sessionsFor(table);
+    const before = table.intentLanes();
+
+    // South holds both roles: the player lane and the host lane stay independent.
+    const preview = sessions.handle("p", hello(TOKENS.south, "player"));
+    expect(preview[0].message.type).toBe("welcome");
+    sessions.handle("hs", hello(TOKENS.south, "host"));
+    sessions.handle("p", intent(table, "south", table.currentVersion, { kind: "preview", selection: { type: "pass" } }));
+    expect(table.intentLaneState("south").highestConsumedCounter).toBe(1);
+    expect(table.intentLaneState("host").highestConsumedCounter).toBe(0);
+
+    driveHand(table, ["south", "north"]);
+    const southLaneAfterHand = table.intentLaneState("south");
+    const northGrantBefore = table.laneGrant("north");
+    const substitute = sessions.handle("hs", intent(table, "host", table.currentVersion, { kind: "host-substitute", seat: "north" }));
+    expect(substitute.some((item) => item.message.type === "receipt")).toBe(true);
+    expect(table.laneGrant("north")).not.toBe(northGrantBefore);
+    expect(table.intentLaneState("north").highestConsumedCounter).toBe(0);
+
+    // Host transfer consumes under the old host grant, then rotates only the host lane.
+    const hostGrantBefore = table.laneGrant("host");
+    const transfer = sessions.handle("hs", intent(table, "host", table.currentVersion, { kind: "host-transfer", participantId: PARTICIPANTS.south }));
+    expect(transfer.some((item) => item.message.type === "receipt" && item.message.receipt.outcome === "accepted")).toBe(true);
+    expect(table.laneGrant("host")).not.toBe(hostGrantBefore);
+    expect(table.intentLaneState("host").highestConsumedCounter).toBe(0);
+    // The south player lane kept its grant through every rotation above.
+    expect(table.laneGrant("south")).toBe(before.south.currentGrantSessionId);
+    expect(table.intentLaneState("south")).toEqual(southLaneAfterHand);
+  });
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 });
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]

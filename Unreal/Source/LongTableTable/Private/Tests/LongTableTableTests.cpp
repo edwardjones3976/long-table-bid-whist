@@ -87,36 +87,46 @@ namespace LongTableTableTests
 		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message, { FLongTableProtocolCodec::EncodeHostProjection(Base) });
 	}
 
-	FString PlayerWelcomeText(FLongTablePlayerProjection Base, int32 Version, bool bHasSeat = true, ELongTableSeat WelcomeSeat = ELongTableSeat::South, const FString& TableId = FixtureTableId)
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	// Crafted welcomes default to the fixture drive's grants ("grant-1" for the
+	// south player lane, "grant-5" for the host lane) with next counter 1, so a
+	// crafted rewelcome continues the same v2 counter domain as the golden
+	// fixture welcome unless a test asks otherwise.
+	FString PlayerWelcomeText(FLongTablePlayerProjection Base, int32 Version, bool bHasSeat = true, ELongTableSeat WelcomeSeat = ELongTableSeat::South, const FString& TableId = FixtureTableId, const FString& SessionId = TEXT("grant-1"), bool bHasNextCounter = true, int64 NextCounter = 1)
 	{
 		FLongTableAuthorityMessage Message;
 		Message.Type = ELongTableAuthorityMessageType::Welcome;
-		Message.Welcome.SessionId = TEXT("session-crafted");
+		Message.Welcome.SessionId = SessionId;
 		Message.Welcome.Role = ELongTableRole::Player;
 		Message.Welcome.bHasSeat = bHasSeat;
 		Message.Welcome.Seat = WelcomeSeat;
 		Message.Welcome.TableId = TableId;
 		Message.Welcome.Version = Version;
+		Message.Welcome.bHasNextIntentCounter = bHasNextCounter;
+		Message.Welcome.NextIntentCounter = bHasNextCounter ? NextCounter : 0;
 		Message.Welcome.bHasProjection = true;
 		Base.Version = Version;
 		Base.TableId = TableId;
 		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message, { FLongTableProtocolCodec::EncodePlayerProjection(Base) });
 	}
 
-	FString HostWelcomeText(FLongTableHostProjection Base, int32 Version, const FString& TableId = FixtureTableId)
+	FString HostWelcomeText(FLongTableHostProjection Base, int32 Version, const FString& TableId = FixtureTableId, bool bHasNextCounter = true, int64 NextCounter = 1)
 	{
 		FLongTableAuthorityMessage Message;
 		Message.Type = ELongTableAuthorityMessageType::Welcome;
-		Message.Welcome.SessionId = TEXT("session-host");
+		Message.Welcome.SessionId = TEXT("grant-5");
 		Message.Welcome.Role = ELongTableRole::Host;
 		Message.Welcome.bHasSeat = false;
 		Message.Welcome.TableId = TableId;
 		Message.Welcome.Version = Version;
+		Message.Welcome.bHasNextIntentCounter = bHasNextCounter;
+		Message.Welcome.NextIntentCounter = bHasNextCounter ? NextCounter : 0;
 		Message.Welcome.bHasProjection = true;
 		Base.Version = Version;
 		Base.TableId = TableId;
 		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message, { FLongTableProtocolCodec::EncodeHostProjection(Base) });
 	}
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 	FString ReceiptMessage(const FString& TableId, const FString& IntentId, ELongTableIntentKind Kind, ELongTableOutcome Outcome, bool bHasCode, ELongTableRejectionCode Code, bool bCommitted, int32 Version)
 	{
@@ -176,12 +186,14 @@ namespace LongTableTableTests
 	{
 		FLongTableAuthorityMessage Message;
 		Message.Type = ELongTableAuthorityMessageType::Welcome;
-		Message.Welcome.SessionId = TEXT("session-host");
+		Message.Welcome.SessionId = TEXT("grant-5");
 		Message.Welcome.Role = ELongTableRole::Host;
 		Message.Welcome.bHasSeat = true;
 		Message.Welcome.Seat = ELongTableSeat::South;
 		Message.Welcome.TableId = FixtureTableId;
 		Message.Welcome.Version = Version;
+		Message.Welcome.bHasNextIntentCounter = true;
+		Message.Welcome.NextIntentCounter = 1;
 		Message.Welcome.bHasProjection = true;
 		Base.Version = Version;
 		Base.TableId = FixtureTableId;
@@ -230,7 +242,6 @@ namespace LongTableTableTests
 			Client->AddToRoot();
 			Transport = MakeShared<FLongTableLoopbackTransport>();
 			Client->Configure(Config, Transport);
-			Client->SetIdentityNonceForTests(TEXT("test-nonce"));
 		}
 
 		~FClientHarness()
@@ -276,32 +287,53 @@ namespace LongTableTableTests
 
 using namespace LongTableTableTests;
 
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableIntentIdentityTest, "LongTable.Table.IntentIdentity", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
 bool FLongTableIntentIdentityTest::RunTest(const FString& Parameters)
 {
-	FLongTableIntentIdentity Fixed(TEXT("nonce"));
-	TestEqual(TEXT("first id"), Fixed.Next(), FString(TEXT("nonce:1")));
-	TestEqual(TEXT("second id"), Fixed.Next(), FString(TEXT("nonce:2")));
+	// Unbound: the client never invents an identity; only a welcome binds one.
+	FLongTableIntentIdentity Identity;
+	TestFalse(TEXT("unbound identity cannot issue"), Identity.CanIssue());
 
-	FLongTableIntentIdentity Random;
-	const FString First = Random.Next();
-	const FString Second = Random.Next();
-	TestNotEqual(TEXT("ids differ"), First, Second);
+	Identity.Adopt(TEXT("grant-7"), true, 4);
+	TestTrue(TEXT("welcomed identity can issue"), Identity.CanIssue());
+	const FString First = Identity.Issue();
+	TestEqual(TEXT("first id is the exact welcomed next"), First, FString(TEXT("grant-7:4")));
+	TestEqual(TEXT("second id advances by one"), Identity.Issue(), FString(TEXT("grant-7:5")));
 	TestTrue(TEXT("id within wire bound"), First.Len() <= 64);
-	TestEqual(TEXT("nonce length"), Random.GetNonce().Len(), 32);
+	Identity.MarkConsumed(5);
+	TestEqual(TEXT("consumption advances the watermark"), Identity.HighestConsumed(), static_cast<int64>(5));
 
-	FLongTableIntentIdentity Other;
-	TestNotEqual(TEXT("nonces differ across sessions"), Random.GetNonce(), Other.GetNonce());
+	// The same grant never rolls backwards; a re-adopt can only move forward.
+	Identity.Adopt(TEXT("grant-7"), true, 3);
+	TestEqual(TEXT("stale re-adopt cannot reduce the next counter"), Identity.PeekNextCounter(), static_cast<int64>(6));
+	TestEqual(TEXT("stale re-adopt cannot reduce the watermark"), Identity.HighestConsumed(), static_cast<int64>(5));
+
+	// A rotated grant restarts the domain and forgets the old counters.
+	Identity.Adopt(TEXT("grant-9"), true, 1);
+	TestEqual(TEXT("rotated grant restarts at its welcomed next"), Identity.Issue(), FString(TEXT("grant-9:1")));
+
+	// A null welcome counter marks the incarnation exhausted; no wrap exists.
+	Identity.Adopt(TEXT("grant-9"), false, 0);
+	TestFalse(TEXT("exhausted identity cannot issue"), Identity.CanIssue());
+
+	FLongTableIntentIdentity AtMaximum;
+	AtMaximum.Adopt(TEXT("g"), true, FLongTableIntentIdentity::MaxCounter());
+	TestTrue(TEXT("the maximum counter itself may issue"), AtMaximum.CanIssue());
+	TestEqual(TEXT("maximum id"), AtMaximum.Issue(), FString::Printf(TEXT("g:%lld"), FLongTableIntentIdentity::MaxCounter()));
+	AtMaximum.MarkConsumed(FLongTableIntentIdentity::MaxCounter());
+	TestFalse(TEXT("consuming the maximum exhausts the domain without wrapping"), AtMaximum.CanIssue());
 	return true;
 }
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableCommitMachineTest, "LongTable.Table.CommitMachine", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
 bool FLongTableCommitMachineTest::RunTest(const FString& Parameters)
 {
 	FLongTableCommitMachine Machine;
 	TestTrue(TEXT("idle can submit"), Machine.CanSubmit());
-	TestTrue(TEXT("begin preview"), Machine.Begin(TEXT("a:1"), PassPreview(), 3));
-	TestFalse(TEXT("second intent refused while in flight"), Machine.Begin(TEXT("a:2"), ConfirmIntent(), 3));
+	TestTrue(TEXT("begin preview"), Machine.Begin(TEXT("a:1"), PassPreview(), 3, 1));
+	TestFalse(TEXT("second intent refused while in flight"), Machine.Begin(TEXT("a:2"), ConfirmIntent(), 3, 2));
 	TestTrue(TEXT("in flight"), Machine.HasInFlight());
 	TestEqual(TEXT("original expected version kept"), Machine.InFlightVersion(), 3);
 
@@ -318,7 +350,7 @@ bool FLongTableCommitMachineTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("idle again"), Machine.CanSubmit());
 	TestTrue(TEXT("local preview held"), Machine.HasLocalPreview());
 
-	TestTrue(TEXT("begin confirm"), Machine.Begin(TEXT("a:2"), ConfirmIntent(), 4));
+	TestTrue(TEXT("begin confirm"), Machine.Begin(TEXT("a:2"), ConfirmIntent(), 4, 2));
 	FLongTableIntentReceipt Stale;
 	Stale.IntentId = TEXT("a:2");
 	Stale.IntentKind = ELongTableIntentKind::Confirm;
@@ -329,7 +361,7 @@ bool FLongTableCommitMachineTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("stale receipt requests resync"), Machine.NeedsResync());
 	TestTrue(TEXT("preview survives a rejection"), Machine.HasLocalPreview());
 
-	TestTrue(TEXT("begin confirm again"), Machine.Begin(TEXT("a:3"), ConfirmIntent(), 5));
+	TestTrue(TEXT("begin confirm again"), Machine.Begin(TEXT("a:3"), ConfirmIntent(), 5, 3));
 	FLongTableIntentReceipt Committed;
 	Committed.IntentId = TEXT("a:3");
 	Committed.IntentKind = ELongTableIntentKind::Confirm;
@@ -359,7 +391,7 @@ bool FLongTableClientHelloTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("hello display name"), Hello.Hello.DisplayName, FString(TEXT("Ada")));
 	TestFalse(TEXT("fresh hello does not resume"), Hello.Hello.bResume);
 	TestEqual(TEXT("fresh hello canonical form"), Harness.Transport->Sent[0],
-		FString(TEXT("{\"type\":\"hello\",\"protocolVersion\":\"long-table-protocol/1\",\"token\":\"fixture-token-south\",\"role\":\"player\",\"tableId\":\"table-fixture-1\",\"displayName\":\"Ada\",\"lastVersion\":null}")));
+		FString(TEXT("{\"type\":\"hello\",\"protocolVersion\":\"long-table-protocol/2\",\"token\":\"fixture-token-south\",\"role\":\"player\",\"tableId\":\"table-fixture-1\",\"displayName\":\"Ada\",\"lastVersion\":null}")));
 
 	const FString Welcome = WelcomeText(*this);
 	if (Welcome.IsEmpty()) { return false; }
@@ -386,7 +418,7 @@ bool FLongTableClientIntentTest::RunTest(const FString& Parameters)
 	const int32 Version = Harness.Client->GetLastAppliedVersion();
 
 	const FString IntentId = Harness.Client->SubmitIntent(PassPreview());
-	TestEqual(TEXT("intent id"), IntentId, FString(TEXT("test-nonce:1")));
+	TestEqual(TEXT("intent id is the welcomed grant and exact next counter"), IntentId, FString::Printf(TEXT("%s:1"), *Harness.Client->GetSessionId()));
 	FLongTableClientMessage Sent;
 	if (!TestTrue(TEXT("intent decodes"), Harness.DecodeSent(1, Sent))) { return false; }
 	TestEqual(TEXT("intent type"), Sent.Type, ELongTableClientMessageType::Intent);
@@ -419,7 +451,7 @@ bool FLongTableClientIntentTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("replayed same revision ignored"), Harness.Client->AppliedFrameCount(), Applied + 1);
 
 	const FString ConfirmId = Harness.Client->SubmitIntent(ConfirmIntent());
-	TestEqual(TEXT("confirm id"), ConfirmId, FString(TEXT("test-nonce:2")));
+	TestEqual(TEXT("confirm id advances the counter"), ConfirmId, FString::Printf(TEXT("%s:2"), *Harness.Client->GetSessionId()));
 	TestEqual(TEXT("three frames sent"), Harness.Transport->Sent.Num(), 3);
 	return true;
 }
@@ -562,7 +594,7 @@ bool FLongTableClientContextIsolationTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("player projection cleared"), Harness.Client->GetPlayerProjection().Hand.Num(), 0);
 	TestEqual(TEXT("player projection version cleared"), Harness.Client->GetPlayerProjection().Version, 0);
 	TestEqual(TEXT("applied frames reset"), Harness.Client->AppliedFrameCount(), 0);
-	TestNotEqual(TEXT("intent identity renewed"), Harness.Client->IdentityNonce(), FString(TEXT("test-nonce")));
+	TestFalse(TEXT("intent identity cleared with the context"), Harness.Client->HasIntentIdentity());
 
 	Harness.Client->Connect();
 	FLongTableClientMessage Hello;
@@ -1060,6 +1092,115 @@ bool FLongTablePlayerCounterfactualTest::RunTest(const FString& Parameters)
 }
 
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
+
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableClientContextEpochReentrancyTest, "LongTable.Table.Client.ContextEpochReentrancyStopsSiblingProjection", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FLongTableClientContextEpochReentrancyTest::RunTest(const FString& Parameters)
+{
+	// Two listeners bound in order. Listener one reconfigures context A to
+	// context B from inside the projection callback; listener two — a sibling
+	// inside the same fanout — must never observe the old context's
+	// projection, because the guarded snapshot adapter re-checks the context
+	// generation before every next copied binding. An ordinary Broadcast()
+	// on UE5.7 would have invoked listener two from its pre-copied list.
+	FClientHarness Harness;
+	ULongTableAuthorityCallbackProbe* First = NewObject<ULongTableAuthorityCallbackProbe>();
+	ULongTableAuthorityCallbackProbe* Second = NewObject<ULongTableAuthorityCallbackProbe>();
+	First->AddToRoot();
+	Second->AddToRoot();
+	Harness.Client->OnPlayerProjection.AddDynamic(First, &ULongTableAuthorityCallbackProbe::HandlePlayerProjection);
+	Harness.Client->OnPlayerProjection.AddDynamic(Second, &ULongTableAuthorityCallbackProbe::HandlePlayerProjection);
+
+	FLongTableClientConfig ContextB = PlayerConfig();
+	ContextB.TableId = TEXT("table-b");
+	const uint64 GenerationBefore = Harness.Client->GetContextGenerationForTests();
+	bool bReconfigured = false;
+	First->OnEvent = [&]()
+	{
+		if (!bReconfigured)
+		{
+			bReconfigured = true;
+			Harness.Client->Configure(ContextB, MakeShared<FLongTableLoopbackTransport>());
+		}
+	};
+
+	Harness.Client->Connect();
+	Harness.Transport->Inject(WelcomeText(*this));
+	TestTrue(TEXT("listener one saw the old-context projection and reconfigured"), bReconfigured);
+	TestEqual(TEXT("listener one received exactly one projection"), First->PlayerVersions.Num(), 1);
+	TestEqual(TEXT("listener two received no old-context projection"), Second->PlayerVersions.Num(), 0);
+	TestTrue(TEXT("the context generation advanced under the fanout"), Harness.Client->GetContextGenerationForTests() > GenerationBefore);
+	// The public client exposes context B, fully reset.
+	TestEqual(TEXT("client exposes the new table"), Harness.Client->GetTableId(), ContextB.TableId);
+	TestEqual(TEXT("new context starts disconnected"), Harness.Client->GetState(), ELongTableConnectionState::Disconnected);
+	TestEqual(TEXT("new context holds no version"), Harness.Client->GetLastAppliedVersion(), -1);
+	TestFalse(TEXT("new context holds no resume marker"), Harness.Client->IsWelcomed());
+	TestFalse(TEXT("new context holds no intent identity"), Harness.Client->HasIntentIdentity());
+	TestEqual(TEXT("new context caches no projection"), Harness.Client->GetPlayerProjection().Version, 0);
+
+	Harness.Client->OnPlayerProjection.RemoveAll(First);
+	Harness.Client->OnPlayerProjection.RemoveAll(Second);
+	First->RemoveFromRoot();
+	Second->RemoveFromRoot();
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableClientGrantCounterCoherenceTest, "LongTable.Table.Client.GrantAndCounterNeverRollBackwards", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FLongTableClientGrantCounterCoherenceTest::RunTest(const FString& Parameters)
+{
+	FLongTablePlayerProjection Base;
+	if (!LoadPlayerProjection(*this, Base)) { return false; }
+	FClientHarness Harness;
+	Harness.Client->Connect();
+	Harness.Transport->Inject(WelcomeText(*this));
+	const int32 Version = Harness.Client->GetLastAppliedVersion();
+	const FString Grant = Harness.Client->GetSessionId();
+	TestEqual(TEXT("welcomed grant"), Grant, FString(TEXT("grant-1")));
+	TestEqual(TEXT("welcomed next counter"), Harness.Client->GetNextIntentCounter(), static_cast<int64>(1));
+
+	// A receipt consumes counter 1 under the grant.
+	const FString IntentId = Harness.Client->SubmitIntent(PassPreview());
+	TestEqual(TEXT("issued identity"), IntentId, FString::Printf(TEXT("%s:1"), *Grant));
+	Harness.Transport->Inject(ReceiptMessage(Harness.Config.TableId, IntentId, ELongTableIntentKind::Preview, ELongTableOutcome::Accepted, false, ELongTableRejectionCode::EngineRejected, false, Version));
+	TestEqual(TEXT("next counter advanced by the receipt"), Harness.Client->GetNextIntentCounter(), static_cast<int64>(2));
+
+	// A same-grant welcome whose next counter is at or below the consumed
+	// watermark is incoherent and applies nothing.
+	const int32 Applied = Harness.Client->AppliedFrameCount();
+	Harness.Transport->Inject(PlayerWelcomeText(Base, Version + 1, true, ELongTableSeat::South, FixtureTableId, Grant, true, 1));
+	TestEqual(TEXT("rollback welcome applies nothing"), Harness.Client->AppliedFrameCount(), Applied);
+	TestEqual(TEXT("rollback welcome leaves the counter"), Harness.Client->GetNextIntentCounter(), static_cast<int64>(2));
+
+	// A coherent same-grant welcome advances normally.
+	Harness.Transport->Inject(PlayerWelcomeText(Base, Version + 1, true, ELongTableSeat::South, FixtureTableId, Grant, true, 2));
+	TestEqual(TEXT("coherent welcome applied"), Harness.Client->GetLastAppliedVersion(), Version + 1);
+
+	// A null welcome counter under the same grant marks the incarnation
+	// exhausted; a later same-grant welcome advertising a counter again is
+	// incoherent, and only a rotated grant restores a usable identity.
+	const FString InFlight = Harness.Client->SubmitIntent(ConfirmIntent());
+	TestFalse(TEXT("intent in flight before exhaustion"), InFlight.IsEmpty());
+	Harness.Transport->Inject(PlayerWelcomeText(Base, Version + 2, true, ELongTableSeat::South, FixtureTableId, Grant, false, 0));
+	TestTrue(TEXT("null counter marks exhaustion"), Harness.Client->IsIntentExhausted());
+	TestFalse(TEXT("exhausted identity cannot issue"), Harness.Client->HasIntentIdentity());
+	TestTrue(TEXT("same-grant retry survives exhaustion notice"), Harness.Client->HasIntentInFlight());
+	const int32 AppliedBeforeRevive = Harness.Client->AppliedFrameCount();
+	Harness.Transport->Inject(PlayerWelcomeText(Base, Version + 3, true, ELongTableSeat::South, FixtureTableId, Grant, true, 9));
+	TestEqual(TEXT("reviving welcome applies nothing"), Harness.Client->AppliedFrameCount(), AppliedBeforeRevive);
+	TestTrue(TEXT("still exhausted"), Harness.Client->IsIntentExhausted());
+
+	// A rotated grant (seat rebinding) discards the old in-flight intent and
+	// restarts the counter domain.
+	Harness.Transport->Inject(PlayerWelcomeText(Base, Version + 3, true, ELongTableSeat::South, FixtureTableId, TEXT("grant-6"), true, 1));
+	TestEqual(TEXT("rotated grant adopted"), Harness.Client->GetSessionId(), FString(TEXT("grant-6")));
+	TestFalse(TEXT("rotated grant discarded the old in-flight intent"), Harness.Client->HasIntentInFlight());
+	TestTrue(TEXT("rotated grant can issue"), Harness.Client->HasIntentIdentity());
+	TestEqual(TEXT("rotated grant restarts its counter"), Harness.Client->GetNextIntentCounter(), static_cast<int64>(1));
+	return true;
+}
+
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 #endif // WITH_DEV_AUTOMATION_TESTS
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]

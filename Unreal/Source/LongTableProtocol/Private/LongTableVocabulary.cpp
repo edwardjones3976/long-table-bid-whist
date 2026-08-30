@@ -36,10 +36,15 @@ namespace
 		TEXT("hand-scored"), TEXT("table-paused"), TEXT("table-resumed"), TEXT("seat-substituted"), TEXT("host-announcement"),
 		TEXT("next-hand-ready"), TEXT("event-ended")
 	};
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
 	const TCHAR* const WireErrorNames[] =
 	{
-		TEXT("schema-rejected"), TEXT("protocol-version"), TEXT("unauthenticated"), TEXT("not-welcomed"), TEXT("unknown-table"), TEXT("role-unavailable")
+		TEXT("schema-rejected"), TEXT("protocol-version"), TEXT("unauthenticated"), TEXT("not-welcomed"), TEXT("unknown-table"), TEXT("role-unavailable"),
+		TEXT("intent-identity"), TEXT("intent-exhausted")
 	};
+	/** The five preallocated intent lanes, in wire order: the four seats plus the host. */
+	const TCHAR* const IntentLaneNames[] = { TEXT("south"), TEXT("west"), TEXT("north"), TEXT("east"), TEXT("host") };
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 	const TCHAR* const ClientMessageTypeNames[] = { TEXT("hello"), TEXT("intent"), TEXT("resync") };
 	const TCHAR* const AuthorityMessageTypeNames[] = { TEXT("welcome"), TEXT("projection"), TEXT("receipt"), TEXT("replay"), TEXT("dealer-cue"), TEXT("error") };
 }
@@ -69,7 +74,9 @@ LONGTABLE_DEFINE_WIRE_ENUM(ELongTableAuthorityMessageType, AuthorityMessageTypeN
 
 namespace LongTableProtocol
 {
-	const TCHAR* const ProtocolVersion = TEXT("long-table-protocol/1");
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	const TCHAR* const ProtocolVersion = TEXT("long-table-protocol/2");
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 	const TCHAR* const ManifestId = TEXT("RESTRICTED_TABLE_SLICE_0_1");
 
 	TArray<FLongTableVocabularyList> VocabularyLists()
@@ -91,6 +98,9 @@ namespace LongTableProtocol
 			{ TEXT("rejectionCodes"), MakeArrayView(RejectionCodeNames) },
 			{ TEXT("dealerCues"), MakeArrayView(DealerCueNames) },
 			{ TEXT("wireErrorCodes"), MakeArrayView(WireErrorNames) },
+			// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+			{ TEXT("intentLanes"), MakeArrayView(IntentLaneNames) },
+			// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 		};
 	}
 }

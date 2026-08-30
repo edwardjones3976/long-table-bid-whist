@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { SEATS, replayMatches, stateDigest } from "../../../packages/rules-core/src";
 import { DEALER_CUES, DEALER_CUE_FRAME, INTENT_RECEIPT, REJECTION_MESSAGES, matchesInventory } from "../../../packages/protocol/src";
-import { PARTICIPANTS, PUBLIC_ACTOR, createTable, driveHand, driveUntil, hostActor, playerActor, playerSnapshot, submit, takeTurn } from "./support";
+import { PARTICIPANTS, PUBLIC_ACTOR, createTable, driveHand, driveUntil, hostActor, nextIntentId, playerActor, playerSnapshot, submit, takeTurn } from "./support";
 
 describe("authoritative boundary — preview, cancel, confirm", () => {
   it("treats a preview as pointing: the shared version stays, only the seat's own projection moves", () => {
@@ -57,7 +57,7 @@ describe("authoritative boundary — preview, cancel, confirm", () => {
     submit(table, playerActor("south"), { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "low" } } });
     expect(submit(table, playerActor("south"), { kind: "confirm" }).receipt.committed).toBe(true);
     const digest = stateDigest(table.committedState());
-    const again = submit(table, playerActor("south"), { kind: "confirm" }, { intentId: "definitely-new" });
+    const again = submit(table, playerActor("south"), { kind: "confirm" }, { intentId: nextIntentId(table, "south") });
     expect(again.receipt.outcome).toBe("rejected");
     expect(again.receipt.committed).toBe(false);
     expect(stateDigest(table.committedState())).toBe(digest);
@@ -95,21 +95,24 @@ describe("authoritative boundary — preview, cancel, confirm", () => {
 });
 
 describe("authoritative boundary — idempotency and versions", () => {
-  it("answers a repeated intent id from the ledger and never re-applies it", () => {
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+  it("answers a repeated intent identity as a duplicate and never re-applies it", () => {
     const table = createTable({ seed: "idempotent" });
-    const first = submit(table, playerActor("south"), { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } }, { intentId: "controller-7" });
+    const identity = nextIntentId(table, "south");
+    const first = submit(table, playerActor("south"), { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } }, { intentId: identity });
     expect(first.receipt.outcome).toBe("accepted");
     const revision = table.seatRevision("south");
 
     const replay = table.submitIntent(playerActor("south"), {
       tableId: table.tableId,
-      intentId: "controller-7",
+      intentId: identity,
       expectedVersion: table.currentVersion,
       intent: { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } },
     });
-    expect(replay.receipt.outcome).toBe("duplicate");
-    expect(replay.receipt.code).toBe("duplicate-input-id");
-    expect(replay.receipt.committed).toBe(false);
+    expect(replay.identityViolation).toBeNull();
+    expect(replay.receipt?.outcome).toBe("duplicate");
+    expect(replay.receipt?.code).toBe("duplicate-input-id");
+    expect(replay.receipt?.committed).toBe(false);
     expect(replay.frame).toBeNull();
     expect(replay.seatUpdate).toBeNull();
     expect(table.seatRevision("south")).toBe(revision);
@@ -118,16 +121,18 @@ describe("authoritative boundary — idempotency and versions", () => {
   it("never commits a replayed confirm, even after the version has moved on", () => {
     const table = createTable({ seed: "replayed-confirm" });
     submit(table, playerActor("south"), { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } });
-    const confirmed = submit(table, playerActor("south"), { kind: "confirm" }, { intentId: "trigger-1" });
+    const confirmId = nextIntentId(table, "south");
+    const confirmed = submit(table, playerActor("south"), { kind: "confirm" }, { intentId: confirmId });
     expect(confirmed.receipt.committed).toBe(true);
     const digest = stateDigest(table.committedState());
     submit(table, hostActor(), { kind: "host-announce", cue: "welcome" });
 
-    const replay = submit(table, playerActor("south"), { kind: "confirm" }, { intentId: "trigger-1" });
+    const replay = submit(table, playerActor("south"), { kind: "confirm" }, { intentId: confirmId });
     expect(replay.receipt.outcome).toBe("duplicate");
     expect(replay.receipt.committed).toBe(false);
     expect(stateDigest(table.committedState())).toBe(digest);
   });
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
   it("rejects a stale expected version and reports the current one", () => {
     const table = createTable({ seed: "stale" });

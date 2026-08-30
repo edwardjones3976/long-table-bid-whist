@@ -1,31 +1,31 @@
 {
   "canonical": [
-    "{\"type\":\"hello\",\"protocolVersion\":\"long-table-protocol/1\",\"token\":\"fixture-token-south\",\"role\":\"player\",\"tableId\":\"table-fixture-1\",\"displayName\":\"Ada\",\"lastVersion\":null}",
-    "{\"type\":\"hello\",\"protocolVersion\":\"long-table-protocol/1\",\"token\":\"fixture-token-host\",\"role\":\"host\",\"tableId\":\"table-fixture-1\",\"displayName\":\"\",\"lastVersion\":null}",
-    "{\"type\":\"hello\",\"protocolVersion\":\"long-table-protocol/1\",\"token\":\"fixture-token-public\",\"role\":\"public\",\"tableId\":\"table-fixture-1\",\"displayName\":\"\",\"lastVersion\":null}",
-    "{\"type\":\"hello\",\"protocolVersion\":\"long-table-protocol/1\",\"token\":\"fixture-token-dealer\",\"role\":\"dealer\",\"tableId\":\"table-fixture-1\",\"displayName\":\"\",\"lastVersion\":null}",
-    "{\"type\":\"hello\",\"protocolVersion\":\"long-table-protocol/1\",\"token\":\"fixture-token-south\",\"role\":\"player\",\"tableId\":\"table-fixture-1\",\"displayName\":\"Ada\",\"lastVersion\":12}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-1\",\"expectedVersion\":12,\"intent\":{\"kind\":\"preview\",\"selection\":{\"type\":\"pass\"}}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-2\",\"expectedVersion\":12,\"intent\":{\"kind\":\"preview\",\"selection\":{\"type\":\"bid\",\"bid\":{\"level\":4,\"mode\":\"low\"}}}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-3\",\"expectedVersion\":12,\"intent\":{\"kind\":\"preview\",\"selection\":{\"type\":\"declaration\",\"trump\":\"spades\"}}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-4\",\"expectedVersion\":12,\"intent\":{\"kind\":\"preview\",\"selection\":{\"type\":\"declaration\",\"trump\":null}}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-5\",\"expectedVersion\":12,\"intent\":{\"kind\":\"preview\",\"selection\":{\"type\":\"play\",\"cardId\":\"hearts-14\"}}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-6\",\"expectedVersion\":12,\"intent\":{\"kind\":\"toggle-discard\",\"cardId\":\"clubs-2\"}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-7\",\"expectedVersion\":12,\"intent\":{\"kind\":\"cancel\"}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-8\",\"expectedVersion\":12,\"intent\":{\"kind\":\"confirm\"}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-9\",\"expectedVersion\":12,\"intent\":{\"kind\":\"next-hand\"}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-10\",\"expectedVersion\":12,\"intent\":{\"kind\":\"host-pause\"}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-11\",\"expectedVersion\":12,\"intent\":{\"kind\":\"host-resume\"}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-12\",\"expectedVersion\":12,\"intent\":{\"kind\":\"host-announce\",\"cue\":\"hand-starting\"}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-13\",\"expectedVersion\":12,\"intent\":{\"kind\":\"host-substitute\",\"seat\":\"west\"}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-14\",\"expectedVersion\":12,\"intent\":{\"kind\":\"host-transfer\",\"participantId\":\"p-north\"}}",
-    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"example-15\",\"expectedVersion\":12,\"intent\":{\"kind\":\"host-end-event\"}}",
+    "{\"type\":\"hello\",\"protocolVersion\":\"long-table-protocol/2\",\"token\":\"fixture-token-south\",\"role\":\"player\",\"tableId\":\"table-fixture-1\",\"displayName\":\"Ada\",\"lastVersion\":null}",
+    "{\"type\":\"hello\",\"protocolVersion\":\"long-table-protocol/2\",\"token\":\"fixture-token-host\",\"role\":\"host\",\"tableId\":\"table-fixture-1\",\"displayName\":\"\",\"lastVersion\":null}",
+    "{\"type\":\"hello\",\"protocolVersion\":\"long-table-protocol/2\",\"token\":\"fixture-token-public\",\"role\":\"public\",\"tableId\":\"table-fixture-1\",\"displayName\":\"\",\"lastVersion\":null}",
+    "{\"type\":\"hello\",\"protocolVersion\":\"long-table-protocol/2\",\"token\":\"fixture-token-dealer\",\"role\":\"dealer\",\"tableId\":\"table-fixture-1\",\"displayName\":\"\",\"lastVersion\":null}",
+    "{\"type\":\"hello\",\"protocolVersion\":\"long-table-protocol/2\",\"token\":\"fixture-token-south\",\"role\":\"player\",\"tableId\":\"table-fixture-1\",\"displayName\":\"Ada\",\"lastVersion\":12}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:1\",\"expectedVersion\":12,\"intent\":{\"kind\":\"preview\",\"selection\":{\"type\":\"pass\"}}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:2\",\"expectedVersion\":12,\"intent\":{\"kind\":\"preview\",\"selection\":{\"type\":\"bid\",\"bid\":{\"level\":4,\"mode\":\"low\"}}}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:3\",\"expectedVersion\":12,\"intent\":{\"kind\":\"preview\",\"selection\":{\"type\":\"declaration\",\"trump\":\"spades\"}}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:4\",\"expectedVersion\":12,\"intent\":{\"kind\":\"preview\",\"selection\":{\"type\":\"declaration\",\"trump\":null}}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:5\",\"expectedVersion\":12,\"intent\":{\"kind\":\"preview\",\"selection\":{\"type\":\"play\",\"cardId\":\"hearts-14\"}}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:6\",\"expectedVersion\":12,\"intent\":{\"kind\":\"toggle-discard\",\"cardId\":\"clubs-2\"}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:7\",\"expectedVersion\":12,\"intent\":{\"kind\":\"cancel\"}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:8\",\"expectedVersion\":12,\"intent\":{\"kind\":\"confirm\"}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:9\",\"expectedVersion\":12,\"intent\":{\"kind\":\"next-hand\"}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:10\",\"expectedVersion\":12,\"intent\":{\"kind\":\"host-pause\"}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:11\",\"expectedVersion\":12,\"intent\":{\"kind\":\"host-resume\"}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:12\",\"expectedVersion\":12,\"intent\":{\"kind\":\"host-announce\",\"cue\":\"hand-starting\"}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:13\",\"expectedVersion\":12,\"intent\":{\"kind\":\"host-substitute\",\"seat\":\"west\"}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:14\",\"expectedVersion\":12,\"intent\":{\"kind\":\"host-transfer\",\"participantId\":\"p-north\"}}",
+    "{\"type\":\"intent\",\"tableId\":\"table-fixture-1\",\"intentId\":\"grant-1:15\",\"expectedVersion\":12,\"intent\":{\"kind\":\"host-end-event\"}}",
     "{\"type\":\"resync\",\"tableId\":\"table-fixture-1\",\"lastVersion\":12}"
   ],
   "messages": [
     {
       "type": "hello",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "token": "fixture-token-south",
       "role": "player",
       "tableId": "table-fixture-1",
@@ -34,7 +34,7 @@
     },
     {
       "type": "hello",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "token": "fixture-token-host",
       "role": "host",
       "tableId": "table-fixture-1",
@@ -43,7 +43,7 @@
     },
     {
       "type": "hello",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "token": "fixture-token-public",
       "role": "public",
       "tableId": "table-fixture-1",
@@ -52,7 +52,7 @@
     },
     {
       "type": "hello",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "token": "fixture-token-dealer",
       "role": "dealer",
       "tableId": "table-fixture-1",
@@ -61,7 +61,7 @@
     },
     {
       "type": "hello",
-      "protocolVersion": "long-table-protocol/1",
+      "protocolVersion": "long-table-protocol/2",
       "token": "fixture-token-south",
       "role": "player",
       "tableId": "table-fixture-1",
@@ -71,7 +71,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-1",
+      "intentId": "grant-1:1",
       "expectedVersion": 12,
       "intent": {
         "kind": "preview",
@@ -83,7 +83,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-2",
+      "intentId": "grant-1:2",
       "expectedVersion": 12,
       "intent": {
         "kind": "preview",
@@ -99,7 +99,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-3",
+      "intentId": "grant-1:3",
       "expectedVersion": 12,
       "intent": {
         "kind": "preview",
@@ -112,7 +112,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-4",
+      "intentId": "grant-1:4",
       "expectedVersion": 12,
       "intent": {
         "kind": "preview",
@@ -125,7 +125,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-5",
+      "intentId": "grant-1:5",
       "expectedVersion": 12,
       "intent": {
         "kind": "preview",
@@ -138,7 +138,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-6",
+      "intentId": "grant-1:6",
       "expectedVersion": 12,
       "intent": {
         "kind": "toggle-discard",
@@ -148,7 +148,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-7",
+      "intentId": "grant-1:7",
       "expectedVersion": 12,
       "intent": {
         "kind": "cancel"
@@ -157,7 +157,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-8",
+      "intentId": "grant-1:8",
       "expectedVersion": 12,
       "intent": {
         "kind": "confirm"
@@ -166,7 +166,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-9",
+      "intentId": "grant-1:9",
       "expectedVersion": 12,
       "intent": {
         "kind": "next-hand"
@@ -175,7 +175,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-10",
+      "intentId": "grant-1:10",
       "expectedVersion": 12,
       "intent": {
         "kind": "host-pause"
@@ -184,7 +184,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-11",
+      "intentId": "grant-1:11",
       "expectedVersion": 12,
       "intent": {
         "kind": "host-resume"
@@ -193,7 +193,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-12",
+      "intentId": "grant-1:12",
       "expectedVersion": 12,
       "intent": {
         "kind": "host-announce",
@@ -203,7 +203,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-13",
+      "intentId": "grant-1:13",
       "expectedVersion": 12,
       "intent": {
         "kind": "host-substitute",
@@ -213,7 +213,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-14",
+      "intentId": "grant-1:14",
       "expectedVersion": 12,
       "intent": {
         "kind": "host-transfer",
@@ -223,7 +223,7 @@
     {
       "type": "intent",
       "tableId": "table-fixture-1",
-      "intentId": "example-15",
+      "intentId": "grant-1:15",
       "expectedVersion": 12,
       "intent": {
         "kind": "host-end-event"

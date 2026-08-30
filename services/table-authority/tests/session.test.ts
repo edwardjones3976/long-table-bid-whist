@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   AUTHORITY_MESSAGE,
+  INTENT_COUNTER_MAX,
   PROTOCOL_VERSION,
   decodeAuthorityMessage,
   encodeClientMessage,
@@ -12,8 +13,9 @@ import {
   type Role,
 } from "../../../packages/protocol/src";
 import { AuthoritySessions, staticDirectory, type Outbound } from "../src/session";
+import { TableAuthority } from "../src/table";
 import { handleClose, handleText } from "../src/wire";
-import { PARTICIPANTS, createTable } from "./support";
+import { PARTICIPANTS, createTable, nextIntentId } from "./support";
 
 const TOKENS = {
   south: "tok-south",
@@ -39,11 +41,26 @@ function hello(token: string, role: Role, lastVersion: number | null = null, tab
   return { type: "hello", protocolVersion: PROTOCOL_VERSION, token, role, tableId, displayName: "", lastVersion };
 }
 
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
 let intentCounter = 0;
-function intent(tableId: string, expectedVersion: number, body: Extract<ClientMessage, { type: "intent" }>["intent"]): ClientMessage {
+/** An intent frame; the identity defaults to `lane`'s current grant and exact next counter. */
+function intent(
+  table: TableAuthority,
+  lane: "south" | "west" | "north" | "east" | "host" | null,
+  expectedVersion: number,
+  body: Extract<ClientMessage, { type: "intent" }>["intent"],
+  intentId?: string,
+): ClientMessage {
   intentCounter += 1;
-  return { type: "intent", tableId, intentId: `session-intent-${intentCounter}`, expectedVersion, intent: body };
+  return {
+    type: "intent",
+    tableId: table.tableId,
+    intentId: intentId ?? (lane ? nextIntentId(table, lane) : `unentitled-${intentCounter}`),
+    expectedVersion,
+    intent: body,
+  };
 }
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 function messagesFor(outbound: Outbound[], connectionId: string): AuthorityMessage[] {
   return outbound.filter((item) => item.connectionId === connectionId).map((item) => item.message);
@@ -90,9 +107,39 @@ describe("sessions — authentication and entitlement", () => {
     });
   });
 
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+  it("exposes each entitled role's own grant and next counter only; public and dealer get a connection id and null", () => {
+    const { table, sessions } = sessionsFor();
+    const player = sessions.handle("p", hello(TOKENS.south, "player"))[0].message;
+    const host = sessions.handle("h", hello(TOKENS.host, "host"))[0].message;
+    const pub = sessions.handle("s", hello(TOKENS.spectator, "public"))[0].message;
+    const dealer = sessions.handle("d", hello(TOKENS.dealer, "dealer"))[0].message;
+    if (player.type !== "welcome" || host.type !== "welcome" || pub.type !== "welcome" || dealer.type !== "welcome") {
+      throw new Error("expected four welcomes");
+    }
+
+    expect(player.role === "player" && player.sessionId).toBe(table.laneGrant("south"));
+    expect(player.role === "player" && player.nextIntentCounter).toBe(1);
+    expect(host.role === "host" && host.sessionId).toBe(table.laneGrant("host"));
+    expect(host.role === "host" && host.nextIntentCounter).toBe(1);
+    expect(pub.nextIntentCounter).toBeNull();
+    expect(dealer.nextIntentCounter).toBeNull();
+
+    // No welcome carries another lane's grant: the four seat grants and the
+    // host grant appear only in their own recipient's welcome.
+    const grants = ["south", "west", "north", "east", "host"] as const;
+    const foreign = (welcome: { sessionId: string }, own: string | null) =>
+      grants.some((lane) => table.laneGrant(lane) === welcome.sessionId && lane !== own);
+    expect(foreign(player, "south")).toBe(false);
+    expect(foreign(host, "host")).toBe(false);
+    expect(foreign(pub, null)).toBe(false);
+    expect(foreign(dealer, null)).toBe(false);
+  });
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
+
   it("refuses intents before hello", () => {
-    const { sessions } = sessionsFor();
-    const out = sessions.handle("ghost", intent("table-1", 1, { kind: "cancel" }));
+    const { table, sessions } = sessionsFor();
+    const out = sessions.handle("ghost", intent(table, null, 1, { kind: "cancel" }));
     expect(out[0].message).toMatchObject({ type: "error", code: "not-welcomed" });
   });
 });
@@ -163,8 +210,8 @@ describe("sessions — connection binding and replacement", () => {
     expect(sessions.isBound("p2")).toBe(true);
 
     // Anything the replaced socket still sends is refused.
-    expect(sessions.handle("p1", intent("table-1", table.currentVersion, { kind: "cancel" }))[0].message).toMatchObject({ type: "error", code: "not-welcomed" });
-    expect(sessions.handle("p2", intent("table-1", table.currentVersion, { kind: "cancel" }))[0].message.type).toBe("receipt");
+    expect(sessions.handle("p1", intent(table, "south", table.currentVersion, { kind: "cancel" }))[0].message).toMatchObject({ type: "error", code: "not-welcomed" });
+    expect(sessions.handle("p2", intent(table, "south", table.currentVersion, { kind: "cancel" }))[0].message.type).toBe("receipt");
   });
 
   it("lets one participant hold different roles on different connections without replacement", () => {
@@ -189,13 +236,13 @@ describe("sessions — broadcast, reconnect and replay", () => {
     sessions.handle("d", hello(TOKENS.dealer, "dealer"));
 
     const version = table.currentVersion;
-    const previewed = sessions.handle("p", intent("table-1", version, { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } }));
+    const previewed = sessions.handle("p", intent(table, "south", version, { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } }));
     expect(messagesFor(previewed, "p").map((m) => m.type)).toEqual(["receipt", "projection"]);
     expect(messagesFor(previewed, "p")[1]).toMatchObject({ type: "projection", version, projection: { role: "player", seat: "south", previewLabel: "3 High" } });
     ["n", "h", "s", "d"].forEach((other) => expect(messagesFor(previewed, other)).toEqual([]));
     expect(table.currentVersion).toBe(version);
 
-    const out = sessions.handle("p", intent("table-1", version, { kind: "confirm" }));
+    const out = sessions.handle("p", intent(table, "south", version, { kind: "confirm" }));
     const south = messagesFor(out, "p");
     expect(south[0]).toMatchObject({ type: "receipt", receipt: { committed: true, version: version + 1 } });
     expect(south.some((m) => m.type === "projection" && m.projection.role === "player" && m.projection.seat === "south")).toBe(true);
@@ -223,7 +270,7 @@ describe("sessions — broadcast, reconnect and replay", () => {
 
     // The table moves on while South is away.
     const version = table.currentVersion;
-    const announced = sessions.handle("h", intent("table-1", version, { kind: "host-announce", cue: "pause-shortly" }));
+    const announced = sessions.handle("h", intent(table, "host", version, { kind: "host-announce", cue: "pause-shortly" }));
     expect(messagesFor(announced, "p1")).toEqual([]);
 
     const back = sessions.handle("p2", hello(TOKENS.south, "player", seenByPlayer));
@@ -250,12 +297,86 @@ describe("sessions — broadcast, reconnect and replay", () => {
     const { table, sessions } = sessionsFor();
     sessions.handle("p", hello(TOKENS.south, "player"));
     const seen = table.currentVersion;
-    sessions.handle("p", intent("table-1", seen, { kind: "preview", selection: { type: "pass" } }));
+    sessions.handle("p", intent(table, "south", seen, { kind: "preview", selection: { type: "pass" } }));
     const out = sessions.handle("p", { type: "resync", tableId: "table-1", lastVersion: seen });
     expect(out.map((item) => item.message.type)).toEqual(["replay", "projection"]);
     expect(out[1].message.type === "projection" && out[1].message.projection.role === "player" && out[1].message.projection.previewLabel).toBe("Pass");
   });
 });
+
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+describe("sessions — intent identity over the wire", () => {
+  it("answers a foreign grant or a forward gap with intent-identity, mutating nothing and keeping the connection open", () => {
+    const { table, sessions } = sessionsFor();
+    sessions.handle("p", hello(TOKENS.south, "player"));
+    const version = table.currentVersion;
+    const grant = table.laneGrant("south");
+
+    const foreign = sessions.handle("p", intent(table, null, version, { kind: "cancel" }, `${table.laneGrant("host")}:1`));
+    expect(foreign).toHaveLength(1);
+    expect(foreign[0]).toEqual({
+      connectionId: "p",
+      message: { type: "error", code: "intent-identity", detail: "intent identity is not the lane's current grant and exact next counter" },
+      closeAfter: false,
+    });
+    const gapped = sessions.handle("p", intent(table, null, version, { kind: "cancel" }, `${grant}:2`));
+    expect(gapped[0].message).toMatchObject({ type: "error", code: "intent-identity" });
+    expect(table.intentLaneState("south").highestConsumedCounter).toBe(0);
+    expect(sessions.isBound("p")).toBe(true);
+
+    // The connection recovers by sending the exact next counter.
+    const ok = sessions.handle("p", intent(table, "south", version, { kind: "cancel" }));
+    expect(ok[0].message.type).toBe("receipt");
+  });
+
+  it("keeps the same grant across socket replacement and reports the advanced next counter on the new welcome", () => {
+    const { table, sessions } = sessionsFor();
+    sessions.handle("p1", hello(TOKENS.south, "player"));
+    const grant = table.laneGrant("south");
+    sessions.handle("p1", intent(table, "south", table.currentVersion, { kind: "preview", selection: { type: "pass" } }));
+    expect(table.intentLaneState("south").highestConsumedCounter).toBe(1);
+
+    const replaced = sessions.handle("p2", hello(TOKENS.south, "player"));
+    const welcome = messagesFor(replaced, "p2")[0];
+    expect(welcome.type === "welcome" && welcome.role === "player" && welcome.sessionId).toBe(grant);
+    expect(welcome.type === "welcome" && welcome.role === "player" && welcome.nextIntentCounter).toBe(2);
+    expect(table.laneGrant("south")).toBe(grant);
+  });
+
+  it("reports null next counters to every entitled welcome once the incarnation is exhausted and rejects new intents intent-exhausted", () => {
+    // A restored incarnation whose west lane already consumed the maximum
+    // counter: the entire table is exhausted, whatever the other lanes hold.
+    const exhaustedTable = new TableAuthority({
+      tableId: "table-1",
+      seed: "sessions-exhausted",
+      hostParticipantId: PARTICIPANTS.host,
+      seats: {
+        south: { occupant: "human", participantId: PARTICIPANTS.south, displayName: "south name", connected: false },
+        west: { occupant: "ai" },
+        north: { occupant: "ai" },
+        east: { occupant: "ai" },
+      },
+      restoredLanes: {
+        south: { currentGrantSessionId: "grant-1", highestConsumedCounter: 41 },
+        west: { currentGrantSessionId: "grant-2", highestConsumedCounter: INTENT_COUNTER_MAX },
+        north: { currentGrantSessionId: "grant-3", highestConsumedCounter: 0 },
+        east: { currentGrantSessionId: "grant-4", highestConsumedCounter: 0 },
+        host: { currentGrantSessionId: "grant-5", highestConsumedCounter: 0 },
+      },
+      restoredGrantHighWater: 5,
+    });
+    const { table, sessions } = sessionsFor(exhaustedTable);
+    const player = sessions.handle("p", hello(TOKENS.south, "player"))[0].message;
+    expect(player.type === "welcome" && player.role === "player" && player.nextIntentCounter).toBeNull();
+    const host = sessions.handle("h", hello(TOKENS.host, "host"))[0].message;
+    expect(host.type === "welcome" && host.role === "host" && host.nextIntentCounter).toBeNull();
+
+    const refused = sessions.handle("p", intent(table, null, table.currentVersion, { kind: "cancel" }, "grant-1:42"));
+    expect(refused[0].message).toMatchObject({ type: "error", code: "intent-exhausted", detail: "table incarnation exhausted" });
+    expect(sessions.isBound("p")).toBe(true);
+  });
+});
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 describe("wire — closed decode and canonical encode", () => {
   it("rejects malformed and non-closed frames without touching the session", () => {

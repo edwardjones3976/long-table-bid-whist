@@ -11,6 +11,41 @@ namespace
 	const FLongTablePublicProjection EmptyPublic;
 }
 
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+/**
+ * Per-listener generation guard. UE5.7's Broadcast() copies the whole
+ * invocation list before ordinary invocation, so a reentrant Configure inside
+ * listener one cannot prevent listener two from seeing an old-context payload.
+ * This adapter copies the invocation list itself (one snapshot per fanout),
+ * invokes one copied binding at a time through the matching single dynamic
+ * delegate, and re-checks the context generation before each next binding —
+ * so the first reentrant context change stops every later sibling.
+ */
+template <typename MulticastType, typename SingleType, typename... TArgs>
+bool ULongTableAuthorityClient::BroadcastGuarded(const MulticastType& Delegate, TArgs&&... Args)
+{
+	const uint64 Generation = ContextGeneration;
+	// A by-value copy of the invocation list: the snapshot the guard walks.
+	const auto Snapshot = Delegate.GetInvocationList();
+	for (const auto& Binding : Snapshot)
+	{
+		if (ContextGeneration != Generation)
+		{
+			return false;
+		}
+		UObject* Target = Binding.GetUObject();
+		if (!Target)
+		{
+			continue;
+		}
+		SingleType Single;
+		Single.BindUFunction(Target, Binding.GetFunctionName());
+		Single.ExecuteIfBound(Args...);
+	}
+	return ContextGeneration == Generation;
+}
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
+
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
 bool ULongTableAuthorityClient::SameAuthorityContext(const FLongTableClientConfig& A, const FLongTableClientConfig& B)
 {
@@ -41,7 +76,7 @@ void ULongTableAuthorityClient::ResetContext()
 	bEverWelcomed = false;
 	AppliedFrames = 0;
 	Commit.Reset();
-	Identity = FLongTableIntentIdentity();
+	Identity.Reset();
 }
 
 void ULongTableAuthorityClient::Configure(const FLongTableClientConfig& InConfig, TSharedPtr<ILongTableTransport> InTransport)
@@ -93,7 +128,9 @@ void ULongTableAuthorityClient::SetState(ELongTableConnectionState NewState)
 	if (State != NewState)
 	{
 		State = NewState;
-		OnConnectionState.Broadcast(State);
+		// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+		BroadcastGuarded<FLongTableConnectionStateEvent, FLongTableConnectionStateSingle>(OnConnectionState, State);
+		// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 	}
 }
 
@@ -150,15 +187,20 @@ void ULongTableAuthorityClient::SendClientMessage(const FLongTableClientMessage&
 
 FString ULongTableAuthorityClient::SubmitIntent(const FLongTableIntent& Intent)
 {
-	if (State != ELongTableConnectionState::Ready || !Commit.CanSubmit())
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	// Only an entitled role welcomed with a live grant can form a v2 identity;
+	// public and dealer connections hold no lane and never submit.
+	if (State != ELongTableConnectionState::Ready || !Commit.CanSubmit() || !Identity.CanIssue())
 	{
 		return FString();
 	}
-	const FString IntentId = Identity.Next();
-	if (!Commit.Begin(IntentId, Intent, LastAppliedVersion))
+	const int64 Counter = Identity.PeekNextCounter();
+	const FString IntentId = Identity.Issue();
+	if (!Commit.Begin(IntentId, Intent, LastAppliedVersion, Counter))
 	{
 		return FString();
 	}
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 	FLongTableClientMessage Message;
 	Message.Type = ELongTableClientMessageType::Intent;
 	Message.Intent.TableId = Config.TableId;
@@ -210,7 +252,9 @@ void ULongTableAuthorityClient::RequestResync()
 bool ULongTableAuthorityClient::Fault(ELongTableFrameFault InFault, const FString& Detail)
 {
 	UE_LOG(LogLongTableTable, Warning, TEXT("authority frame rejected: %s"), *Detail);
-	OnFrameRejected.Broadcast(InFault, Detail);
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	BroadcastGuarded<FLongTableFrameRejectedEvent, FLongTableFrameRejectedSingle>(OnFrameRejected, InFault, Detail);
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 	return false;
 }
 
@@ -307,7 +351,7 @@ bool ULongTableAuthorityClient::ApplyStaged(const FStagedPayloads& Staged)
 		LastUncommittedRevision = Candidate.UncommittedRevision;
 		PlayerCache = Candidate;
 		++AppliedFrames;
-		OnPlayerProjection.Broadcast(PlayerCache);
+		if (!BroadcastGuarded<FLongTablePlayerProjectionEvent, FLongTablePlayerProjectionSingle>(OnPlayerProjection, PlayerCache)) { return false; }
 		if (ContextGeneration != Generation) { return false; }
 	}
 	for (const FLongTableHostProjection& Candidate : Staged.Host)
@@ -316,7 +360,7 @@ bool ULongTableAuthorityClient::ApplyStaged(const FStagedPayloads& Staged)
 		LastAppliedVersion = Candidate.Version;
 		HostCache = Candidate;
 		++AppliedFrames;
-		OnHostProjection.Broadcast(HostCache);
+		if (!BroadcastGuarded<FLongTableHostProjectionEvent, FLongTableHostProjectionSingle>(OnHostProjection, HostCache)) { return false; }
 		if (ContextGeneration != Generation) { return false; }
 	}
 	for (const FLongTablePublicProjection& Candidate : Staged.Public)
@@ -325,7 +369,7 @@ bool ULongTableAuthorityClient::ApplyStaged(const FStagedPayloads& Staged)
 		LastAppliedVersion = Candidate.Version;
 		PublicCache = Candidate;
 		++AppliedFrames;
-		OnPublicProjection.Broadcast(PublicCache);
+		if (!BroadcastGuarded<FLongTablePublicProjectionEvent, FLongTablePublicProjectionSingle>(OnPublicProjection, PublicCache)) { return false; }
 		if (ContextGeneration != Generation) { return false; }
 	}
 	return true;
@@ -369,6 +413,26 @@ void ULongTableAuthorityClient::HandleMessage(const FString& Text)
 			Fault(ELongTableFrameFault::VersionMismatch, TEXT("welcome would roll the applied version back"));
 			return;
 		}
+		// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+		// v2 grant/counter coherence. Under the SAME grant the counter never
+		// rolls backwards and an exhausted domain never revives; a DIFFERENT
+		// grant is a rotation and discards the old in-flight intent below.
+		const bool bEntitledRole = Config.Role == ELongTableRole::Player || Config.Role == ELongTableRole::Host;
+		const bool bSameGrant = bEntitledRole && Identity.IsBound() && Identity.GetGrant().Equals(Welcome.SessionId, ESearchCase::CaseSensitive);
+		if (bSameGrant)
+		{
+			if (Identity.IsExhausted() && Welcome.bHasNextIntentCounter)
+			{
+				Fault(ELongTableFrameFault::VersionMismatch, TEXT("welcome would revive an exhausted counter domain"));
+				return;
+			}
+			if (Welcome.bHasNextIntentCounter && Welcome.NextIntentCounter <= Identity.HighestConsumed())
+			{
+				Fault(ELongTableFrameFault::VersionMismatch, TEXT("welcome would roll the intent counter backwards"));
+				return;
+			}
+		}
+		// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 		// Stage the complete welcome — snapshot decoded and validated against
 		// the welcomed seat — before one field of client state changes.
 		FStagedPayloads Staged;
@@ -385,6 +449,18 @@ void ULongTableAuthorityClient::HandleMessage(const FString& Text)
 		}
 
 		// ---- Atomic commit: every field below is in place before any callback runs. ----
+		// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+		if (bEntitledRole)
+		{
+			if (!bSameGrant)
+			{
+				// A changed authenticated grant discards the old in-flight
+				// intent; a retry survives only under the same grant.
+				Commit.AbandonInFlight();
+			}
+			Identity.Adopt(Welcome.SessionId, Welcome.bHasNextIntentCounter, Welcome.NextIntentCounter);
+		}
+		// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 		SessionId = Welcome.SessionId;
 		bHasSeat = Welcome.bHasSeat;
 		Seat = Welcome.Seat;
@@ -424,13 +500,15 @@ void ULongTableAuthorityClient::HandleMessage(const FString& Text)
 		if (ContextGeneration != Generation) { return; }
 		if (bApplyCache)
 		{
+			// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
 			switch (Config.Role)
 			{
-			case ELongTableRole::Player: OnPlayerProjection.Broadcast(PlayerCache); break;
-			case ELongTableRole::Host: OnHostProjection.Broadcast(HostCache); break;
-			case ELongTableRole::Public: OnPublicProjection.Broadcast(PublicCache); break;
+			case ELongTableRole::Player: BroadcastGuarded<FLongTablePlayerProjectionEvent, FLongTablePlayerProjectionSingle>(OnPlayerProjection, PlayerCache); break;
+			case ELongTableRole::Host: BroadcastGuarded<FLongTableHostProjectionEvent, FLongTableHostProjectionSingle>(OnHostProjection, HostCache); break;
+			case ELongTableRole::Public: BroadcastGuarded<FLongTablePublicProjectionEvent, FLongTablePublicProjectionSingle>(OnPublicProjection, PublicCache); break;
 			case ELongTableRole::Dealer: break;
 			}
+			// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 			if (ContextGeneration != Generation) { return; }
 		}
 		ResendInFlight();
@@ -462,15 +540,27 @@ void ULongTableAuthorityClient::HandleMessage(const FString& Text)
 	}
 
 	case ELongTableAuthorityMessageType::Receipt:
+	{
 		if (Message.Receipt.TableId != Config.TableId) { Fault(ELongTableFrameFault::TableMismatch, TEXT("receipt for another table")); return; }
 		LastReceipt = Message.Receipt.Receipt;
-		Commit.OnReceipt(LastReceipt);
-		OnReceipt.Broadcast(LastReceipt);
+		// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+		// Any receipt outcome — accepted, duplicate or rejected — proves the
+		// authority consumed (or had already consumed) the in-flight counter
+		// under the current grant; the client's counter never rolls backwards.
+		const int64 AnsweredCounter = Commit.InFlightCounter();
+		const bool bAnswered = Commit.OnReceipt(LastReceipt);
+		if (bAnswered && AnsweredCounter > 0)
+		{
+			Identity.MarkConsumed(AnsweredCounter);
+		}
+		if (!BroadcastGuarded<FLongTableReceiptEvent, FLongTableReceiptSingle>(OnReceipt, LastReceipt)) { return; }
+		// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 		if (Commit.NeedsResync())
 		{
 			RequestResync();
 		}
 		break;
+	}
 
 	case ELongTableAuthorityMessageType::Replay:
 	{
@@ -528,12 +618,15 @@ void ULongTableAuthorityClient::HandleMessage(const FString& Text)
 			Fault(ELongTableFrameFault::TableMismatch, TEXT("dealer cue inner frame is for another table"));
 			return;
 		}
-		OnDealerCue.Broadcast(Message.DealerCue.Frame);
+		// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+		BroadcastGuarded<FLongTableDealerCueEvent, FLongTableDealerCueSingle>(OnDealerCue, Message.DealerCue.Frame);
+		// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 		break;
 	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
 	case ELongTableAuthorityMessageType::Error:
-		OnWireError.Broadcast(Message.Error.Code, Message.Error.Detail);
+		// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+		if (!BroadcastGuarded<FLongTableWireErrorEvent, FLongTableWireErrorSingle>(OnWireError, Message.Error.Code, Message.Error.Detail)) { return; }
 		switch (Message.Error.Code)
 		{
 		case ELongTableWireError::Unauthenticated:
@@ -542,10 +635,23 @@ void ULongTableAuthorityClient::HandleMessage(const FString& Text)
 		case ELongTableWireError::ProtocolVersion:
 			Disconnect();
 			break;
+		case ELongTableWireError::IntentIdentity:
+			// The authority refused the identity without consuming a counter;
+			// the retry is abandoned and the next welcome resupplies the
+			// lane's current grant and exact next counter.
+			Commit.AbandonInFlight();
+			break;
+		case ELongTableWireError::IntentExhausted:
+			// The table incarnation is exhausted: nothing further can be
+			// submitted under any grant of this incarnation.
+			Identity.MarkExhausted();
+			Commit.AbandonInFlight();
+			break;
 		default:
 			break;
 		}
 		break;
+		// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 	}
 }
 
