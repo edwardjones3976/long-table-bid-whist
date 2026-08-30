@@ -41,13 +41,17 @@ The PR76 canonical rolling series begins with the first native-program packets:
 5. `LT-NATIVE-ANTIGRAVITY-002` — Gemini Antigravity, short/2, authenticated
    provider execution, terminal `UNAVAILABLE` after its configured sandbox
    policy denied writes and local commands, zero direct-production credit.
+6. `LT-NATIVE-CURSOR-XRCORE-001` — Cursor, medium/5, authenticated execution
+   and exact candidate `72a805f`, terminal `CHANGES_REQUIRED` after OpenAI
+   reproduced an Unreal editor-build failure and ten consolidated findings,
+   zero direct-production credit.
 
 The exact `director-orchestrator@cc791364e2f1ff1ac4c72e01c7122296e4ff7362`
 enforcer activates rolling hard thresholds only with a complete 20-assignment
-window. At three completed rows it reports `rolling_window_warming_up:3/20`.
-Accordingly, this baseline reports the current effort-weighted partial 44.44%
-Claude / 55.56% Antigravity distribution as severe drift, not as a pass and not
-as a hard-cap calculation over a fictitious complete window.
+window. At four completed rows it reports `rolling_window_warming_up:4/20`.
+Accordingly, this baseline reports the current effort-weighted partial 34.78%
+Claude / 21.74% Cursor / 43.48% Antigravity distribution as severe drift, not
+as a pass and not as a hard-cap calculation over a fictitious complete window.
 
 ## Routing correction
 

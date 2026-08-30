@@ -10,7 +10,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_3_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists"
+  rolling_compliance_status: "WARMING_UP_4_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -170,22 +170,22 @@ overall_effort_ledger:
     assignment_id: "LT-NATIVE-CURSOR-XRCORE-001"
     provider: cursor
     size: medium
-    canonical_points: 0
-    completed: false
-    terminal_status: "PRESTAGED_NO_PROVIDER_EXECUTION"
-    authenticated_run: null
+    canonical_points: 5
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_R1_AUTHORIZED"
+    authenticated_run: "cursor-chat:2818c90a-0ac8-420e-aa02-beb79cf06bf2;request:61e1c1d6-36a7-465b-b6da-0ef7b0eb8c25"
     direct_production_points: 0
-    exclusion_reason: "immutable medium/5 packet is dependency-independent and dispatchable; no overall or direct-production points exist before provider execution"
+    exclusion_reason: "authenticated Cursor authored exact candidate 72a805f; OpenAI reproduced an editor-build failure and retained ten revision-blocking findings; overall effort is recorded once and direct-production credit remains zero"
 
 accepted_direct_production_ledger: []
 
 rolling_window_projection:
-  completed_assignments: 3
+  completed_assignments: 4
   window_size: 20
-  current_canonical_points: {claude: 8, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 10, perplexity: 0}
-  current_partial_shares_percent: {claude: 44.44, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 55.56, perplexity: 0}
+  current_canonical_points: {claude: 8, cursor: 5, grok: 0, openai: 0, gemini_antigravity: 10, perplexity: 0}
+  current_partial_shares_percent: {claude: 34.78, cursor: 21.74, grok: 0, openai: 0, gemini_antigravity: 43.48, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
-  next_route: "dispatch the dependency-independent Cursor XR-core packet now; resume exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; Grok and Antigravity require explicit human account/permission actions; final Cursor integration remains dependency-gated"
+  next_route: "dispatch the one consolidated Cursor XR-core R1 after its corrected authority and immutable packet are frozen; resume exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; Grok and Antigravity require explicit human account/permission actions; final Cursor integration remains dependency-gated"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -246,11 +246,13 @@ canonical_assignment_ledger:
     provider: cursor
     size: medium
     canonical_points: 5
-    status: "PRESTAGED_NO_PROVIDER_EXECUTION"
+    status: "OPENAI_CHANGES_REQUIRED_R1_AUTHORIZED"
     accepted_direct_production_points: 0
     packet_digest: "sha256:0a11a591a5861253317d6a3fe4a0b960441d0279b53d9676f7306fc5d1fddefe"
     work_packet_digest: "sha256:05c17de2488ddd6d69b51db78c42609d0b72c3451f05c90e6b6ba3b1eae2c3b4"
     accepted_outcome_digest: null
+    candidate_sha: "72a805fd7c8653453253527e68509c7e9a0b2895"
+    candidate_tree: "099e591fae1316d2a35a4d58e27f3d080decb9ee"
     manual_overlay_reason: "owner-required Cursor coding lane split into a self-registering dependency-independent XR-core plugin; real product scope routed to an under-target provider, never filler"
 
 credit_rules:
