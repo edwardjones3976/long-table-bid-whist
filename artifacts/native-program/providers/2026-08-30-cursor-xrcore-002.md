@@ -73,3 +73,44 @@ Cursor the sole plugin writer, and authorizes exactly one final source-only
 recovery in the same authenticated session. OpenAI will mechanically freeze
 and independently test its terminal bytes; no further Cursor revision is
 authorized.
+
+## Final Cursor recovery and exact-candidate QA
+
+Cursor completed the source-only recovery in the same authenticated session:
+
+- request `a6b7b6dd-01da-4709-9e2b-99c7a23e9d9d`;
+- 92,399 input, 24,977 output and 1,544,064 cache-read tokens;
+- eight changed paths, all below `Unreal/Plugins/LongTableXR/**`;
+- every provider-local command honestly reported `NOT_RUN` with null exit code.
+
+OpenAI mechanically committed the exact unchanged Cursor diff
+`57814a52fe1f8974419349299a985d920ba6a8f0` as:
+
+- candidate `33aca6106603342efcf43fb813482cb18fd4b18c`;
+- tree `04f65bc3c72202977312cb38bc039460545daeec`;
+- sole parent `72fb778a9536b4e5dda74d73451244d069d53713`;
+- Cursor Agent author / OpenAI QA committer.
+
+The exact UE5.7 `LongTableEditor Win64 Development` build passed with
+UnrealBuildTool exit `0`. Focused `LongTable.XR` automation then reported nine
+successes and one failure. `LongTable.XR.SemanticParity` failed:
+
+- `out unchanged after above max interaction id`;
+- `out unchanged after above max target handle`.
+
+Independent source review proved both failures are stale test-oracle bugs, not
+production decoder mutations. Successful exact-minimum/maximum decodes changed
+`DecodeOut`; later rejection checks compared the preserved current value to the
+older initial `Baseline`. `DecodeInteractionEventJson` parses into locals and
+assigns `Out` only after complete validation. The correct test snapshots the
+immediately preceding value before each rejecting call. The same test also
+omits above-maximum `ConfirmGeneration` rejection plus unchanged-output
+coverage.
+
+Because focused automation is nonzero and the final packet's revision budget is
+exhausted, candidate `33aca610...` is
+`OPENAI_CHANGES_REQUIRED_REVISION_EXHAUSTED_TEST_GATE_FAILED`. The game target,
+full Unreal automation and TypeScript gates were correctly not run after the
+focused-gate failure. No XR byte is accepted or receives direct-production
+credit. A new, explicit ownership-transfer fallback packet is required for the
+test-only correction; OpenAI will not edit it.

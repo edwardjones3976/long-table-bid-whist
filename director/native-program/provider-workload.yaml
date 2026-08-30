@@ -1,4 +1,4 @@
-# [[OpenAI Director | Codex | 2026-08-30 | 09:48 UTC | BEGIN]]
+# [[OpenAI Director | Codex | 2026-08-30 | 09:58 UTC | BEGIN]]
 schema_version: "long-table-provider-workload/v2"
 
 policy_binding:
@@ -10,7 +10,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_7_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists"
+  rolling_compliance_status: "WARMING_UP_8_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -200,22 +200,22 @@ overall_effort_ledger:
     assignment_id: "LT-NATIVE-CURSOR-XRCORE-002-R1"
     provider: cursor
     size: medium
-    canonical_points: 0
-    completed: false
-    terminal_status: "PROVIDER_EXECUTION_IN_PROGRESS_FINAL_SOURCE_ONLY_RECOVERY"
-    authenticated_run: "cursor-session:a0bf5116c-ce93-4fa7-880a-a35b652f3476"
+    canonical_points: 5
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_REVISION_EXHAUSTED_TEST_GATE_FAILED"
+    authenticated_run: "cursor-session:a0bf5116c-ce93-4fa7-880a-a35b652f3476;request:a6b7b6dd-01da-4709-9e2b-99c7a23e9d9d;candidate:33aca6106603342efcf43fb813482cb18fd4b18c"
     direct_production_points: 0
-    exclusion_reason: "the immutable schema-valid final recovery is executing in the same authenticated session with Shell prohibited; it receives no completed-window or direct-production points before a terminal result and OpenAI exact-candidate QA"
+    exclusion_reason: "Cursor completed the final source-only recovery; OpenAI mechanically froze candidate 33aca61, verified a green UE5.7 editor build, then reproduced focused XR automation at 9 pass / 1 fail. The remaining failures are stale-baseline test-oracle defects and ConfirmGeneration above-max coverage is missing; revision authority is exhausted and production credit remains zero"
 
 accepted_direct_production_ledger: []
 
 rolling_window_projection:
-  completed_assignments: 7
+  completed_assignments: 8
   window_size: 20
-  current_canonical_points: {claude: 8, cursor: 15, grok: 8, openai: 0, gemini_antigravity: 10, perplexity: 0}
-  current_partial_shares_percent: {claude: 19.51, cursor: 36.59, grok: 19.51, openai: 0, gemini_antigravity: 24.39, perplexity: 0}
+  current_canonical_points: {claude: 8, cursor: 20, grok: 8, openai: 0, gemini_antigravity: 10, perplexity: 0}
+  current_partial_shares_percent: {claude: 17.39, cursor: 43.48, grok: 17.39, openai: 0, gemini_antigravity: 21.74, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
-  next_route: "complete the one active final Cursor XR recovery and OpenAI exact-candidate QA; resume the exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; then route the product-required RobotDealer replacement to an eligible under-target provider under a new non-overlapping packet"
+  next_route: "resume the exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; after that terminal outcome, route one small XR-test ownership-transfer correction and the product-required RobotDealer replacement to an eligible under-target fallback under new non-overlapping packets"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -323,14 +323,14 @@ canonical_assignment_ledger:
     provider: cursor
     size: medium
     canonical_points: 5
-    status: "PROVIDER_EXECUTION_IN_PROGRESS_FINAL_SOURCE_ONLY_RECOVERY"
+    status: "OPENAI_CHANGES_REQUIRED_REVISION_EXHAUSTED_TEST_GATE_FAILED"
     accepted_direct_production_points: 0
     packet_digest: "sha256:abb7c31e5d70eb8ea2395f817eea03c3d638fef335a1ecd486a8ab22cc9c5cf9"
     work_packet_digest: "sha256:08e25f8e11c300a608c0ca23fdbed5c6ca4ce1e575b429837d49ba92a0705db8"
     accepted_outcome_digest: null
-    candidate_sha: null
-    candidate_tree: null
-    manual_overlay_reason: "one final schema-valid recovery of the useful XR lane consolidates all exact OpenAI findings, prohibits Shell, preserves Cursor as the sole writer and earns no points before terminal execution"
+    candidate_sha: "33aca6106603342efcf43fb813482cb18fd4b18c"
+    candidate_tree: "04f65bc3c72202977312cb38bc039460545daeec"
+    manual_overlay_reason: "the final schema-valid source-only recovery remained Cursor-authored and produced a compilable plugin, but exact OpenAI automation failed one test and independent review confirmed a stale-oracle defect plus missing boundary coverage; no further Cursor revision or direct-production credit is permitted"
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -352,4 +352,4 @@ action_reduction:
   duplicate_validation_reduction_percent: 70
   total_action_reduction_percent: 60
 
-# [[OpenAI Director | Codex | 2026-08-30 | 09:48 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-30 | 09:58 UTC | END]]
