@@ -72,6 +72,13 @@ paths, but it does not implement or edit the Antigravity plugin. Grok may emit
 closed public dealer cues from its own surfaces, but it likewise cannot edit the
 presenter.
 
+The dependency-independent Grok fallback is frozen by
+`contracts/long-table-house-public-v1.json`. That contract is the entire
+HouseCore product authority for `LT-NATIVE-GROK-HOUSE-001`: public event,
+occupancy, queue, rotation and standings facts only. It grants no rules,
+identity, session, moderation, networking, robot-dealer or concealed-state
+authority.
+
 ## Bound source and engine
 
 - Repository: `edwardjones3976/long-table-bid-whist`

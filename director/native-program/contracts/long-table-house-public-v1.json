@@ -1,0 +1,480 @@
+{
+  "contract_id": "long-table-house-public/v1",
+  "status": "FROZEN_FOR_LT_NATIVE_GROK_HOUSE_001",
+  "purpose": "Closed public-only contract for a clean-room Unreal Engine 5.7 LongTableHouseCore implementation. It governs events, public table occupancy, queues, rotations and standings without rules authority, identity authority, networking or concealed game state.",
+  "module": {
+    "plugin": "LongTableHouseCore",
+    "root": "Unreal/Plugins/LongTableHouseCore",
+    "runtime_module": "LongTableHouseCore",
+    "test_module": "LongTableHouseCoreTests",
+    "namespace": "LongTableHouse"
+  },
+  "trust_boundary": {
+    "input_authority": "All commands are already authenticated and authorized by an upstream owner. HouseCore validates structure, bounds, version and lifecycle only and grants no role or identity authority.",
+    "output_authority": "Snapshots and receipts are public presentation facts only and cannot authorize play, seating identity, moderation, credentials, sessions or host actions.",
+    "construction": "Create every public record field by field from the exact positive inventory below. Unknown fields are rejected before mutation.",
+    "privacy_controls": "Structural closed types, distinct command payloads, explicit bounds and counterfactual byte-equivalence tests only.",
+    "prohibited_privacy_controls": [
+      "regex",
+      "blacklist",
+      "keyword or substring classification",
+      "redaction",
+      "serialize then delete",
+      "best-effort text filtering"
+    ],
+    "physically_absent_concepts": [
+      "card",
+      "hand",
+      "bid",
+      "trick",
+      "rules manifest",
+      "player projection",
+      "credential",
+      "capability",
+      "token",
+      "room code",
+      "invitation",
+      "resume secret",
+      "moderation record",
+      "voice or audio payload",
+      "transcript",
+      "music or media",
+      "free-form announcement text",
+      "network address",
+      "provider payload",
+      "extension map"
+    ]
+  },
+  "bounds": {
+    "event_capacity": 32,
+    "tables_per_event": 64,
+    "seats_per_table": 4,
+    "spectators_per_table": 32,
+    "queued_parties_per_event": 256,
+    "party_size_min": 1,
+    "party_size_max": 4,
+    "priority_min": 0,
+    "priority_max": 3,
+    "standing_entries_per_event": 1024,
+    "standing_played_min": 0,
+    "standing_played_max": 1000000,
+    "standing_wins_min": 0,
+    "standing_wins_max": 1000000,
+    "standing_losses_min": 0,
+    "standing_losses_max": 1000000,
+    "standing_ties_min": 0,
+    "standing_ties_max": 1000000,
+    "standing_table_points_min": -1000000,
+    "standing_table_points_max": 1000000,
+    "standing_books_for_min": 0,
+    "standing_books_for_max": 1000000,
+    "standing_books_against_min": 0,
+    "standing_books_against_max": 1000000,
+    "standing_played_delta_min": 0,
+    "standing_played_delta_max": 1,
+    "standing_outcome_delta_min": 0,
+    "standing_outcome_delta_max": 1,
+    "standing_table_points_delta_min": -1000,
+    "standing_table_points_delta_max": 1000,
+    "standing_books_delta_min": 0,
+    "standing_books_delta_max": 64,
+    "retained_command_receipts_per_event": 1024,
+    "identifier_bytes_min": 1,
+    "identifier_bytes_max": 64,
+    "version_max_decimal": "18446744073709551614",
+    "sequence_max_decimal": "18446744073709551614",
+    "schedule_slot_max": 4294967294
+  },
+  "identifier_contract": {
+    "encoding": "UTF-8",
+    "permitted_bytes": [
+      "ASCII A through Z",
+      "ASCII a through z",
+      "ASCII 0 through 9",
+      "hyphen",
+      "underscore"
+    ],
+    "validation": "Validate length and each byte against the explicit permitted-byte ranges. This syntax check is not a privacy, authorization or disclosure decision.",
+    "canonical_form": "Identifiers are case-sensitive and byte-preserving. Empty values, whitespace, normalization, truncation and replacement are rejected."
+  },
+  "enums": {
+    "EHouseEventState": [
+      "Scheduled",
+      "Open",
+      "Paused",
+      "Closing",
+      "Closed"
+    ],
+    "EHouseTableState": [
+      "Available",
+      "Reserved",
+      "Seated",
+      "Playing",
+      "Completed",
+      "Closed"
+    ],
+    "EHouseCommandKind": [
+      "CreateEvent",
+      "SetEventState",
+      "AddTable",
+      "SetTableState",
+      "EnqueueParty",
+      "CancelParty",
+      "RotateNextParty",
+      "MigrateTableParties",
+      "ReleaseCompletedTable",
+      "RecordStandingDelta",
+      "SetSpectatorCount"
+    ],
+    "EHouseResultCode": [
+      "Applied",
+      "NoOp",
+      "Snapshot",
+      "RejectedUnknownField",
+      "RejectedInvalidEnum",
+      "RejectedInvalidIdentifier",
+      "RejectedOutOfBounds",
+      "RejectedCapacity",
+      "RejectedStaleVersion",
+      "RejectedStaleSequence",
+      "RejectedSequenceConflict",
+      "RejectedDuplicateOutsideRetention",
+      "RejectedLifecycle",
+      "RejectedNotFound",
+      "RejectedAlreadyExists",
+      "RejectedNoFit",
+      "RejectedOverflow"
+    ]
+  },
+  "record_definitions": {
+    "FHouseIdentifier": {
+      "additional_properties": false,
+      "representation": "FString validated against identifier_contract without normalization or replacement"
+    },
+    "FHouseDigest": {
+      "additional_properties": false,
+      "representation": "exact 32-byte SHA-256 value; canonical test JSON renders 64 lowercase hexadecimal bytes using explicit nibble conversion"
+    },
+    "FHouseEventPublic": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "EventId:FHouseIdentifier",
+        "Version:uint64",
+        "State:EHouseEventState",
+        "ScheduleSlot:uint32",
+        "TableCount:uint16",
+        "OpenTableCount:uint16",
+        "OccupiedSeatCount:uint16",
+        "QueuedPartyCount:uint16",
+        "StandingEntryCount:uint16"
+      ]
+    },
+    "FHouseSeatedPartyPublic": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "PartyId:FHouseIdentifier",
+        "PartySize:uint8",
+        "SeatStart:uint8"
+      ]
+    },
+    "FHouseTablePublic": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "TableId:FHouseIdentifier",
+        "EventId:FHouseIdentifier",
+        "State:EHouseTableState",
+        "SeatCapacity:uint8",
+        "OccupiedSeatCount:uint8",
+        "SeatedParties:TArray<FHouseSeatedPartyPublic>",
+        "SpectatorCount:uint8",
+        "RotationOrdinal:uint64"
+      ]
+    },
+    "FHouseQueueEntryPublic": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "PartyId:FHouseIdentifier",
+        "PartySize:uint8",
+        "Priority:uint8",
+        "InsertionSequence:uint64"
+      ]
+    },
+    "FHouseStandingPublic": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "EntryId:FHouseIdentifier",
+        "Played:uint32",
+        "Wins:uint32",
+        "Losses:uint32",
+        "Ties:uint32",
+        "TablePoints:int64",
+        "BooksFor:uint32",
+        "BooksAgainst:uint32"
+      ]
+    },
+    "FHouseSnapshotPublic": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "Event:FHouseEventPublic",
+        "Tables:TArray<FHouseTablePublic>",
+        "Queue:TArray<FHouseQueueEntryPublic>",
+        "Standings:TArray<FHouseStandingPublic>"
+      ]
+    },
+    "FHouseCommandEnvelope": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "CommandId:FHouseIdentifier",
+        "CommandSequence:uint64",
+        "ExpectedVersion:uint64",
+        "EventId:FHouseIdentifier",
+        "Kind:EHouseCommandKind",
+        "Payload:exact-discriminated-payload"
+      ]
+    },
+    "FHouseCommandReceipt": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "CommandId:FHouseIdentifier",
+        "CommandSequence:uint64",
+        "EventId:FHouseIdentifier",
+        "Result:EHouseResultCode",
+        "BeforeVersion:uint64",
+        "AfterVersion:uint64",
+        "PublicStateDigest:FHouseDigest"
+      ]
+    },
+    "FHouseMutationResult": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "Receipt:FHouseCommandReceipt"
+      ]
+    },
+    "FHouseSnapshotQuery": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "EventId:FHouseIdentifier",
+        "ExpectedVersion:uint64"
+      ]
+    },
+    "FHouseSnapshotReceipt": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "EventId:FHouseIdentifier",
+        "Result:EHouseResultCode",
+        "CurrentVersion:uint64",
+        "PublicStateDigest:FHouseDigest"
+      ]
+    },
+    "FHouseSnapshotSuccess": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "Receipt:FHouseSnapshotReceipt",
+        "Snapshot:FHouseSnapshotPublic"
+      ]
+    },
+    "FHouseSnapshotFailure": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "Receipt:FHouseSnapshotReceipt"
+      ]
+    },
+    "FHouseSnapshotResult": {
+      "additional_properties": false,
+      "representation": "closed tagged union of FHouseSnapshotSuccess when Receipt.Result is Snapshot or FHouseSnapshotFailure for every rejection; no optional Snapshot member"
+    }
+  },
+  "command_payloads": {
+    "CreateEvent": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "ScheduleSlot:uint32",
+        "InitialState:EHouseEventState"
+      ],
+      "allowed_initial_states": [
+        "Scheduled",
+        "Open"
+      ]
+    },
+    "SetEventState": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "NewState:EHouseEventState"
+      ]
+    },
+    "AddTable": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "TableId:FHouseIdentifier"
+      ]
+    },
+    "SetTableState": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "TableId:FHouseIdentifier",
+        "NewState:EHouseTableState"
+      ]
+    },
+    "EnqueueParty": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "PartyId:FHouseIdentifier",
+        "PartySize:uint8",
+        "Priority:uint8"
+      ]
+    },
+    "CancelParty": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "PartyId:FHouseIdentifier"
+      ]
+    },
+    "RotateNextParty": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "TableId:FHouseIdentifier"
+      ]
+    },
+    "MigrateTableParties": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "SourceTableId:FHouseIdentifier",
+        "DestinationTableId:FHouseIdentifier"
+      ]
+    },
+    "ReleaseCompletedTable": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "TableId:FHouseIdentifier"
+      ]
+    },
+    "RecordStandingDelta": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "EntryId:FHouseIdentifier",
+        "PlayedDelta:uint8",
+        "WinsDelta:uint8",
+        "LossesDelta:uint8",
+        "TiesDelta:uint8",
+        "TablePointsDelta:int32",
+        "BooksForDelta:uint16",
+        "BooksAgainstDelta:uint16"
+      ]
+    },
+    "SetSpectatorCount": {
+      "additional_properties": false,
+      "fields_in_order": [
+        "TableId:FHouseIdentifier",
+        "SpectatorCount:uint8"
+      ]
+    }
+  },
+  "determinism": {
+    "validation_order": [
+      "closed envelope and exact discriminated payload",
+      "enum and scalar bounds",
+      "identifier byte contract",
+      "retained exact duplicate lookup by CommandId",
+      "CommandId conflict detection",
+      "sequence replay defense",
+      "event existence",
+      "expected version",
+      "lifecycle preconditions",
+      "overflow and capacity",
+      "single atomic mutation",
+      "canonical snapshot and receipt"
+    ],
+    "idempotency": "For a structurally valid envelope targeting an existing event, an exact retained duplicate returns its original FHouseMutationResult bytes and never revalidates ExpectedVersion. Reusing a retained CommandId or CommandSequence with different canonical command bytes returns RejectedSequenceConflict. A non-retained CommandSequence below the oldest retained sequence returns RejectedDuplicateOutsideRetention; a non-retained gap at or below the high-water mark returns RejectedStaleSequence. Neither mutates. Reset or restore preserves the high-water mark and retained result ring.",
+    "receipt_retention": "After structural, enum, bound and identifier validation, every new CommandSequence above an existing event's high-water mark advances that high-water mark and retains its terminal FHouseMutationResult, including Applied, NoOp and domain rejection. Structurally invalid envelopes, absent-event non-creation commands, and already-stale or outside-retention sequences do not advance it. CreateEvent sequence 1 creates the journal and retains its Applied result. Keep the latest 1024 terminal mutation results per event ordered by CommandSequence; eviction never makes an old sequence fresh.",
+    "versioning": "Only an Applied semantic mutation increments Event.Version exactly once. Snapshot, NoOp and every rejection preserve version and canonical public-state bytes. Overflow is rejected before mutation.",
+    "queue_order": "Lower Priority value sorts first, then lower InsertionSequence, then PartyId UTF-8 bytes. Capacity rejection preserves all prior bytes and order.",
+    "rotation": "RotateNextParty selects the first sorted queued party that fits the selected Available or Reserved table. On success it atomically removes that party, assigns the first contiguous free seat range, appends an exact FHouseSeatedPartyPublic, derives OccupiedSeatCount from all seated parties, increments RotationOrdinal and sets state to Reserved or Seated when full. A PartyId already queued or seated is rejected. No fitting party returns RejectedNoFit without mutation.",
+    "standings_order": "Sort by Wins descending, then TablePoints descending, then BooksFor minus BooksAgainst descending, then EntryId UTF-8 bytes ascending. All arithmetic is checked before mutation.",
+    "serialization": "Canonical UTF-8 JSON for test evidence uses record field order above, enum names exactly as listed, base-10 integers, no insignificant whitespace and arrays in their specified deterministic order. Runtime C++ state must produce byte-identical canonical test output across runs.",
+    "public_state_digest": "PublicStateDigest is SHA-256 over the exact canonical FHouseSnapshotPublic bytes after the terminal outcome. When an EventId is absent, it is SHA-256 over the exact four ASCII bytes null. FHouseSnapshotSuccess must carry the snapshot whose bytes match its receipt digest; FHouseSnapshotFailure carries no snapshot."
+  },
+  "lifecycle": {
+    "creation_rule": "CreateEvent requires ExpectedVersion 0, CommandSequence 1, an absent EventId and global event capacity. Success creates Version 1 and initializes empty sorted arrays. Every non-creation mutating command requires an existing event and a strictly increasing CommandSequence.",
+    "snapshot_rule": "GetSnapshot accepts only FHouseSnapshotQuery and returns the closed FHouseSnapshotResult union. ExpectedVersion may be 0 for latest or the exact current version. Success returns FHouseSnapshotSuccess with Result Snapshot; absence, structural failure or an exact-version mismatch returns FHouseSnapshotFailure. It never enters mutation idempotency, changes version, receipt retention, high-water state or canonical public-state bytes.",
+    "event_transitions": [
+      "Scheduled->Open",
+      "Open->Paused",
+      "Paused->Open",
+      "Open->Closing",
+      "Paused->Closing",
+      "Scheduled->Closed when the event has no tables, queued parties or standings",
+      "Closing->Closed"
+    ],
+    "set_table_state_transitions": [
+      "Seated->Playing",
+      "Playing->Completed",
+      "Available->Closed",
+      "Completed->Closed only when no seated party remains"
+    ],
+    "rotation_transition": "RotateNextParty is the only path from Available to Reserved and from Reserved to Seated. It derives seats from the exact queued party and cannot accept an occupancy count from the caller.",
+    "migration_rule": "MigrateTableParties requires distinct existing source and destination tables. The source must be Reserved, Seated or Playing; the destination must be Available or Reserved; and every complete source party must fit. The command atomically preserves PartyId and PartySize, assigns deterministic contiguous destination SeatStart values after existing destination parties, clears and closes the source, derives both occupancy counts, and leaves the destination Reserved or Seated when full. Any failure preserves both tables byte-for-byte.",
+    "release_rule": "ReleaseCompletedTable requires state Completed. It atomically removes every complete seated-party assignment, sets OccupiedSeatCount to 0 and state to Available. No generic command may clear or overwrite occupancy.",
+    "close_rule": "SetTableState cannot close any table with a seated party or state Reserved, Seated or Playing. Only MigrateTableParties may close such a source while preserving every party assignment at its destination.",
+    "event_close_rule": "An event cannot enter Closed while any table is occupied, queued party remains, or table state is not Closed. Failed closure is atomic.",
+    "table_occupancy_invariants": [
+      "Available and Closed require OccupiedSeatCount 0",
+      "Reserved requires OccupiedSeatCount 1 through 3",
+      "Seated, Playing and Completed require OccupiedSeatCount 1 through 4",
+      "SeatCapacity is always exactly 4",
+      "OccupiedSeatCount is derived as the sum of PartySize across SeatedParties",
+      "SeatedParties are sorted by SeatStart, use non-overlapping contiguous ranges within seats 0 through 3 and contain unique PartyId values across the event"
+    ],
+    "standing_invariant": "For every standing, Played equals Wins plus Losses plus Ties. PlayedDelta must equal WinsDelta plus LossesDelta plus TiesDelta. Each delta and resulting stored field must stay inside its separately configured minimum and maximum, and the entire operation validates before mutation."
+  },
+  "state_persistence": {
+    "api": "ExportState returns caller-owned TArray<uint8>; RestoreState accepts a caller-supplied TConstArrayView<uint8>. The plugin performs no file or network I/O.",
+    "wire_format": "Deterministic little-endian binary with exact eight-byte ASCII magic LTHC0001, uint32 payload length, the closed internal inventory in the order below, and a final 32-byte SHA-256 over every preceding byte. Strings are uint8 byte length plus validated identifier bytes. Arrays are fixed-width count then ordered members. Booleans are one byte 0 or 1. No padding, optional field, tag extension or trailing byte is allowed.",
+    "closed_internal_inventory": [
+      "contract_id",
+      "sorted event snapshots",
+      "per-event command-sequence high-water mark",
+      "per-event retained entries of CommandSequence, CommandId, canonical command digest and exact FHouseMutationResult bytes",
+      "payload SHA-256"
+    ],
+    "restore": "Restore into a temporary state, reject an unknown field, contract mismatch, trailing byte, invalid enum, invalid bound, invalid ordering, broken lifecycle or occupancy invariant, duplicate identity, receipt mismatch, digest mismatch, missing high-water state or retained sequence above high water, and swap atomically only after full validation.",
+    "replay_defense": "Round-trip restore must preserve exact canonical public bytes, version, high-water state and retained-result replay behavior. A corrupt or older incompatible payload leaves live state byte-for-byte unchanged."
+  },
+  "implementation_constraints": [
+    "C++ owns all types, validation, lifecycle, idempotency, ordering, canonical serialization and mutation.",
+    "Blueprint exposure is read-only snapshot and typed presentation notification only; Blueprint cannot mutate internal state or submit untyped maps.",
+    "The plugin has no Runtime dependencies beyond Core and CoreUObject and no socket, HTTP, file, process, analytics, telemetry, rules, player-intent, credential, microphone, voice, audio or media dependency.",
+    "Source and tests are original code only. No generated, cached, packaged or binary artifact is committed.",
+    "The plugin neither implements nor imports LongTableRobotDealer and emits no robot behavior.",
+    "The plugin reads no Claude implementation and no historical or quarantined Antigravity artifact."
+  ],
+  "required_test_ids": [
+    "House.Contract.ExactFieldInventory",
+    "House.Contract.UnknownFieldRejected",
+    "House.Contract.InvalidEnumAndBoundsNoMutation",
+    "House.Idempotency.DuplicateBeforeStale",
+    "House.Idempotency.ConflictAndEvictionReplayDefense",
+    "House.Idempotency.ResetPreservesReplayDefense",
+    "House.Version.SnapshotAndNoOpStable",
+    "House.Version.OverflowAtomic",
+    "House.Queue.PriorityInsertionAndTieOrder",
+    "House.Queue.CapacityRetainsBytes",
+    "House.Rotation.AtomicPartySeating",
+    "House.Rotation.DerivedOccupancyAndUniqueAssignments",
+    "House.Rotation.SingletonAndNoFitNoOp",
+    "House.Lifecycle.OccupiedTableCannotClose",
+    "House.Lifecycle.AtomicMigrationPreservesEveryParty",
+    "House.Lifecycle.CompletedReleaseIsOnlyClearPath",
+    "House.Lifecycle.EventCloseFailsAtomically",
+    "House.Standings.DeterministicTieOrder",
+    "House.Standings.ExactDeltaAndStoredBounds",
+    "House.Standings.CheckedArithmetic",
+    "House.Snapshot.ClosedSuccessFailureVariantsAndDigest",
+    "House.Persistence.RoundTripPreservesReplayDefense",
+    "House.Persistence.CorruptRestoreIsAtomic",
+    "House.Serialization.ByteStableAcrossRuns",
+    "House.Privacy.CounterfactualPublicBytes",
+    "House.Dependencies.NoAuthorityNetworkAudioOrRobot"
+  ],
+  "counterfactual_test_contract": "Test fixtures may contain synthetic private-side values only in the test harness outside HouseCore. Vary every such value while holding the exact public command sequence constant and prove HouseCore canonical snapshot and receipt bytes are unchanged. No private-side field or name may appear in a HouseCore public type.",
+  "acceptance_boundary": "Passing local source, build and headless automation proves only a clean-room HouseCore candidate. It does not prove integration, Android or Quest packaging, physical headset behavior, human event hosting, rights, cultural acceptance, store acceptance, release or product completion."
+}

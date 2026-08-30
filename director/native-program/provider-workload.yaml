@@ -146,6 +146,16 @@ overall_effort_ledger:
     authenticated_run: null
     direct_production_points: 0
     exclusion_reason: "429 session cap occurred before model execution; the immutable packet remains queued for the exact reset"
+  - sequence: 4
+    assignment_id: "LT-NATIVE-GROK-HOUSE-001"
+    provider: grok
+    size: long
+    canonical_points: 0
+    completed: false
+    terminal_status: "PRESTAGED_AUTHORITY_CONTRACT_FREEZE"
+    authenticated_run: null
+    direct_production_points: 0
+    exclusion_reason: "pre-dispatch authority preparation is not provider execution or workload credit"
 
 accepted_direct_production_ledger: []
 
@@ -155,7 +165,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 8, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 8, perplexity: 0}
   current_partial_shares_percent: {claude: 50, cursor: 0, grok: 0, openai: 0, gemini_antigravity: 50, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
-  next_route: "LT-NATIVE-GROK-HOUSE-001 clean-room HouseCore, because it is useful, dependency-independent, under-target, and does not overlap another writer"
+  next_route: "dispatch the exact LT-NATIVE-GROK-HOUSE-001 clean-room HouseCore packet after schema, digest, starting-ref and clean-worktree preflight"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -189,6 +199,16 @@ canonical_assignment_ledger:
     work_packet_digest: "sha256:801ae362d21ce3dbc8b880db1d29cf652899815e8a1595a7d8d2943dc42c0279"
     accepted_outcome_digest: null
     manual_overlay_reason: "single Claude correction and cumulative revalidation; authenticated CLI recovery reached its temporary session cap before provider execution; no code or credit; materially different authenticated Cowork transport requires action-time transmission approval"
+  - sequence: 4
+    assignment_id: "LT-NATIVE-GROK-HOUSE-001"
+    provider: grok
+    size: long
+    canonical_points: 8
+    status: "PRESTAGED_AUTHORITY_CONTRACT_FREEZE"
+    accepted_direct_production_points: 0
+    packet_digest: null
+    accepted_outcome_digest: null
+    manual_overlay_reason: "owner-authorized independent clean-room HouseCore fallback; no Claude dependency; no Antigravity artifact access; exact packet and authenticated execution required before effort credit"
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
