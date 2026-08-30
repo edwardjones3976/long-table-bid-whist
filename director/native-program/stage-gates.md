@@ -4,8 +4,9 @@
 ## Architecture boundary
 
 One UE5.7 C++ project uses `LongTableProtocol`, `LongTableTable`,
-`LongTableXR`, `LongTableSocial`, the isolated `LongTableHouseCore`, and the
-`LongTable` composition root. Blueprint owns room composition, materials,
+`LongTableXR`, `LongTableRobotDealer`, `LongTableSocial`, the isolated
+`LongTableHouseCore`, and the `LongTable` composition root. Blueprint owns room
+composition, materials,
 lighting, choreography, animation curves and allowlisted presentation. C++ owns
 schemas, authority connection, projection application, intent identity,
 permissions, input normalization, commit state machines and tests.

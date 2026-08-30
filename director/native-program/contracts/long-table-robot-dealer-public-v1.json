@@ -1,0 +1,164 @@
+{
+  "schema_version": "long-table-robot-dealer-public/v1.0",
+  "contract_id": "LT-ROBOT-DEALER-PUBLIC-1.0",
+  "purpose": "Closed public ABI and deterministic behavior contract for a visibly non-human, presentation-only UE5.7 robot dealer. It receives only fixed public cues and has no card-game authority, concealed state, identity, network, audio, media or host/player command capability.",
+  "provenance": {
+    "public_synthetic_base": "74f856fd80429d8b167723c949985040c634e11e",
+    "reuse_boundary": "The twelve-kind and six-field vocabulary below comes only from the pre-provider public synthetic contract. No Antigravity implementation, diff, transcript or QA copy is authority or a readable dependency.",
+    "qa_strengthening": "This v1.0 freezes monotonic direct/queued behavior, explicit pause/resume semantics, compile-safe native and Blueprint delegate seams, and honest evidence requirements after independent OpenAI findings."
+  },
+  "plugin_boundary": {
+    "owned_path": "Unreal/Plugins/LongTableRobotDealer/**",
+    "descriptor": "Unreal/Plugins/LongTableRobotDealer/LongTableRobotDealer.uplugin",
+    "public_header": "Unreal/Plugins/LongTableRobotDealer/Source/LongTableRobotDealer/Public/LongTableRobotDealerCueInterface.h",
+    "module_type": "Runtime",
+    "loading_phase": "Default",
+    "can_contain_content": false,
+    "allowed_module_dependencies": [
+      "Core",
+      "CoreUObject",
+      "Engine"
+    ],
+    "prohibited_project_dependencies": [
+      "LongTable",
+      "LongTableProtocol",
+      "LongTableTable",
+      "LongTableXR",
+      "LongTableHouseCore",
+      "LongTableSocial"
+    ],
+    "prohibited_capabilities": [
+      "rules or adjudication",
+      "authority or committed-state mutation",
+      "player or host commands",
+      "credentials, identity, session or table identifiers",
+      "card, hand, kitty, discard, bid detail or private receipt data",
+      "socket, HTTP, file, process, analytics or telemetry",
+      "microphone, voice, music, audio, media, URL or third-party asset",
+      "Meta account, avatar, SDK, store or device claims"
+    ]
+  },
+  "closed_vocabulary": {
+    "cue_kind": [
+      "TableOpened",
+      "DealStarted",
+      "BidConfirmed",
+      "TrickStarted",
+      "PublicCardPlayed",
+      "TrickWon",
+      "BookCountChanged",
+      "HandCompleted",
+      "MatchCompleted",
+      "PresentationPaused",
+      "PresentationResumed",
+      "PresentationReset"
+    ],
+    "motion_kind": [
+      "Idle",
+      "Welcome",
+      "Deal",
+      "Acknowledge",
+      "PresentTable",
+      "Gather",
+      "Celebrate",
+      "Summarize",
+      "Pause",
+      "Resume",
+      "Reset"
+    ],
+    "submit_result": [
+      "Accepted",
+      "AcceptedQueued",
+      "ExactDuplicate",
+      "RejectedInvalid",
+      "RejectedStale",
+      "RejectedSequenceConflict",
+      "RejectedQueueFull"
+    ]
+  },
+  "closed_structures": {
+    "FLongTableRobotDealerCue": {
+      "fields_in_order": [
+        "Kind:cue_kind",
+        "PublicSequence:uint64[0,9007199254740991]",
+        "FocusSeat:int8[-1,3]",
+        "PrimaryCount:uint8[0,255]",
+        "SecondaryCount:uint8[0,255]",
+        "TeamIndex:int8[-1,1]"
+      ],
+      "additional_fields": false,
+      "forbidden_representation": "No string, UObject reference, optional member, variant payload, property bag, map, extension field or opaque bytes."
+    },
+    "FLongTableRobotDealerPresentationState": {
+      "fields_in_order": [
+        "PublicSequence:uint64[0,9007199254740991]",
+        "FocusSeat:int8[-1,3]",
+        "PrimaryCount:uint8[0,255]",
+        "SecondaryCount:uint8[0,255]",
+        "TeamIndex:int8[-1,1]",
+        "Paused:bool",
+        "Motion:motion_kind"
+      ],
+      "additional_fields": false
+    }
+  },
+  "deterministic_state_machine": {
+    "queue_capacity": 64,
+    "validation": "Validate the complete closed cue, enum and every numeric bound before changing high-water state, queue, presentation state or emitting an event.",
+    "sequence": "A new cue is eligible only when PublicSequence is strictly greater than the immutable high-water mark. The exact duplicate of the last accepted cue is idempotent and emits nothing. Reusing its sequence with different bytes is a conflict. Any older sequence is stale.",
+    "monotonicity": "The high-water mark never decreases. Direct and queued submission paths share one acceptance function; draining an older queued cue can never overwrite a later accepted high-water value.",
+    "pause": "PresentationPaused is the only cue that enters paused state. While paused, an otherwise valid ordinary cue may be accepted into the bounded FIFO but cannot emit or unpause. PresentationResumed is the only cue that exits paused state and then drains accepted queued cues once in FIFO order.",
+    "reset": "PresentationReset clears queued presentation work and restores neutral presentation state, but preserves the sequence high-water mark and exact-duplicate/conflict defense so an old cue never becomes fresh.",
+    "rejection_atomicity": "Invalid, stale, conflicting and capacity-rejected input changes no state, never evicts an accepted cue and emits nothing.",
+    "emission": "Every accepted ordinary cue emits at most once. Output and event order depend only on the accepted cue byte sequence, never wall clock, randomness, network, filesystem, platform account or authoritative game state.",
+    "authority_equivalence": "Selecting AI Dealer or Human Host may change presentation and host pacing only. For an identical authoritative seed and action sequence, cards, legality, trick winners, score and authority digest remain byte-identical."
+  },
+  "delegate_boundary": {
+    "native_test_seam": "Declare a native C++ multicast delegate that supports lambda handles for deterministic automation tests.",
+    "blueprint_seam": "If Blueprint notification is exposed, declare a separate dynamic multicast delegate and bind it only through valid UObject/UFUNCTION mechanisms.",
+    "prohibition": "Tests must never call AddLambda on a dynamic multicast delegate."
+  },
+  "privacy_and_rights": {
+    "control": "Positive closed structures, field-by-field construction, decode rejection, exact reflected inventory and counterfactual byte-equivalence only.",
+    "prohibited_controls": [
+      "regex",
+      "blacklist",
+      "keyword or substring scan",
+      "redaction",
+      "serialize-then-delete",
+      "concealed-object-then-delete"
+    ],
+    "content": "Original code-native placeholders only. Bundle no voice, jazz, blues, samples, music, images, models, textures, likenesses or archival media. Host music remains external and off; the application does not upload, stream, record or rebroadcast it."
+  },
+  "required_test_ids": [
+    "LongTable.RobotDealer.ClosedSchema",
+    "LongTable.RobotDealer.ValidCueEmitsOnce",
+    "LongTable.RobotDealer.InvalidCueAtomic",
+    "LongTable.RobotDealer.SequenceMonotonic",
+    "LongTable.RobotDealer.StaleDuplicateNoMutation",
+    "LongTable.RobotDealer.DirectQueuedInterleaveCannotRegress",
+    "LongTable.RobotDealer.PauseRequiresExplicitCue",
+    "LongTable.RobotDealer.OrdinaryCueCannotResume",
+    "LongTable.RobotDealer.PausedQueueOrder",
+    "LongTable.RobotDealer.QueueCapacityAtomic",
+    "LongTable.RobotDealer.ResetPreservesReplayDefense",
+    "LongTable.RobotDealer.ConcealmentCounterfactual",
+    "LongTable.RobotDealer.DealerModeAuthorityEquivalence",
+    "LongTable.RobotDealer.RightsCleanInventory",
+    "LongTable.RobotDealer.ModuleBoundary"
+  ],
+  "evidence": {
+    "required": [
+      "exact base, head, tree and one-provider provenance",
+      "exact changed-file allowlist under the plugin subtree",
+      "UE5.7 LongTableEditor and LongTable Win64 Development builds",
+      "focused LongTable.RobotDealer automation with zero failure or not-run",
+      "full LongTable automation after focused acceptance",
+      "exact public-header and contract SHA-256 inventory",
+      "honest command, exit-code and result records"
+    ],
+    "generated_artifacts": "Binaries, Intermediate, Saved, logs, caches and reports remain uncommitted.",
+    "result_boundary": "A provider result is evidence only. OpenAI freezes and independently accepts or rejects the exact unchanged candidate."
+  },
+  "acceptance_boundary": "A green plugin proves only the deterministic presentation component and ABI. Authority integration, visible robot presentation, Android packaging, Quest install/launch, hand/controller interaction, two-headset privacy, Meta presence, performance, human, cultural, rights, store, merge and release remain separate gates."
+}

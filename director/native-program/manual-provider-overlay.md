@@ -77,7 +77,7 @@ interfaces pass OpenAI QA. This split routes real dependency-independent work
 to an under-target provider; it is not filler and does not convert a local
 plugin pass into a combined-game or physical-Quest claim.
 
-### Cursor XR-core terminal R1 disposition
+### Cursor XR-core terminal disposition
 
 Cursor's original exact candidate `72a805f` failed OpenAI's UE5.7 editor build
 and retained ten consolidated findings. The one immutable final revision packet
@@ -85,14 +85,18 @@ then produced provider-authored plugin changes but could not run its shell,
 gates or local commit. OpenAI mechanically froze those unchanged files as exact
 candidate `de02a26`, tree `1faab10`, without editing production code.
 
-Independent OpenAI QA again rejected the candidate. UHT passed, but UE5.7 C++
-compilation failed on a nonexistent surrogate API; source review retained
-closed-schema, enum, overflow, load-phase, export, Unicode and test-validity
-defects. The final revision is therefore terminal
-`CHANGES_REQUIRED_REVISION_EXHAUSTED`, earns zero accepted-production credit and
-is not an integration dependency. No new Cursor correction may be disguised as
-a transport retry; a genuinely new assignment requires an explicit owner
-decision and a fresh authority packet.
+Independent OpenAI QA rejected that candidate. The owner then explicitly
+authorized one genuinely new rescue assignment, `LT-NATIVE-CURSOR-XRCORE-002`,
+and one final source-only revision. Cursor's exact final candidate is
+`33aca6106603342efcf43fb813482cb18fd4b18c`, tree
+`04f65bc3c72202977312cb38bc039460545daeec`. Its UE5.7 editor build passed and
+focused `LongTable.XR` automation reached 9 pass / 1 fail. Independent OpenAI
+review proved the remaining two assertions compare rejected decodes with a
+stale pre-boundary baseline, and that above-maximum `ConfirmGeneration`
+coverage is missing. Production decoding is transactional and requires no
+change. Cursor's revision budget is exhausted, the route is terminal
+`OPENAI_CHANGES_REQUIRED_REVISION_EXHAUSTED_TEST_GATE_FAILED`, and it earns zero
+accepted-production credit.
 
 ## Robot-dealer ownership amendment
 
@@ -112,10 +116,42 @@ QA and can accept, reject or kick back the exact artifact; it writes no dealer
 production code.
 
 The packet was dispatched only after the required under-target Grok route. Its
-structured run terminated `UNAVAILABLE` because the user's configured policy
-denied sandbox file writes and local commands. OpenAI verified zero code and
-zero mutation. It earns overall assignment effort once, but no accepted direct
-production credit; Cursor therefore has no robot-presenter artifact to bind.
+primary transport stopped at the sandbox policy. The owner then explicitly
+authorized the exact project-bound `write_to_file` and `run_command` recovery.
+That recovery produced source-only candidate
+`0ae3269b602288563804b081abe82cb7e69d0059`, tree
+`5702fe88522a6587eaf5831f318e6791e9f1653f`. OpenAI rejected it for a sequence
+high-water regression when queued and direct submissions interleave, likely
+dynamic-multicast `AddLambda` compilation failures, ordinary cues unpausing a
+paused presenter, and result evidence that overstated commands actually run.
+The final recovery is terminal, earns its overall effort once, and earns zero
+accepted direct-production credit.
+
+## Cursor XR test-only exhausted-route transfer
+
+After Claude R1 is terminal, one new medium/5 Claude assignment may start from
+exact Cursor base `33aca6106603342efcf43fb813482cb18fd4b18c`. Its sole
+writable file is
+`Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp`.
+It snapshots the most recently accepted `DecodeOut` before above-maximum
+`InteractionId` and `TargetHandle` rejections and adds the missing
+above-maximum `ConfirmGeneration` rejection plus unchanged-output assertion.
+Every other XR file is a readable immutable dependency; no production decoder
+change is authorized. This is a sequential ownership transfer from a terminal
+route, not simultaneous cross-writing and not another Cursor revision.
+
+## Robot-dealer exhausted-route transfer
+
+After the XR fallback is frozen and OpenAI-QA terminal, one separate medium/5
+Claude clean-room assignment may own
+`Unreal/Plugins/LongTableRobotDealer/**`. Its authority is the frozen
+`contracts/long-table-robot-dealer-public-v1.json` plus exact accepted Claude
+public presentation interfaces, if available. The rejected Antigravity source,
+sandbox, worktree, frozen copies, transcript, evidence, hashes and diffs are
+never readable dependencies. The fresh packet must bind an exact clean base,
+closed cue ABI, one writer, one result envelope and full UE5.7 automation.
+Neither rejected Antigravity bytes nor OpenAI corrections may seed the new
+plugin.
 
 ## Warm-up variance after the Grok route
 
