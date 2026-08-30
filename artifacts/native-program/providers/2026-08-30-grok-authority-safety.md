@@ -61,6 +61,16 @@ email, offline access, xAI API access, and Grok.com conversation/workspace
 read-write access. OpenAI did not grant that permission; owner confirmation is
 required at the action boundary.
 
+Before dispatch, OpenAI froze the implementation-independent acceptance
+contract in
+`artifacts/native-program/qa/2026-08-30-grok-authority-safety-acceptance.md`.
+Its real `node:net` probe sends the upgrade and three masked hellos in exactly
+one TCP write. On the rejected starting candidate it exits `1` and reproduces
+the ghost state exactly: transport connections `0`, session connections `1`
+and South connected `true`. Acceptance requires the unchanged probe to converge
+to `0`, `0`, `false`, plus the fixed-bound/non-reuse intent test and the ordered
+two-listener Unreal context-epoch test described there.
+
 No provider prompt, model execution, output, candidate, workload point,
 production credit, integration or acceptance is claimed yet. The queued XR-test
 and RobotDealer leases remain closed until this foundation fallback is
