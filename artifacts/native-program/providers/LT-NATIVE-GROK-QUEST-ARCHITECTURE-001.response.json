@@ -1,0 +1,82 @@
+{
+  "recommended_surface": "standalone_native_unreal_app",
+  "decisive_reasons": [
+    "Public evidence ties Meta XR SDK 205.0 to UE 5.7.4, which is the only supplied path that can actually be a native Quest 3/3S Unreal seated table. A Horizon world is a different runtime and cannot satisfy the native-UE requirement.",
+    "Controller/hand multimodal input is documented on Meta's OpenXR path, with explicit switching and feature limitations. That is enough to design equivalence-with-fallback on a native app; Horizon does not provide evidence of matching Unreal-native input control.",
+    "Music rights can be bounded only if the product owns the audio graph. A Horizon world or companion ingest path would make 'host personal music stays fully external' harder to prove and easier to violate.",
+    "Shared Scene is only a UE 5.4 LAN sample without production authentication or proven persistence. Treating LAN-sample networking, Meta Avatars, MR-first passthrough, or store acceptance as First Deal foundations is unsupported.",
+    "A hybrid/companion split (native table + Horizon identity/events, or native + external host-music app) multiplies surfaces before any device, package, two-headset, rights, or human proof exists. Smallest coherent First Deal is one seated native app with a robotic dealer, VR default, and optional human host as a privileged player."
+  ],
+  "must_build_now": [
+    "Seated-only native UE 5.7.4 Quest 3/3S table loop: deal, hold, play, score, talk, leave. No locomotion product.",
+    "One interaction contract used by both controllers and hands: hover, select, grab, confirm, cancel, dealer-call. Live switch must release in-flight grabs, clear hover, and reacquire rather than assume frame-continuous equivalence (Meta documents switching/feature limits).",
+    "Visibly robotic AI dealer as the default table actor: readable tells, no human-passing, no Meta Avatar dependency (Avatars SDK never released for Unreal; Unreal support not planned).",
+    "Deliberate VR table as the ship path when mixed reality, room data, anchors, or passthrough are missing, denied, or unstable. MR is enhancement, never a boot gate.",
+    "Identity fallback: local display name + simple seated non-Meta body/nameplate. No Meta Avatar, no cross-app identity claim.",
+    "Event-host mode as privileges on a seated player (mute table, pause, reseat, kick, start/stop round) or as the robotic dealer. No production auth, no Shared Scene persistence claim.",
+    "In-product audio bed only from original, commissioned, public-domain, or documented-cleared recordings. Host personal music remains outside the product.",
+    "Comfort/accessibility defaults for roughly ages 30-70: seated play, large UI, high contrast, snap-to-card, hold-to-confirm, subtitle/dealer text, reduced motion, 72 FPS target with Quest 3/3S draw-call/triangle budget as a hard constraint.",
+    "Hospitality tone only: warm lighting, unhurried table rhythm, service energy. No dialect performance, costume caricature, or claim to represent Foundational Black American people.",
+    "Android/NDK alignment to the published values (NDK 25.1.8937393, min API 32, Store target API 34) as build hygiene only\u2014not a store verdict. ADB/logcat used as the only evidenced debug path."
+  ],
+  "defer": [
+    "Mixed reality table aligned to real furniture, anchors, or passthrough guests until VR fallback is proven on device.",
+    "Any persistence, accounts, anti-cheat, or cross-session inventory. Shared Scene evidence is UE 5.4 LAN sample only.",
+    "Two-headset social proof, voice-party scale, and spectator tools until a single-headset table is stable at 72 FPS.",
+    "Rich custom avatars, wardrobe, or Meta identity linking (unsupported on Unreal).",
+    "Companion phone/desktop/Horizon presence, QR join, or 'music DJ' sidecar.",
+    "Hand-tracking-only advanced gestures that have no controller twin.",
+    "Live dealer video, celebrity hosts, or licensed table brands.",
+    "Always-on MR, scene understanding as a differentiator, or world-locked chips as a ship requirement."
+  ],
+  "reject": [
+    "Horizon world as the primary product: cannot be native UE 5.7.4, cannot own the required input/audio/dealer contract from supplied evidence.",
+    "Deliberate hybrid as First Deal: splits identity, input, events, and music before any public proof of device, package, two-headset, rights, or human acceptance.",
+    "Meta Avatars SDK, or any plan that blocks play without it.",
+    "Using Shared Scene as production authentication, matchmaking, or persistence.",
+    "Ingesting, caching, streaming, recording, fingerprinting, or UI-labeling host-selected personal music as cleared.",
+    "MR-only boot, room-scan mandatory play, or no-VR-table path.",
+    "Caricature, imitation, vernacular performance, or 'this represents everyone / represents FBA'.",
+    "Standing locomotion, twitch-aim, or young-core combat metaphor as the social rhythm.",
+    "Any store, rating, rights, or human-acceptance claim. None is proven."
+  ],
+  "controller_hand_strategy": "Treat controllers and hands as one table grammar, not two minigames. Every card/chip/UI verb has both a controller binding and a hand binding with the same outcome. Safe live switching is an explicit state machine: on modality change, cancel press, drop grab, freeze the in-flight card at a known rest, then require a fresh hover. Do not promise pixel-continuous grab across the switch; public Meta docs already record switching and feature limitations. Prefer poke/pinch/ray plus a large confirm over micro-gestures. If hands lose tracking, fall back to controllers without resetting the pot. If controllers disconnect, pause the round rather than drop cards. Unsupported assumption: that multimodal OpenXR implies production-quality seamless switching on Quest 3/3S for a card table\u2014this is unevidenced here.",
+  "mr_vr_strategy": "Ship a complete seated VR salon as the product. Passthrough/anchors/room data may dress the same table when present, but absence must be a quiet, automatic VR fallback with no setup maze. Do not require a scanned room, furniture alignment, or mixed-reality entitlement to deal. If MR tracking fails mid-round, snap back to the VR table without voiding the hand. Unsupported assumptions: that Quest 3/3S passthrough, anchors, and scene data will be available, stable, and comfortable for a 30-70 seated social session; none of that is proven in the supplied evidence.",
+  "identity_fallback": "Do not design around Meta Avatars. Public evidence: SDK never released for Unreal; Unreal support not planned. First Deal identity is a display name, optional color/seat marker, and a simple seated mannequin or implied presence. The dealer is a visibly robotic figure, not a human avatar. Human hosts appear as the same simple seated player with a host badge. No cross-horizon identity, no face clone, no 'your Meta avatar sits down'. If a later official Unreal avatar path appears, it can be an optional skin\u2014not a load-bearing dependency.",
+  "host_event_strategy": "First Deal events are local-or-small seated tables, not a platform. Default host is the robotic dealer (always-on, visibly non-human, predictable cadence). A human event host is an optional privileged seat: start/stop, pause for accessibility, reseat, mute, and table-stakes announcement only. Do not require Meta accounts, Horizon instances, or Shared Scene. Do not record the table. Spectator is 'empty chair / voice at table' at most, deferred if it costs frame time. Unsupported assumption: that LAN-sample Shared Scene or Horizon social graph will host production events with authentication and persistence.",
+  "accessibility_for_30_70": "Design for inviting social-table rhythm, not youth dexterity. Defaults: seated, static camera with small comfort yaw only, large cards, high-contrast felt, readable dealer text plus voice, no required hearing, no required two-hand precision, long dwell allowed, undo where fair, no fail-on-tremor. Controllers remain first-class so players who dislike hand tracking are not second-class. Avoid flicker, rapid cuts, and standing recents. Copy in plain language. Offer reduced-motion dealer animation. Age 30-70 is a comfort and legibility target, not a medical claim. Unsupported assumption: that this audience will accept MR passthrough, hand-only play, or headset donning without a human host; untested.",
+  "cultural_guardrails": "Light Foundational Black American spirit means hospitality, patience, warmth, and a lived-in parlor energy in environment and service\u2014not character performance. Reject dialect coaching, slang packs, costume kits, 'soul' checklists, or any claim that the table represents FBA people or 'everyone'. No caricatured bodies, no joke-dealer tropes, no borrowed sacred or family ritual as flavor. Art direction should be original interior and robotic dealer, reviewable against caricature. If a reference is not a cleared original commission, do not ship it. This is a boundary, not an authenticity badge.",
+  "music_rights_boundary": "Product audio = original, commissioned, public-domain, or otherwise documented-cleared music and recordings only, with a rights log as a ship artifact of the audio set (not a legal verdict). Host-selected personal music is external to the product: never ingested, cached, streamed through the app, recorded from mic/system, fingerprinted, or shown as 'cleared', 'in-game radio', or 'DJ mode'. No silent capture of the room 'in case the host plays something'. If a host wants their own music, they use their own outside device at their own risk; the app neither helps nor represents it. Horizon/hybrid sidecars that touch host audio are rejected for First Deal because they blur this boundary.",
+  "competitive_differentiators": [
+    "Native seated card table with controller/hand equivalence and an honest switch contract, rather than a Horizon toy or a standing VR bar.",
+    "Visibly robotic dealer plus optional human host, instead of fake-human avatars the Unreal path does not have.",
+    "VR-complete table with MR as costume, so play does not die with room data.",
+    "Rights-clean house music and a hard wall against host-library laundering.",
+    "30-70 social rhythm: slow, legible, event-hostable, non-caricature hospitality."
+  ],
+  "highest_risks": [
+    "Input: documented multimodal limits may make true hand/controller equivalence fail in live play (double-input, dropped grabs, tracking loss).",
+    "Identity: no Unreal Meta Avatars; players may expect Horizon-like bodies the evidence says Unreal will not get.",
+    "Social: Shared Scene evidence is a UE 5.4 LAN sample; any 'event' beyond one headset is unproven.",
+    "MR: passthrough/anchors/room data may be absent; if VR fallback is weak, the product has no product.",
+    "Performance: 72 FPS and Quest 3/3S draw-call/triangle guidance are targets, not measurements. No device proof.",
+    "Rights: any 'just let the host play their phone' feature becomes ingest/representation risk.",
+    "Culture: 'light FBA spirit' can slide into caricature without a hard reject list.",
+    "Process: no physical device, package, two-headset, store, rights, or human acceptance is proven\u2014shipping confidence cannot be borrowed from SDK version strings.",
+    "Strategy trap: hybrid/Horizon 'also' work that delays the only coherent surface."
+  ],
+  "falsification_tests": [
+    "If a required table verb exists for hands but not controllers, or vice versa, the input contract is false.",
+    "If live switch duplicates a play, drops a held card, or requires a round restart, 'safe live switching' is false.",
+    "If missing passthrough/anchors/room data blocks dealing, VR fallback is false.",
+    "If boot or multiplayer requires Meta Avatars, the identity fallback is false.",
+    "If matchmaking/persistence is implemented by treating the UE 5.4 Shared Scene LAN sample as production auth, the networking claim is false.",
+    "If any path copies, caches, streams, records, or labels host personal music as in-product/cleared, the rights boundary is false.",
+    "If the dealer or environment uses dialect imitation, costume caricature, or a represent-everyone claim, the cultural guardrail is false.",
+    "If the primary build is a Horizon world or a companion mesh, the native-UE 5.7.4 product claim is false.",
+    "If Quest 3/3S cannot hold the seated table near the public 72 FPS target under the published draw-call/triangle guidance with both input modes, the First Deal is too large.",
+    "If a 30-70 seated player cannot complete a round with controllers only, large UI, and subtitles, accessibility is false."
+  ],
+  "strongest_dissent": "Ship Horizon-first (or native+Horizon hybrid) because Unreal has no Meta Avatars, Shared Scene is not production, store/device proof is absent, and Horizon already has social graph, events, and avatars. Native Unreal then looks like the higher-risk way to build a seated card table. This dissent is strongest on identity and event distribution. It is still weaker on the actual constraints: Horizon is not UE 5.7.4; it does not evidence controller/hand equivalence under OpenXR Unreal; it does not keep host music cleanly outside a product you own; and hybrid increases unverified surface area. The dissent should be recorded, not followed, unless the native-Unreal requirement is dropped in public.",
+  "confidence": "Architecture fit in the 0.65\u20130.75 range on public SDK/runtime facts (UE 5.7.4 + XR SDK 205.0, OpenXR multimodal with documented limits, no Unreal Avatars, Shared Scene = UE 5.4 LAN sample, Android API/NDK numbers, 72 FPS guidance). Ship-readiness confidence is low (~0.2\u20130.3) because no physical device, package, two-headset, store, rights, or human acceptance is proven. All performance, comfort, MR, switching-quality, and audience-acceptance judgments above are marked unsupported until falsification tests run. This is a bounded architecture dissent, not a review, acceptance, merge, release, or store verdict."
+}

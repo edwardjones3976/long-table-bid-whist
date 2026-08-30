@@ -62,8 +62,8 @@ result is recorded locally before any optional milestone notice.
 - **Perplexity:** sequence 13 is terminal before submission because the configured credential was empty. No request, response or point exists and the query will not be duplicated.
 - **Firecrawl:** the ten-source official Meta/Epic matrix is frozen at `artifacts/native-program/research/2026-08-30-quest-platform-matrix.md`; Firecrawl is a tool and earns no workforce credit or decision authority
 - **Gemini/Antigravity:** sequence 14 completed one exact merged-Director fixed-vocabulary `state_machine_skeleton` request. Conversation `77080670-8270-40e5-bb25-7a2ded7eff3a` returned the generic scaffold; the sandbox stayed clean. It earns simple/1 overall effort and zero direct production.
-- **Grok:** sequence 11 remains terminal and cannot be reopened. Sequence 15 is now dependency-open for one distinct public architecture dissent using the synchronous xAI Responses API with tools/storage off.
-- **Claude:** required implementation model remains `FABLE 5 ULTRA/MAX`. Sequence 16 has a complete 17-path repair-seed contract and isolated worktree but remains dependency-closed until sequences 14/15 are terminal and the 80-point workload projection is rechecked.
+- **Grok:** sequence 11 remains terminal and cannot be reopened. Sequence 15 completed one distinct public architecture dissent at run `83108f4d-c4b6-91fb-b368-5a4fc9dca344`, cost `$0.032256`, with tools/storage/sources off. It earns medium/5 overall effort and zero direct production.
+- **Claude:** required implementation model remains `FABLE 5 ULTRA/MAX`. Sequence 16 has a complete 17-path repair-seed contract and isolated worktree. Both provider dependencies are terminal; only the exact 80-point workload, packet and worktree recheck remains before activation.
 - **Cursor:** no active lease; prior XR route remains terminal and current workload is above its planning ceiling
 - **Budget and timeout:** sequence 14 reserves `$0` and 600 seconds; sequence 15 reserves at most `$0.75` and 180 seconds; sequence 16 reserves `$0` and 3600 seconds. Each has one primary attempt, with no duplicate send; only sequence 16 permits one recovery for a demonstrably transient transport failure.
 - **n8n/workflow identity:** `not_applicable` for provider-native research and isolated local QA
@@ -110,9 +110,9 @@ It does not reopen that route, create a candidate or satisfy a test gate.
 
 ## Disposition
 
-- **Current state:** `ready for bounded sequence 15`; implementation, integration, Android/device, merge, release and Slack gateway activation remain blocked
-- **Blocking fields:** terminal sequence-15 evidence and final workload recheck; accepted replacement foundation; current XR/Robot authority deltas; Android package/install/launch; controller/hand/MR/anchor/two-headset evidence; cultural/rules/rights/human acceptance; exact Slack app isolation for gateway activation
-- **Next responsible party:** Grok through exact packet `LT-NATIVE-GROK-QUEST-ARCHITECTURE-001`, followed by Claude only when the public dissent is terminal and workload gates still pass
-- **Next bounded action:** dispatch sequence 15 once through the merged non-browser xAI adapter, record its exact response and do not retry any ambiguous failure
+- **Current state:** `ready for sequence-16 activation recheck`; integration, Android/device, merge, release and Slack gateway activation remain blocked
+- **Blocking fields:** exact sequence-16 activation recheck and accepted replacement foundation; current XR/Robot authority deltas; Android package/install/launch; controller/hand/MR/anchor/two-headset evidence; cultural/rules/rights/human acceptance; exact Slack app isolation for gateway activation
+- **Next responsible party:** OpenAI for the one deterministic activation recheck, then Claude FABLE 5 ULTRA/MAX for the exact 17-path repair
+- **Next bounded action:** verify packet digest, assignment digest, clean seed/worktree, path lease and 80-point hard ceilings once; if green, dispatch sequence 16 without widening scope
 - **Milestone stop:** stop only when Chunk A — Native Foundation / First Deal passes every code gate and every available unchanged-candidate physical Quest gate; unavailable physical devices remain explicitly missing evidence rather than inferred success
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 23:08 UTC | END]] -->

@@ -263,16 +263,30 @@ overall_effort_ledger:
     terminal_response_digest: "sha256:5e745c62cb132d0094f4b46e9d4811fc3eeb5670ba8cfeaeae92a13bf4f2c253"
     terminal_evidence: "artifacts/native-program/providers/2026-08-30-antigravity-state-machine-003.md"
     exclusion_reason: "One real Antigravity model turn returned the exact fixed-vocabulary generic TypeScript state-machine scaffold. The request carried no Long Table context, repository or private prose; the plan sandbox stayed unchanged; no tool or external execution occurred. It earns simple/1 overall effort and zero direct-production points because it is generic subordinate evidence, not accepted product code."
+  - sequence: 15
+    assignment_id: "LT-NATIVE-GROK-QUEST-ARCHITECTURE-001"
+    provider: grok
+    size: medium
+    canonical_points: 5
+    completed: true
+    terminal_status: "SUCCEEDED_PUBLIC_ARCHITECTURE_ADVICE_OVERALL_EFFORT_ONLY"
+    authenticated_run: "xai-responses:83108f4d-c4b6-91fb-b368-5a4fc9dca344;model:grok-4.6"
+    direct_production_points: 0
+    terminal_response_digest: "sha256:b17744f703488ce6145af3df0e119de91d69b822258f6bad2076e1be7a677d39"
+    canonical_response_digest: "sha256:be6c0cfb5290aa23f2c683bde52898999a93ad7eb67baa2f8b6f55ec6883b8ba"
+    terminal_evidence: "artifacts/native-program/providers/2026-08-30-grok-quest-architecture-001.md"
+    cost_usd: 0.032256
+    exclusion_reason: "One synchronous xAI response returned the exact 17-field public architecture dissent with tools, storage, sources and server-side tools disabled. It recommends the standalone native UE app and records Horizon-first as the strongest dissent. It earns medium/5 overall effort and zero direct-production points because it owns no code path and has no review or acceptance authority."
 
 accepted_direct_production_ledger: []
 
 rolling_window_projection:
-  completed_assignments: 13
+  completed_assignments: 14
   window_size: 20
-  current_canonical_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0}
-  current_partial_shares_percent: {claude: 37.14, cursor: 28.57, grok: 18.57, openai: 0, gemini_antigravity: 15.71, perplexity: 0}
+  current_canonical_points: {claude: 26, cursor: 20, grok: 18, openai: 0, gemini_antigravity: 11, perplexity: 0}
+  current_partial_shares_percent: {claude: 34.67, cursor: 26.67, grok: 24.0, openai: 0, gemini_antigravity: 14.67, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "Sequence 14 is terminal at one real fixed-vocabulary Antigravity turn. Run public-only Grok sequence 15 once through the exact merged xAI adapter, then Claude replacement-foundation sequence 16 only after the Grok terminal record and an exact pre-dispatch workload recheck. Sequence 13 earns zero because no Perplexity request was submitted; sequence 12 stays terminal with no fourth contact."
+  next_route: "Sequences 14 and 15 are terminal with one authenticated provider turn each. Reverify the frozen sequence-16 assignment, exact seed/worktree and 80-point target-plus-five projection, then activate Claude foundation replacement once. Sequence 13 remains zero because no Perplexity request was submitted; sequence 12 stays terminal with no fourth contact."
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -561,14 +575,20 @@ canonical_assignment_ledger:
     provider: grok
     size: medium
     canonical_points: 5
-    status: "PRESTAGED_DEPENDS_ON_SEQUENCE_14_TERMINAL"
+    status: "SUCCEEDED_PUBLIC_ARCHITECTURE_ADVICE_OVERALL_EFFORT_ONLY"
     accepted_direct_production_points: 0
+    awarded_overall_effort_points: 5
     packet_digest: "sha256:b999e2a84476e2cdd918dc45f254f65e43c3ab81df8f117626ed4e2fa13fb569"
     assignment_approval_digest: "sha256:f27c1287032b4d01c597fafef2f22fa26866499d0595428e7263901d025ec01d"
     public_context_digest: "sha256:6896794f9d89730e91e23e957d9ff9413da169377c0557047d404567b1cc5b41"
     packet_file: "director/native-program/packets/LT-NATIVE-GROK-QUEST-ARCHITECTURE-001.json"
     accepted_outcome_digest: null
-    manual_overlay_reason: "A separate new public-only architecture dissent compares native app, Horizon world and hybrid direction; challenges platform, controller/hand, MR/VR, event-hosting, accessibility, cultural and rights assumptions; uses no code/repository/rejected artifacts; and runs through the one-request xAI Responses API with tools and storage disabled. It is not a sequence-11 retry."
+    authenticated_run: "xai-responses:83108f4d-c4b6-91fb-b368-5a4fc9dca344"
+    terminal_response_digest: "sha256:b17744f703488ce6145af3df0e119de91d69b822258f6bad2076e1be7a677d39"
+    canonical_response_digest: "sha256:be6c0cfb5290aa23f2c683bde52898999a93ad7eb67baa2f8b6f55ec6883b8ba"
+    terminal_evidence: "artifacts/native-program/providers/2026-08-30-grok-quest-architecture-001.md"
+    cost_usd: 0.032256
+    manual_overlay_reason: "One synchronous xAI response returned a valid 17-field public architecture dissent with zero tools, storage, sources or server-side tools. It recommends the standalone native Unreal app and records Horizon-first as dissent. It is not a sequence-11 retry, owns no product path, earns medium/5 overall effort and zero direct-production points."
   - sequence: 16
     assignment_id: "LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003"
     provider: claude
