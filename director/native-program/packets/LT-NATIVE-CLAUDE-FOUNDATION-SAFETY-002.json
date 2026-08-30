@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "starting_ref": "a6742a04a384a88e7342530041a1f0d3ab71db2c",
+  "objective": "Implement one fresh sequential foundation-safety replacement after the terminal Grok route. Correct terminal WebSocket dispatch and Unreal sibling reentrancy, and replace the mathematically inconsistent arbitrary-string idempotency requirement with the frozen long-table-intent-idempotency/v2 server-issued role-grant and monotonic-counter protocol. Preserve all green rules, privacy and build behavior, create one sole-parent candidate, and return one exact model-result-packet-v1 document for independent OpenAI QA.",
+  "non_goals": [
+    "No XR, RobotDealer, Social, HouseCore, Meta SDK, avatar, voice, content, visual, music, likeness, store, deployment or release work",
+    "No rules-engine behavior, scoring, card vocabulary, projection field inventory or concealed-state change except the required welcome identity fields",
+    "No reuse, comparison or derivation from any Grok patch, ZIP, replacement, transcript, hash, quarantine or rejected source",
+    "No regex, blacklist, keyword, substring, scanning, redaction or concealed-object-then-delete privacy control",
+    "No physical Quest, Android, human, cultural, rights, store or product-completion claim"
+  ],
+  "authority_snapshot": [
+    {"path":"director/native-program/README.md","commit_sha":"db4a4b159cd9a4f6061307d16add9bec02dbc060","blob_sha":"f73e51172418e5e04ca3f0770b5cd9c7f0246a6a"},
+    {"path":"director/native-program/manual-provider-overlay.md","commit_sha":"db4a4b159cd9a4f6061307d16add9bec02dbc060","blob_sha":"0fe3c769ab699f10adf6ea0b8c0b91e08b777673"},
+    {"path":"director/native-program/provider-workload.yaml","commit_sha":"db4a4b159cd9a4f6061307d16add9bec02dbc060","blob_sha":"add030c3b6f26ced8ed9aa8326722e74fba81696"},
+    {"path":"director/native-program/roles-and-responsibilities.md","commit_sha":"db4a4b159cd9a4f6061307d16add9bec02dbc060","blob_sha":"4ae7efe2811fd1f9d030697fe7cac528c4c715ee"},
+    {"path":"director/native-program/stage-gates.md","commit_sha":"db4a4b159cd9a4f6061307d16add9bec02dbc060","blob_sha":"ffaa499e196e1f9948d7797702f925063962b208"},
+    {"path":"director/native-program/workload-baseline.md","commit_sha":"db4a4b159cd9a4f6061307d16add9bec02dbc060","blob_sha":"bfcc20b5d902eefcbadad49320a4c88007e4da49"},
+    {"path":"director/privacy-control-policy.md","commit_sha":"db4a4b159cd9a4f6061307d16add9bec02dbc060","blob_sha":"a31ce14bdaed03f3028480b7572cd9ccf7c0f859"},
+    {"path":"director/native-program/contracts/model-result-packet-v1.schema.json","commit_sha":"db4a4b159cd9a4f6061307d16add9bec02dbc060","blob_sha":"3f68e59136c422ce84d79f874c0343fd5ffc0a9e"},
+    {"path":"director/native-program/contracts/intent-idempotency-v2.json","commit_sha":"db4a4b159cd9a4f6061307d16add9bec02dbc060","blob_sha":"2864b0f6898084ac5e0e05ebc1eb919b41cbb68b"},
+    {"path":"artifacts/native-program/qa/2026-08-30-claude-foundation-safety-002-acceptance.md","commit_sha":"db4a4b159cd9a4f6061307d16add9bec02dbc060","blob_sha":"c6a44b377b701b15e60459b1f5aea798159b14f6"},
+    {"path":"artifacts/native-program/qa/2026-08-30-grok-authority-safety-terminal-rejection.md","commit_sha":"db4a4b159cd9a4f6061307d16add9bec02dbc060","blob_sha":"e4f9e2b496fb8272c5fd1049d4762854734ffab6"}
+  ],
+  "authority_snapshot_digest": "sha256:564e1d892898ce5644604e10d58fb52c1d9453bf27465fb57ab07563debf3516",
+  "dependencies": [],
+  "constraints": [
+    "Claude is the sole writer for this fresh medium/5 exhausted-route assignment; the terminal Grok lease is closed",
+    "Verify exact clean start a6742a04a384a88e7342530041a1f0d3ab71db2c and preserve it as the candidate's sole parent",
+    "The frozen contract is director/native-program/contracts/intent-idempotency-v2.json from the control commit carrying this packet",
+    "Writable paths are limited to packages/protocol/src/vocabulary.ts, wire.ts and invariants.ts; services/table-authority/src/session.ts, table.ts and websocket-server.ts; the corresponding listed TypeScript tests; LongTableProtocol and LongTableTable wire, vocabulary, client, commit-machine and test files; scripts/native/generate-fixtures.ts; scripts/native/tests/fixtures.test.ts; and the six fixtures/protocol JSON files named by the contract",
+    "The protocol version advances to long-table-protocol/2 and welcome shapes remain role-discriminated closed schemas",
+    "Exactly five preallocated intent lanes exist per table; no submitted-id collection or probabilistic membership filter is permitted",
+    "Every entitled exact-next counter is consumed before semantic or version evaluation, including rejected outcomes",
+    "WebSocket finish is terminal within the current parsed-frame loop and Unreal context-bound fanout stops before a later sibling",
+    "Use Unreal Engine 5.7.4 and pass the exact verified 40-character candidate HEAD as the value of scripts/native/build-unreal.ps1 -BuildSha for both fresh Windows targets",
+    "Preserve contribution markers and unrelated user work"
+  ],
+  "prohibited_actions": [
+    "Do not read or use Grok, Antigravity or Cursor implementation artifacts as source inputs",
+    "Do not edit outside the exact writable paths expressed in the constraints",
+    "Do not push, merge, deploy, publish, mutate PRs/issues, post Slack/Linear, purchase, or change credentials, permissions or licenses",
+    "Do not weaken, delete, skip or relabel an existing acceptance assertion",
+    "Do not claim completion from provider self-review"
+  ],
+  "allowed_tools": [
+    "local filesystem and repository tools inside the isolated Claude worktree",
+    "existing Node, TypeScript, Vitest and fixture toolchain",
+    "UnrealBuildTool, UnrealEditor-Cmd and compiler",
+    "authenticated Claude Code or Claude Cowork implementation surface"
+  ],
+  "allowed_external_effects": [
+    "Edit only the packet-constrained repository paths in the isolated provider worktree",
+    "Run local builds and tests",
+    "Create one local sole-parent candidate commit",
+    "Return one JSON result packet in the authenticated terminal response"
+  ],
+  "acceptance_checks": [
+    "Exact start, sole parent, candidate head/tree, clean status and changed-path allowlist are proven",
+    "The unchanged real-socket coalesced-frame probe exits zero with transport/session/presence 0/0/false after policy close",
+    "Protocol v2 uses one current server-issued grant and monotonic high-water in exactly five fixed table lanes with no request-count-dependent collection",
+    "Player and host welcomes expose only their own grant and next counter; public/dealer expose null and no role leaks another grant",
+    "Exact-next, duplicate, gap, maximum, all-outcome consumption, lost-receipt reconnect, raw-socket replacement, seat rebind, substitution and host-transfer tests are green",
+    "The two-listener Unreal test proves a reentrant Configure prevents every later old-context sibling callback",
+    "Focused and full TypeScript tests, strict native typecheck, fixture-current and production build pass",
+    "LongTableEditor and LongTable Win64 Development build; Protocol, Table and complete LongTable automation report zero failures and zero not-run tests",
+    "Structural privacy/source review finds no concealed field in host/public/dealer shapes and no regex-based privacy control",
+    "The terminal response is exactly one JSON document valid against model-result-packet-v1 with complete packet identity and correlation"
+  ],
+  "evidence_requirements": [
+    "Authenticated Claude run reference, exact model/surface, start and terminal status",
+    "Exact candidate SHA, tree, sole parent, clean allowlist and contribution markers",
+    "Source proof enumerating all five lane records and absence of request-dependent identity storage",
+    "Executable evidence for counter ordering, all outcomes, reconnect, authority rotation, unauthorized flood and non-vacuous legitimate progress",
+    "Real-socket, TypeScript, fixture, production, both Unreal target and scoped/complete automation logs",
+    "Known limits including no Android, Meta plugin, account, headset, human or release evidence",
+    "One schema-valid model-result-packet-v1 with checks, acceptance, risks, blockers, side effects and revision recommendation"
+  ],
+  "approval_requirements": [
+    "OpenAI independently reviews, builds and accepts the exact candidate before integration or direct-production credit",
+    "One consolidated revision is permitted only for substantive OpenAI kickback or a genuinely temporary transport failure",
+    "Owner separately authorizes merge, release, spending, credential, license, external-account, device, human and store effects"
+  ],
+  "limits": {"budget_usd":0,"timeout_seconds":10800,"max_hops":0,"max_revisions":1},
+  "idempotency_key": "LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002-a6742a0",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002",
+    "source_event_id": "owner-authorized-fix-and-complete-everything-20260830",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}
