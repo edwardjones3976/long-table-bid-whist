@@ -437,6 +437,37 @@ may not author a product correction. This final transport creates no new
 assignment, workload row or duplicate credit. Any source, commit, schema, test
 or delivery failure is terminal, with no fourth contact or delivery retry.
 
+### Claude final Chrome transport and terminal OpenAI rejection
+
+The final materially different Claude Code browser transport ran once in fresh
+sanitized session `session_01ByWs7G3pnpWQFyLrfAPNQx`. Claude authored provider
+commit `0eeb716e9df7da5e36d22894c381fa6ae4317b3f`, tree
+`a1aa2dd716cc5a06d688f6ed42165debed69e410`, with sole parent `64a9c97`. Its
+result packet is schema-valid with SHA-256
+`6e845927d8f332b089dc0dc2c580737b3d9d8ba32936a177c2131005d3d76d61`.
+The commit changed exactly all 35 leased paths with no unleased path or mode
+change.
+
+OpenAI mechanically restored those exact blobs onto clean product base
+`a6742a0` and created local-only candidate `623ca52c`, tree `746fc5a`, without
+authoring a product correction. Independent QA passed the real-socket
+coalesced-policy-close probe, 42/42 focused tests and 208/208 full LF TypeScript
+tests. It then stopped expensive later gates and terminally rejected the
+candidate for grant identity reuse after restart, duplicate player-visible
+mutation, missing rejection/reconnect proof, a UE5.7 delegate compile failure,
+same-context and reentrant old-operation/credential hazards, identity and
+exhaustion inconsistency, incomplete reentrancy automation, and removed
+contribution markers.
+
+Sequence 12 is therefore terminal
+`OPENAI_CHANGES_REQUIRED_FINAL_TRANSPORT_EXHAUSTED`. It earns medium/5 overall
+effort once and zero direct-production points. The candidate remains unpushed;
+no product PR, fourth provider contact or delivery retry is authorized. The
+available Linear workspace was unrelated Project Uppercut, so no Linear object
+was mutated; that isolation is deliberate rather than evidence of Long Table
+delivery. XR-test, RobotDealer and later integration/device gates remain closed
+until a new explicit Director assignment and authority decision.
+
 ## Acceptance
 
 Manual routing never weakens acceptance. Each provider candidate still requires:

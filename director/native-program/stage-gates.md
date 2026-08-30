@@ -39,16 +39,16 @@ Device acceptance: Android package/install/launch, hands, controllers,
 switching, haptics, placement, anchor recovery and two-headset privacy evidence
 pass on the unchanged candidate.
 
-Current stop: the Grok authority-safety recovery and delivery are terminal
-rejected. No valid candidate was materialized, so `a6742a0` remains the exact
-foundation base and no XR, RobotDealer, integration, Android or device gate may
-use it as an accepted dependency. Run the fresh
-`LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002` v2 gate: terminal WebSocket loop stop,
-exactly five bounded server-issued role-grant/counter lanes, two-listener Unreal
-epoch protection, full TypeScript/fixture/build/Unreal automation, and
-independent OpenAI source/privacy acceptance. Only then may the XR test-only and
-RobotDealer clean-room fallbacks run. A green browser, Windows or headless gate
-never substitutes for physical Quest evidence.
+Current stop: sequence 12 `LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002` completed its
+final transport but is terminal OpenAI-rejected. Local candidate `623ca52c`
+passed the real-socket convergence probe, `42/42` focused and `208/208` full LF
+TypeScript tests, but source QA found terminal authority, UE5.7 compile,
+reentrancy/credential, evidence and provenance failures. It is local-only,
+unpushed and not an accepted dependency. No XR, RobotDealer, integration,
+Android or device gate may consume it, and no fourth provider contact or
+delivery retry is permitted. A new explicit Director assignment and authority
+decision is required before replacement foundation work. A green browser,
+Windows or headless gate never substitutes for physical Quest evidence.
 
 ## Chunk B — Private Game Night
 

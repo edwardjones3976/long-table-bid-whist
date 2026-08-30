@@ -263,3 +263,27 @@ OpenAI 0 and Perplexity 0. A terminal sequence-12 result still projects Claude
 to 26/69 = 37.68%. XR-test and RobotDealer remain dependency-closed until
 OpenAI accepts the exact mechanically materialized foundation candidate.
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 21:13 UTC | END]] -->
+
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 22:35 UTC | BEGIN]] -->
+## Claude foundation-safety terminal final transport
+
+Sequence 12 completed once through the materially different authenticated
+Claude Code browser transport. Provider commit `0eeb716e`, tree `a1aa2dd`, and
+its schema-valid terminal result changed exactly all 35 leased paths. OpenAI
+mechanically materialized those exact provider blobs as local candidate
+`623ca52c`, tree `746fc5a`, on clean product base `a6742a0`.
+
+Independent QA passed the real-socket convergence probe, 42/42 focused tests
+and 208/208 full LF TypeScript tests, then terminally rejected authority,
+UE5.7 compile, reentrancy/credential, executable-evidence and contribution-
+marker findings. The candidate remains local-only and unpushed, no product PR
+exists, and no fourth provider contact or delivery retry is permitted.
+
+The completed partial window is now 12 of 20 and 69 points: Claude 26 (37.68%),
+Cursor 20 (28.99%), Grok 13 (18.84%), Gemini Antigravity 10 (14.49%), OpenAI 0
+and Perplexity 0. This is still a warm-up advisory, not a complete rolling-20
+compliance pass. Sequence 12 earns medium/5 overall effort once and zero
+direct-production credit. XR-test, RobotDealer and later integration/device
+work remain dependency-closed until a new explicit Director assignment and
+authority decision replaces the rejected foundation route.
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 22:35 UTC | END]] -->

@@ -58,8 +58,9 @@ physical headset, external account, human cohort, or owner gate.
 ## Provider code ownership
 
 - Claude: terminal historical TypeScript authority/protocol/core-table output
-  plus the sole ready foundation-safety v2 writer lease; later XR-test and
-  RobotDealer exhausted-route leases remain dependency-closed.
+  plus the terminal rejected foundation-safety v2 candidate; no active writer
+  lease remains. Later XR-test and RobotDealer exhausted-route leases remain
+  dependency-closed.
 - Cursor: the self-registering `Unreal/Plugins/LongTableXR/**` project plugin
   for hands/controllers, presence fallback, accessibility and MR/VR adapters.
 - Grok: no active writer lease. Its seven-path authority-safety assignment is
@@ -96,14 +97,18 @@ same invalid bytes. No product candidate was materialized; exact base
 `a6742a0` remains unchanged and Grok earns medium/5 overall effort but zero
 direct-production credit.
 
-`LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002` is the fresh sequential medium/5
-fallback. It is the sole ready foundation writer lease and starts from
-`a6742a0` under `contracts/intent-idempotency-v2.json`: exactly five
-preallocated role lanes, server-issued role-grant identity and monotonic
-counters replace the impossible arbitrary-string lifetime-membership demand.
-It may not read or reuse any rejected Grok implementation artifact. XR-test and
-RobotDealer remain queued until OpenAI accepts the exact new foundation
-candidate.
+`LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002` completed its final authenticated
+Chrome transport and produced schema-valid provider commit `0eeb716e`. OpenAI
+mechanically materialized the exact 35 leased blobs as local candidate
+`623ca52c`, reproduced the real-socket convergence probe, `42/42` focused tests
+and `208/208` full LF tests, then rejected it. Terminal failures include reused
+grant identities after restart, player-visible duplicate mutation, missing
+reconnect/engine-rejection proof, an uncompilable UE5.7 delegate adapter,
+same-context/reentrant stale-operation and credential hazards, inconsistent
+identity/exhaustion state, and removed contribution markers. The candidate is
+local-only, unpushed and ineligible for a product PR. No active foundation
+writer lease remains; XR-test and RobotDealer stay closed pending a new explicit
+Director assignment and authority decision.
 
 The dependency-independent Grok fallback is frozen by
 `contracts/long-table-house-public-v1.json`. That contract is the entire

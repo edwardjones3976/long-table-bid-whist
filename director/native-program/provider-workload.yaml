@@ -10,7 +10,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_11_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists; the project target-plus-five ceilings remain the stricter planning constraint"
+  rolling_compliance_status: "WARMING_UP_12_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists; the project target-plus-five ceilings remain the stricter planning constraint"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -236,16 +236,31 @@ overall_effort_ledger:
     accepted_outcome_digest: null
     terminal_evidence: "artifacts/native-program/qa/2026-08-30-grok-authority-safety-terminal-rejection.md"
     exclusion_reason: "The authenticated primary, bounded recovery and materially different delivery-only action are exhausted. Provider-declared patch/archive hashes disagreed with exact browser bytes, the replacement ZIP had CRC/decompression failures, the result packets failed the frozen schema, and independent source QA rejected the Bloom/Set design. The owner's later usage-limit retry reproduced the identical invalid ZIP, manifest and result bytes. No candidate was materialized and direct-production credit remains zero."
+  - sequence: 12
+    assignment_id: "LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002"
+    provider: claude
+    size: medium
+    canonical_points: 5
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_FINAL_TRANSPORT_EXHAUSTED"
+    authenticated_run: "claude-code-browser:session_01ByWs7G3pnpWQFyLrfAPNQx;provider-commit:0eeb716e9df7da5e36d22894c381fa6ae4317b3f"
+    direct_production_points: 0
+    candidate_sha: "623ca52c5679b5348630f86eb88ecd48c9db82a1"
+    candidate_tree: "746fc5ac7234fa49adaa728262e95745aee52755"
+    accepted_outcome_digest: null
+    terminal_result_digest: "sha256:6e845927d8f332b089dc0dc2c580737b3d9d8ba32936a177c2131005d3d76d61"
+    terminal_evidence: "artifacts/native-program/qa/2026-08-30-claude-foundation-safety-002-terminal-rejection.md"
+    exclusion_reason: "Authenticated Claude Code produced one schema-valid SUCCEEDED result and one exact 35-path provider commit. OpenAI mechanically materialized exact candidate 623ca52, reproduced a real-socket convergence probe plus 42/42 focused and 208/208 full TypeScript tests, then rejected terminal source, compile, acceptance-evidence and provenance failures: grant identities can be reused after restart; duplicates mutate player-visible feedback; required engine-rejected and reconnect retries are unproven; the UE5.7 dynamic-delegate adapter does not compile; same-context replacement and reentrant callbacks can continue old operations and credentials; identity/exhaustion state is inconsistent; and eight pre-existing contribution-marker lines were removed. The candidate is local-only and unpushed, no product PR exists, no fourth contact is permitted, and direct-production credit remains zero."
 
 accepted_direct_production_ledger: []
 
 rolling_window_projection:
-  completed_assignments: 11
+  completed_assignments: 12
   window_size: 20
-  current_canonical_points: {claude: 21, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0}
-  current_partial_shares_percent: {claude: 32.81, cursor: 31.25, grok: 20.31, openai: 0, gemini_antigravity: 15.63, perplexity: 0}
+  current_canonical_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0}
+  current_partial_shares_percent: {claude: 37.68, cursor: 28.99, grok: 18.84, openai: 0, gemini_antigravity: 14.49, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "dispatch the final third transport of the same medium/5 Claude foundation-safety assignment through authenticated Claude Code in Chrome on sanitized GitHub branch codex/claude-foundation-safety-web-sandbox at exact complete transport base 64a9c97. The local recovery is terminal pre-write after an unrelated persistent-memory scope violation. The materially different browser transport plus new scope information permits this one final attempt; it creates no new row or points and permits no fourth contact or delivery retry. XR-test and RobotDealer remain closed until exact OpenAI acceptance of the new foundation candidate."
+  next_route: "No production dispatch is authorized. Sequence 12 and its final transport are terminal OpenAI-rejected, and no fourth provider contact or delivery retry is permitted. The rejected candidate remains local-only and unpushed. XR-test, RobotDealer, integration, Android and physical-Quest work remain closed until a new explicit Director assignment and authority decision replaces the rejected foundation route."
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -435,7 +450,7 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "LOCAL_RECOVERY_TERMINAL_SCOPE_VIOLATION_BROWSER_ATTEMPT_3_READY"
+    status: "OPENAI_CHANGES_REQUIRED_FINAL_TRANSPORT_EXHAUSTED"
     accepted_direct_production_points: 0
     accepted_outcome_digest: null
     starting_ref: "a6742a04a384a88e7342530041a1f0d3ab71db2c"
@@ -469,35 +484,51 @@ canonical_assignment_ledger:
     browser_transport_tree: "96724372b87522166eb9efdc9c893a3b88f429b4"
     browser_transport_tracked_files: 154
     browser_transport_omitted_nonexcluded_files: 0
-    browser_transport_status: "READY_NOT_SENT_ATTEMPT_3_FINAL_TRANSPORT"
+    browser_transport_status: "COMPLETED_SCHEMA_VALID_PROVIDER_RESULT_OPENAI_REJECTED"
+    browser_provider_session: "session_01ByWs7G3pnpWQFyLrfAPNQx"
+    browser_provider_commit: "0eeb716e9df7da5e36d22894c381fa6ae4317b3f"
+    browser_provider_commit_tree: "a1aa2dd716cc5a06d688f6ed42165debed69e410"
+    browser_provider_commit_parent: "64a9c978cbe5a81e92756f9ddf6085ad6a9ee7e5"
+    browser_provider_result_sha256: "sha256:6e845927d8f332b089dc0dc2c580737b3d9d8ba32936a177c2131005d3d76d61"
+    browser_provider_result_schema_valid: true
+    browser_provider_changed_paths: 35
+    candidate_sha: "623ca52c5679b5348630f86eb88ecd48c9db82a1"
+    candidate_tree: "746fc5ac7234fa49adaa728262e95745aee52755"
+    candidate_parent: "a6742a04a384a88e7342530041a1f0d3ab71db2c"
+    candidate_disposition: "LOCAL_ONLY_REJECTED_NOT_PUSHED_NO_PRODUCT_PR"
+    openai_real_socket_coalesced_policy_close_probe: "PASS"
+    openai_focused_typescript_gate: "PASS_42_OF_42"
+    openai_full_lf_typescript_gate: "PASS_208_OF_208"
+    openai_remaining_expensive_gates: "NOT_RUN_FAIL_FAST_AFTER_TERMINAL_P1_SOURCE_AND_UE57_COMPILE_FINDINGS"
+    terminal_evidence: "artifacts/native-program/qa/2026-08-30-claude-foundation-safety-002-terminal-rejection.md"
     retry_after_final_transport: false
-    manual_overlay_reason: "Fresh exhausted-route assignment based on materially new OpenAI authority analysis. The authenticated primary was stopped before edits for Director control conflicts, and the corrected local recovery was stopped before any tracked edit after it read unrelated persistent Edge Engine memory. The worktree remained clean and neither stop produced accepted bytes. Authenticated Claude Code in Chrome on a sanitized sole-repository GitHub branch is the materially different final transport permitted by the retry rule. It is the same sequence-12 row, earns no duplicate credit, excludes every rejected-provider artifact and unrelated memory source, and permits no fourth contact or delivery retry."
+    manual_overlay_reason: "Fresh exhausted-route assignment based on materially new OpenAI authority analysis. The authenticated primary and local recovery stopped before accepted edits. The materially different final Claude Code browser transport then produced an exact 35-path provider commit and schema-valid result. OpenAI mechanically materialized candidate 623ca52, reproduced 42/42 focused and 208/208 full TypeScript tests plus the real-socket convergence probe, and terminally rejected source, UE5.7 compile, acceptance-evidence and provenance failures. This same sequence-12 row earns medium/5 overall effort once and zero direct-production credit. The candidate remains local-only and unpushed; no product PR, fourth contact or delivery retry is authorized."
   - sequence: 13
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
     provider: claude
     size: medium
     canonical_points: 5
-    status: "QUEUED_AFTER_FOUNDATION_SAFETY_OPENAI_ACCEPTANCE"
+    status: "DEPENDENCY_CLOSED_REQUIRES_ACCEPTED_REPLACEMENT_FOUNDATION_AND_DIRECTOR_REAUTHORIZATION"
     accepted_direct_production_points: 0
     packet_digest: "sha256:2818b0cb6ff9fa507934a0b8a5a1d6b57a734886085c96c5864204d4c8a5db38"
     work_packet_digest: "sha256:06ea0377d7abc6d7a1fb41a104ac051929820e884c8494caff2c6db3309a9d58"
     accepted_outcome_digest: null
     starting_ref: "33aca6106603342efcf43fb813482cb18fd4b18c"
     starting_tree: "04f65bc3c72202977312cb38bc039460545daeec"
-    manual_overlay_reason: "new owner-authorized sequential ownership transfer after terminal Cursor; sole writable path is the XR transactional-decode test and no production decoder change is authorized; pending packets do not enter completed effort totals"
+    manual_overlay_reason: "frozen future sequential ownership transfer after terminal Cursor; sole writable path is the XR transactional-decode test and no production decoder change is authorized. Rejected foundation candidate 623ca52 cannot satisfy its dependency, so this row has no current dispatch authority and requires an accepted replacement foundation plus explicit Director reauthorization; pending packets do not enter completed effort totals"
   - sequence: 14
     assignment_id: "LT-NATIVE-CLAUDE-ROBOT-001"
     provider: claude
     size: medium
     canonical_points: 5
-    status: "QUEUED_AFTER_FOUNDATION_SAFETY_AND_XR_QA_TERMINAL"
+    status: "DEPENDENCY_CLOSED_REQUIRES_ACCEPTED_REPLACEMENT_FOUNDATION_XR_QA_AND_DIRECTOR_REAUTHORIZATION"
     accepted_direct_production_points: 0
     packet_digest: "sha256:4cd8d536d1500f776310e0814956b988cb03abe21cc670449c8658b7cad33cba"
     work_packet_digest: "sha256:5b7078b5d4c760609726f3a2f3fe2d9abbe36a581f3023337e385b159b17d750"
     accepted_outcome_digest: null
     starting_ref: "2f3ce02ba6a4339655a096066730c1ea12d96b5b"
     starting_tree: "b7c0ca0ee65507d03c8cb9c603162a214a9fe6bd"
-    manual_overlay_reason: "new owner-authorized clean-room replacement after terminal Antigravity; provider may see only the public synthetic contract and Director result schema; pending packets do not enter completed effort totals"
+    manual_overlay_reason: "frozen future clean-room replacement after terminal Antigravity; provider may see only the public synthetic contract and Director result schema. Rejected foundation candidate 623ca52 cannot satisfy its dependency, so this row has no current dispatch authority and requires an accepted replacement foundation, terminal XR QA and explicit Director reauthorization; pending packets do not enter completed effort totals"
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -511,7 +542,7 @@ credit_rules:
   - "Provider identity never grants merge, deploy, publication, spending, permissions, store or final-acceptance authority."
   - "Pre-PR76 legacy units remain visible but are excluded from canonical rolling and direct-production ledgers until assignment ID, immutable points, order, authentication and outcome binding are all proven."
   - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
-  - "After terminal Grok the partial share is Claude 21/64 = 32.81%. A terminal medium/5 Claude foundation-safety packet projects to 26/69 = 37.68%; a later XR packet projects to 31/74 = 41.89%; RobotDealer projects to 36/79 = 45.57%. XR and RobotDealer therefore require an explicit useful-work variance or genuine rebalance and cannot be called workload-compliant or repaired with filler."
+  - "The current terminal sequence-12 partial share is Claude 26/69 = 37.68%. A later XR packet would project to 31/74 = 41.89%, and RobotDealer to 36/79 = 45.57%. Both are dependency-closed and would require an explicit useful-work variance or genuine rebalance after replacement-foundation acceptance; they cannot be called workload-compliant or repaired with filler."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
