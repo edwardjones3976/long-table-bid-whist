@@ -89,6 +89,15 @@ and regression paths, has no revision budget, and must become OpenAI-QA terminal
 before the already-frozen XR test-only fallback and clean-room RobotDealer
 fallback run sequentially.
 
+The authenticated CLI run stopped at a temporary usage limit after ten owned
+file edits; OpenAI preserved those bytes as an unaccepted mechanical checkpoint.
+The materially different Cowork transport accepted the sanitized checkpoint but
+returned no output when the same account reached its explicit plan limit. The
+existing Cowork task is paused until the observed `2026-08-30 10:10
+America/Los_Angeles` reset and is planned to resume once after 10:12. This pause adds no
+assignment, workload credit or permission to buy credits, and it does not open
+any downstream provider lease.
+
 The dependency-independent Grok fallback is frozen by
 `contracts/long-table-house-public-v1.json`. That contract is the entire
 HouseCore product authority for `LT-NATIVE-GROK-HOUSE-001`: public event,

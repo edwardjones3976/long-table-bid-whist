@@ -124,3 +124,21 @@ ceiling during warm-up; execute only genuine dependency work, record the
 variance honestly, and never create filler or duplicate research to alter the
 denominator.
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 11:30 UTC | END]] -->
+
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 12:30 UTC | BEGIN]] -->
+## Foundation-final pause addendum
+
+Sequence 10 remains pending and contributes zero completed-window or
+direct-production points. The primary authenticated Claude CLI route stopped on
+an explicit temporary usage limit after a mechanically frozen ten-owned-path
+checkpoint. The materially different Cowork recovery then accepted the exact
+sanitized input but returned no output because the authenticated account reached
+its plan limit. The observed plan reset is `2026-08-30 10:10
+America/Los_Angeles`.
+
+Only the existing Cowork task is planned to resume once at or after 10:12 Pacific. This is
+the same assignment and transport after a concrete external-state change, not a
+new dispatch or workload row. It earns no points until a real provider execution
+becomes terminal. The `$0` packet budget prohibits buying usage credits, and all
+downstream leases remain closed during the pause.
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 12:30 UTC | END]] -->

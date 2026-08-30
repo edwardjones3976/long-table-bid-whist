@@ -183,7 +183,7 @@ The primary Fable 5/MAX CLI transport later stopped explicitly at a temporary
 429 session limit after writing ten owned TypeScript paths but before Unreal,
 fixtures, tests, commit or terminal result. OpenAI mechanically froze those
 exact bytes at `bf27721` with no acceptance. The owner-authorized materially
-different recovery is authenticated Claude Code in Chrome, bound by the
+different recovery is authenticated Claude Cowork in Chrome, bound by the
 separate browser delta. Its GitHub transport branch omits workflow and control
 paths only because the OAuth token cannot create workflow changes; it is not a
 candidate. Only Claude-authored owned-path deltas may be materialized back onto
@@ -198,13 +198,25 @@ credit. The single browser recovery therefore uses Claude Cowork with a
 Cowork must return only changed owned-path files, a provider diff and a valid
 result JSON; OpenAI may materialize those exact bytes but may not author a fix.
 
+Cowork accepted that archive and the exact prompt, then returned no source,
+patch or result because the authenticated account reached its explicit plan
+limit. The UI identified `2026-08-30 10:10 America/Los_Angeles` as the reset.
+The assignment is paused—not terminal or credited—and the existing Cowork task
+is planned to resume once at or after 10:12 Pacific. This is a continuation of the
+same task and transport after a concrete external-state change; it creates no
+new assignment, workload row, retry credit or concurrent provider lease. Buying
+credits is prohibited because the packet budget is zero and no purchase amount
+was authorized. If that existing task cannot resume, the route is recorded
+unavailable and OpenAI does not write the production fix.
+
 ## Warm-up variance after the Grok route
 
 The required under-target Grok HouseCore lane was routed first. Its immutable
 assignment incurred directly observed model effort, but the Grok Build CLI then
-exhausted its rolling allowance and its separate Chrome fallback stopped at an
-account Terms / Acceptable Use acknowledgement that OpenAI cannot accept for the
-owner. No Grok code or accepted production credit exists.
+exhausted its rolling allowance. The owner accepted the displayed terms and the
+single separate Chrome fallback ran to its terminal response, but it returned no
+complete downloadable bundle or valid result packet. No Grok code or accepted
+production credit exists, and the route cannot be retried.
 
 Cursor's final integration cannot start until both Claude R1 and the
 robot-dealer public interface are independently accepted. The frozen short

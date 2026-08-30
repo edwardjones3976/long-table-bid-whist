@@ -56,6 +56,7 @@
   "transport": {
     "provider": "Claude",
     "surface": "authenticated Claude Cowork at claude.ai in owner-selected Chrome",
+    "task_url": "https://claude.ai/cowork/cse_01J1WZXZMbRcQgYj3nS2dFJb",
     "model_label": "Fable 5",
     "effort_label": "High, the highest available Cowork effort",
     "input_archive": "lt-claude-cowork-upload.zip",
@@ -65,7 +66,26 @@
     "transport_source_head": "2f2a18765e25289ff42cc5740de5d07a7c4d6ea8",
     "transport_source_tree": "5a486cab48e6cc88cf6c04b3da736865bdd0b7e5",
     "web_search": false,
-    "subagents": false
+    "subagents": false,
+    "prompt_sent": true,
+    "status": "PAUSED_EXPLICIT_USAGE_RESET_NO_OUTPUT",
+    "provider_output_artifact": false,
+    "provider_source_change": false,
+    "terminal_ui_evidence": "session limit reached; plan usage resets at 2026-08-30T10:10:00-07:00",
+    "purchase_offered": true,
+    "purchase_authorized": false,
+    "purchase_reason": "base packet budget_usd is zero and no purchase amount was authorized"
+  },
+  "same_task_continuation": {
+    "resume_not_before": "2026-08-30T10:12:00-07:00",
+    "external_state_change": "Claude plan usage reset at 2026-08-30T10:10:00-07:00",
+    "retry": false,
+    "new_assignment": false,
+    "new_workload_row": false,
+    "new_provider_dispatch": false,
+    "additional_effort_credit": false,
+    "resume_rule": "resume the existing Cowork task once after the explicit usage reset; never run Cowork and CLI concurrently",
+    "fallback_if_task_cannot_resume": "record the route unavailable and stop this assignment without authoring or transferring production fixes"
   },
   "transport_sanitization": {
     "basis": "the GitHub OAuth token cannot create a branch containing workflow-file changes",
