@@ -142,10 +142,10 @@ overall_effort_ledger:
     size: long
     canonical_points: 0
     completed: false
-    terminal_status: "RECOVERY_TRANSPORT_BLOCKED_BEFORE_PROVIDER_EXECUTION"
-    authenticated_run: null
+    terminal_status: "PROVIDER_EXECUTION_PARTIAL_SESSION_CAP_NO_SOURCE_MUTATION"
+    authenticated_run: "claude-session:f0d909ff-0700-4846-b6d0-65f75598d745; partial provider execution at 2026-08-30T06:58:24Z"
     direct_production_points: 0
-    exclusion_reason: "429 session cap occurred before model execution; the immutable packet remains queued for the exact reset"
+    exclusion_reason: "Claude executed two read-only preflight tools and then hit its temporary session cap before any source mutation; the same assignment is unfinished and receives no completed-window or direct-production points until its single recovery reaches a terminal outcome"
   - sequence: 4
     assignment_id: "LT-NATIVE-GROK-HOUSE-001"
     provider: grok
@@ -213,12 +213,12 @@ canonical_assignment_ledger:
     provider: claude
     size: long
     canonical_points: 8
-    status: "RECOVERY_TRANSPORT_BLOCKED_TEMPORARY_NO_CODE_EXECUTED"
+    status: "PROVIDER_EXECUTION_PARTIAL_TEMPORARY_SESSION_CAP_NO_CODE"
     accepted_direct_production_points: 0
     packet_digest: "sha256:55ce945cbe277c3ac93066db2fc9b33c813ff8270d9da675b5e49ddecfb62a3e"
     work_packet_digest: "sha256:801ae362d21ce3dbc8b880db1d29cf652899815e8a1595a7d8d2943dc42c0279"
     accepted_outcome_digest: null
-    manual_overlay_reason: "single Claude correction and cumulative revalidation; authenticated CLI recovery reached its temporary session cap before provider execution; no code or credit; materially different authenticated Cowork transport requires action-time transmission approval"
+    manual_overlay_reason: "single Claude correction and cumulative revalidation; authenticated Claude executed two read-only inspection tools before the temporary session cap, made no source change and remains the same unfinished assignment; one transient same-session recovery is queued for the exact reset"
   - sequence: 4
     assignment_id: "LT-NATIVE-GROK-HOUSE-001"
     provider: grok

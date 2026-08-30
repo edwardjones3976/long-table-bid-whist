@@ -29,9 +29,11 @@ The PR76 canonical rolling series begins with the first native-program packets:
 2. `LT-NATIVE-ANTIGRAVITY-001` — Gemini Antigravity, long/8, authenticated
    execution and exhausted recovery, quarantined, zero direct-production
    credit.
-3. `LT-NATIVE-CLAUDE-001-R1` is not completed effort: its authenticated CLI
-   transport hit a 429 session cap before model execution. It remains queued
-   with zero points until the provider actually executes.
+3. `LT-NATIVE-CLAUDE-001-R1` is not completed effort: authenticated Claude
+   executed two read-only inspection tools, then hit its temporary session cap
+   before any source mutation. The same assignment remains queued for one
+   transient recovery at the exact reset, with zero completed-window and
+   direct-production points until a terminal outcome exists.
 4. `LT-NATIVE-GROK-HOUSE-001` reached authenticated provider execution, but its
    configured browser fallback is still blocked at a human-only legal
    acknowledgement. The assignment is not terminal and does not enter the
