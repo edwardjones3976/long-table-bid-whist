@@ -67,6 +67,28 @@ redispatch is allowed. The bare-array digest is not propagated. Fresh Cursor and
 Grok packets use the snapshot-document form and depend on the separate digest of
 the exact OpenAI-accepted Claude `AssignmentOutcome`.
 
+## UE target-rule path amendment
+
+OpenAI's exact-candidate QA confirmed that UnrealBuildTool 5.7 discovers a
+project's target-rule classes only when they are direct children of the
+project's `Source` directory. The dispatched Claude packet mistakenly
+allowlisted `Unreal/LongTable.Target.cs` and
+`Unreal/LongTableEditor.Target.cs`; those locations do not produce a valid
+code-project target.
+
+For assignment `LT-NATIVE-CLAUDE-001` only, the owner-authorized manual overlay
+therefore treats these two engine-required paths as Claude-owned:
+
+- `Unreal/Source/LongTable.Target.cs`
+- `Unreal/Source/LongTableEditor.Target.cs`
+
+This is a two-file path correction, not a scope expansion. No other direct
+child of `Unreal/Source`, no XR or Social module, and no provider-owned content
+path is added. The original packet remains immutable and the provider's
+disclosure remains part of its evidence. OpenAI still verifies both target
+files, the complete changed-file set, UBT recognition, and the exact candidate
+before any acceptance credit.
+
 ## Acceptance
 
 Manual routing never weakens acceptance. Each provider candidate still requires:
