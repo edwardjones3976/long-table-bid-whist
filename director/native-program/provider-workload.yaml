@@ -1,4 +1,4 @@
-# [[OpenAI Director | Codex | 2026-08-30 | 09:00 UTC | BEGIN]]
+# [[OpenAI Director | Codex | 2026-08-30 | 09:06 UTC | BEGIN]]
 schema_version: "long-table-provider-workload/v2"
 
 policy_binding:
@@ -152,10 +152,10 @@ overall_effort_ledger:
     size: long
     canonical_points: 8
     completed: false
-    terminal_status: "GROK_BUILD_CLI_UNAVAILABLE_BROWSER_FALLBACK_BLOCKED_LEGAL_ACK"
+    terminal_status: "BROWSER_FALLBACK_PRESTAGED_OWNER_TERMS_ACCEPTED_NOT_YET_DISPATCHED"
     authenticated_run: "grok-session:01a051a1-c92b-7bf2-b28b-2d3d81155d71;request:433d5853-4edc-46ff-914e-e15dd21720a2"
     direct_production_points: 0
-    exclusion_reason: "direct provider effort is recorded once for the assignment; rolling completed-assignment share waits for the configured browser fallback's terminal outcome"
+    exclusion_reason: "direct provider effort is recorded once for the assignment; the owner accepted the displayed terms and an immutable materially different browser-transport delta is pre-staged; rolling completed-assignment share still waits for the fallback's terminal outcome"
   - sequence: 5
     assignment_id: "LT-NATIVE-ANTIGRAVITY-002"
     provider: gemini_antigravity
@@ -195,7 +195,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 8, cursor: 10, grok: 0, openai: 0, gemini_antigravity: 10, perplexity: 0}
   current_partial_shares_percent: {claude: 28.57, cursor: 35.71, grok: 0, openai: 0, gemini_antigravity: 35.71, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
-  next_route: "resume exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; Grok and Antigravity require explicit human account/permission actions; Cursor XR revision authority is exhausted after rejected de02a26, so any new correction requires an explicit owner decision rather than a disguised retry; final integration remains dependency-gated"
+  next_route: "dispatch the one pre-staged Grok Build Beta browser fallback; then run the newly owner-authorized Antigravity sandbox assignment with exact scoped write/command permissions; resume exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; a fresh bounded Cursor correction packet is owner-authorized but remains sequenced after the independent provider gates"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -234,12 +234,15 @@ canonical_assignment_ledger:
     provider: grok
     size: long
     canonical_points: 8
-    status: "GROK_BUILD_CLI_UNAVAILABLE_BROWSER_FALLBACK_BLOCKED_LEGAL_ACK"
+    status: "BROWSER_FALLBACK_PRESTAGED_OWNER_TERMS_ACCEPTED_NOT_YET_DISPATCHED"
     accepted_direct_production_points: 0
     packet_digest: "sha256:9991f2b1ff276a40aef598a5023a9fa000edfa99007904f150e0579099a8b89d"
     work_packet_digest: "sha256:bab8d037913238b56f984621a544081b4a63194e0807cba26c08446142e4f208"
+    transport_delta_file: "director/native-program/packets/LT-NATIVE-GROK-HOUSE-001-BROWSER-DELTA.json"
+    transport_delta_file_sha256: "sha256:96f6d3babde27e8c930b60743d85420b59dc8bf85c52a4dd20a66f458777aa16"
+    transport_delta_digest: "sha256:dea7c9e100d5f4c8dc7bb3f9e7635945974b2cd923fdfc096035c21a9db4b9ab"
     accepted_outcome_digest: null
-    manual_overlay_reason: "owner-authorized independent clean-room HouseCore fallback; no Claude dependency; no Antigravity artifact access; exact packet and authenticated execution required before effort credit"
+    manual_overlay_reason: "owner-authorized independent clean-room HouseCore fallback; no Claude dependency; no Antigravity artifact access; after the owner completed Grok terms acknowledgement, one materially different Build Beta browser transport is pre-staged under the same assignment and cannot create duplicate effort credit"
   - sequence: 5
     assignment_id: "LT-NATIVE-ANTIGRAVITY-002"
     provider: gemini_antigravity
@@ -298,4 +301,4 @@ action_reduction:
   duplicate_validation_reduction_percent: 70
   total_action_reduction_percent: 60
 
-# [[OpenAI Director | Codex | 2026-08-30 | 09:00 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-30 | 09:06 UTC | END]]

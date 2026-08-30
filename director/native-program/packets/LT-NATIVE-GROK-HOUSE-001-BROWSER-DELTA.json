@@ -1,0 +1,61 @@
+{
+  "schema_version": "long-table-transport-delta/v1",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-GROK-HOUSE-001",
+  "base_work_packet": "director/native-program/packets/LT-NATIVE-GROK-HOUSE-001.json",
+  "base_work_packet_file_sha256": "sha256:9991f2b1ff276a40aef598a5023a9fa000edfa99007904f150e0579099a8b89d",
+  "base_work_packet_digest": "sha256:bab8d037913238b56f984621a544081b4a63194e0807cba26c08446142e4f208",
+  "authority_snapshot_digest": "sha256:b174208d96db02a22153f2848d572856b5ec025743159524a414ca5cdf1efe73",
+  "starting_ref": "377a4039a9cc46b38497f2be3223ab7533dfe207",
+  "starting_tree": "566e43ccf6a0642843485e20272ebee93a7b6c10",
+  "owner_authorization": {
+    "recorded_at_utc": "2026-08-30T09:05:46Z",
+    "scope": "Accept the displayed Grok terms and continue the already configured browser fallback so Grok can code its non-overlapping clean-room HouseCore lane.",
+    "terms_acknowledgement_completed": true
+  },
+  "recovery_classification": {
+    "attempt": 3,
+    "basis": "materially different authenticated Chrome transport plus new owner terms acknowledgement",
+    "ambiguous_paid_dispatch": false,
+    "prior_cli_route": "unavailable after usage exhaustion",
+    "retry_after_this_transport": false
+  },
+  "transport": {
+    "provider": "Grok",
+    "surface": "authenticated grok.com in owner-selected Chrome",
+    "mode": "Build Beta",
+    "model_label": "Grok 4.6",
+    "web_search": false,
+    "subagents": false
+  },
+  "permitted_inputs": [
+    "the exact base work packet identified above",
+    "director/native-program/contracts/long-table-house-public-v1.json at starting_ref",
+    "director/native-program/contracts/model-result-packet-v1.schema.json at starting_ref"
+  ],
+  "prohibited_inputs": [
+    "any Claude, Cursor, Antigravity or OpenAI production source, diff, transcript or artifact",
+    "any quarantined or frozen HouseCore implementation",
+    "Slack, Linear, credentials, cookies, environment values or private repository context",
+    "concealed cards, bids, plays, identities, invitations, moderation, session or provider payloads"
+  ],
+  "delivery_contract": {
+    "artifact": "one source-only LongTableHouseCore plugin archive or an equivalently complete downloadable source bundle",
+    "owned_root": "Unreal/Plugins/LongTableHouseCore/",
+    "required_contents": "runtime module, automation-test module, source-only plugin descriptor, minimal plugin-owned test-host files, and all 26 exact House.* automation tests",
+    "local_materialization": "OpenAI may mechanically extract or copy the exact provider-delivered bytes into the clean worktree and commit them with Grok as author; OpenAI may not alter production code",
+    "provider_local_claims": "The browser provider has no local worktree, Git or Unreal access and must mark those checks NOT_RUN",
+    "terminal_response": "Return the exact downloadable artifact plus one model-result-packet-v1 JSON object; if artifact delivery is unavailable, return UNAVAILABLE without requesting private source"
+  },
+  "unchanged_boundaries": [
+    "All objective, non-goal, authority, owned-path, prohibited-path, closed-contract, privacy, rights, budget and final-acceptance clauses in the base packet remain unchanged.",
+    "No integration, push, merge, release, account, license, device, human, cultural, rights or store authority is added.",
+    "This is a transport continuation of one assignment and earns no additional workload row or duplicate credit."
+  ],
+  "idempotency_key": "LT-NATIVE-GROK-HOUSE-001-377a4039a9cc",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-GROK-HOUSE-001",
+    "source_event_id": "owner-authorized-grok-browser-fallback-20260830",
+    "slack_thread_ts": "1788068481.517609"
+  }
+}
