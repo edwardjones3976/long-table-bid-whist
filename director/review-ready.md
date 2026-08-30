@@ -1,3 +1,4 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]] -->
 # REVIEW_READY template — The Long Table
 
@@ -41,6 +42,15 @@ independent review; it does not approve, merge, deploy, or publish anything.
 - **Candidate invalidation:** Any artifact change voids this handoff and all
   candidate-bound review evidence.
 
+## Authority separation
+
+- An accepted assignment does not complete the project.
+- `REVIEW_READY` does not mean accepted, merged, deployed, published, or
+  released.
+- A merge-eligible result records evidence only and performs no merge.
+- `COMPLETE` requires all gates for the unchanged candidate, human user testing,
+  and explicit owner acceptance.
+
 ```text
 REVIEW_REQUEST
 Project: long-table-bid-whist
@@ -68,3 +78,4 @@ change access, spend funds, or infer authority from this request.
 - **Current CI/security/rights evidence:** `<exact status or unverified>`
 - **Next responsible party:** `<producer, deterministic gate, Director, or owner>`
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]] -->
