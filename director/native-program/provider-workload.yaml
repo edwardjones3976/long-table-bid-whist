@@ -1,4 +1,4 @@
-# [[OpenAI Director | Codex | 2026-08-30 | 09:10 UTC | BEGIN]]
+# [[OpenAI Director | Codex | 2026-08-30 | 09:48 UTC | BEGIN]]
 schema_version: "long-table-provider-workload/v2"
 
 policy_binding:
@@ -10,7 +10,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_5_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists"
+  rolling_compliance_status: "WARMING_UP_7_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -91,13 +91,13 @@ native_code_assignments:
     credit_rule: "forecast is not credit; HouseCore and later social work use separate actual packets"
     allocation: {native_foundation_first_deal: 5, private_game_night: 6, long_table_house: 6}
     owned_surfaces: ["services/session-gateway", "Unreal/Source/LongTableSocial", "Unreal/Content/Social", "Unreal/Plugins/LongTableHouseCore"]
-    house_core_authority: "prospective clean-room fallback only; quarantined Antigravity source is prohibited"
+    house_core_authority: "Grok clean-room CLI and final browser fallback are terminal unavailable with no complete downloadable bundle; quarantined Antigravity source remains prohibited and any later HouseCore route requires a new packet"
   gemini_antigravity:
     scope_forecast_units: 8
     allocation: {historical_house_core_attempt: 8, prospective_robot_dealer_short_assignment: 2}
     owned_surfaces: ["isolated historical LongTableHouseCore", "isolated prospective LongTableRobotDealer"]
-    assignment_status: "HouseCore revision exhausted and quarantined at zero credit; robot-dealer assignment terminated unavailable after its configured sandbox policy denied writes and local commands, with zero code and zero accepted production credit"
-    integration_destination: "HouseCore transferred prospectively to Grok clean-room fallback; an accepted robot-dealer artifact must be independently integrated or rejected by Cursor"
+    assignment_status: "HouseCore revision exhausted and quarantined at zero credit; the final owner-authorized robot-dealer recovery authored an exact candidate, but OpenAI rejected it for monotonicity, likely delegate compilation, pause-state and evidence defects, with zero accepted production credit"
+    integration_destination: "Grok HouseCore is terminal unavailable; Antigravity robot-dealer candidate 0ae3269 is provenance-frozen but rejected and any replacement must use a new non-overlapping fallback assignment"
     outbound_boundary: "closed public contract, enums, bounded integers, fixed strings and synthetic fixtures only; no private repository context"
   openai:
     program_capacity_units: 0
@@ -151,21 +151,21 @@ overall_effort_ledger:
     provider: grok
     size: long
     canonical_points: 8
-    completed: false
-    terminal_status: "BROWSER_FALLBACK_PRESTAGED_OWNER_TERMS_ACCEPTED_NOT_YET_DISPATCHED"
-    authenticated_run: "grok-session:01a051a1-c92b-7bf2-b28b-2d3d81155d71;request:433d5853-4edc-46ff-914e-e15dd21720a2"
+    completed: true
+    terminal_status: "UNAVAILABLE_BROWSER_TERMINAL_NO_COMPLETE_DOWNLOADABLE_BUNDLE"
+    authenticated_run: "grok-chat:ded7001b-47a5-4b4a-9a77-80427d035500;rid:1cb24501-667d-49b4-bbe1-947fdd46757d;Build Beta Grok 4.6;28m22s"
     direct_production_points: 0
-    exclusion_reason: "direct provider effort is recorded once for the assignment; the owner accepted the displayed terms and an immutable materially different browser-transport delta is pre-staged; rolling completed-assignment share still waits for the fallback's terminal outcome"
+    exclusion_reason: "direct provider effort is recorded once; the owner accepted the displayed terms and the final materially different Build Beta browser route ran 28m22s but ended 'could not finish responding', supplied no terminal result packet or complete downloadable archive, exposed only a partial workspace, and permits no retry"
   - sequence: 5
     assignment_id: "LT-NATIVE-ANTIGRAVITY-002"
     provider: gemini_antigravity
     size: short
     canonical_points: 2
     completed: true
-    terminal_status: "UNAVAILABLE_USER_PERMISSION_DENY_ZERO_CODE"
-    authenticated_run: "antigravity-conversation:4eaec0f1-1092-44a2-b5e9-bdb4574018db;run:LT-NATIVE-ANTIGRAVITY-002-74f856fd8042"
+    terminal_status: "OPENAI_CHANGES_REQUIRED_FINAL_RECOVERY_REJECTED"
+    authenticated_run: "antigravity-conversation:2b41c6a4-771e-4fab-be81-1d5d74b7d197;candidate:0ae3269b602288563804b081abe82cb7e69d0059"
     direct_production_points: 0
-    exclusion_reason: "directly observed provider effort earns overall assignment points once; zero code and unavailable status earn no accepted production credit"
+    exclusion_reason: "directly observed provider effort earns overall assignment points once; the owner-authorized project-bound final recovery produced 12 exact files, but OpenAI rejected strict-sequence regression, likely dynamic-delegate compilation, pause-state and evidence defects; retry authority is exhausted and direct-production credit remains zero"
   - sequence: 6
     assignment_id: "LT-NATIVE-CURSOR-XRCORE-001"
     provider: cursor
@@ -190,22 +190,32 @@ overall_effort_ledger:
     assignment_id: "LT-NATIVE-CURSOR-XRCORE-002"
     provider: cursor
     size: medium
+    canonical_points: 5
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_R1_AUTHORIZED"
+    authenticated_run: "cursor-session:a0bf5116c-ce93-4fa7-880a-a35b652f3476;request:7f0233d0-b391-4ca5-a09a-6b73faad5eefd;candidate:72fb778a9536b4e5dda74d73451244d069d53713"
+    direct_production_points: 0
+    exclusion_reason: "Cursor authored exact plugin-only bytes but its Shell route was rejected; OpenAI mechanically froze candidate 72fb778, reproduced the UE5.7 InitializeStandalone compile failure and consolidated atomicity, overflow, persistence, cancellation and structural-rights findings; one final source-only recovery is active"
+  - sequence: 9
+    assignment_id: "LT-NATIVE-CURSOR-XRCORE-002-R1"
+    provider: cursor
+    size: medium
     canonical_points: 0
     completed: false
-    terminal_status: "PRESTAGED_NEW_OWNER_AUTHORIZED_ASSIGNMENT_NOT_YET_DISPATCHED"
-    authenticated_run: null
+    terminal_status: "PROVIDER_EXECUTION_IN_PROGRESS_FINAL_SOURCE_ONLY_RECOVERY"
+    authenticated_run: "cursor-session:a0bf5116c-ce93-4fa7-880a-a35b652f3476"
     direct_production_points: 0
-    exclusion_reason: "the owner explicitly authorized one genuinely new bounded XR correction assignment after the exhausted R1; immutable prestage is being frozen and earns no completed-window or direct-production points before terminal execution"
+    exclusion_reason: "the immutable schema-valid final recovery is executing in the same authenticated session with Shell prohibited; it receives no completed-window or direct-production points before a terminal result and OpenAI exact-candidate QA"
 
 accepted_direct_production_ledger: []
 
 rolling_window_projection:
-  completed_assignments: 5
+  completed_assignments: 7
   window_size: 20
-  current_canonical_points: {claude: 8, cursor: 10, grok: 0, openai: 0, gemini_antigravity: 10, perplexity: 0}
-  current_partial_shares_percent: {claude: 28.57, cursor: 35.71, grok: 0, openai: 0, gemini_antigravity: 35.71, perplexity: 0}
+  current_canonical_points: {claude: 8, cursor: 15, grok: 8, openai: 0, gemini_antigravity: 10, perplexity: 0}
+  current_partial_shares_percent: {claude: 19.51, cursor: 36.59, grok: 19.51, openai: 0, gemini_antigravity: 24.39, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
-  next_route: "collect the one Grok Build Beta browser terminal artifact and the parallel Antigravity sandbox terminal outcome; then dispatch the frozen Cursor XR rescue packet once; resume exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset"
+  next_route: "complete the one active final Cursor XR recovery and OpenAI exact-candidate QA; resume the exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; then route the product-required RobotDealer replacement to an eligible under-target provider under a new non-overlapping packet"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -244,7 +254,7 @@ canonical_assignment_ledger:
     provider: grok
     size: long
     canonical_points: 8
-    status: "BROWSER_FALLBACK_PRESTAGED_OWNER_TERMS_ACCEPTED_NOT_YET_DISPATCHED"
+    status: "UNAVAILABLE_BROWSER_TERMINAL_NO_COMPLETE_DOWNLOADABLE_BUNDLE"
     accepted_direct_production_points: 0
     packet_digest: "sha256:9991f2b1ff276a40aef598a5023a9fa000edfa99007904f150e0579099a8b89d"
     work_packet_digest: "sha256:bab8d037913238b56f984621a544081b4a63194e0807cba26c08446142e4f208"
@@ -252,18 +262,21 @@ canonical_assignment_ledger:
     transport_delta_file_sha256: "sha256:96f6d3babde27e8c930b60743d85420b59dc8bf85c52a4dd20a66f458777aa16"
     transport_delta_digest: "sha256:dea7c9e100d5f4c8dc7bb3f9e7635945974b2cd923fdfc096035c21a9db4b9ab"
     accepted_outcome_digest: null
-    manual_overlay_reason: "owner-authorized independent clean-room HouseCore fallback; no Claude dependency; no Antigravity artifact access; after the owner completed Grok terms acknowledgement, one materially different Build Beta browser transport is pre-staged under the same assignment and cannot create duplicate effort credit"
+    manual_overlay_reason: "owner-authorized independent clean-room HouseCore fallback; the final materially different browser route ran once after terms acknowledgement, ended without a complete downloadable source bundle or result packet, and cannot be retried or credited as production"
   - sequence: 5
     assignment_id: "LT-NATIVE-ANTIGRAVITY-002"
     provider: gemini_antigravity
     size: short
     canonical_points: 2
-    status: "UNAVAILABLE_USER_PERMISSION_DENY_ZERO_CODE"
+    status: "OPENAI_CHANGES_REQUIRED_FINAL_RECOVERY_REJECTED"
     accepted_direct_production_points: 0
     packet_digest: "sha256:5d8e25b68bbfd18e029c7953dca27c95ef238587824bb256a58dfcf1004bbd16"
     work_packet_digest: "sha256:7e8436fe9c1a203de2a266e90cab224520b38b1b2e5d94451d270f60e21d59fd"
     accepted_outcome_digest: null
-    manual_overlay_reason: "owner-required isolated robot-presenter lane; dispatched after the required under-target Grok route exhausted and before dependent Cursor; warm-up advisory variance only"
+    candidate_sha: "0ae3269b602288563804b081abe82cb7e69d0059"
+    candidate_tree: "5702fe88522a6587eaf5831f318e6791e9f1653f"
+    terminal_result_digest: "sha256:7774460a7bb7268d4123ea5b6cddd3b48130bff8502305ba523d8da5c342fa2c"
+    manual_overlay_reason: "owner-required isolated robot-presenter lane; the final project-bound sandbox recovery produced exact attributable bytes, but independent OpenAI QA rejected the candidate and no additional Antigravity retry is permitted"
   - sequence: 6
     assignment_id: "LT-NATIVE-CURSOR-XRCORE-001"
     provider: cursor
@@ -295,14 +308,29 @@ canonical_assignment_ledger:
     provider: cursor
     size: medium
     canonical_points: 5
-    status: "PRESTAGED_NEW_OWNER_AUTHORIZED_ASSIGNMENT_NOT_YET_DISPATCHED"
+    status: "OPENAI_CHANGES_REQUIRED_R1_AUTHORIZED"
     accepted_direct_production_points: 0
     packet_digest: "sha256:cc133adf74b0f2a41694d7bae8b88ce7643e4d2483a9c66a5d72ccfae2995ee4"
     work_packet_digest: "sha256:5d3c880b2841d7e9edc584bfa627e9f30c1500d654db4e977d83f01aba77c2de"
+    transport_delta_file: "director/native-program/packets/LT-NATIVE-CURSOR-XRCORE-002-SHELL-DELTA.json"
+    transport_delta_file_sha256: "sha256:2783813490a2710cbb9587e21a89112990a9ead64aa7841ce3e5379b4315bdb0"
+    accepted_outcome_digest: null
+    candidate_sha: "72fb778a9536b4e5dda74d73451244d069d53713"
+    candidate_tree: "156070468946e0f3092830857dc6077a1564ce8c"
+    manual_overlay_reason: "explicit owner authorization created one genuinely new product-required Cursor XR rescue assignment; authenticated Cursor authored exact bytes, OpenAI reproduced blocking findings, and a single final source-only recovery is authorized"
+  - sequence: 9
+    assignment_id: "LT-NATIVE-CURSOR-XRCORE-002-R1"
+    provider: cursor
+    size: medium
+    canonical_points: 5
+    status: "PROVIDER_EXECUTION_IN_PROGRESS_FINAL_SOURCE_ONLY_RECOVERY"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:abb7c31e5d70eb8ea2395f817eea03c3d638fef335a1ecd486a8ab22cc9c5cf9"
+    work_packet_digest: "sha256:08e25f8e11c300a608c0ca23fdbed5c6ca4ce1e575b429837d49ba92a0705db8"
     accepted_outcome_digest: null
     candidate_sha: null
     candidate_tree: null
-    manual_overlay_reason: "explicit owner authorization created one genuinely new product-required Cursor XR rescue assignment after the exhausted R1; it remains one writer, one plugin and no filler, and earns no points before terminal execution"
+    manual_overlay_reason: "one final schema-valid recovery of the useful XR lane consolidates all exact OpenAI findings, prohibits Shell, preserves Cursor as the sole writer and earns no points before terminal execution"
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -324,4 +352,4 @@ action_reduction:
   duplicate_validation_reduction_percent: 70
   total_action_reduction_percent: 60
 
-# [[OpenAI Director | Codex | 2026-08-30 | 09:10 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-30 | 09:48 UTC | END]]
