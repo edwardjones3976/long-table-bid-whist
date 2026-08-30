@@ -1,4 +1,4 @@
-# [[OpenAI Director | Codex | 2026-08-30 | 09:06 UTC | BEGIN]]
+# [[OpenAI Director | Codex | 2026-08-30 | 09:10 UTC | BEGIN]]
 schema_version: "long-table-provider-workload/v2"
 
 policy_binding:
@@ -186,6 +186,16 @@ overall_effort_ledger:
     authenticated_run: "cursor-chat:2818c90a-0ac8-420e-aa02-beb79cf06bf2;request:ef7e5029-d2b4-4dbe-85f1-c0ce80b8f820"
     direct_production_points: 0
     exclusion_reason: "authenticated Cursor wrote the final provider revision and reached a terminal failed shell/result-envelope state; OpenAI mechanically froze exact candidate de02a26, reproduced an editor C++ build failure and retained substantive contract/test findings; revision authority is exhausted and no accepted production credit exists"
+  - sequence: 8
+    assignment_id: "LT-NATIVE-CURSOR-XRCORE-002"
+    provider: cursor
+    size: medium
+    canonical_points: 0
+    completed: false
+    terminal_status: "PRESTAGED_NEW_OWNER_AUTHORIZED_ASSIGNMENT_NOT_YET_DISPATCHED"
+    authenticated_run: null
+    direct_production_points: 0
+    exclusion_reason: "the owner explicitly authorized one genuinely new bounded XR correction assignment after the exhausted R1; immutable prestage is being frozen and earns no completed-window or direct-production points before terminal execution"
 
 accepted_direct_production_ledger: []
 
@@ -195,7 +205,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 8, cursor: 10, grok: 0, openai: 0, gemini_antigravity: 10, perplexity: 0}
   current_partial_shares_percent: {claude: 28.57, cursor: 35.71, grok: 0, openai: 0, gemini_antigravity: 35.71, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
-  next_route: "dispatch the one pre-staged Grok Build Beta browser fallback; then run the newly owner-authorized Antigravity sandbox assignment with exact scoped write/command permissions; resume exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; a fresh bounded Cursor correction packet is owner-authorized but remains sequenced after the independent provider gates"
+  next_route: "collect the one Grok Build Beta browser terminal artifact and the parallel Antigravity sandbox terminal outcome; then dispatch the frozen Cursor XR rescue packet once; resume exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -280,6 +290,19 @@ canonical_assignment_ledger:
     candidate_sha: "de02a26d57065dfc52d5639ac6e2e5ae2baa0029"
     candidate_tree: "1faab10219e3197e2e3b8db06814ab3674298812"
     manual_overlay_reason: "one consolidated final revision of the same useful Cursor XR-core lane; terminal provider effort is recorded once, OpenAI rejection leaves direct-production credit at zero, and no further Cursor revision authority remains"
+  - sequence: 8
+    assignment_id: "LT-NATIVE-CURSOR-XRCORE-002"
+    provider: cursor
+    size: medium
+    canonical_points: 5
+    status: "PRESTAGED_NEW_OWNER_AUTHORIZED_ASSIGNMENT_NOT_YET_DISPATCHED"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:cc133adf74b0f2a41694d7bae8b88ce7643e4d2483a9c66a5d72ccfae2995ee4"
+    work_packet_digest: "sha256:5d3c880b2841d7e9edc584bfa627e9f30c1500d654db4e977d83f01aba77c2de"
+    accepted_outcome_digest: null
+    candidate_sha: null
+    candidate_tree: null
+    manual_overlay_reason: "explicit owner authorization created one genuinely new product-required Cursor XR rescue assignment after the exhausted R1; it remains one writer, one plugin and no filler, and earns no points before terminal execution"
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -301,4 +324,4 @@ action_reduction:
   duplicate_validation_reduction_percent: 70
   total_action_reduction_percent: 60
 
-# [[OpenAI Director | Codex | 2026-08-30 | 09:06 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-30 | 09:10 UTC | END]]
