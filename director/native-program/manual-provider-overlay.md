@@ -70,9 +70,11 @@ authoritative public presentation facts but cannot edit the plugin. OpenAI owns
 QA and can accept, reject or kick back the exact artifact; it writes no dealer
 production code.
 
-The packet is prestaged but not dispatched while Antigravity's partial warm-up
-share is high. Useful under-target Grok work routes first, per
-`workload-baseline.md`.
+The packet was dispatched only after the required under-target Grok route. Its
+structured run terminated `UNAVAILABLE` because the user's configured policy
+denied sandbox file writes and local commands. OpenAI verified zero code and
+zero mutation. It earns overall assignment effort once, but no accepted direct
+production credit; Cursor therefore has no robot-presenter artifact to bind.
 
 ## Warm-up variance after the Grok route
 
@@ -83,12 +85,13 @@ account Terms / Acceptable Use acknowledgement that OpenAI cannot accept for the
 owner. No Grok code or accepted production credit exists.
 
 Cursor cannot start until both Claude R1 and the robot-dealer public interface
-are independently accepted. The next useful dependency-reducing assignment is
-therefore the already-frozen short Antigravity robot-presenter sandbox. Exact
-Director policy is still in its fewer-than-20 completed-assignment warm-up, so
-this is recorded as an owner-authorized manual variance—not a rolling-20 pass,
-not filler, and not a relaxation of privacy, QA, budget, source-isolation or
-acceptance. It receives one bounded dispatch and one revision at most.
+are independently accepted. The frozen short Antigravity robot-presenter
+sandbox was therefore the next useful dependency-reducing assignment. Exact
+Director policy remains in its fewer-than-20 completed-assignment warm-up, so
+the dispatch is recorded as an owner-authorized manual variance—not a
+rolling-20 pass, not filler, and not a relaxation of privacy, QA, budget,
+source-isolation or acceptance. The bounded run returned no artifact because
+its configured permission policy denied the required write and command tools.
 
 Accepted Claude protocol headers, schemas, fixtures, and registration interfaces
 are readable, immutable dependencies for Cursor and Grok. They must not appear in

@@ -10,7 +10,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_2_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists"
+  rolling_compliance_status: "WARMING_UP_3_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -96,7 +96,7 @@ native_code_assignments:
     scope_forecast_units: 8
     allocation: {historical_house_core_attempt: 8, prospective_robot_dealer_short_assignment: 2}
     owned_surfaces: ["isolated historical LongTableHouseCore", "isolated prospective LongTableRobotDealer"]
-    assignment_status: "HouseCore revision exhausted and quarantined at zero credit; robot-dealer packet prestaged but not dispatched"
+    assignment_status: "HouseCore revision exhausted and quarantined at zero credit; robot-dealer assignment terminated unavailable after its configured sandbox policy denied writes and local commands, with zero code and zero accepted production credit"
     integration_destination: "HouseCore transferred prospectively to Grok clean-room fallback; an accepted robot-dealer artifact must be independently integrated or rejected by Cursor"
     outbound_boundary: "closed public contract, enums, bounded integers, fixed strings and synthetic fixtures only; no private repository context"
   openai:
