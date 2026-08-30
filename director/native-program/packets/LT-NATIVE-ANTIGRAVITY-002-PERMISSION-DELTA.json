@@ -1,0 +1,73 @@
+{
+  "schema_version": "long-table-transport-delta/v1",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-ANTIGRAVITY-002",
+  "base_work_packet": "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-002.json",
+  "base_work_packet_file_sha256": "sha256:5d8e25b68bbfd18e029c7953dca27c95ef238587824bb256a58dfcf1004bbd16",
+  "base_work_packet_digest": "sha256:7e8436fe9c1a203de2a266e90cab224520b38b1b2e5d94451d270f60e21d59fd",
+  "authority_snapshot_digest": "sha256:db5ada50860e9c78afb913e28591e5140594acafa24ffc952ce424b54f10f52c",
+  "starting_ref": "74f856fd80429d8b167723c949985040c634e11e",
+  "starting_tree": "9215fcd3085b4cae0570baa54f33a2a35d20bd52",
+  "owner_authorization": {
+    "recorded_at_utc": "2026-08-30T09:26:24Z",
+    "scope": "Permit Antigravity run_command and write_to_file inside the exact disposable robot-dealer sandbox, authorize the required narrow permission correction, and complete the assignment.",
+    "global_or_unsandboxed_authority": false
+  },
+  "recovery_classification": {
+    "attempt": 3,
+    "basis": "materially new evidence identified the wrong default project plus an effective global write deny; this final recovery binds the exact sandbox project and applies a temporary project-scoped permission repair",
+    "ambiguous_paid_dispatch": false,
+    "retry_after_this_transport": false
+  },
+  "transport": {
+    "provider": "Gemini Antigravity",
+    "surface": "authenticated agy CLI v1.1.22",
+    "project_id": "078d0f61-1252-40e5-a802-3c4da65f2756",
+    "project_root": "C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-robot-dealer-002",
+    "flags": [
+      "--project=078d0f61-1252-40e5-a802-3c4da65f2756",
+      "--sandbox",
+      "--mode=accept-edits",
+      "--output-format=json"
+    ]
+  },
+  "temporary_permission_change": {
+    "global_settings": "C:\\Users\\edwar\\.gemini\\antigravity-cli\\settings.json",
+    "global_settings_prechange_sha256": "sha256:5a9aef19fff41049666ff285eeecfd37ee35a9dc016b7c9be19b79dfefaed2e3",
+    "remove_during_run_only": "write_file(*)",
+    "retain_global_denies": [
+      "unsandboxed(*)",
+      "read_url(*)",
+      "execute_url(*)",
+      "mcp(*)"
+    ],
+    "project_settings": "C:\\Users\\edwar\\.gemini\\config\\projects\\078d0f61-1252-40e5-a802-3c4da65f2756.json",
+    "project_settings_prechange_sha256": "sha256:a5911da2562e2b89b7069be3081111cf467fb1a8c745a679bca1cfefb33b2160",
+    "project_allow": [
+      "command(*)",
+      "write_file(*)"
+    ],
+    "project_deny": [
+      "write_file(PUBLIC_CONTRACT.md)",
+      "write_file(RESULT_SCHEMA.json)"
+    ],
+    "scope_guard": "the project maps only the exact disposable sandbox and the CLI must retain --sandbox",
+    "restore_immediately_after_run": true
+  },
+  "delivery_contract_delta": {
+    "provider_owned_root": "Unreal/Plugins/LongTableRobotDealer/",
+    "provider_local_commit": "NOT_AVAILABLE because Antigravity sandbox mounts .git read-only",
+    "local_materialization": "OpenAI QA may mechanically freeze the exact provider-authored bytes and hashes and create one local commit with Antigravity as author; OpenAI may not alter production code",
+    "authority_files": "PUBLIC_CONTRACT.md and RESULT_SCHEMA.json must remain byte-identical",
+    "terminal_response": "return exactly one model-result-packet-v1 JSON object and mark provider-local commit NOT_RUN"
+  },
+  "unchanged_prohibitions": [
+    "no unsandboxed execution",
+    "no network, URL, MCP, browser or external-service access",
+    "no source outside the two public authority files and provider-owned root",
+    "no edits outside Unreal/Plugins/LongTableRobotDealer/",
+    "no regex, blacklist, keyword, substring, redaction or serialize-then-delete privacy control",
+    "no push, merge, deployment, release, purchase, account, credential or device action",
+    "no further retry after this final materially different recovery"
+  ]
+}
