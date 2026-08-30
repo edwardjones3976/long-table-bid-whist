@@ -145,6 +145,78 @@ namespace LongTableTableTests
 		return Config;
 	}
 
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+	FLongTableClientConfig DealerConfig()
+	{
+		FLongTableClientConfig Config;
+		Config.AuthorityUrl = TEXT("ws://127.0.0.1:1");
+		Config.Token = TEXT("fixture-token-dealer");
+		Config.Role = ELongTableRole::Dealer;
+		Config.TableId = FixtureTableId;
+		return Config;
+	}
+
+	FString DealerWelcomeText(int32 Version, bool bHasSeat = false, const TCHAR* ProjectionText = nullptr, const FString& TableId = FixtureTableId)
+	{
+		FLongTableAuthorityMessage Message;
+		Message.Type = ELongTableAuthorityMessageType::Welcome;
+		Message.Welcome.SessionId = TEXT("session-dealer");
+		Message.Welcome.Role = ELongTableRole::Dealer;
+		Message.Welcome.bHasSeat = bHasSeat;
+		Message.Welcome.Seat = ELongTableSeat::West;
+		Message.Welcome.TableId = TableId;
+		Message.Welcome.Version = Version;
+		Message.Welcome.bHasProjection = ProjectionText != nullptr;
+		TArray<FString> Texts;
+		if (ProjectionText) { Texts.Add(ProjectionText); }
+		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message, Texts);
+	}
+
+	FString HostWelcomeWithSeatText(FLongTableHostProjection Base, int32 Version)
+	{
+		FLongTableAuthorityMessage Message;
+		Message.Type = ELongTableAuthorityMessageType::Welcome;
+		Message.Welcome.SessionId = TEXT("session-host");
+		Message.Welcome.Role = ELongTableRole::Host;
+		Message.Welcome.bHasSeat = true;
+		Message.Welcome.Seat = ELongTableSeat::South;
+		Message.Welcome.TableId = FixtureTableId;
+		Message.Welcome.Version = Version;
+		Message.Welcome.bHasProjection = true;
+		Base.Version = Version;
+		Base.TableId = FixtureTableId;
+		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message, { FLongTableProtocolCodec::EncodeHostProjection(Base) });
+	}
+
+	FString DealerCueText(const FLongTableDealerCueFrame& Frame, const FString& EnvelopeTableId)
+	{
+		FLongTableAuthorityMessage Message;
+		Message.Type = ELongTableAuthorityMessageType::DealerCue;
+		Message.DealerCue.TableId = EnvelopeTableId;
+		Message.DealerCue.Frame = Frame;
+		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message, {});
+	}
+
+	FString ReplayText(const FLongTablePlayerProjection& Base, int32 FromVersion, int32 ToVersion, const TArray<int32>& FrameVersions, bool bTruncated = false, const FString& TableId = FixtureTableId)
+	{
+		FLongTableAuthorityMessage Message;
+		Message.Type = ELongTableAuthorityMessageType::Replay;
+		Message.Replay.TableId = TableId;
+		Message.Replay.FromVersion = FromVersion;
+		Message.Replay.ToVersion = ToVersion;
+		Message.Replay.bTruncated = bTruncated;
+		Message.Replay.FrameVersions = FrameVersions;
+		TArray<FString> Texts;
+		for (const int32 FrameVersion : FrameVersions)
+		{
+			FLongTablePlayerProjection Frame = Base;
+			Frame.Version = FrameVersion;
+			Texts.Add(FLongTableProtocolCodec::EncodePlayerProjection(Frame));
+		}
+		return FLongTableProtocolCodec::EncodeAuthorityMessage(Message, Texts);
+	}
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
+
 	struct FClientHarness
 	{
 		ULongTableAuthorityClient* Client = nullptr;
@@ -652,6 +724,342 @@ bool FLongTableLocalConfirmGateTest::RunTest(const FString& Parameters)
 	TestFalse(TEXT("paused blocks confirm"), ULongTableTableSubsystem::LocalConfirmGate(Projection, false));
 	return true;
 }
+
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableClientContextCollisionTest, "LongTable.Table.Client.ContextTuplesNeverCollide", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FLongTableClientContextCollisionTest::RunTest(const FString& Parameters)
+{
+	FLongTablePlayerProjection Base;
+	if (!LoadPlayerProjection(*this, Base)) { return false; }
+
+	// Two contexts whose old delimiter-joined identity was one identical
+	// string: (url "ws://h|tok", token "x") versus (url "ws://h", token
+	// "tok|x"). Structural comparison keeps them distinct.
+	FLongTableClientConfig ConfigA = PlayerConfig();
+	ConfigA.AuthorityUrl = TEXT("ws://h|tok");
+	ConfigA.Token = TEXT("x");
+	FLongTableClientConfig ConfigB = PlayerConfig();
+	ConfigB.AuthorityUrl = TEXT("ws://h");
+	ConfigB.Token = TEXT("tok|x");
+
+	FClientHarness Harness(ConfigA);
+	Harness.Client->Connect();
+	Harness.Transport->Inject(PlayerWelcomeText(Base, 9));
+	TestEqual(TEXT("welcomed under context A"), Harness.Client->GetLastAppliedVersion(), 9);
+	TestTrue(TEXT("resume marker held under context A"), Harness.Client->IsWelcomed());
+
+	Harness.Reconfigure(ConfigB);
+	TestEqual(TEXT("colliding tuple resets the version independently"), Harness.Client->GetLastAppliedVersion(), -1);
+	TestFalse(TEXT("colliding tuple clears the resume marker"), Harness.Client->IsWelcomed());
+	TestEqual(TEXT("colliding tuple clears the projection cache"), Harness.Client->GetPlayerProjection().Version, 0);
+	Harness.Client->Connect();
+	FLongTableClientMessage Hello;
+	if (!TestTrue(TEXT("hello sent under context B"), Harness.DecodeLastSent(Hello))) { return false; }
+	TestFalse(TEXT("no cross-context resume between colliding tuples"), Hello.Hello.bResume);
+
+	// A context differing only by token character case is a different context.
+	Harness.Transport->Inject(PlayerWelcomeText(Base, 4));
+	TestEqual(TEXT("welcomed under context B"), Harness.Client->GetLastAppliedVersion(), 4);
+	FLongTableClientConfig ConfigC = ConfigB;
+	ConfigC.Token = TEXT("TOK|X");
+	Harness.Reconfigure(ConfigC);
+	TestEqual(TEXT("case-differing token resets the context"), Harness.Client->GetLastAppliedVersion(), -1);
+	TestFalse(TEXT("case-differing token clears the resume marker"), Harness.Client->IsWelcomed());
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableClientReentrantWelcomeTest, "LongTable.Table.Client.ReentrantWelcomeCannotContaminateNewContext", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FLongTableClientReentrantWelcomeTest::RunTest(const FString& Parameters)
+{
+	FLongTablePlayerProjection Base;
+	if (!LoadPlayerProjection(*this, Base)) { return false; }
+
+	// First: every welcome callback observes one fully committed context.
+	{
+		FClientHarness Harness;
+		ULongTableAuthorityCallbackProbe* Probe = NewObject<ULongTableAuthorityCallbackProbe>();
+		Probe->AddToRoot();
+		Harness.Client->OnPlayerProjection.AddDynamic(Probe, &ULongTableAuthorityCallbackProbe::HandlePlayerProjection);
+		bool bObservedCommitted = false;
+		Probe->OnEvent = [&]()
+		{
+			bObservedCommitted = !Harness.Client->GetSessionId().IsEmpty()
+				&& Harness.Client->IsWelcomed()
+				&& Harness.Client->GetState() == ELongTableConnectionState::Ready
+				&& Harness.Client->GetLastAppliedVersion() == Harness.Client->PlayerProjection().Version;
+		};
+		Harness.Client->Connect();
+		Harness.Transport->Inject(WelcomeText(*this));
+		TestEqual(TEXT("welcome projection callback fired once"), Probe->PlayerVersions.Num(), 1);
+		TestTrue(TEXT("callback observed a fully committed welcome"), bObservedCommitted);
+		Harness.Client->OnPlayerProjection.RemoveAll(Probe);
+		Probe->RemoveFromRoot();
+	}
+
+	// Second: a handler that reconfigures the client mid-welcome cannot leak
+	// the old frame's continuation — the in-flight resend included — into the
+	// newly configured context.
+	{
+		FClientHarness Harness;
+		Harness.Client->Connect();
+		Harness.Transport->Inject(WelcomeText(*this));
+		const FString InFlight = Harness.Client->SubmitIntent(PassPreview());
+		TestFalse(TEXT("intent in flight before the drop"), InFlight.IsEmpty());
+		Harness.Transport->Drop();
+		Harness.Client->Connect();
+		const int32 SentOnOldTransport = Harness.Transport->Sent.Num();
+		TSharedPtr<FLongTableLoopbackTransport> OldTransport = Harness.Transport;
+
+		FLongTableClientConfig NewContext = PlayerConfig();
+		NewContext.Token = TEXT("fixture-token-host");
+		NewContext.Role = ELongTableRole::Host;
+
+		ULongTableAuthorityCallbackProbe* Probe = NewObject<ULongTableAuthorityCallbackProbe>();
+		Probe->AddToRoot();
+		Harness.Client->OnConnectionState.AddDynamic(Probe, &ULongTableAuthorityCallbackProbe::HandleConnectionState);
+		bool bReconfigured = false;
+		Probe->OnEvent = [&]()
+		{
+			if (!bReconfigured && Probe->States.Num() > 0 && Probe->States.Last() == ELongTableConnectionState::Ready)
+			{
+				bReconfigured = true;
+				Harness.Reconfigure(NewContext);
+			}
+		};
+		OldTransport->Inject(WelcomeText(*this));
+		TestTrue(TEXT("handler reconfigured the client mid-welcome"), bReconfigured);
+		// The old frame aborted: nothing was resent on the old transport and
+		// nothing at all reached the new context's transport.
+		TestEqual(TEXT("no in-flight resend leaked to the old transport"), OldTransport->Sent.Num(), SentOnOldTransport);
+		TestEqual(TEXT("nothing reached the new context's transport"), Harness.Transport->Sent.Num(), 0);
+		TestEqual(TEXT("new context starts disconnected"), Harness.Client->GetState(), ELongTableConnectionState::Disconnected);
+		TestEqual(TEXT("new context holds no version"), Harness.Client->GetLastAppliedVersion(), -1);
+		TestFalse(TEXT("new context holds no resume marker"), Harness.Client->IsWelcomed());
+		TestFalse(TEXT("old in-flight intent did not survive into the new context"), Harness.Client->HasIntentInFlight());
+		Harness.Client->OnConnectionState.RemoveAll(Probe);
+		Probe->RemoveFromRoot();
+	}
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableClientWelcomeMonotonicTest, "LongTable.Table.Client.WelcomeNeverRollsBackwards", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FLongTableClientWelcomeMonotonicTest::RunTest(const FString& Parameters)
+{
+	FLongTablePlayerProjection Base;
+	if (!LoadPlayerProjection(*this, Base)) { return false; }
+	FClientHarness Harness;
+	Harness.Client->Connect();
+
+	FLongTablePlayerProjection Rich = Base;
+	Rich.UncommittedRevision = 5;
+	Rich.bHasPreviewLabel = true;
+	Rich.PreviewLabel = TEXT("Keep Me");
+	Harness.Transport->Inject(PlayerWelcomeText(Rich, 9));
+	TestEqual(TEXT("welcomed at version 9"), Harness.Client->GetLastAppliedVersion(), 9);
+	TestEqual(TEXT("revision committed"), Harness.Client->GetLastUncommittedRevision(), 5);
+	const int32 Applied = Harness.Client->AppliedFrameCount();
+
+	// An older welcome in the same context cannot roll anything backwards.
+	Harness.Transport->Inject(PlayerWelcomeText(Base, 4));
+	TestEqual(TEXT("older welcome leaves the version"), Harness.Client->GetLastAppliedVersion(), 9);
+	TestEqual(TEXT("older welcome applies nothing"), Harness.Client->AppliedFrameCount(), Applied);
+	TestTrue(TEXT("older welcome leaves the cached preview"), Harness.Client->PlayerProjection().bHasPreviewLabel);
+	TestEqual(TEXT("older welcome leaves the revision"), Harness.Client->GetLastUncommittedRevision(), 5);
+
+	// An equal-version welcome with an older snapshot revision commits the
+	// session but leaves the newer cached projection in place.
+	FLongTablePlayerProjection Stale = Base;
+	Stale.UncommittedRevision = 3;
+	Stale.bHasPreviewLabel = false;
+	Harness.Transport->Inject(PlayerWelcomeText(Stale, 9));
+	TestEqual(TEXT("equal-version welcome keeps the version"), Harness.Client->GetLastAppliedVersion(), 9);
+	TestEqual(TEXT("equal-version welcome cannot reduce the revision"), Harness.Client->GetLastUncommittedRevision(), 5);
+	TestTrue(TEXT("equal-version welcome cannot roll the projection back"), Harness.Client->PlayerProjection().bHasPreviewLabel);
+	TestEqual(TEXT("still ready"), Harness.Client->GetState(), ELongTableConnectionState::Ready);
+
+	// The resume position never goes backwards either.
+	Harness.Transport->Drop();
+	Harness.Client->Connect();
+	FLongTableClientMessage Hello;
+	if (!TestTrue(TEXT("resume hello sent"), Harness.DecodeLastSent(Hello))) { return false; }
+	TestTrue(TEXT("hello resumes"), Hello.Hello.bResume);
+	TestEqual(TEXT("resume position is the newest applied version"), Hello.Hello.LastVersion, 9);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableClientResyncCoherenceTest, "LongTable.Table.Client.ResyncFailsClosedUntilCoherentNewerState", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FLongTableClientResyncCoherenceTest::RunTest(const FString& Parameters)
+{
+	FLongTablePlayerProjection Base;
+	if (!LoadPlayerProjection(*this, Base)) { return false; }
+	FClientHarness Harness;
+	Harness.Client->Connect();
+	Harness.Transport->Inject(WelcomeText(*this));
+	const int32 Version = Harness.Client->GetLastAppliedVersion();
+
+	const FString IntentId = Harness.Client->SubmitIntent(ConfirmIntent());
+	Harness.Transport->Inject(ReceiptMessage(Harness.Config.TableId, IntentId, ELongTableIntentKind::Confirm, ELongTableOutcome::Rejected, true, ELongTableRejectionCode::StaleVersion, false, Version + 4));
+	TestEqual(TEXT("resyncing after the stale receipt"), Harness.Client->GetState(), ELongTableConnectionState::Resyncing);
+	const int32 Applied = Harness.Client->AppliedFrameCount();
+
+	auto StillResyncing = [&](const TCHAR* What)
+	{
+		TestEqual(FString::Printf(TEXT("%s: still resyncing"), What), Harness.Client->GetState(), ELongTableConnectionState::Resyncing);
+		TestEqual(FString::Printf(TEXT("%s: version unchanged"), What), Harness.Client->GetLastAppliedVersion(), Version);
+		TestEqual(FString::Printf(TEXT("%s: nothing applied"), What), Harness.Client->AppliedFrameCount(), Applied);
+	};
+
+	// Empty coverage: nothing newer than the resync base.
+	Harness.Transport->Inject(ReplayText(Base, Version, Version, {}));
+	StillResyncing(TEXT("empty replay"));
+
+	// Stale coverage that ends at or before the applied version.
+	Harness.Transport->Inject(ReplayText(Base, Version - 1, Version, { Version }));
+	StillResyncing(TEXT("stale replay"));
+
+	// A range that starts beyond the applied version would skip versions.
+	Harness.Transport->Inject(ReplayText(Base, Version + 2, Version + 4, { Version + 3, Version + 4 }));
+	StillResyncing(TEXT("gapped range"));
+
+	// Frames that do not cover the declared range.
+	Harness.Transport->Inject(ReplayText(Base, Version, Version + 3, { Version + 1, Version + 2 }));
+	StillResyncing(TEXT("incomplete coverage"));
+
+	// Disordered frames.
+	Harness.Transport->Inject(ReplayText(Base, Version, Version + 2, { Version + 2, Version + 1 }));
+	StillResyncing(TEXT("disordered frames"));
+
+	// A truncated replay never substitutes for coherent coverage.
+	Harness.Transport->Inject(ReplayText(Base, Version, Version + 2, { Version + 1, Version + 2 }, true));
+	StillResyncing(TEXT("truncated replay"));
+
+	// Only coherent newer coverage exits Resyncing.
+	Harness.Transport->Inject(ReplayText(Base, Version, Version + 2, { Version + 1, Version + 2 }));
+	TestEqual(TEXT("coherent replay exits resyncing"), Harness.Client->GetState(), ELongTableConnectionState::Ready);
+	TestEqual(TEXT("coherent replay advanced the version"), Harness.Client->GetLastAppliedVersion(), Version + 2);
+	TestEqual(TEXT("coherent replay applied both frames"), Harness.Client->AppliedFrameCount(), Applied + 2);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableClientWelcomeCrossoverTest, "LongTable.Table.Client.WelcomeCrossoversFailClosed", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FLongTableClientWelcomeCrossoverTest::RunTest(const FString& Parameters)
+{
+	FLongTablePlayerProjection Base;
+	FLongTableHostProjection HostBase;
+	if (!LoadPlayerProjection(*this, Base) || !LoadHostProjection(*this, HostBase)) { return false; }
+
+	// Decode-level: every seat/projection crossover is rejected with the exact
+	// TypeScript code and path before any envelope is produced.
+	{
+		FLongTableAuthorityMessage Out;
+		FLongTableSchemaRejection Rejection;
+		TestFalse(TEXT("host welcome with a seat rejected at decode"), FLongTableProtocolCodec::DecodeAuthorityMessageText(HostWelcomeWithSeatText(HostBase, 3), Out, Rejection));
+		TestEqual(TEXT("host welcome with a seat code"), Rejection.Code, FString(TEXT("value-out-of-range")));
+		TestEqual(TEXT("host welcome with a seat path"), Rejection.Path, FString(TEXT("authority.seat")));
+
+		TestFalse(TEXT("player welcome without a seat rejected at decode"), FLongTableProtocolCodec::DecodeAuthorityMessageText(PlayerWelcomeText(Base, 3, false), Out, Rejection));
+		TestEqual(TEXT("player welcome without a seat code"), Rejection.Code, FString(TEXT("type-mismatch")));
+		TestEqual(TEXT("player welcome without a seat path"), Rejection.Path, FString(TEXT("authority.seat")));
+
+		FLongTablePlayerProjection Crafted = Base;
+		Crafted.Version = 3;
+		Crafted.TableId = FixtureTableId;
+		TestFalse(TEXT("dealer welcome with a projection rejected at decode"), FLongTableProtocolCodec::DecodeAuthorityMessageText(DealerWelcomeText(3, false, *FLongTableProtocolCodec::EncodePlayerProjection(Crafted)), Out, Rejection));
+		TestEqual(TEXT("dealer welcome with a projection code"), Rejection.Code, FString(TEXT("value-out-of-range")));
+		TestEqual(TEXT("dealer welcome with a projection path"), Rejection.Path, FString(TEXT("authority.projection")));
+	}
+
+	// Client-level: the crafted frames change no client-visible state.
+	FClientHarness Harness;
+	Harness.Client->Connect();
+	Harness.Transport->Inject(WelcomeText(*this));
+	const int32 Version = Harness.Client->GetLastAppliedVersion();
+	const int32 Applied = Harness.Client->AppliedFrameCount();
+	const FString Session = Harness.Client->GetSessionId();
+
+	for (const FString& Crafted : {
+		HostWelcomeWithSeatText(HostBase, Version + 1),
+		PlayerWelcomeText(Base, Version + 1, false),
+		DealerWelcomeText(Version + 1) })
+	{
+		Harness.Transport->Inject(Crafted);
+		TestEqual(TEXT("crossover: version unchanged"), Harness.Client->GetLastAppliedVersion(), Version);
+		TestEqual(TEXT("crossover: nothing applied"), Harness.Client->AppliedFrameCount(), Applied);
+		TestEqual(TEXT("crossover: session unchanged"), Harness.Client->GetSessionId(), Session);
+		TestEqual(TEXT("crossover: still ready"), Harness.Client->GetState(), ELongTableConnectionState::Ready);
+	}
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTableClientDealerCueTableTest, "LongTable.Table.Client.DealerCueTableCoherence", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FLongTableClientDealerCueTableTest::RunTest(const FString& Parameters)
+{
+	const TSharedPtr<FJsonObject> Fixture = LoadFixtureObject(*this, TEXT("dealer-cues.json"));
+	if (!Fixture.IsValid()) { return false; }
+	FLongTableDealerCueFrame Frame;
+	FLongTableSchemaRejection Rejection;
+	if (!TestTrue(TEXT("fixture cue decodes"), FLongTableProtocolCodec::DecodeDealerCueFrame(Fixture->GetArrayField(TEXT("frames"))[0], TEXT("cue"), Frame, Rejection))) { return false; }
+
+	FClientHarness Harness{ DealerConfig() };
+	ULongTableAuthorityCallbackProbe* Probe = NewObject<ULongTableAuthorityCallbackProbe>();
+	Probe->AddToRoot();
+	Harness.Client->OnDealerCue.AddDynamic(Probe, &ULongTableAuthorityCallbackProbe::HandleDealerCue);
+	Harness.Client->Connect();
+	Harness.Transport->Inject(DealerWelcomeText(3));
+	TestEqual(TEXT("dealer welcomed"), Harness.Client->GetState(), ELongTableConnectionState::Ready);
+
+	// Coherent: inner frame table equals the envelope table and the configured table.
+	Harness.Transport->Inject(DealerCueText(Frame, FixtureTableId));
+	TestEqual(TEXT("coherent cue broadcast"), Probe->CueTableIds.Num(), 1);
+
+	// A decode-level rejection: the inner frame's table differs from the envelope's.
+	FLongTableDealerCueFrame Foreign = Frame;
+	Foreign.TableId = TEXT("table-elsewhere");
+	FLongTableAuthorityMessage Out;
+	TestFalse(TEXT("mismatched inner table rejected at decode"), FLongTableProtocolCodec::DecodeAuthorityMessageText(DealerCueText(Foreign, FixtureTableId), Out, Rejection));
+	TestEqual(TEXT("mismatched inner table code"), Rejection.Code, FString(TEXT("value-out-of-range")));
+	TestEqual(TEXT("mismatched inner table path"), Rejection.Path, FString(TEXT("authority.frame.tableId")));
+	Harness.Transport->Inject(DealerCueText(Foreign, FixtureTableId));
+	TestEqual(TEXT("mismatched inner table never broadcast"), Probe->CueTableIds.Num(), 1);
+
+	// Coherent with each other but for another table entirely: dropped by the client.
+	Harness.Transport->Inject(DealerCueText(Foreign, TEXT("table-elsewhere")));
+	TestEqual(TEXT("foreign table cue never broadcast"), Probe->CueTableIds.Num(), 1);
+
+	Harness.Client->OnDealerCue.RemoveAll(Probe);
+	Probe->RemoveFromRoot();
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLongTablePlayerCounterfactualTest, "LongTable.Table.PlayerCounterfactual", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FLongTablePlayerCounterfactualTest::RunTest(const FString& Parameters)
+{
+	const TSharedPtr<FJsonObject> Fixture = LoadFixtureObject(*this, TEXT("counterfactual.json"));
+	if (!Fixture.IsValid()) { return false; }
+
+	// Non-vacuity first: the fixture's concealed source inputs really differ
+	// between the live state and each counterfactual, and the entitled hand
+	// really was retained.
+	const TSharedPtr<FJsonObject> SourceDigests = Fixture->GetObjectField(TEXT("concealedSourceDigests"));
+	const FString Actual = SourceDigests->GetStringField(TEXT("actual"));
+	TestNotEqual(TEXT("all-hands counterfactual inputs differ"), SourceDigests->GetStringField(TEXT("allHandsCounterfactual")), Actual);
+	TestNotEqual(TEXT("entitled counterfactual inputs differ"), SourceDigests->GetStringField(TEXT("entitledCounterfactual")), Actual);
+	const TSharedPtr<FJsonObject> HandDigests = Fixture->GetObjectField(TEXT("entitledHandDigests"));
+	TestEqual(TEXT("entitled hand retained"), HandDigests->GetStringField(TEXT("entitledCounterfactual")), HandDigests->GetStringField(TEXT("actual")));
+
+	const TSharedPtr<FJsonObject> PlayerPair = Fixture->GetObjectField(TEXT("player"));
+	TestEqual(TEXT("entitled seat"), PlayerPair->GetStringField(TEXT("seat")), FString(TEXT("south")));
+	FLongTablePlayerProjection PlayerActual, PlayerCounterfactual;
+	FLongTableSchemaRejection Rejection;
+	TestTrue(TEXT("player actual decodes"), FLongTableProtocolCodec::DecodePlayerProjection(PlayerPair->TryGetField(TEXT("actual")), TEXT("player"), PlayerActual, Rejection));
+	TestTrue(TEXT("player counterfactual decodes"), FLongTableProtocolCodec::DecodePlayerProjection(PlayerPair->TryGetField(TEXT("counterfactual")), TEXT("player"), PlayerCounterfactual, Rejection));
+	TestTrue(TEXT("entitled projection byte-identical when every non-entitled hand and concealed input changes"),
+		FLongTableProtocolCodec::Utf8BytesEqual(FLongTableProtocolCodec::EncodePlayerProjection(PlayerActual), FLongTableProtocolCodec::EncodePlayerProjection(PlayerCounterfactual)));
+	return true;
+}
+
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
 #endif // WITH_DEV_AUTOMATION_TESTS
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]

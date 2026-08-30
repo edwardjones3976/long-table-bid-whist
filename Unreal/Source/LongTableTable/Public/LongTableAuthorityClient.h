@@ -11,12 +11,22 @@
  * configured role, table or its own envelope — is dropped in full before any
  * client-visible state changes.
  *
- * An authority context is (url, token, role, table). Reconfiguring to a
- * different context resets every cached projection, the session, the seat,
- * the version, the resume marker and the in-flight intent, so nothing from
- * one context can be resumed or replayed into another. A retry after a
- * reconnect within the same context carries the intent's original expected
- * version.
+ * An authority context is (url, token, role, table), compared structurally
+ * field by field with exact case-sensitive equality — never through a
+ * delimiter-joined key, so no token, role, table or endpoint pair can collide.
+ * Reconfiguring to a different context resets every cached projection, the
+ * session, the seat, the version, the resume marker and the in-flight intent,
+ * and bumps the context generation, so nothing from one context can be
+ * resumed or replayed into another. A retry after a reconnect within the same
+ * context carries the intent's original expected version.
+ *
+ * A welcome is staged and validated in full, committed atomically, and only
+ * then broadcast: every synchronous callback observes one fully committed
+ * context, and after every callback the client aborts the old frame's
+ * continuation — including the in-flight resend — when the context generation
+ * changed underneath it. A welcome in the same context never rolls the
+ * applied version, the cached projection or the resume position backwards,
+ * and Resyncing exits to Ready only after coherent newer state was applied.
  */
 #pragma once
 
@@ -133,17 +143,45 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Long Table") FLongTableWireErrorEvent OnWireError;
 	UPROPERTY(BlueprintAssignable, Category = "Long Table") FLongTableFrameRejectedEvent OnFrameRejected;
 
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+	/** Increments whenever the authenticated context resets; a change under a callback aborts the old frame's continuation. */
+	uint64 GetContextGenerationForTests() const { return ContextGeneration; }
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
+
 private:
-	static FString ContextKeyFor(const FLongTableClientConfig& InConfig);
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+	/** Structural, case-sensitive equality of two authenticated contexts: url, token, role and table, field by field. */
+	static bool SameAuthorityContext(const FLongTableClientConfig& A, const FLongTableClientConfig& B);
+
+	/** Every payload of one envelope, decoded and validated but not yet applied. */
+	struct FStagedPayloads
+	{
+		TArray<FLongTablePlayerProjection> Player;
+		TArray<FLongTableHostProjection> Host;
+		TArray<FLongTablePublicProjection> Public;
+	};
+
+	/**
+	 * Pass 1: decodes and validates every retained payload for this client's
+	 * role against role, table, envelope version and (when expected) the seat.
+	 * Changes no state; a single failure stages nothing.
+	 */
+	bool StagePayloads(const FLongTableAuthorityMessage& Message, const FString& EnvelopeTableId, bool bExpectSeat, ELongTableSeat ExpectedSeat, FStagedPayloads& OutStaged);
+
+	/**
+	 * Pass 2: applies staged candidates in order — commit first, then the
+	 * broadcast — and returns false when the context generation changed under
+	 * a callback, so the caller aborts the old frame's continuation.
+	 */
+	bool ApplyStaged(const FStagedPayloads& Staged);
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
+
 	void ResetContext();
 	void SetState(ELongTableConnectionState NewState);
 	void SendHello();
 	void SendClientMessage(const FLongTableClientMessage& Message);
 	void ResendInFlight();
 	bool Fault(ELongTableFrameFault Fault, const FString& Detail);
-
-	/** Validates every retained payload against role, table and envelope version; applies all or none. */
-	bool ApplyPayloads(const FLongTableAuthorityMessage& Message, const FString& EnvelopeTableId, bool bSnapshot);
 	bool ShouldApply(int32 Version, int32 Revision) const;
 
 	void HandleConnected();
@@ -152,7 +190,15 @@ private:
 	void HandleError(const FString& Error);
 
 	FLongTableClientConfig Config;
-	FString ActiveContext;
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+	/** The authenticated context currently bound; compared structurally, never as a joined string. */
+	FLongTableClientConfig ActiveConfig;
+	bool bHasActiveContext = false;
+	/** Bumped by every context reset; captured before callbacks and re-checked after each one. */
+	uint64 ContextGeneration = 0;
+	/** The version held when the outstanding resync was requested; -1 when none is outstanding. */
+	int32 ResyncBaseVersion = -1;
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 	TSharedPtr<ILongTableTransport> Transport;
 	ELongTableConnectionState State = ELongTableConnectionState::Disconnected;
 	int32 LastAppliedVersion = -1;
@@ -170,5 +216,48 @@ private:
 	FLongTableIntentReceipt LastReceipt;
 	int32 AppliedFrames = 0;
 };
+
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+/**
+ * Automation support: a UObject whose UFUNCTION handlers can be bound to the
+ * client's dynamic delegates so tests can observe callback ordering and drive
+ * a reentrant action (such as reconfiguring the client) from inside a
+ * synchronous broadcast. Not used by any runtime path.
+ */
+UCLASS()
+class LONGTABLETABLE_API ULongTableAuthorityCallbackProbe : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	/** Invoked from every handler below, after recording; automation may reenter the client from it. */
+	TFunction<void()> OnEvent;
+
+	UFUNCTION()
+	void HandleConnectionState(ELongTableConnectionState NewState)
+	{
+		States.Add(NewState);
+		if (OnEvent) { OnEvent(); }
+	}
+
+	UFUNCTION()
+	void HandlePlayerProjection(const FLongTablePlayerProjection& Projection)
+	{
+		PlayerVersions.Add(Projection.Version);
+		if (OnEvent) { OnEvent(); }
+	}
+
+	UFUNCTION()
+	void HandleDealerCue(const FLongTableDealerCueFrame& Frame)
+	{
+		CueTableIds.Add(Frame.TableId);
+		if (OnEvent) { OnEvent(); }
+	}
+
+	TArray<ELongTableConnectionState> States;
+	TArray<int32> PlayerVersions;
+	TArray<FString> CueTableIds;
+};
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

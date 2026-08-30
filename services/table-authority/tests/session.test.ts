@@ -70,16 +70,19 @@ describe("sessions — authentication and entitlement", () => {
     expect(sessions.handle("c8", hello(TOKENS.dealer, "dealer"))[0].message.type).toBe("welcome");
   });
 
-  it("welcomes each role with exactly its own projection inventory", () => {
+  it("welcomes each role with exactly its own role-discriminated shape", () => {
     const { sessions } = sessionsFor();
     const player = sessions.handle("p", hello(TOKENS.south, "player"))[0].message;
     const host = sessions.handle("h", hello(TOKENS.host, "host"))[0].message;
     const pub = sessions.handle("s", hello(TOKENS.spectator, "public"))[0].message;
     const dealer = sessions.handle("d", hello(TOKENS.dealer, "dealer"))[0].message;
-    expect(player.type === "welcome" && player.seat).toBe("south");
-    expect(player.type === "welcome" && player.projection && matchesInventory("PlayerProjection", player.projection)).toBe(true);
-    expect(host.type === "welcome" && host.projection && matchesInventory("HostProjection", host.projection)).toBe(true);
-    expect(pub.type === "welcome" && pub.projection && matchesInventory("PublicProjection", pub.projection)).toBe(true);
+    expect(player.type === "welcome" && player.role === "player" && player.seat).toBe("south");
+    expect(player.type === "welcome" && player.role === "player" && matchesInventory("PlayerProjection", player.projection)).toBe(true);
+    expect(host.type === "welcome" && host.role === "host" && host.seat).toBeNull();
+    expect(host.type === "welcome" && host.role === "host" && matchesInventory("HostProjection", host.projection)).toBe(true);
+    expect(pub.type === "welcome" && pub.role === "public" && pub.seat).toBeNull();
+    expect(pub.type === "welcome" && pub.role === "public" && matchesInventory("PublicProjection", pub.projection)).toBe(true);
+    expect(dealer.type === "welcome" && dealer.role === "dealer" && dealer.seat).toBeNull();
     expect(dealer.type === "welcome" && dealer.projection).toBeNull();
     [player, host, pub, dealer].forEach((message) => {
       expect(AUTHORITY_MESSAGE.decode(message, "m").ok).toBe(true);
@@ -93,6 +96,88 @@ describe("sessions — authentication and entitlement", () => {
     expect(out[0].message).toMatchObject({ type: "error", code: "not-welcomed" });
   });
 });
+
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+describe("sessions — connection binding and replacement", () => {
+  it("rejects and policy-closes a second hello on an already bound connection without overwriting it or leaving ghost presence", () => {
+    const { table, sessions } = sessionsFor();
+    sessions.handle("h", hello(TOKENS.host, "host"));
+    const first = sessions.handle("p", hello(TOKENS.south, "player"));
+    expect(first[0].message.type).toBe("welcome");
+    const south = table.seatBinding("south");
+    expect(south.occupant === "human" && south.connected).toBe(true);
+    const version = table.currentVersion;
+
+    // A second hello on the same connection — even for another role — is refused and the socket is policy-closed.
+    for (const attempt of [hello(TOKENS.south, "player"), hello(TOKENS.north, "player"), hello(TOKENS.host, "host")]) {
+      const out = sessions.handle("p", attempt);
+      expect(out).toHaveLength(1);
+      expect(out[0]).toEqual({ connectionId: "p", message: { type: "error", code: "role-unavailable", detail: "connection already bound" }, closeAfter: true });
+    }
+    // Nothing was overwritten: the binding, the seat and the presence are as before.
+    expect(sessions.connectionCount()).toBe(2);
+    expect(sessions.isBound("p")).toBe(true);
+    expect(table.seatOf(PARTICIPANTS.south)).toBe("south");
+    expect(table.seatOf(PARTICIPANTS.north)).toBe("north");
+    expect(table.currentVersion).toBe(version);
+    const still = table.seatBinding("south");
+    expect(still.occupant === "human" && still.participantId).toBe(PARTICIPANTS.south);
+    expect(still.occupant === "human" && still.connected).toBe(true);
+
+    // The transport's close path retires the presence normally: no ghost seat survives.
+    const closed = sessions.disconnect("p");
+    expect(sessions.connectionCount()).toBe(1);
+    expect(sessions.isBound("p")).toBe(false);
+    const after = table.seatBinding("south");
+    expect(after.occupant === "human" && after.connected).toBe(false);
+    expect(messagesFor(closed, "h").some((m) => m.type === "projection" && m.projection.seats.find((seat) => seat.seat === "south")?.connected === false)).toBe(true);
+  });
+
+  it("replaces an earlier connection of the same participant and role atomically, closing the replaced socket and keeping presence", () => {
+    const { table, sessions } = sessionsFor();
+    sessions.handle("h", hello(TOKENS.host, "host"));
+    sessions.handle("p1", hello(TOKENS.south, "player"));
+    const version = table.currentVersion;
+
+    const out = sessions.handle("p2", hello(TOKENS.south, "player"));
+    const replaced = out.filter((item) => item.connectionId === "p1");
+    expect(replaced).toHaveLength(1);
+    expect(replaced[0]).toEqual({ connectionId: "p1", message: { type: "error", code: "role-unavailable", detail: "replaced by a newer connection" }, closeAfter: true });
+    const own = messagesFor(out, "p2");
+    expect(own[0].type).toBe("welcome");
+    expect(own[0].type === "welcome" && own[0].role === "player" && own[0].seat).toBe("south");
+    expect(sessions.isBound("p1")).toBe(false);
+    expect(sessions.isBound("p2")).toBe(true);
+    expect(sessions.connectionCount()).toBe(2);
+
+    // Presence stayed with the seat: no disconnect/reconnect flap reached the host.
+    const binding = table.seatBinding("south");
+    expect(binding.occupant === "human" && binding.connected).toBe(true);
+    expect(table.currentVersion).toBe(version);
+    expect(messagesFor(out, "h").every((m) => m.type !== "projection")).toBe(true);
+
+    // The replaced raw socket closing later cannot retire the new connection's presence.
+    expect(sessions.disconnect("p1")).toEqual([]);
+    const after = table.seatBinding("south");
+    expect(after.occupant === "human" && after.connected).toBe(true);
+    expect(sessions.isBound("p2")).toBe(true);
+
+    // Anything the replaced socket still sends is refused.
+    expect(sessions.handle("p1", intent("table-1", table.currentVersion, { kind: "cancel" }))[0].message).toMatchObject({ type: "error", code: "not-welcomed" });
+    expect(sessions.handle("p2", intent("table-1", table.currentVersion, { kind: "cancel" }))[0].message.type).toBe("receipt");
+  });
+
+  it("lets one participant hold different roles on different connections without replacement", () => {
+    const table = createTable({ seed: "sessions-roles", humans: ["south"], host: PARTICIPANTS.south });
+    const { sessions } = sessionsFor(table);
+    expect(sessions.handle("as-player", hello(TOKENS.south, "player"))[0].message.type).toBe("welcome");
+    const out = sessions.handle("as-host", hello(TOKENS.south, "host"));
+    expect(messagesFor(out, "as-player")).toEqual([]);
+    expect(messagesFor(out, "as-host")[0].type).toBe("welcome");
+    expect(sessions.connectionCount()).toBe(2);
+  });
+});
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
 describe("sessions — broadcast, reconnect and replay", () => {
   it("delivers a player-local preview to its seat alone and an authoritative commit to every role", () => {
@@ -145,7 +230,7 @@ describe("sessions — broadcast, reconnect and replay", () => {
     const own = messagesFor(back, "p2");
     expect(own[0].type).toBe("welcome");
     expect(own[0].type === "welcome" && own[0].version).toBe(table.currentVersion);
-    expect(own[0].type === "welcome" && own[0].projection?.seats.find((seat) => seat.seat === "south")?.connected).toBe(true);
+    expect(own[0].type === "welcome" && own[0].role === "player" && own[0].projection.seats.find((seat) => seat.seat === "south")?.connected).toBe(true);
     const replay = own[1];
     expect(replay.type).toBe("replay");
     if (replay.type === "replay") {

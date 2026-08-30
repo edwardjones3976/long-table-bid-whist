@@ -11,14 +11,23 @@ namespace
 	const FLongTablePublicProjection EmptyPublic;
 }
 
-FString ULongTableAuthorityClient::ContextKeyFor(const FLongTableClientConfig& InConfig)
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+bool ULongTableAuthorityClient::SameAuthorityContext(const FLongTableClientConfig& A, const FLongTableClientConfig& B)
 {
-	// In-memory identity of the authenticated context; never logged.
-	return FString::Printf(TEXT("%s|%s|%s|%s"), *InConfig.AuthorityUrl, *InConfig.Token, *TLongTableWire<ELongTableRole>::ToWire(InConfig.Role), *InConfig.TableId);
+	// Structural, field-by-field, case-sensitive equality. There is no joined
+	// key, so no url/token/role/table pair can collide across field
+	// boundaries, and contexts differing only by character case stay distinct.
+	return A.AuthorityUrl.Equals(B.AuthorityUrl, ESearchCase::CaseSensitive)
+		&& A.Token.Equals(B.Token, ESearchCase::CaseSensitive)
+		&& A.Role == B.Role
+		&& A.TableId.Equals(B.TableId, ESearchCase::CaseSensitive);
 }
 
 void ULongTableAuthorityClient::ResetContext()
 {
+	// A new generation: any continuation still on the stack for the previous
+	// context aborts at its next generation check.
+	++ContextGeneration;
 	PlayerCache = FLongTablePlayerProjection();
 	HostCache = FLongTableHostProjection();
 	PublicCache = FLongTablePublicProjection();
@@ -28,6 +37,7 @@ void ULongTableAuthorityClient::ResetContext()
 	Seat = ELongTableSeat::South;
 	LastAppliedVersion = -1;
 	LastUncommittedRevision = -1;
+	ResyncBaseVersion = -1;
 	bEverWelcomed = false;
 	AppliedFrames = 0;
 	Commit.Reset();
@@ -44,13 +54,14 @@ void ULongTableAuthorityClient::Configure(const FLongTableClientConfig& InConfig
 		Transport->OnError.RemoveAll(this);
 		Transport->Close();
 	}
-	const FString NextContext = ContextKeyFor(InConfig);
-	if (NextContext != ActiveContext)
+	if (!bHasActiveContext || !SameAuthorityContext(InConfig, ActiveConfig))
 	{
 		ResetContext();
-		ActiveContext = NextContext;
 	}
+	ActiveConfig = InConfig;
+	bHasActiveContext = true;
 	Config = InConfig;
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 	Transport = InTransport;
 	if (Transport.IsValid())
 	{
@@ -186,6 +197,11 @@ void ULongTableAuthorityClient::RequestResync()
 	Message.Type = ELongTableClientMessageType::Resync;
 	Message.Resync.TableId = Config.TableId;
 	Message.Resync.LastVersion = FMath::Max(0, LastAppliedVersion);
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+	// Resyncing exits to Ready only after coherent state NEWER than this base
+	// was applied; a stale, empty or incoherent answer is rejected loudly.
+	ResyncBaseVersion = LastAppliedVersion;
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 	SetState(ELongTableConnectionState::Resyncing);
 	Commit.ClearResync();
 	SendClientMessage(Message);
@@ -204,14 +220,15 @@ bool ULongTableAuthorityClient::ShouldApply(int32 Version, int32 Revision) const
 	return Version == LastAppliedVersion && Revision > LastUncommittedRevision;
 }
 
-bool ULongTableAuthorityClient::ApplyPayloads(const FLongTableAuthorityMessage& Message, const FString& EnvelopeTableId, bool bSnapshot)
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+bool ULongTableAuthorityClient::StagePayloads(const FLongTableAuthorityMessage& Message, const FString& EnvelopeTableId, bool bExpectSeat, ELongTableSeat ExpectedSeat, FStagedPayloads& OutStaged)
 {
-	// Pass 1: decode and validate every payload for this client's role. Nothing is applied if any fails.
+	// Pass 1: decode and validate every payload for this client's role.
+	// Nothing is staged — and nothing will be applied — if any check fails.
 	switch (Config.Role)
 	{
 	case ELongTableRole::Player:
 	{
-		TArray<FLongTablePlayerProjection> Candidates;
 		for (const FLongTableProjectionPayload& Payload : Message.Payloads)
 		{
 			ELongTableRole Role;
@@ -220,29 +237,19 @@ bool ULongTableAuthorityClient::ApplyPayloads(const FLongTableAuthorityMessage& 
 				return Fault(ELongTableFrameFault::RoleMismatch, TEXT("projection payload is not a player projection"));
 			}
 			FLongTableSchemaRejection Rejection;
-			FLongTablePlayerProjection& Candidate = Candidates.AddDefaulted_GetRef();
+			FLongTablePlayerProjection& Candidate = OutStaged.Player.AddDefaulted_GetRef();
 			if (!FLongTableProtocolCodec::ExtractPlayerProjection(Payload, TEXT("projection"), Candidate, Rejection))
 			{
 				return Fault(ELongTableFrameFault::SchemaRejected, Rejection.ToString());
 			}
-			if (Candidate.TableId != EnvelopeTableId) { return Fault(ELongTableFrameFault::TableMismatch, TEXT("projection tableId differs from envelope")); }
+			if (!Candidate.TableId.Equals(EnvelopeTableId, ESearchCase::CaseSensitive)) { return Fault(ELongTableFrameFault::TableMismatch, TEXT("projection tableId differs from envelope")); }
 			if (Candidate.Version != Payload.EnvelopeVersion) { return Fault(ELongTableFrameFault::VersionMismatch, TEXT("projection version differs from envelope")); }
-			if (bHasSeat && Candidate.Seat != Seat) { return Fault(ELongTableFrameFault::SeatMismatch, TEXT("projection seat differs from the welcomed seat")); }
-		}
-		for (const FLongTablePlayerProjection& Candidate : Candidates)
-		{
-			if (!bSnapshot && !ShouldApply(Candidate.Version, Candidate.UncommittedRevision)) { continue; }
-			LastAppliedVersion = Candidate.Version;
-			LastUncommittedRevision = Candidate.UncommittedRevision;
-			PlayerCache = Candidate;
-			++AppliedFrames;
-			OnPlayerProjection.Broadcast(PlayerCache);
+			if (bExpectSeat && Candidate.Seat != ExpectedSeat) { return Fault(ELongTableFrameFault::SeatMismatch, TEXT("projection seat differs from the welcomed seat")); }
 		}
 		return true;
 	}
 	case ELongTableRole::Host:
 	{
-		TArray<FLongTableHostProjection> Candidates;
 		for (const FLongTableProjectionPayload& Payload : Message.Payloads)
 		{
 			ELongTableRole Role;
@@ -251,27 +258,18 @@ bool ULongTableAuthorityClient::ApplyPayloads(const FLongTableAuthorityMessage& 
 				return Fault(ELongTableFrameFault::RoleMismatch, TEXT("projection payload is not a host projection"));
 			}
 			FLongTableSchemaRejection Rejection;
-			FLongTableHostProjection& Candidate = Candidates.AddDefaulted_GetRef();
+			FLongTableHostProjection& Candidate = OutStaged.Host.AddDefaulted_GetRef();
 			if (!FLongTableProtocolCodec::ExtractHostProjection(Payload, TEXT("projection"), Candidate, Rejection))
 			{
 				return Fault(ELongTableFrameFault::SchemaRejected, Rejection.ToString());
 			}
-			if (Candidate.TableId != EnvelopeTableId) { return Fault(ELongTableFrameFault::TableMismatch, TEXT("projection tableId differs from envelope")); }
+			if (!Candidate.TableId.Equals(EnvelopeTableId, ESearchCase::CaseSensitive)) { return Fault(ELongTableFrameFault::TableMismatch, TEXT("projection tableId differs from envelope")); }
 			if (Candidate.Version != Payload.EnvelopeVersion) { return Fault(ELongTableFrameFault::VersionMismatch, TEXT("projection version differs from envelope")); }
-		}
-		for (const FLongTableHostProjection& Candidate : Candidates)
-		{
-			if (!bSnapshot && !ShouldApply(Candidate.Version, -1)) { continue; }
-			LastAppliedVersion = Candidate.Version;
-			HostCache = Candidate;
-			++AppliedFrames;
-			OnHostProjection.Broadcast(HostCache);
 		}
 		return true;
 	}
 	case ELongTableRole::Public:
 	{
-		TArray<FLongTablePublicProjection> Candidates;
 		for (const FLongTableProjectionPayload& Payload : Message.Payloads)
 		{
 			ELongTableRole Role;
@@ -280,21 +278,13 @@ bool ULongTableAuthorityClient::ApplyPayloads(const FLongTableAuthorityMessage& 
 				return Fault(ELongTableFrameFault::RoleMismatch, TEXT("projection payload is not a public projection"));
 			}
 			FLongTableSchemaRejection Rejection;
-			FLongTablePublicProjection& Candidate = Candidates.AddDefaulted_GetRef();
+			FLongTablePublicProjection& Candidate = OutStaged.Public.AddDefaulted_GetRef();
 			if (!FLongTableProtocolCodec::ExtractPublicProjection(Payload, TEXT("projection"), Candidate, Rejection))
 			{
 				return Fault(ELongTableFrameFault::SchemaRejected, Rejection.ToString());
 			}
-			if (Candidate.TableId != EnvelopeTableId) { return Fault(ELongTableFrameFault::TableMismatch, TEXT("projection tableId differs from envelope")); }
+			if (!Candidate.TableId.Equals(EnvelopeTableId, ESearchCase::CaseSensitive)) { return Fault(ELongTableFrameFault::TableMismatch, TEXT("projection tableId differs from envelope")); }
 			if (Candidate.Version != Payload.EnvelopeVersion) { return Fault(ELongTableFrameFault::VersionMismatch, TEXT("projection version differs from envelope")); }
-		}
-		for (const FLongTablePublicProjection& Candidate : Candidates)
-		{
-			if (!bSnapshot && !ShouldApply(Candidate.Version, -1)) { continue; }
-			LastAppliedVersion = Candidate.Version;
-			PublicCache = Candidate;
-			++AppliedFrames;
-			OnPublicProjection.Broadcast(PublicCache);
 		}
 		return true;
 	}
@@ -303,6 +293,44 @@ bool ULongTableAuthorityClient::ApplyPayloads(const FLongTableAuthorityMessage& 
 	}
 	return false;
 }
+
+bool ULongTableAuthorityClient::ApplyStaged(const FStagedPayloads& Staged)
+{
+	// Pass 2: per candidate, the full commit precedes its broadcast, so every
+	// callback observes committed state; after every synchronous callback the
+	// old frame's continuation aborts when the context generation changed.
+	const uint64 Generation = ContextGeneration;
+	for (const FLongTablePlayerProjection& Candidate : Staged.Player)
+	{
+		if (!ShouldApply(Candidate.Version, Candidate.UncommittedRevision)) { continue; }
+		LastAppliedVersion = Candidate.Version;
+		LastUncommittedRevision = Candidate.UncommittedRevision;
+		PlayerCache = Candidate;
+		++AppliedFrames;
+		OnPlayerProjection.Broadcast(PlayerCache);
+		if (ContextGeneration != Generation) { return false; }
+	}
+	for (const FLongTableHostProjection& Candidate : Staged.Host)
+	{
+		if (!ShouldApply(Candidate.Version, -1)) { continue; }
+		LastAppliedVersion = Candidate.Version;
+		HostCache = Candidate;
+		++AppliedFrames;
+		OnHostProjection.Broadcast(HostCache);
+		if (ContextGeneration != Generation) { return false; }
+	}
+	for (const FLongTablePublicProjection& Candidate : Staged.Public)
+	{
+		if (!ShouldApply(Candidate.Version, -1)) { continue; }
+		LastAppliedVersion = Candidate.Version;
+		PublicCache = Candidate;
+		++AppliedFrames;
+		OnPublicProjection.Broadcast(PublicCache);
+		if (ContextGeneration != Generation) { return false; }
+	}
+	return true;
+}
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
 void ULongTableAuthorityClient::HandleMessage(const FString& Text)
 {
@@ -318,64 +346,120 @@ void ULongTableAuthorityClient::HandleMessage(const FString& Text)
 
 	switch (Message.Type)
 	{
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
 	case ELongTableAuthorityMessageType::Welcome:
 	{
 		const FLongTableWelcome& Welcome = Message.Welcome;
-		if (Welcome.TableId != Config.TableId) { Fault(ELongTableFrameFault::TableMismatch, TEXT("welcome for another table")); return; }
+		if (!Welcome.TableId.Equals(Config.TableId, ESearchCase::CaseSensitive)) { Fault(ELongTableFrameFault::TableMismatch, TEXT("welcome for another table")); return; }
 		if (Welcome.Role != Config.Role) { Fault(ELongTableFrameFault::RoleMismatch, TEXT("welcome for another role")); return; }
+		// The decoder already fails every role/seat crossover closed; these
+		// checks keep the client fail-closed even against its own decoder.
 		if (Config.Role == ELongTableRole::Player && !Welcome.bHasSeat) { Fault(ELongTableFrameFault::SeatMismatch, TEXT("player welcome without a seat")); return; }
+		if (Config.Role != ELongTableRole::Player && Welcome.bHasSeat) { Fault(ELongTableFrameFault::SeatMismatch, TEXT("non-player welcome carries a seat")); return; }
 		const bool bNeedsProjection = Config.Role != ELongTableRole::Dealer;
 		if (bNeedsProjection != Welcome.bHasProjection || Message.Payloads.Num() != (bNeedsProjection ? 1 : 0))
 		{
 			Fault(ELongTableFrameFault::ProjectionMissing, TEXT("welcome projection presence does not match the role"));
 			return;
 		}
-		// Validate the snapshot against the welcomed seat before adopting it.
-		if (Config.Role == ELongTableRole::Player)
+		// A welcome in the same authenticated context can never reduce the
+		// applied version, the cached projection or the resume position.
+		if (bEverWelcomed && Welcome.Version < LastAppliedVersion)
 		{
-			ELongTableRole Role;
-			if (!FLongTableProtocolCodec::PayloadRole(Message.Payloads[0], Role) || Role != ELongTableRole::Player)
-			{
-				Fault(ELongTableFrameFault::RoleMismatch, TEXT("welcome payload is not a player projection"));
-				return;
-			}
-			FLongTableSchemaRejection SnapshotRejection;
-			FLongTablePlayerProjection Snapshot;
-			if (!FLongTableProtocolCodec::ExtractPlayerProjection(Message.Payloads[0], TEXT("projection"), Snapshot, SnapshotRejection))
-			{
-				Fault(ELongTableFrameFault::SchemaRejected, SnapshotRejection.ToString());
-				return;
-			}
-			if (Snapshot.Seat != Welcome.Seat) { Fault(ELongTableFrameFault::SeatMismatch, TEXT("welcome projection seat differs from the welcomed seat")); return; }
-		}
-		const bool bPreviousSeat = bHasSeat;
-		const ELongTableSeat PreviousSeat = Seat;
-		bHasSeat = Welcome.bHasSeat;
-		Seat = Welcome.Seat;
-		if (!ApplyPayloads(Message, Welcome.TableId, true))
-		{
-			bHasSeat = bPreviousSeat;
-			Seat = PreviousSeat;
+			Fault(ELongTableFrameFault::VersionMismatch, TEXT("welcome would roll the applied version back"));
 			return;
 		}
+		// Stage the complete welcome — snapshot decoded and validated against
+		// the welcomed seat — before one field of client state changes.
+		FStagedPayloads Staged;
+		if (!StagePayloads(Message, Welcome.TableId, Welcome.bHasSeat, Welcome.Seat, Staged)) { return; }
+		bool bApplyCache = bNeedsProjection;
+		if (Config.Role == ELongTableRole::Player)
+		{
+			if (Staged.Player.Num() != 1) { Fault(ELongTableFrameFault::ProjectionMissing, TEXT("welcome projection presence does not match the role")); return; }
+			// At an unchanged version, an older snapshot revision must not roll
+			// the cached projection back; the session still commits.
+			bApplyCache = Welcome.Version > LastAppliedVersion
+				|| !bEverWelcomed
+				|| Staged.Player[0].UncommittedRevision >= LastUncommittedRevision;
+		}
+
+		// ---- Atomic commit: every field below is in place before any callback runs. ----
 		SessionId = Welcome.SessionId;
-		LastAppliedVersion = Welcome.Version;
-		if (Config.Role != ELongTableRole::Player) { LastUncommittedRevision = -1; }
+		bHasSeat = Welcome.bHasSeat;
+		Seat = Welcome.Seat;
+		if (bApplyCache)
+		{
+			switch (Config.Role)
+			{
+			case ELongTableRole::Player:
+				PlayerCache = Staged.Player[0];
+				LastUncommittedRevision = PlayerCache.UncommittedRevision;
+				++AppliedFrames;
+				break;
+			case ELongTableRole::Host:
+				HostCache = Staged.Host[0];
+				LastUncommittedRevision = -1;
+				++AppliedFrames;
+				break;
+			case ELongTableRole::Public:
+				PublicCache = Staged.Public[0];
+				LastUncommittedRevision = -1;
+				++AppliedFrames;
+				break;
+			case ELongTableRole::Dealer:
+				break;
+			}
+		}
+		if (Config.Role == ELongTableRole::Dealer) { LastUncommittedRevision = -1; }
+		LastAppliedVersion = FMath::Max(LastAppliedVersion, Welcome.Version);
+		ResyncBaseVersion = -1;
 		bEverWelcomed = true;
+
+		// ---- Broadcasts: after every synchronous callback, abort this frame's
+		// continuation — including the in-flight resend — when the context
+		// generation changed underneath it. ----
+		const uint64 Generation = ContextGeneration;
 		SetState(ELongTableConnectionState::Ready);
+		if (ContextGeneration != Generation) { return; }
+		if (bApplyCache)
+		{
+			switch (Config.Role)
+			{
+			case ELongTableRole::Player: OnPlayerProjection.Broadcast(PlayerCache); break;
+			case ELongTableRole::Host: OnHostProjection.Broadcast(HostCache); break;
+			case ELongTableRole::Public: OnPublicProjection.Broadcast(PublicCache); break;
+			case ELongTableRole::Dealer: break;
+			}
+			if (ContextGeneration != Generation) { return; }
+		}
 		ResendInFlight();
 		break;
 	}
 
 	case ELongTableAuthorityMessageType::Projection:
+	{
 		if (Message.Projection.TableId != Config.TableId) { Fault(ELongTableFrameFault::TableMismatch, TEXT("projection for another table")); return; }
 		if (Config.Role == ELongTableRole::Dealer) { Fault(ELongTableFrameFault::RoleMismatch, TEXT("a dealer connection receives no projection")); return; }
-		if (!ApplyPayloads(Message, Message.Projection.TableId, false)) { return; }
+		FStagedPayloads Staged;
+		if (!StagePayloads(Message, Message.Projection.TableId, bHasSeat, Seat, Staged)) { return; }
+		if (!ApplyStaged(Staged)) { return; }
 		if (State == ELongTableConnectionState::Resyncing)
 		{
-			SetState(ELongTableConnectionState::Ready);
+			// Ready only after coherent state newer than the resync base was
+			// applied; anything else is rejected loudly, never a silent Ready.
+			if (LastAppliedVersion > ResyncBaseVersion)
+			{
+				ResyncBaseVersion = -1;
+				SetState(ELongTableConnectionState::Ready);
+			}
+			else
+			{
+				Fault(ELongTableFrameFault::VersionMismatch, TEXT("resync answer did not advance past the resync base"));
+			}
 		}
 		break;
+	}
 
 	case ELongTableAuthorityMessageType::Receipt:
 		if (Message.Receipt.TableId != Config.TableId) { Fault(ELongTableFrameFault::TableMismatch, TEXT("receipt for another table")); return; }
@@ -389,19 +473,64 @@ void ULongTableAuthorityClient::HandleMessage(const FString& Text)
 		break;
 
 	case ELongTableAuthorityMessageType::Replay:
-		if (Message.Replay.TableId != Config.TableId) { Fault(ELongTableFrameFault::TableMismatch, TEXT("replay for another table")); return; }
+	{
+		const FLongTableReplayMessage& Replay = Message.Replay;
+		if (Replay.TableId != Config.TableId) { Fault(ELongTableFrameFault::TableMismatch, TEXT("replay for another table")); return; }
 		if (Config.Role == ELongTableRole::Dealer) { Fault(ELongTableFrameFault::RoleMismatch, TEXT("a dealer connection receives no replay")); return; }
-		if (!ApplyPayloads(Message, Message.Replay.TableId, false)) { return; }
+		// Coverage coherence before anything is staged or applied: the range
+		// must be well-formed and untruncated, the frames must cover exactly
+		// FromVersion+1..ToVersion in order with no gap, disorder or excess,
+		// and the range must start at or before the applied version.
+		if (Replay.ToVersion < Replay.FromVersion) { Fault(ELongTableFrameFault::VersionMismatch, TEXT("replay range is incoherent")); return; }
+		if (Replay.bTruncated) { Fault(ELongTableFrameFault::VersionMismatch, TEXT("truncated replay rejected; the authoritative snapshot governs")); return; }
+		if (Replay.FrameVersions.Num() != Replay.ToVersion - Replay.FromVersion) { Fault(ELongTableFrameFault::VersionMismatch, TEXT("replay frames do not cover the declared range")); return; }
+		for (int32 Index = 0; Index < Replay.FrameVersions.Num(); ++Index)
+		{
+			if (Replay.FrameVersions[Index] != Replay.FromVersion + 1 + Index)
+			{
+				Fault(ELongTableFrameFault::VersionMismatch, TEXT("replay frames are gapped or disordered"));
+				return;
+			}
+		}
+		if (Replay.FromVersion > LastAppliedVersion) { Fault(ELongTableFrameFault::VersionMismatch, TEXT("replay leaves a gap after the applied version")); return; }
+		if (State == ELongTableConnectionState::Resyncing && Replay.ToVersion <= LastAppliedVersion)
+		{
+			// Stale or empty resync coverage: nothing newer to apply. Rejected
+			// loudly so the client is never silently left stale.
+			Fault(ELongTableFrameFault::VersionMismatch, TEXT("stale or empty resync replay rejected"));
+			return;
+		}
+		FStagedPayloads Staged;
+		if (!StagePayloads(Message, Replay.TableId, bHasSeat, Seat, Staged)) { return; }
+		if (!ApplyStaged(Staged)) { return; }
 		if (State == ELongTableConnectionState::Resyncing)
 		{
-			SetState(ELongTableConnectionState::Ready);
+			if (LastAppliedVersion > ResyncBaseVersion)
+			{
+				ResyncBaseVersion = -1;
+				SetState(ELongTableConnectionState::Ready);
+			}
+			else
+			{
+				Fault(ELongTableFrameFault::VersionMismatch, TEXT("resync answer did not advance past the resync base"));
+			}
 		}
 		break;
+	}
 
 	case ELongTableAuthorityMessageType::DealerCue:
-		if (Message.DealerCue.TableId != Config.TableId) { Fault(ELongTableFrameFault::TableMismatch, TEXT("dealer cue for another table")); return; }
+		if (!Message.DealerCue.TableId.Equals(Config.TableId, ESearchCase::CaseSensitive)) { Fault(ELongTableFrameFault::TableMismatch, TEXT("dealer cue for another table")); return; }
+		// The decoder already requires the inner frame's table to equal the
+		// envelope's; re-checked here, with the configured table, fail-closed.
+		if (!Message.DealerCue.Frame.TableId.Equals(Message.DealerCue.TableId, ESearchCase::CaseSensitive)
+			|| !Message.DealerCue.Frame.TableId.Equals(Config.TableId, ESearchCase::CaseSensitive))
+		{
+			Fault(ELongTableFrameFault::TableMismatch, TEXT("dealer cue inner frame is for another table"));
+			return;
+		}
 		OnDealerCue.Broadcast(Message.DealerCue.Frame);
 		break;
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
 	case ELongTableAuthorityMessageType::Error:
 		OnWireError.Broadcast(Message.Error.Code, Message.Error.Detail);

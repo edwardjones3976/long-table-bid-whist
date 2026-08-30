@@ -1,5 +1,14 @@
 {
-  "description": "Both pairs are built from the same public facts; the counterfactual replaces every concealed card, the kitty, the discard pile, the seed and the event log. A correct decoder re-encodes each pair to byte-identical canonical text.",
+  "description": "Every pair is built from the same public facts. The host and public counterfactual replaces all four hands, the kitty, the discard pile, the seed and the event log; the player counterfactual retains only the entitled south hand and replaces every other concealed input. The concealedSourceDigests prove the inputs really differ before any byte equality is asserted. A correct decoder re-encodes each pair to byte-identical canonical text.",
+  "concealedSourceDigests": {
+    "actual": "3f9944cb",
+    "allHandsCounterfactual": "921437d1",
+    "entitledCounterfactual": "45f136f7"
+  },
+  "entitledHandDigests": {
+    "actual": "6d723850",
+    "entitledCounterfactual": "6d723850"
+  },
   "host": {
     "actual": {
       "role": "host",
@@ -448,6 +457,519 @@
       "summaryLine": null,
       "paused": false,
       "eventEnded": false
+    }
+  },
+  "player": {
+    "seat": "south",
+    "actual": {
+      "role": "player",
+      "protocolVersion": "long-table-protocol/1",
+      "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
+      "tableId": "table-fixture-1",
+      "version": 8,
+      "handNumber": 1,
+      "phase": "play",
+      "turn": "south",
+      "turnLabel": "South",
+      "dealer": "east",
+      "dealerLabel": "East",
+      "contract": {
+        "level": 6,
+        "mode": "high",
+        "modeLabel": "High",
+        "trump": "clubs",
+        "trumpLabel": "clubs",
+        "bidder": "south",
+        "bidderLabel": "South"
+      },
+      "auction": [
+        {
+          "seat": "south",
+          "bid": {
+            "level": 6,
+            "mode": "high"
+          }
+        },
+        {
+          "seat": "west",
+          "bid": null
+        },
+        {
+          "seat": "north",
+          "bid": null
+        },
+        {
+          "seat": "east",
+          "bid": null
+        }
+      ],
+      "publicTrick": [
+        {
+          "seat": "east",
+          "seatLabel": "East",
+          "cardId": "spades-3",
+          "label": "3♠",
+          "glyph": "♠",
+          "rankText": "3",
+          "red": false
+        }
+      ],
+      "completedTricks": [
+        {
+          "number": 1,
+          "lead": "south",
+          "winner": "north"
+        },
+        {
+          "number": 2,
+          "lead": "north",
+          "winner": "east"
+        }
+      ],
+      "booksNorthSouth": 1,
+      "booksEastWest": 1,
+      "scoreNorthSouth": 0,
+      "scoreEastWest": 0,
+      "seats": [
+        {
+          "seat": "south",
+          "seatLabel": "South",
+          "occupant": "human",
+          "displayName": "Ada",
+          "connected": true,
+          "cardCount": 10
+        },
+        {
+          "seat": "west",
+          "seatLabel": "West",
+          "occupant": "ai",
+          "displayName": "AI seat",
+          "connected": true,
+          "cardCount": 10
+        },
+        {
+          "seat": "north",
+          "seatLabel": "North",
+          "occupant": "ai",
+          "displayName": "AI seat",
+          "connected": true,
+          "cardCount": 10
+        },
+        {
+          "seat": "east",
+          "seatLabel": "East",
+          "occupant": "ai",
+          "displayName": "AI seat",
+          "connected": true,
+          "cardCount": 9
+        }
+      ],
+      "statusLine": "east plays 3♠.",
+      "summaryLine": null,
+      "paused": false,
+      "eventEnded": false,
+      "seat": "south",
+      "hand": [
+        {
+          "cardId": "clubs-12",
+          "label": "Q♣",
+          "glyph": "♣",
+          "rankText": "Q",
+          "red": false,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "spades-14",
+          "label": "A♠",
+          "glyph": "♠",
+          "rankText": "A",
+          "red": false,
+          "legal": true,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "clubs-6",
+          "label": "6♣",
+          "glyph": "♣",
+          "rankText": "6",
+          "red": false,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "spades-7",
+          "label": "7♠",
+          "glyph": "♠",
+          "rankText": "7",
+          "red": false,
+          "legal": true,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "clubs-8",
+          "label": "8♣",
+          "glyph": "♣",
+          "rankText": "8",
+          "red": false,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "clubs-14",
+          "label": "A♣",
+          "glyph": "♣",
+          "rankText": "A",
+          "red": false,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "clubs-2",
+          "label": "2♣",
+          "glyph": "♣",
+          "rankText": "2",
+          "red": false,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "hearts-8",
+          "label": "8♥",
+          "glyph": "♥",
+          "rankText": "8",
+          "red": true,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "diamonds-8",
+          "label": "8♦",
+          "glyph": "♦",
+          "rankText": "8",
+          "red": true,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "hearts-13",
+          "label": "K♥",
+          "glyph": "♥",
+          "rankText": "K",
+          "red": true,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        }
+      ],
+      "legalChoices": [
+        {
+          "targetId": "play:spades-14",
+          "kind": "play",
+          "label": "A♠",
+          "intent": {
+            "kind": "preview",
+            "selection": {
+              "type": "play",
+              "cardId": "spades-14"
+            }
+          }
+        },
+        {
+          "targetId": "play:spades-7",
+          "kind": "play",
+          "label": "7♠",
+          "intent": {
+            "kind": "preview",
+            "selection": {
+              "type": "play",
+              "cardId": "spades-7"
+            }
+          }
+        }
+      ],
+      "previewLabel": null,
+      "discardPicked": 0,
+      "discardTarget": 6,
+      "uncommittedRevision": 0,
+      "feedbackCode": null,
+      "feedbackLine": null,
+      "disabledNotices": [
+        {
+          "id": "level-7",
+          "label": "Level 7",
+          "explanation": "Not included in Alpha 0.1; available after the published-rules stage."
+        },
+        {
+          "id": "no-trump",
+          "label": "No Trump",
+          "explanation": "Not included in Alpha 0.1; available after the published-rules stage."
+        }
+      ]
+    },
+    "counterfactual": {
+      "role": "player",
+      "protocolVersion": "long-table-protocol/1",
+      "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
+      "tableId": "table-fixture-1",
+      "version": 8,
+      "handNumber": 1,
+      "phase": "play",
+      "turn": "south",
+      "turnLabel": "South",
+      "dealer": "east",
+      "dealerLabel": "East",
+      "contract": {
+        "level": 6,
+        "mode": "high",
+        "modeLabel": "High",
+        "trump": "clubs",
+        "trumpLabel": "clubs",
+        "bidder": "south",
+        "bidderLabel": "South"
+      },
+      "auction": [
+        {
+          "seat": "south",
+          "bid": {
+            "level": 6,
+            "mode": "high"
+          }
+        },
+        {
+          "seat": "west",
+          "bid": null
+        },
+        {
+          "seat": "north",
+          "bid": null
+        },
+        {
+          "seat": "east",
+          "bid": null
+        }
+      ],
+      "publicTrick": [
+        {
+          "seat": "east",
+          "seatLabel": "East",
+          "cardId": "spades-3",
+          "label": "3♠",
+          "glyph": "♠",
+          "rankText": "3",
+          "red": false
+        }
+      ],
+      "completedTricks": [
+        {
+          "number": 1,
+          "lead": "south",
+          "winner": "north"
+        },
+        {
+          "number": 2,
+          "lead": "north",
+          "winner": "east"
+        }
+      ],
+      "booksNorthSouth": 1,
+      "booksEastWest": 1,
+      "scoreNorthSouth": 0,
+      "scoreEastWest": 0,
+      "seats": [
+        {
+          "seat": "south",
+          "seatLabel": "South",
+          "occupant": "human",
+          "displayName": "Ada",
+          "connected": true,
+          "cardCount": 10
+        },
+        {
+          "seat": "west",
+          "seatLabel": "West",
+          "occupant": "ai",
+          "displayName": "AI seat",
+          "connected": true,
+          "cardCount": 10
+        },
+        {
+          "seat": "north",
+          "seatLabel": "North",
+          "occupant": "ai",
+          "displayName": "AI seat",
+          "connected": true,
+          "cardCount": 10
+        },
+        {
+          "seat": "east",
+          "seatLabel": "East",
+          "occupant": "ai",
+          "displayName": "AI seat",
+          "connected": true,
+          "cardCount": 9
+        }
+      ],
+      "statusLine": "east plays 3♠.",
+      "summaryLine": null,
+      "paused": false,
+      "eventEnded": false,
+      "seat": "south",
+      "hand": [
+        {
+          "cardId": "clubs-12",
+          "label": "Q♣",
+          "glyph": "♣",
+          "rankText": "Q",
+          "red": false,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "spades-14",
+          "label": "A♠",
+          "glyph": "♠",
+          "rankText": "A",
+          "red": false,
+          "legal": true,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "clubs-6",
+          "label": "6♣",
+          "glyph": "♣",
+          "rankText": "6",
+          "red": false,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "spades-7",
+          "label": "7♠",
+          "glyph": "♠",
+          "rankText": "7",
+          "red": false,
+          "legal": true,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "clubs-8",
+          "label": "8♣",
+          "glyph": "♣",
+          "rankText": "8",
+          "red": false,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "clubs-14",
+          "label": "A♣",
+          "glyph": "♣",
+          "rankText": "A",
+          "red": false,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "clubs-2",
+          "label": "2♣",
+          "glyph": "♣",
+          "rankText": "2",
+          "red": false,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "hearts-8",
+          "label": "8♥",
+          "glyph": "♥",
+          "rankText": "8",
+          "red": true,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "diamonds-8",
+          "label": "8♦",
+          "glyph": "♦",
+          "rankText": "8",
+          "red": true,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        },
+        {
+          "cardId": "hearts-13",
+          "label": "K♥",
+          "glyph": "♥",
+          "rankText": "K",
+          "red": true,
+          "legal": false,
+          "selectedForDiscard": false,
+          "previewed": false
+        }
+      ],
+      "legalChoices": [
+        {
+          "targetId": "play:spades-14",
+          "kind": "play",
+          "label": "A♠",
+          "intent": {
+            "kind": "preview",
+            "selection": {
+              "type": "play",
+              "cardId": "spades-14"
+            }
+          }
+        },
+        {
+          "targetId": "play:spades-7",
+          "kind": "play",
+          "label": "7♠",
+          "intent": {
+            "kind": "preview",
+            "selection": {
+              "type": "play",
+              "cardId": "spades-7"
+            }
+          }
+        }
+      ],
+      "previewLabel": null,
+      "discardPicked": 0,
+      "discardTarget": 6,
+      "uncommittedRevision": 0,
+      "feedbackCode": null,
+      "feedbackLine": null,
+      "disabledNotices": [
+        {
+          "id": "level-7",
+          "label": "Level 7",
+          "explanation": "Not included in Alpha 0.1; available after the published-rules stage."
+        },
+        {
+          "id": "no-trump",
+          "label": "No Trump",
+          "explanation": "Not included in Alpha 0.1; available after the published-rules stage."
+        }
+      ]
     }
   }
 }

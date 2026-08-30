@@ -15,7 +15,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { RULES_MANIFEST, SEATS, manifestDigest, type Card, type GameState } from "../../packages/rules-core/src";
+import { RULES_MANIFEST, SEATS, fnv1a, manifestDigest, type Card, type GameState } from "../../packages/rules-core/src";
 import {
   AUTHORITY_MESSAGE,
   CHOICE_KINDS,
@@ -57,7 +57,8 @@ import {
   type TableIntent,
 } from "../../packages/protocol/src";
 import { AuthoritySessions, staticDirectory, type Outbound } from "../../services/table-authority/src/session";
-import { buildHostProjection, buildPublicProjection, type TableView } from "../../services/table-authority/src/projections";
+import { buildHostProjection, buildPlayerProjection, buildPublicProjection, type TableView } from "../../services/table-authority/src/projections";
+import { EMPTY_UNCOMMITTED } from "../../services/table-authority/src/seat-interaction";
 import { TableAuthority } from "../../services/table-authority/src/table";
 import { handleText } from "../../services/table-authority/src/wire";
 
@@ -91,17 +92,38 @@ function replacementCards(tag: string, count: number): Card[] {
   return Array.from({ length: count }, (_, index) => ({ id: `other-${tag}-${index}`, suit: "spades" as const, rank: 2, label: "OTHER", glyph: "!" }));
 }
 
-function concealedCounterfactual(game: GameState): GameState {
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+/**
+ * Host/public counterfactual: all four hands, the kitty, the discard pile,
+ * the seed and the event log are replaced. The kitty and discard replacements
+ * are never empty, so the non-vacuity evidence can never rest on an
+ * empty-versus-empty comparison; no pile's cards or length reaches any
+ * projection.
+ */
+function allHandsCounterfactual(game: GameState): GameState {
   const variant = structuredClone(game);
   variant.seed = "counterfactual-seed";
-  SEATS.filter((seat) => seat !== "south").forEach((seat) => {
+  SEATS.forEach((seat) => {
     variant.hands[seat] = replacementCards(seat, variant.hands[seat].length);
   });
-  variant.kitty = replacementCards("kitty", variant.kitty.length);
-  variant.discardPile = replacementCards("discard", variant.discardPile.length);
+  variant.kitty = replacementCards("kitty", Math.max(1, variant.kitty.length));
+  variant.discardPile = replacementCards("discard", Math.max(1, variant.discardPile.length));
   variant.events = [{ id: 1, text: "private host record" }];
   return variant;
 }
+
+/** Player counterfactual: only the entitled seat's hand is retained; every other concealed input is replaced. */
+function entitledCounterfactual(game: GameState, entitled: Seat): GameState {
+  const variant = allHandsCounterfactual(game);
+  variant.hands[entitled] = structuredClone(game.hands[entitled]);
+  return variant;
+}
+
+/** Digest of every concealed input a projection builder could read. */
+function concealedSourceDigest(game: GameState): string {
+  return fnv1a(JSON.stringify({ hands: game.hands, kitty: game.kitty, discardPile: game.discardPile, seed: game.seed, events: game.events }));
+}
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
 function newDrive(seed: string): Drive {
   const table = new TableAuthority({
@@ -273,7 +295,27 @@ export function buildFixtures(): FixtureSet {
     eventEnded: false,
     lastAnnouncement: "welcome",
   };
-  const counterfactualView: TableView = { ...actualView, game: concealedCounterfactual(game) };
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+  const allHandsTwin = allHandsCounterfactual(game);
+  const entitledTwin = entitledCounterfactual(game, "south");
+  const allHandsView: TableView = { ...actualView, game: allHandsTwin };
+  const entitledView: TableView = { ...actualView, game: entitledTwin };
+  // Non-vacuity before any equality is asserted anywhere: the concealed source
+  // inputs of each counterfactual really differ from the live state, and the
+  // entitled counterfactual really retains the entitled hand alone.
+  const actualDigest = concealedSourceDigest(game);
+  if (concealedSourceDigest(allHandsTwin) === actualDigest) throw new Error("all-hands counterfactual left the concealed inputs unchanged");
+  if (concealedSourceDigest(entitledTwin) === actualDigest) throw new Error("entitled counterfactual left the concealed inputs unchanged");
+  SEATS.forEach((seat) => {
+    if (JSON.stringify(allHandsTwin.hands[seat]) === JSON.stringify(game.hands[seat])) {
+      throw new Error(`all-hands counterfactual retained the ${seat} hand`);
+    }
+    const entitledSame = JSON.stringify(entitledTwin.hands[seat]) === JSON.stringify(game.hands[seat]);
+    if (seat === "south" ? !entitledSame : entitledSame) {
+      throw new Error(`entitled counterfactual mishandled the ${seat} hand`);
+    }
+  });
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
   const intentExamples: ClientMessage[] = (
     [
@@ -336,6 +378,20 @@ export function buildFixtures(): FixtureSet {
     { name: "welcome carrying a hand beside its projection", schema: "authority-message", payload: { ...welcomes.host, hand: [] }, code: "unknown-field", path: "authority.hand" },
     { name: "receipt with an unknown outcome", schema: "receipt", payload: { ...receipts.committedConfirm, outcome: "maybe" }, code: "value-out-of-range", path: "receipt.outcome" },
     { name: "empty text", schema: "client-message", payload: null, code: "not-an-object", path: "client" },
+    // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+    // Role-discriminated welcome crossovers: every seat/projection crossover
+    // fails closed identically in the TypeScript and Unreal decoders.
+    { name: "host welcome carrying a seat", schema: "authority-message", payload: { ...welcomes.host, seat: "south" }, code: "value-out-of-range", path: "authority.seat" },
+    { name: "public welcome carrying a seat", schema: "authority-message", payload: { ...welcomes.public, seat: "east" }, code: "value-out-of-range", path: "authority.seat" },
+    { name: "dealer welcome carrying a seat", schema: "authority-message", payload: { ...welcomes.dealer, seat: "west" }, code: "value-out-of-range", path: "authority.seat" },
+    { name: "player welcome without a seat", schema: "authority-message", payload: { ...welcomes.player, seat: null }, code: "type-mismatch", path: "authority.seat" },
+    { name: "player welcome with a public projection", schema: "authority-message", payload: { ...welcomes.player, projection: pub }, code: "value-out-of-range", path: "authority.projection.role" },
+    { name: "host welcome with a public projection", schema: "authority-message", payload: { ...welcomes.host, projection: pub }, code: "value-out-of-range", path: "authority.projection.role" },
+    { name: "public welcome with a player projection", schema: "authority-message", payload: { ...welcomes.public, projection: player }, code: "unknown-field", path: "authority.projection.seat" },
+    { name: "dealer welcome carrying a projection", schema: "authority-message", payload: { ...welcomes.dealer, projection: pub }, code: "value-out-of-range", path: "authority.projection" },
+    { name: "player welcome with a null projection", schema: "authority-message", payload: { ...welcomes.player, projection: null }, code: "not-an-object", path: "authority.projection" },
+    { name: "dealer cue whose inner frame is for another table", schema: "authority-message", payload: { type: "dealer-cue", tableId: TABLE_ID, frame: { ...cues[0], tableId: "table-elsewhere" } }, code: "value-out-of-range", path: "authority.frame.tableId" },
+    // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
   ];
 
   const inventories = Object.fromEntries(SCHEMA_INVENTORIES.map((entry) => [entry.name, [...entry.inventory]]));
@@ -385,12 +441,28 @@ export function buildFixtures(): FixtureSet {
     "client-messages.json": { canonical: clientMessages.map((message) => canonicalJson(CLIENT_MESSAGE, message)), messages: clientMessages },
     "authority-messages.json": { canonical: authorityMessages.map((message) => canonicalJson(AUTHORITY_MESSAGE, message)), messages: authorityMessages },
     "rejections.json": rejections,
+    // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
     "counterfactual.json": {
       description:
-        "Both pairs are built from the same public facts; the counterfactual replaces every concealed card, the kitty, the discard pile, the seed and the event log. A correct decoder re-encodes each pair to byte-identical canonical text.",
-      host: { actual: buildHostProjection(actualView), counterfactual: buildHostProjection(counterfactualView) },
-      public: { actual: buildPublicProjection(actualView), counterfactual: buildPublicProjection(counterfactualView) },
+        "Every pair is built from the same public facts. The host and public counterfactual replaces all four hands, the kitty, the discard pile, the seed and the event log; the player counterfactual retains only the entitled south hand and replaces every other concealed input. The concealedSourceDigests prove the inputs really differ before any byte equality is asserted. A correct decoder re-encodes each pair to byte-identical canonical text.",
+      concealedSourceDigests: {
+        actual: actualDigest,
+        allHandsCounterfactual: concealedSourceDigest(allHandsTwin),
+        entitledCounterfactual: concealedSourceDigest(entitledTwin),
+      },
+      entitledHandDigests: {
+        actual: fnv1a(JSON.stringify(game.hands.south)),
+        entitledCounterfactual: fnv1a(JSON.stringify(entitledTwin.hands.south)),
+      },
+      host: { actual: buildHostProjection(actualView), counterfactual: buildHostProjection(allHandsView) },
+      public: { actual: buildPublicProjection(actualView), counterfactual: buildPublicProjection(allHandsView) },
+      player: {
+        seat: "south",
+        actual: buildPlayerProjection(actualView, "south", EMPTY_UNCOMMITTED, 0, null),
+        counterfactual: buildPlayerProjection(entitledView, "south", EMPTY_UNCOMMITTED, 0, null),
+      },
     },
+    // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
     "dev-room.json": {
       tableId: TABLE_ID,
       seed,

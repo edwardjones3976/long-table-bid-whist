@@ -8,9 +8,19 @@
  * `dealer-cue`, `error`.
  */
 import * as s from "./schema";
+import type { Schema } from "./schema";
 import { DEALER_CUE_FRAME, type DealerCueFrame } from "./dealer";
 import { TABLE_INTENT, type TableIntent } from "./intents";
-import { ROLE_PROJECTION, type RoleProjection } from "./projections";
+import {
+  HOST_PROJECTION,
+  PLAYER_PROJECTION,
+  PUBLIC_PROJECTION,
+  ROLE_PROJECTION,
+  type HostProjection,
+  type PlayerProjection,
+  type PublicProjection,
+  type RoleProjection,
+} from "./projections";
 import { INTENT_RECEIPT, type IntentReceipt } from "./receipts";
 import {
   LIMITS,
@@ -59,18 +69,47 @@ export const WIRE_ERROR_CODES = [
 ] as const;
 export type WireErrorCode = (typeof WIRE_ERROR_CODES)[number];
 
-// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
-export interface WelcomeMessage {
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+/**
+ * The welcome is role-discriminated. Each role has its own closed shape:
+ * a player welcome carries a seat and a `PlayerProjection`; host and public
+ * welcomes carry no seat and their own projection; a dealer welcome carries
+ * no seat and a null projection. Every crossover fails closed at decode.
+ */
+interface WelcomeBase {
   type: "welcome";
   protocolVersion: ProtocolVersion;
   sessionId: string;
-  role: Role;
-  seat: Seat | null;
   tableId: string;
   version: number;
-  /** Null only for the dealer role, which receives cues alone. */
-  projection: RoleProjection | null;
 }
+
+export interface PlayerWelcome extends WelcomeBase {
+  role: "player";
+  seat: Seat;
+  projection: PlayerProjection;
+}
+
+export interface HostWelcome extends WelcomeBase {
+  role: "host";
+  seat: null;
+  projection: HostProjection;
+}
+
+export interface PublicWelcome extends WelcomeBase {
+  role: "public";
+  seat: null;
+  projection: PublicProjection;
+}
+
+export interface DealerWelcome extends WelcomeBase {
+  role: "dealer";
+  seat: null;
+  projection: null;
+}
+
+export type WelcomeMessage = PlayerWelcome | HostWelcome | PublicWelcome | DealerWelcome;
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
 export interface ErrorMessage {
   type: "error";
@@ -93,7 +132,6 @@ export type AuthorityMessage =
     }
   | { type: "dealer-cue"; tableId: string; frame: DealerCueFrame }
   | ErrorMessage;
-// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 
 const ID = s.string({ maxLength: LIMITS.id });
 const VERSION = s.int({ min: 0, max: LIMITS.maxVersion });
@@ -124,27 +162,84 @@ export const CLIENT_MESSAGE = s.union<"type", ClientMessage>("type", {
 
 export const REPLAY_FRAME = s.object<ReplayFrame>({ version: VERSION, projection: ROLE_PROJECTION });
 
-// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
-export const WELCOME_MESSAGE = s.object<WelcomeMessage>({
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+/** Accepts JSON null and nothing else. */
+const NULL_ONLY: Schema<null> = {
+  kind: "primitive",
+  decode: (input, path) => (input === null ? { ok: true, value: null } : { ok: false, rejection: { code: "value-out-of-range", path } }),
+  canonical: () => null,
+};
+
+export const WELCOME_PLAYER_MESSAGE = s.object<PlayerWelcome>({
   type: s.literal("welcome"),
   protocolVersion: s.literal(PROTOCOL_VERSION),
   sessionId: ID,
-  role: s.enumOf(ROLES),
-  seat: s.nullable(s.enumOf(SEATS)),
+  role: s.literal("player"),
+  seat: s.enumOf(SEATS),
   tableId: ID,
   version: VERSION,
-  projection: s.nullable(ROLE_PROJECTION),
+  projection: PLAYER_PROJECTION,
 });
+
+export const WELCOME_HOST_MESSAGE = s.object<HostWelcome>({
+  type: s.literal("welcome"),
+  protocolVersion: s.literal(PROTOCOL_VERSION),
+  sessionId: ID,
+  role: s.literal("host"),
+  seat: NULL_ONLY,
+  tableId: ID,
+  version: VERSION,
+  projection: HOST_PROJECTION,
+});
+
+export const WELCOME_PUBLIC_MESSAGE = s.object<PublicWelcome>({
+  type: s.literal("welcome"),
+  protocolVersion: s.literal(PROTOCOL_VERSION),
+  sessionId: ID,
+  role: s.literal("public"),
+  seat: NULL_ONLY,
+  tableId: ID,
+  version: VERSION,
+  projection: PUBLIC_PROJECTION,
+});
+
+export const WELCOME_DEALER_MESSAGE = s.object<DealerWelcome>({
+  type: s.literal("welcome"),
+  protocolVersion: s.literal(PROTOCOL_VERSION),
+  sessionId: ID,
+  role: s.literal("dealer"),
+  seat: NULL_ONLY,
+  tableId: ID,
+  version: VERSION,
+  projection: NULL_ONLY,
+});
+
+/** The four closed welcome shapes; every one declares the same ordered key inventory. */
+export const WELCOME_MESSAGE_VARIANTS: readonly s.ObjectSchema<object>[] = [
+  WELCOME_PLAYER_MESSAGE as s.ObjectSchema<object>,
+  WELCOME_HOST_MESSAGE as s.ObjectSchema<object>,
+  WELCOME_PUBLIC_MESSAGE as s.ObjectSchema<object>,
+  WELCOME_DEALER_MESSAGE as s.ObjectSchema<object>,
+];
+
+export const WELCOME_MESSAGE: Schema<WelcomeMessage> = s.union<"role", WelcomeMessage>("role", {
+  player: WELCOME_PLAYER_MESSAGE,
+  host: WELCOME_HOST_MESSAGE,
+  public: WELCOME_PUBLIC_MESSAGE,
+  dealer: WELCOME_DEALER_MESSAGE,
+});
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
 export const ERROR_MESSAGE = s.object<ErrorMessage>({
   type: s.literal("error"),
   code: s.enumOf(WIRE_ERROR_CODES),
   detail: s.string({ maxLength: LIMITS.detail, allowEmpty: true }),
 });
-// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 
-export const AUTHORITY_MESSAGE = s.union<"type", AuthorityMessage>("type", {
-  welcome: WELCOME_MESSAGE,
+const AUTHORITY_MESSAGE_UNION = s.union<"type", AuthorityMessage>("type", {
+  // The welcome variant is itself a role-discriminated union; it exposes the
+  // same decode/canonical contract the outer union needs.
+  welcome: WELCOME_MESSAGE as unknown as s.ObjectSchema<WelcomeMessage>,
   projection: s.object<Extract<AuthorityMessage, { type: "projection" }>>({
     type: s.literal("projection"),
     tableId: ID,
@@ -171,6 +266,27 @@ export const AUTHORITY_MESSAGE = s.union<"type", AuthorityMessage>("type", {
   }),
   error: ERROR_MESSAGE,
 });
+
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+/**
+ * The authority envelope with one structural cross-field invariant: a dealer
+ * cue's inner `frame.tableId` must equal its envelope `tableId` exactly, so a
+ * cue can never smuggle a frame for another table inside a well-addressed
+ * envelope. The Unreal decoder enforces the identical rejection.
+ */
+export const AUTHORITY_MESSAGE: Schema<AuthorityMessage> = {
+  kind: "union",
+  decode(input, path) {
+    const decoded = AUTHORITY_MESSAGE_UNION.decode(input, path);
+    if (!decoded.ok) return decoded;
+    if (decoded.value.type === "dealer-cue" && decoded.value.frame.tableId !== decoded.value.tableId) {
+      return { ok: false, rejection: { code: "value-out-of-range", path: `${path}.frame.tableId` } };
+    }
+    return decoded;
+  },
+  canonical: (value) => AUTHORITY_MESSAGE_UNION.canonical(value),
+};
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
 export function encodeClientMessage(message: ClientMessage): string {
   return s.canonicalJson(CLIENT_MESSAGE, message);

@@ -22,7 +22,15 @@ import {
   type PublicProjection,
 } from "./projections";
 import { INTENT_RECEIPT, type IntentReceipt } from "./receipts";
-import { ERROR_MESSAGE, REPLAY_FRAME, WELCOME_MESSAGE, type ErrorMessage, type ReplayFrame, type WelcomeMessage } from "./wire";
+import {
+  ERROR_MESSAGE,
+  REPLAY_FRAME,
+  WELCOME_MESSAGE_VARIANTS,
+  WELCOME_PLAYER_MESSAGE,
+  type ErrorMessage,
+  type ReplayFrame,
+  type WelcomeMessage,
+} from "./wire";
 
 export const PUBLIC_CORE_INVENTORY = [
   "protocolVersion",
@@ -142,7 +150,10 @@ export const SCHEMA_INVENTORIES: readonly SchemaInventory[] = [
   { name: "PublicProjection", schema: PUBLIC_PROJECTION as ObjectSchema<object>, inventory: PUBLIC_PROJECTION_INVENTORY },
   { name: "DealerCueFrame", schema: DEALER_CUE_FRAME as ObjectSchema<object>, inventory: DEALER_CUE_FRAME_INVENTORY },
   { name: "IntentReceipt", schema: INTENT_RECEIPT as ObjectSchema<object>, inventory: INTENT_RECEIPT_INVENTORY },
-  { name: "WelcomeMessage", schema: WELCOME_MESSAGE as ObjectSchema<object>, inventory: WELCOME_MESSAGE_INVENTORY },
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+  // The welcome is role-discriminated; every variant shares this inventory (checked below).
+  { name: "WelcomeMessage", schema: WELCOME_PLAYER_MESSAGE as ObjectSchema<object>, inventory: WELCOME_MESSAGE_INVENTORY },
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
   { name: "ErrorMessage", schema: ERROR_MESSAGE as ObjectSchema<object>, inventory: ERROR_MESSAGE_INVENTORY },
   { name: "ReplayFrame", schema: REPLAY_FRAME as ObjectSchema<object>, inventory: REPLAY_FRAME_INVENTORY },
 ];
@@ -153,7 +164,13 @@ function sameInventory(declared: readonly string[], inventory: readonly string[]
 
 /** Names of schemas whose runtime key list differs from the inventory in members or order; empty when sound. */
 export function inventoryViolations(): string[] {
-  return SCHEMA_INVENTORIES.filter(({ schema, inventory }) => !sameInventory(schema.keys, inventory)).map(({ name }) => name);
+  const violations = SCHEMA_INVENTORIES.filter(({ schema, inventory }) => !sameInventory(schema.keys, inventory)).map(({ name }) => name);
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+  if (WELCOME_MESSAGE_VARIANTS.some((variant) => !sameInventory(variant.keys, WELCOME_MESSAGE_INVENTORY)) && !violations.includes("WelcomeMessage")) {
+    violations.push("WelcomeMessage");
+  }
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
+  return violations;
 }
 
 /** True when `value` carries exactly the inventory of `name`: no more, no fewer. */

@@ -5,11 +5,12 @@
  * decodability, counterfactual byte-equivalence for host, public and the
  * player's own projection, and no reachable reference back into the
  * authoritative state. Nothing here scans text for forbidden content; the
- * evidence is the closed structure and the counterfactual construction.
+ * evidence is the closed structure and the counterfactual construction, and
+ * every counterfactual first proves that its concealed inputs really differ.
  */
 import { describe, expect, it } from "vitest";
 
-import { SEATS, type Card, type GameState, type Seat } from "../../../packages/rules-core/src";
+import { SEATS, fnv1a, type Card, type GameState, type Seat } from "../../../packages/rules-core/src";
 import {
   HOST_PROJECTION,
   HOST_PROJECTION_INVENTORY,
@@ -29,18 +30,38 @@ function replacementCards(tag: string, count: number): Card[] {
   return Array.from({ length: count }, (_, index) => ({ id: `other-${tag}-${index}`, suit: "spades" as const, rank: 2, label: "OTHER", glyph: "!" }));
 }
 
-/** Same public facts; every fact the kept seat cannot see replaced by different cards, a different seed and a different private log. */
-function concealedCounterfactual(game: GameState, keep: Seat): GameState {
+/** Digest of every concealed input a projection builder could read. */
+function concealedSourceDigest(game: GameState): string {
+  return fnv1a(JSON.stringify({ hands: game.hands, kitty: game.kitty, discardPile: game.discardPile, seed: game.seed, events: game.events }));
+}
+
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+/**
+ * Host/public counterfactual: all four hands, the kitty, the discard pile,
+ * the seed and the log replaced. The kitty and discard replacements are never
+ * empty — even when the live pile is — so the "inputs differ" assertions can
+ * never pass vacuously on an empty-versus-empty comparison; neither pile's
+ * cards nor length reaches any projection.
+ */
+function allHandsCounterfactual(game: GameState): GameState {
   const variant = structuredClone(game);
   variant.seed = "counterfactual-seed";
-  SEATS.filter((seat) => seat !== keep).forEach((seat) => {
+  SEATS.forEach((seat) => {
     variant.hands[seat] = replacementCards(seat, variant.hands[seat].length);
   });
-  variant.kitty = replacementCards("kitty", variant.kitty.length);
-  variant.discardPile = replacementCards("discard", variant.discardPile.length);
+  variant.kitty = replacementCards("kitty", Math.max(1, variant.kitty.length));
+  variant.discardPile = replacementCards("discard", Math.max(1, variant.discardPile.length));
   variant.events = [{ id: 1, text: "private host record" }];
   return variant;
 }
+
+/** Player counterfactual: the entitled hand is retained; every other concealed input is replaced. */
+function entitledCounterfactual(game: GameState, entitled: Seat): GameState {
+  const variant = allHandsCounterfactual(game);
+  variant.hands[entitled] = structuredClone(game.hands[entitled]);
+  return variant;
+}
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
 function viewOf(game: GameState, tableId = "table-1"): TableView {
   return {
@@ -145,33 +166,58 @@ describe("role projections — exact inventories", () => {
   });
 });
 
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
 describe("role projections — counterfactual concealed state", () => {
-  it("leaves host, public and the seat's own projection byte-identical when every concealed fact changes", () => {
+  it("keeps host and public byte-identical when all four hands and every other concealed input change", () => {
     for (const seed of ["cf-a", "cf-b", "cf-c"]) {
       const game = midPlayGame(seed);
-      const actual = viewOf(game);
-      const counterfactual = viewOf(concealedCounterfactual(game, "south"));
+      const twin = allHandsCounterfactual(game);
+      // Non-vacuity first: every hand and every other concealed input really differs.
+      SEATS.forEach((seat) => expect(twin.hands[seat]).not.toEqual(game.hands[seat]));
+      expect(twin.kitty).not.toEqual(game.kitty);
+      expect(twin.discardPile).not.toEqual(game.discardPile);
+      expect(twin.seed).not.toBe(game.seed);
+      expect(concealedSourceDigest(twin)).not.toBe(concealedSourceDigest(game));
 
-      expect(canonicalJson(HOST_PROJECTION, buildHostProjection(counterfactual))).toBe(
-        canonicalJson(HOST_PROJECTION, buildHostProjection(actual)),
-      );
-      expect(canonicalJson(PUBLIC_PROJECTION, buildPublicProjection(counterfactual))).toBe(
-        canonicalJson(PUBLIC_PROJECTION, buildPublicProjection(actual)),
-      );
+      const actual = viewOf(game);
+      const counterfactual = viewOf(twin);
+      expect(canonicalJson(HOST_PROJECTION, buildHostProjection(counterfactual))).toBe(canonicalJson(HOST_PROJECTION, buildHostProjection(actual)));
+      expect(canonicalJson(PUBLIC_PROJECTION, buildPublicProjection(counterfactual))).toBe(canonicalJson(PUBLIC_PROJECTION, buildPublicProjection(actual)));
+    }
+  });
+
+  it("keeps the entitled seat's projection byte-identical when every non-entitled hand and concealed input changes", () => {
+    for (const seed of ["cf-player-a", "cf-player-b"]) {
+      const game = midPlayGame(seed);
+      const twin = entitledCounterfactual(game, "south");
+      // Non-vacuity: the entitled hand is the same object graph, every other hand differs.
+      expect(twin.hands.south).toEqual(game.hands.south);
+      SEATS.filter((seat) => seat !== "south").forEach((seat) => expect(twin.hands[seat]).not.toEqual(game.hands[seat]));
+      expect(concealedSourceDigest(twin)).not.toBe(concealedSourceDigest(game));
+
+      const actual = viewOf(game);
+      const counterfactual = viewOf(twin);
       expect(canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(counterfactual, "south", EMPTY_UNCOMMITTED, 0, null))).toBe(
         canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(actual, "south", EMPTY_UNCOMMITTED, 0, null)),
       );
     }
   });
 
-  it("is not vacuous: West's own projection changes when West's hand changes", () => {
+  it("is not vacuous: a changed entitled hand changes the entitled projection, and the host/public counterfactual changes every seat's own projection", () => {
     const game = midPlayGame("cf-control");
     const actual = viewOf(game);
-    const counterfactual = viewOf(concealedCounterfactual(game, "south"));
-    expect(canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(counterfactual, "west", EMPTY_UNCOMMITTED, 0, null))).not.toBe(
+    const playerTwin = viewOf(entitledCounterfactual(game, "south"));
+    // West's hand was replaced under the south-entitled counterfactual, so West's own projection differs.
+    expect(canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(playerTwin, "west", EMPTY_UNCOMMITTED, 0, null))).not.toBe(
       canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(actual, "west", EMPTY_UNCOMMITTED, 0, null)),
+    );
+    // Under the all-hands counterfactual even South's own projection differs, proving the host/public equality is not trivial.
+    const allTwin = viewOf(allHandsCounterfactual(game));
+    expect(canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(allTwin, "south", EMPTY_UNCOMMITTED, 0, null))).not.toBe(
+      canonicalJson(PLAYER_PROJECTION, buildPlayerProjection(actual, "south", EMPTY_UNCOMMITTED, 0, null)),
     );
   });
 });
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

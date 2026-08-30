@@ -15,15 +15,23 @@
  * no longer belongs to the table is revoked (`role-unavailable`, then closed)
  * before anything is sent to it and before its disconnect can touch presence.
  *
- * Reconnect: a second hello with the same token and a `lastVersion` re-binds
- * the participant, marks the seat connected, and replays the retained
- * projections the connection missed after the authoritative snapshot.
+ * A connection binds exactly once: a second hello on a bound connection is
+ * rejected and the connection is policy-closed, so the transport's close path
+ * retires its presence normally and nothing is overwritten. When the same
+ * entitled participant reconnects on a new connection, the replaced connection
+ * is unbound and closed atomically with the new binding; presence stays with
+ * the new connection and the closed socket can no longer change it.
+ *
+ * Reconnect: a hello with a `lastVersion` re-binds the participant, marks the
+ * seat connected, and replays the retained projections the connection missed
+ * after the authoritative snapshot.
  */
 import {
   type AuthorityMessage,
   type ClientMessage,
   type Role,
   type Seat,
+  type WelcomeMessage,
   type WireErrorCode,
 } from "../../../packages/protocol/src";
 import { TableAuthority, type Actor, type HistoryFrame, type SeatBinding, type SeatUpdate } from "./table";
@@ -182,7 +190,46 @@ export class AuthoritySessions {
     return frame ? this.broadcast(table, frame) : this.revalidate(table);
   }
 
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+  /**
+   * The role-discriminated welcome, or null when the table no longer entitles
+   * the connection. Each variant is constructed in the exact welcome inventory
+   * order (type, protocolVersion, sessionId, role, seat, tableId, version,
+   * projection), so a raw welcome value serializes identically to its schema.
+   */
+  private welcomeFor(connection: Connection, table: TableAuthority, protocolVersion: WelcomeMessage["protocolVersion"]): WelcomeMessage | null {
+    const type = "welcome" as const;
+    const sessionId = connection.sessionId;
+    const tableId = table.tableId;
+    const version = table.currentVersion;
+    switch (connection.role) {
+      case "player": {
+        const projection = table.snapshot("player", connection.seat, connection.participantId);
+        if (connection.seat === null || !projection || projection.role !== "player") return null;
+        return { type, protocolVersion, sessionId, role: "player", seat: connection.seat, tableId, version, projection };
+      }
+      case "host": {
+        const projection = table.snapshot("host", null, connection.participantId);
+        if (!projection || projection.role !== "host") return null;
+        return { type, protocolVersion, sessionId, role: "host", seat: null, tableId, version, projection };
+      }
+      case "public": {
+        const projection = table.snapshot("public", null, connection.participantId);
+        if (!projection || projection.role !== "public") return null;
+        return { type, protocolVersion, sessionId, role: "public", seat: null, tableId, version, projection };
+      }
+      case "dealer":
+        return { type, protocolVersion, sessionId, role: "dealer", seat: null, tableId, version, projection: null };
+    }
+  }
+
   private hello(connectionId: string, message: Extract<ClientMessage, { type: "hello" }>): Outbound[] {
+    // A connection binds once. A second hello is refused and the connection is
+    // policy-closed; the transport's close path then retires its presence, so
+    // nothing is overwritten and no ghost seat survives.
+    if (this.connections.has(connectionId)) {
+      return [this.error(connectionId, "role-unavailable", "connection already bound", true)];
+    }
     const entry = this.directory.lookup(message.token);
     if (!entry) return [this.error(connectionId, "unauthenticated")];
     const table = this.tables.get(message.tableId);
@@ -205,10 +252,14 @@ export class AuthoritySessions {
         break;
     }
 
-    // A reconnecting participant replaces any earlier connection of the same role silently.
+    // The same participant reconnecting in the same role replaces its earlier
+    // connection atomically: the old binding is retired here and the old raw
+    // socket is closed, so its later close cannot touch the seat's presence.
+    const out: Outbound[] = [];
     for (const existing of [...this.connections.values()]) {
       if (existing.participantId === entry.participantId && existing.role === message.role && existing.tableId === table.tableId) {
         this.connections.delete(existing.connectionId);
+        out.push(this.error(existing.connectionId, "role-unavailable", "replaced by a newer connection", true));
       }
     }
     const connection: Connection = {
@@ -222,22 +273,17 @@ export class AuthoritySessions {
     };
     this.connections.set(connectionId, connection);
 
-    const out: Outbound[] = this.revalidate(table);
+    out.push(...this.revalidate(table));
     const presenceFrame = seat ? table.setSeatPresence(seat, entry.participantId, true, message.displayName) : null;
 
-    out.push({
-      connectionId,
-      message: {
-        type: "welcome",
-        protocolVersion: message.protocolVersion,
-        sessionId: connection.sessionId,
-        role: connection.role,
-        seat,
-        tableId: table.tableId,
-        version: table.currentVersion,
-        projection: table.snapshot(connection.role, seat, connection.participantId),
-      },
-    });
+    const welcome = this.welcomeFor(connection, table, message.protocolVersion);
+    if (!welcome) {
+      this.connections.delete(connectionId);
+      out.push(this.error(connectionId, "role-unavailable", "entitlement revoked", true));
+      return out;
+    }
+    out.push({ connectionId, message: welcome });
+    // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
     if (message.lastVersion !== null) {
       const replay = table.replayFrames(connection.role, seat, connection.participantId, message.lastVersion);
       out.push({

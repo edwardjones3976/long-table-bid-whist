@@ -658,6 +658,17 @@ namespace
 		return false;
 	}
 
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+	/** The welcome role, mirroring the TypeScript role-discriminated union: an unknown member is `unknown-variant`. */
+	bool ReadWelcomeRole(FReader& R, ELongTableRole& OutRole)
+	{
+		FString Text;
+		if (!R.ReadString(TEXT("role"), IdLength, false, Text)) { return false; }
+		if (!TLongTableWire<ELongTableRole>::FromWire(Text, OutRole)) { return R.Reject(TEXT("unknown-variant"), R.ChildPath(TEXT("role"))); }
+		return true;
+	}
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
+
 	bool DecodeAuthorityInner(FReader& R, FLongTableAuthorityMessage& Out)
 	{
 		Out = FLongTableAuthorityMessage();
@@ -666,26 +677,84 @@ namespace
 		if (!TLongTableWire<ELongTableAuthorityMessageType>::FromWire(Tag, Out.Type)) { return R.RejectUnknownVariant(TEXT("type")); }
 		switch (Out.Type)
 		{
+		// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
 		case ELongTableAuthorityMessageType::Welcome:
 		{
-			TSharedPtr<FJsonValue> Payload;
-			const bool bOk = R.BeginObject(MakeArrayView(WelcomeKeys))
+			// The welcome is a closed role-discriminated shape. Every
+			// role/seat/projection crossover fails closed here, in schema
+			// field order, with the exact TypeScript rejection code and path —
+			// before any payload is retained: a player welcome requires a seat
+			// and a player projection; host and public welcomes forbid a seat
+			// and require their own projection; a dealer welcome forbids a
+			// seat and requires a null projection.
+			if (!(R.BeginObject(MakeArrayView(WelcomeKeys))
 				&& R.ReadLiteral(TEXT("type"), TEXT("welcome"))
 				&& R.ReadLiteral(TEXT("protocolVersion"), ProtocolVersion)
 				&& R.ReadString(TEXT("sessionId"), IdLength, false, Out.Welcome.SessionId)
-				&& R.ReadEnum(TEXT("role"), Out.Welcome.Role)
-				&& R.ReadNullableEnum(TEXT("seat"), Out.Welcome.bHasSeat, Out.Welcome.Seat)
-				&& R.ReadString(TEXT("tableId"), IdLength, false, Out.Welcome.TableId)
-				&& R.ReadInt(TEXT("version"), 0, MaxVersion, Out.Welcome.Version)
-				&& R.ReadNullableProjectionPayload(TEXT("projection"), Out.Welcome.bHasProjection, Payload);
-			if (bOk && Out.Welcome.bHasProjection)
+				&& ReadWelcomeRole(R, Out.Welcome.Role)
+				&& R.ReadNullableEnum(TEXT("seat"), Out.Welcome.bHasSeat, Out.Welcome.Seat)))
 			{
-				FLongTableProjectionPayload& Retained = Out.Payloads.AddDefaulted_GetRef();
-				Retained.EnvelopeVersion = Out.Welcome.Version;
-				Retained.Json = Payload;
+				return false;
 			}
-			return bOk;
+			if (Out.Welcome.Role == ELongTableRole::Player && !Out.Welcome.bHasSeat)
+			{
+				return R.Reject(TEXT("type-mismatch"), R.ChildPath(TEXT("seat")));
+			}
+			if (Out.Welcome.Role != ELongTableRole::Player && Out.Welcome.bHasSeat)
+			{
+				return R.Reject(TEXT("value-out-of-range"), R.ChildPath(TEXT("seat")));
+			}
+			if (!(R.ReadString(TEXT("tableId"), IdLength, false, Out.Welcome.TableId)
+				&& R.ReadInt(TEXT("version"), 0, MaxVersion, Out.Welcome.Version)))
+			{
+				return false;
+			}
+			bool bHasProjection = false;
+			bool bProjectionOk = false;
+			switch (Out.Welcome.Role)
+			{
+			case ELongTableRole::Player:
+			{
+				FLongTablePlayerProjection Staged;
+				bProjectionOk = R.ReadNullableObject(TEXT("projection"), bHasProjection, [&Staged](FReader& Child) { return DecodePlayerInner(Child, Staged); });
+				break;
+			}
+			case ELongTableRole::Host:
+			{
+				FLongTableHostProjection Staged;
+				bProjectionOk = R.ReadNullableObject(TEXT("projection"), bHasProjection, [&Staged](FReader& Child) { return DecodeHostInner(Child, Staged); });
+				break;
+			}
+			case ELongTableRole::Public:
+			{
+				FLongTablePublicProjection Staged;
+				bProjectionOk = R.ReadNullableObject(TEXT("projection"), bHasProjection, [&Staged](FReader& Child) { return DecodePublicInner(Child, Staged); });
+				break;
+			}
+			case ELongTableRole::Dealer:
+				// The dealer projection accepts JSON null and nothing else.
+				bProjectionOk = R.ReadNullableObject(TEXT("projection"), bHasProjection, [](FReader& Child) { return Child.Reject(TEXT("value-out-of-range"), Child.Path); });
+				break;
+			}
+			if (!bProjectionOk || R.Failed()) { return false; }
+			if (Out.Welcome.Role == ELongTableRole::Dealer)
+			{
+				Out.Welcome.bHasProjection = false;
+				return true;
+			}
+			if (!bHasProjection)
+			{
+				return R.Reject(TEXT("not-an-object"), R.ChildPath(TEXT("projection")));
+			}
+			TSharedPtr<FJsonValue> Payload;
+			if (!R.ReadProjectionPayload(TEXT("projection"), Payload)) { return false; }
+			Out.Welcome.bHasProjection = true;
+			FLongTableProjectionPayload& Retained = Out.Payloads.AddDefaulted_GetRef();
+			Retained.EnvelopeVersion = Out.Welcome.Version;
+			Retained.Json = Payload;
+			return true;
 		}
+		// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 		case ELongTableAuthorityMessageType::Projection:
 		{
 			TSharedPtr<FJsonValue> Payload;
@@ -730,11 +799,25 @@ namespace
 					}
 					return bFrameOk;
 				});
+		// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
 		case ELongTableAuthorityMessageType::DealerCue:
-			return R.BeginObject(MakeArrayView(DealerCueMessageKeys))
+		{
+			// One structural cross-field invariant, mirrored from the
+			// TypeScript decoder: the inner frame's tableId must equal the
+			// envelope's tableId exactly, so a cue can never smuggle a frame
+			// for another table inside a well-addressed envelope.
+			const bool bOk = R.BeginObject(MakeArrayView(DealerCueMessageKeys))
 				&& R.ReadLiteral(TEXT("type"), TEXT("dealer-cue"))
 				&& R.ReadString(TEXT("tableId"), IdLength, false, Out.DealerCue.TableId)
 				&& R.ReadObject(TEXT("frame"), [&Out](FReader& Child) { return DecodeDealerCueInner(Child, Out.DealerCue.Frame); });
+			if (!bOk) { return false; }
+			if (!Out.DealerCue.Frame.TableId.Equals(Out.DealerCue.TableId, ESearchCase::CaseSensitive))
+			{
+				return R.Reject(TEXT("value-out-of-range"), R.ChildPath(TEXT("frame")) + TEXT(".tableId"));
+			}
+			return true;
+		}
+		// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 		case ELongTableAuthorityMessageType::Error:
 			return R.BeginObject(MakeArrayView(ErrorMessageKeys))
 				&& R.ReadLiteral(TEXT("type"), TEXT("error"))

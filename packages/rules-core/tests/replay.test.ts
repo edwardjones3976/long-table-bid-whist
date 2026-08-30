@@ -55,6 +55,7 @@ describe("deterministic replay", () => {
       expect(record.entries.length).toBeGreaterThan(40);
       const outcome = replayRecord(record);
       expect(outcome.failedAt).toBe(-1);
+      expect(outcome.state).not.toBeNull();
       expect(outcome.publicDigest).toBe(publicDigest(live));
       expect(outcome.stateDigest).toBe(stateDigest(live));
       expect(replayMatches(record, live)).toBe(true);
@@ -87,28 +88,42 @@ describe("deterministic replay", () => {
     expect(replayManifestError(record)).toBeNull();
   });
 
-  it("fails closed when the manifest digest differs even though every action is unchanged", () => {
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+  it("detects a manifest digest mismatch before replay and reconstructs no state", () => {
     const { record, live } = playRecorded("replay-manifest-digest");
     const rebound: ReplayRecord = { ...structuredClone(record), manifestDigest: "00000000" };
     expect(replayManifestError(rebound)).not.toBeNull();
     const outcome = replayRecord(rebound);
     expect(outcome.failedAt).toBe(0);
     expect(outcome.error).toContain("manifest digest");
-    // No entry was applied: the outcome is the untouched opening deal.
-    expect(outcome.state.auction).toEqual([]);
-    expect(outcome.state.completedTricks).toEqual([]);
+    // Nothing was reconstructed: no opening deal, no digests of any state.
+    expect(outcome.state).toBeNull();
+    expect(outcome.publicDigest).toBeNull();
+    expect(outcome.stateDigest).toBeNull();
     expect(replayMatches(rebound, live)).toBe(false);
   });
 
-  it("fails closed when the manifest identity differs", () => {
+  it("detects a manifest identity mismatch before replay and reconstructs no state", () => {
     const { record, live } = playRecorded("replay-manifest-id");
     const rebound = { ...structuredClone(record), manifestId: "SOME_OTHER_MANIFEST" } as unknown as ReplayRecord;
     const outcome = replayRecord(rebound);
     expect(outcome.failedAt).toBe(0);
     expect(outcome.error).toContain("manifest identity");
-    expect(outcome.state.auction).toEqual([]);
+    expect(outcome.state).toBeNull();
+    expect(outcome.publicDigest).toBeNull();
+    expect(outcome.stateDigest).toBeNull();
     expect(replayMatches(rebound, live)).toBe(false);
   });
+
+  it("validates the manifest binding even when the record would otherwise be unplayable", () => {
+    // An unknown dealer would be reconstructed from the seed only after validation; a
+    // manifest mismatch must win before any deal is attempted.
+    const rebound = { ...newReplayRecord("unplayable", "nowhere" as unknown as "east"), manifestDigest: "ffffffff" } as ReplayRecord;
+    const outcome = replayRecord(rebound);
+    expect(outcome.state).toBeNull();
+    expect(outcome.error).toContain("manifest digest");
+  });
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
   // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 });
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

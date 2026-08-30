@@ -21,6 +21,51 @@ function maskedFrame(opcode: number, payload: Buffer, fin = true): Buffer {
   return Buffer.concat([header, mask, body]);
 }
 
+interface Client {
+  socket: WebSocket;
+  next: () => Promise<AuthorityMessage>;
+  send: (message: ClientMessage) => void;
+  closed: Promise<number>;
+}
+
+function connectTo(url: string): Promise<Client> {
+  return new Promise((resolve, reject) => {
+    const socket = new WebSocket(url);
+    const queue: AuthorityMessage[] = [];
+    const waiters: ((message: AuthorityMessage) => void)[] = [];
+    const closed = new Promise<number>((done) => socket.addEventListener("close", (event) => done(event.code)));
+    socket.addEventListener("message", (event) => {
+      const decoded = decodeAuthorityMessage(String(event.data));
+      if (!decoded.ok) throw new Error(`authority frame rejected: ${decoded.rejection.code} at ${decoded.rejection.path}`);
+      const waiter = waiters.shift();
+      if (waiter) waiter(decoded.value);
+      else queue.push(decoded.value);
+    });
+    socket.addEventListener("error", () => reject(new Error("socket error")));
+    socket.addEventListener("open", () =>
+      resolve({
+        socket,
+        closed,
+        send: (message) => socket.send(encodeClientMessage(message)),
+        next: () =>
+          new Promise((done, fail) => {
+            const queued = queue.shift();
+            if (queued) return done(queued);
+            const timer = setTimeout(() => fail(new Error("timed out waiting for authority message")), 5000);
+            waiters.push((message) => {
+              clearTimeout(timer);
+              done(message);
+            });
+          }),
+      }),
+    );
+  });
+}
+
+function playerHello(tableId: string, token = "tok-south", displayName = "Ada"): ClientMessage {
+  return { type: "hello", protocolVersion: PROTOCOL_VERSION, token, role: "player", tableId, displayName, lastVersion: null };
+}
+
 describe("frame parser", () => {
   it("parses masked text frames, reassembles fragments, and answers pings", () => {
     const parser = new FrameParser();
@@ -74,52 +119,13 @@ describe("authority over a loopback WebSocket", () => {
     await server.close();
   });
 
-  interface Client {
-    socket: WebSocket;
-    next: () => Promise<AuthorityMessage>;
-    send: (message: ClientMessage) => void;
-    closed: Promise<number>;
-  }
-
-  function connect(): Promise<Client> {
-    return new Promise((resolve, reject) => {
-      const socket = new WebSocket(server.url);
-      const queue: AuthorityMessage[] = [];
-      const waiters: ((message: AuthorityMessage) => void)[] = [];
-      const closed = new Promise<number>((done) => socket.addEventListener("close", (event) => done(event.code)));
-      socket.addEventListener("message", (event) => {
-        const decoded = decodeAuthorityMessage(String(event.data));
-        if (!decoded.ok) throw new Error(`authority frame rejected: ${decoded.rejection.code} at ${decoded.rejection.path}`);
-        const waiter = waiters.shift();
-        if (waiter) waiter(decoded.value);
-        else queue.push(decoded.value);
-      });
-      socket.addEventListener("error", () => reject(new Error("socket error")));
-      socket.addEventListener("open", () =>
-        resolve({
-          socket,
-          closed,
-          send: (message) => socket.send(encodeClientMessage(message)),
-          next: () =>
-            new Promise((done, fail) => {
-              const queued = queue.shift();
-              if (queued) return done(queued);
-              const timer = setTimeout(() => fail(new Error("timed out waiting for authority message")), 5000);
-              waiters.push((message) => {
-                clearTimeout(timer);
-                done(message);
-              });
-            }),
-        }),
-      );
-    });
-  }
+  const connect = () => connectTo(server.url);
 
   it("welcomes, applies intents, broadcasts commits to the host, and cleans up on close", async () => {
     const player = await connect();
     const host = await connect();
 
-    player.send({ type: "hello", protocolVersion: PROTOCOL_VERSION, token: "tok-south", role: "player", tableId: table.tableId, displayName: "Ada", lastVersion: null });
+    player.send(playerHello(table.tableId));
     const welcome = await player.next();
     expect(welcome.type).toBe("welcome");
     if (welcome.type !== "welcome") return;
@@ -127,8 +133,8 @@ describe("authority over a loopback WebSocket", () => {
 
     host.send({ type: "hello", protocolVersion: PROTOCOL_VERSION, token: "tok-host", role: "host", tableId: table.tableId, displayName: "", lastVersion: null });
     const hostWelcome = await host.next();
-    expect(hostWelcome.type === "welcome" && hostWelcome.projection?.role).toBe("host");
-    expect(hostWelcome.type === "welcome" && hostWelcome.projection?.seats.find((seat) => seat.seat === "south")?.displayName).toBe("Ada");
+    expect(hostWelcome.type === "welcome" && hostWelcome.role === "host" && hostWelcome.projection.role).toBe("host");
+    expect(hostWelcome.type === "welcome" && hostWelcome.role === "host" && hostWelcome.projection.seats.find((seat) => seat.seat === "south")?.displayName).toBe("Ada");
 
     player.send({ type: "intent", tableId: table.tableId, intentId: "ws-1", expectedVersion: welcome.version, intent: { kind: "preview", selection: { type: "bid", bid: { level: 3, mode: "high" } } } });
     const receipt = await player.next();
@@ -166,7 +172,7 @@ describe("authority over a loopback WebSocket", () => {
   it("closes a player's socket with a policy code when the host substitutes that seat", async () => {
     const player = await connect();
     const host = await connect();
-    player.send({ type: "hello", protocolVersion: PROTOCOL_VERSION, token: "tok-south", role: "player", tableId: table.tableId, displayName: "Ada", lastVersion: null });
+    player.send(playerHello(table.tableId));
     expect((await player.next()).type).toBe("welcome");
     host.send({ type: "hello", protocolVersion: PROTOCOL_VERSION, token: "tok-host", role: "host", tableId: table.tableId, displayName: "", lastVersion: null });
     expect((await host.next()).type).toBe("welcome");
@@ -192,4 +198,88 @@ describe("authority over a loopback WebSocket", () => {
     client.socket.close();
   });
 });
+
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+describe("connection binding and replacement over a loopback WebSocket", () => {
+  const table = createTable({ seed: "socket-binding", humans: ["south"] });
+  const sessions = new AuthoritySessions({
+    directory: staticDirectory({
+      "tok-south": { participantId: PARTICIPANTS.south, kind: "participant" },
+      "tok-host": { participantId: PARTICIPANTS.host, kind: "participant" },
+    }),
+    tables: new Map([[table.tableId, table]]),
+  });
+  let server: RunningServer;
+
+  beforeAll(async () => {
+    server = await startAuthorityServer({
+      handlers: {
+        onText: (id, text) => handleText(sessions, id, text),
+        onClose: (id) => handleClose(sessions, id),
+      },
+    });
+  });
+
+  afterAll(async () => {
+    await server.close();
+  });
+
+  const connect = () => connectTo(server.url);
+
+  it("closes the replaced raw socket with a policy code when the same identity reconnects on a new socket, keeping presence", async () => {
+    const host = await connect();
+    host.send({ type: "hello", protocolVersion: PROTOCOL_VERSION, token: "tok-host", role: "host", tableId: table.tableId, displayName: "", lastVersion: null });
+    expect((await host.next()).type).toBe("welcome");
+
+    const first = await connect();
+    first.send(playerHello(table.tableId));
+    expect((await first.next()).type).toBe("welcome");
+    // The host sees the seat connect once.
+    const connectedFrame = await host.next();
+    expect(connectedFrame.type === "projection" && connectedFrame.projection.seats.find((seat) => seat.seat === "south")?.connected).toBe(true);
+    const version = table.currentVersion;
+
+    const second = await connect();
+    second.send(playerHello(table.tableId));
+    const replaced = await first.next();
+    expect(replaced).toEqual({ type: "error", code: "role-unavailable", detail: "replaced by a newer connection" });
+    expect(await first.closed).toBe(1008);
+    const welcome = await second.next();
+    expect(welcome.type === "welcome" && welcome.role === "player" && welcome.seat).toBe("south");
+
+    // The replaced socket's close retired nothing: presence stayed with the new socket and no flap reached the host.
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    const binding = table.seatBinding("south");
+    expect(binding.occupant === "human" && binding.connected).toBe(true);
+    expect(table.currentVersion).toBe(version);
+    expect(server.connectionCount()).toBe(2);
+
+    second.send({ type: "intent", tableId: table.tableId, intentId: "binding-1", expectedVersion: table.currentVersion, intent: { kind: "preview", selection: { type: "pass" } } });
+    expect(await second.next()).toMatchObject({ type: "receipt", receipt: { intentId: "binding-1", outcome: "accepted" } });
+    second.socket.close();
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    const after = table.seatBinding("south");
+    expect(after.occupant === "human" && after.connected).toBe(false);
+    host.socket.close();
+  });
+
+  it("rejects a second hello on an already bound socket and policy-closes it without ghost presence", async () => {
+    const client = await connect();
+    client.send(playerHello(table.tableId));
+    expect((await client.next()).type).toBe("welcome");
+    const binding = table.seatBinding("south");
+    expect(binding.occupant === "human" && binding.connected).toBe(true);
+
+    client.send(playerHello(table.tableId));
+    const refused = await client.next();
+    expect(refused).toEqual({ type: "error", code: "role-unavailable", detail: "connection already bound" });
+    expect(await client.closed).toBe(1008);
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    const after = table.seatBinding("south");
+    expect(after.occupant === "human" && after.connected).toBe(false);
+    expect(sessions.connectionCount()).toBe(0);
+    expect(server.connectionCount()).toBe(0);
+  });
+});
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

@@ -6,9 +6,10 @@
  * every committed action in order — human and AI alike. Replaying it through
  * `applySeatAction` reconstructs the identical state, so the public digest of
  * the live table and of its replay must agree. A record bound to a different
- * manifest identity or digest fails closed before any action is applied, even
- * when the actions are unchanged. The seed inside a record is concealed
- * material; a record is authority evidence and is never sent to a role.
+ * manifest identity or digest fails closed before the opening deal is even
+ * reconstructed: the mismatch outcome carries no state at all. The seed inside
+ * a record is concealed material; a record is authority evidence and is never
+ * sent to a role.
  */
 import { publicDigest, stateDigest } from "./digest";
 import { applySeatAction, openHand } from "./hand";
@@ -50,24 +51,24 @@ export function replayManifestError(record: Pick<ReplayRecord, "manifestId" | "m
 }
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
 export interface ReplayOutcome {
-  state: GameState;
+  /** Null when the manifest binding was rejected: nothing was reconstructed. */
+  state: GameState | null;
   /** Index of the first entry that could not be applied, or -1 when all applied. */
   failedAt: number;
   error: string | null;
-  publicDigest: string;
-  stateDigest: string;
+  publicDigest: string | null;
+  stateDigest: string | null;
 }
 
 export function replayRecord(record: ReplayRecord): ReplayOutcome {
-  let state = openHand({ seed: record.seed, dealer: record.firstDealer, scores: record.openingScores });
-  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
+  // Validate the manifest binding before any state exists; a mismatch reconstructs nothing.
   const manifestError = replayManifestError(record);
   if (manifestError) {
-    // Fail closed: no entry is applied when the manifest binding differs.
-    return { state, failedAt: 0, error: manifestError, publicDigest: publicDigest(state), stateDigest: stateDigest(state) };
+    return { state: null, failedAt: 0, error: manifestError, publicDigest: null, stateDigest: null };
   }
-  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
+  let state = openHand({ seed: record.seed, dealer: record.firstDealer, scores: record.openingScores });
   for (let index = 0; index < record.entries.length; index += 1) {
     const entry = record.entries[index];
     const result = applySeatAction(state, entry.seat, entry.action);
@@ -88,6 +89,12 @@ export function replayRecord(record: ReplayRecord): ReplayOutcome {
 /** True when replaying the record reproduces `live` exactly. */
 export function replayMatches(record: ReplayRecord, live: GameState): boolean {
   const outcome = replayRecord(record);
-  return outcome.failedAt === -1 && outcome.stateDigest === stateDigest(live) && outcome.publicDigest === publicDigest(live);
+  return (
+    outcome.failedAt === -1 &&
+    outcome.state !== null &&
+    outcome.stateDigest === stateDigest(live) &&
+    outcome.publicDigest === publicDigest(live)
+  );
 }
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]

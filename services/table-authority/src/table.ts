@@ -4,14 +4,18 @@
  *
  * One `TableAuthority` owns one table: the committed `GameState`, the seat
  * bindings, every seat's player-local (uncommitted) preview state, the
- * monotonic table version, the intent-id ledgers, the replay record, and a
- * bounded history of the projections emitted at each version.
+ * monotonic table version, the processed-intent ledger, the replay record, and
+ * a bounded history of the projections emitted at each version.
  *
  * Two kinds of accepted intent exist. Authoritative intents (confirm,
- * next-hand, host powers) advance the shared version, enter history and are
- * remembered forever. Player-local intents (preview, toggle-discard, cancel)
- * change only the acting seat's own projection: the shared version, the host
- * and public projections and the replay history are untouched.
+ * next-hand, host powers) advance the shared version and enter history.
+ * Player-local intents (preview, toggle-discard, cancel) change only the
+ * acting seat's own projection: the shared version, the host and public
+ * projections and the replay history are untouched.
+ *
+ * Every processed intent identity — accepted, local or rejected — is
+ * remembered for the table's lifetime and answered `duplicate` on replay, so
+ * no request can ever be re-evaluated against a later table view.
  *
  * Order of checks for every intent: table identity, duplicate intent id,
  * event ended, role authority, seat ownership, stale version, then the rules.
@@ -110,10 +114,6 @@ export interface ReplayFrames {
 }
 
 const DEFAULT_RETENTION = 128;
-/** Accepted player-local intents remembered for duplicate suppression. Their re-application is harmless. */
-const LOCAL_LEDGER = 4096;
-/** Rejected intents remembered for duplicate suppression. They changed nothing, so eviction is harmless. */
-const REJECTED_LEDGER = 512;
 
 interface SeatLocal {
   readonly uncommitted: SeatUncommitted;
@@ -134,30 +134,6 @@ function emptyLocals(): Record<Seat, SeatLocal> {
   return { south: freshLocal(), west: freshLocal(), north: freshLocal(), east: freshLocal() };
 }
 
-/** Insertion-ordered ledger with a capacity; the oldest entry is evicted first. */
-class BoundedLedger {
-  private readonly entries = new Map<string, IntentReceipt>();
-  private readonly order: string[] = [];
-  private readonly capacity: number;
-
-  constructor(capacity: number) {
-    this.capacity = capacity;
-  }
-
-  get(intentId: string): IntentReceipt | undefined {
-    return this.entries.get(intentId);
-  }
-
-  set(intentId: string, receipt: IntentReceipt): void {
-    if (!this.entries.has(intentId)) this.order.push(intentId);
-    this.entries.set(intentId, receipt);
-    while (this.order.length > this.capacity) {
-      const evicted = this.order.shift();
-      if (evicted !== undefined) this.entries.delete(evicted);
-    }
-  }
-}
-
 interface Transition {
   readonly game: GameState;
   readonly announcement?: HostAnnouncementCue;
@@ -173,10 +149,15 @@ export class TableAuthority {
   private seats: Record<Seat, SeatBinding>;
   private hostParticipantId: string | null;
   private locals: Record<Seat, SeatLocal> = emptyLocals();
-  /** Intents that advanced authoritative state. Unbounded for the table's lifetime: they can never become reusable. */
-  private readonly authoritativeLedger = new Map<string, IntentReceipt>();
-  private readonly localLedger = new BoundedLedger(LOCAL_LEDGER);
-  private readonly rejectedLedger = new BoundedLedger(REJECTED_LEDGER);
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+  /**
+   * Every processed intent identity with its receipt, for the table's
+   * lifetime. Never evicted, whatever the outcome: a replayed id is answered
+   * `duplicate` and is never re-evaluated, so an old request can never turn
+   * into a fresh one that consumes a later preview.
+   */
+  private readonly processed = new Map<string, IntentReceipt>();
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
   private readonly history: HistoryFrame[] = [];
   private readonly retention: number;
   private readonly replay: ReplayRecord;
@@ -206,6 +187,11 @@ export class TableAuthority {
   /** The most recently emitted authoritative frame, including the opening frame's cues. */
   lastFrame(): HistoryFrame | null {
     return this.history.length > 0 ? this.history[this.history.length - 1] : null;
+  }
+
+  /** Number of intent identities remembered for this table's lifetime. */
+  processedIntentCount(): number {
+    return this.processed.size;
   }
 
   hostOf(): string | null {
@@ -410,13 +396,9 @@ export class TableAuthority {
     };
   }
 
-  private findReceipt(intentId: string): IntentReceipt | undefined {
-    return this.authoritativeLedger.get(intentId) ?? this.localLedger.get(intentId) ?? this.rejectedLedger.get(intentId);
-  }
-
   private rejected(seat: Seat | null, submission: IntentSubmission, code: RejectionCode): SubmitResult {
     const receipt = this.receipt(submission, "rejected", code, false);
-    this.rejectedLedger.set(receipt.intentId, receipt);
+    this.processed.set(receipt.intentId, receipt);
     if (seat) this.locals = { ...this.locals, [seat]: { ...this.locals[seat], lastReceipt: receipt } };
     return { receipt, frame: null, seatUpdate: null };
   }
@@ -426,9 +408,10 @@ export class TableAuthority {
 
     if (submission.tableId !== this.tableId) return this.rejected(seat, submission, "unknown-table");
 
-    // Idempotency first: a replayed intent id is answered from the ledgers and
-    // never re-evaluated, whatever the version has become since.
-    if (this.findReceipt(submission.intentId)) {
+    // Idempotency first: a replayed intent id is answered from the ledger and
+    // never re-evaluated, whatever its first outcome was and whatever the
+    // version has become since.
+    if (this.processed.has(submission.intentId)) {
       const receipt = this.receipt(submission, "duplicate", "duplicate-input-id", false);
       if (seat) this.locals = { ...this.locals, [seat]: { ...this.locals[seat], lastReceipt: receipt } };
       return { receipt, frame: null, seatUpdate: null };
@@ -508,7 +491,7 @@ export class TableAuthority {
   /** Accepts a player-local change: no shared version, no history, no host/public change. */
   private acceptLocal(seat: Seat, submission: IntentSubmission, uncommitted: SeatUncommitted): SubmitResult {
     const receipt = this.receipt(submission, "accepted", null, false);
-    this.localLedger.set(receipt.intentId, receipt);
+    this.processed.set(receipt.intentId, receipt);
     this.setLocal(seat, uncommitted, receipt);
     const binding = this.seats[seat];
     if (binding.occupant !== "human") return { receipt, frame: null, seatUpdate: null };
@@ -528,7 +511,7 @@ export class TableAuthority {
     if (seat) this.locals = { ...this.locals, [seat]: { ...this.locals[seat], lastReceipt: provisional } };
     const frame = this.pushFrame(before, transition);
     const receipt: IntentReceipt = { ...provisional, version: this.version };
-    this.authoritativeLedger.set(receipt.intentId, receipt);
+    this.processed.set(receipt.intentId, receipt);
     if (seat) this.locals = { ...this.locals, [seat]: { ...this.locals[seat], lastReceipt: receipt } };
     return { receipt, frame, seatUpdate: null };
   }

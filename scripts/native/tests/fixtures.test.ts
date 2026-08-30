@@ -135,15 +135,52 @@ describe("golden protocol fixtures", () => {
     expect("concealedKeys" in (committed["manifest.json"] as object)).toBe(false);
   });
 
-  it("keep host and public byte-identical under the concealed counterfactual", () => {
-    const pair = committed["counterfactual.json"] as { host: { actual: unknown; counterfactual: unknown }; public: { actual: unknown; counterfactual: unknown } };
-    const host = canonicalJson(HOST_PROJECTION as Schema<unknown>, pair.host.actual);
-    expect(canonicalJson(HOST_PROJECTION as Schema<unknown>, pair.host.counterfactual)).toBe(host);
-    const pub = canonicalJson(PUBLIC_PROJECTION as Schema<unknown>, pair.public.actual);
-    expect(canonicalJson(PUBLIC_PROJECTION as Schema<unknown>, pair.public.counterfactual)).toBe(pub);
-    expect(matchesInventory("HostProjection", pair.host.actual as object)).toBe(true);
-    expect(matchesInventory("PublicProjection", pair.public.actual as object)).toBe(true);
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
+  it("keep every role pair byte-identical under its concealed counterfactual, with non-vacuous inputs", () => {
+    const fixture = committed["counterfactual.json"] as {
+      concealedSourceDigests: { actual: string; allHandsCounterfactual: string; entitledCounterfactual: string };
+      entitledHandDigests: { actual: string; entitledCounterfactual: string };
+      host: { actual: unknown; counterfactual: unknown };
+      public: { actual: unknown; counterfactual: unknown };
+      player: { seat: string; actual: unknown; counterfactual: unknown };
+    };
+    // Non-vacuity first: the concealed source inputs of both counterfactuals
+    // really differ from the live state, and the player counterfactual really
+    // retained the entitled hand while the all-hands counterfactual did not.
+    expect(fixture.concealedSourceDigests.allHandsCounterfactual).not.toBe(fixture.concealedSourceDigests.actual);
+    expect(fixture.concealedSourceDigests.entitledCounterfactual).not.toBe(fixture.concealedSourceDigests.actual);
+    expect(fixture.concealedSourceDigests.entitledCounterfactual).not.toBe(fixture.concealedSourceDigests.allHandsCounterfactual);
+    expect(fixture.entitledHandDigests.entitledCounterfactual).toBe(fixture.entitledHandDigests.actual);
+
+    const host = canonicalJson(HOST_PROJECTION as Schema<unknown>, fixture.host.actual);
+    expect(canonicalJson(HOST_PROJECTION as Schema<unknown>, fixture.host.counterfactual)).toBe(host);
+    const pub = canonicalJson(PUBLIC_PROJECTION as Schema<unknown>, fixture.public.actual);
+    expect(canonicalJson(PUBLIC_PROJECTION as Schema<unknown>, fixture.public.counterfactual)).toBe(pub);
+    expect(fixture.player.seat).toBe("south");
+    const player = canonicalJson(PLAYER_PROJECTION as Schema<unknown>, fixture.player.actual);
+    expect(canonicalJson(PLAYER_PROJECTION as Schema<unknown>, fixture.player.counterfactual)).toBe(player);
+    expect(matchesInventory("HostProjection", fixture.host.actual as object)).toBe(true);
+    expect(matchesInventory("PublicProjection", fixture.public.actual as object)).toBe(true);
+    expect(matchesInventory("PlayerProjection", fixture.player.actual as object)).toBe(true);
   });
+
+  it("pin every role-discriminated welcome crossover and the dealer-cue table coherence as rejections", () => {
+    const rejections = committed["rejections.json"] as { name: string }[];
+    const names = rejections.map((example) => example.name);
+    [
+      "host welcome carrying a seat",
+      "public welcome carrying a seat",
+      "dealer welcome carrying a seat",
+      "player welcome without a seat",
+      "player welcome with a public projection",
+      "host welcome with a public projection",
+      "public welcome with a player projection",
+      "dealer welcome carrying a projection",
+      "player welcome with a null projection",
+      "dealer cue whose inner frame is for another table",
+    ].forEach((name) => expect(names, name).toContain(name));
+  });
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
   // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
 });
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]
