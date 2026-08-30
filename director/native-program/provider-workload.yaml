@@ -235,8 +235,9 @@ canonical_assignment_ledger:
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
   - "Canonical workload credit is one ordered packet record at 1, 2, 5 or 8 points; never split a response retroactively or manufacture filler."
-  - "Credit only authenticated, attributable code that satisfies its immutable packet, passes OpenAI QA, and is accepted into the candidate."
-  - "Tool launch, prompt submission, failed attempt, unavailable route, discarded output, duplicate validation and Director coordination earn zero production credit."
+  - "A terminal assignment after real provider execution appends its immutable points once to the canonical overall-effort ledger, including rejected or unavailable outcomes; a pre-model transport stop earns no points."
+  - "Only authenticated, attributable code that satisfies its immutable packet, passes OpenAI QA, and is accepted into the candidate earns the same points in the separate direct-production ledger."
+  - "Tool launch, prompt submission, failed transport, unavailable code artifact, discarded output, duplicate validation and Director coordination earn zero direct-production credit."
   - "One primary attempt; one recovery only for a plausibly temporary failure; a third only with a materially different transport or new information."
   - "Never repeat an ambiguous paid dispatch."
   - "Each path has one provider writer; no provider reviews or edits another lane."

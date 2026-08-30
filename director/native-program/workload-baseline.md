@@ -32,13 +32,20 @@ The PR76 canonical rolling series begins with the first native-program packets:
 3. `LT-NATIVE-CLAUDE-001-R1` is not completed effort: its authenticated CLI
    transport hit a 429 session cap before model execution. It remains queued
    with zero points until the provider actually executes.
+4. `LT-NATIVE-GROK-HOUSE-001` reached authenticated provider execution, but its
+   configured browser fallback is still blocked at a human-only legal
+   acknowledgement. The assignment is not terminal and does not enter the
+   completed rolling window yet.
+5. `LT-NATIVE-ANTIGRAVITY-002` — Gemini Antigravity, short/2, authenticated
+   provider execution, terminal `UNAVAILABLE` after its configured sandbox
+   policy denied writes and local commands, zero direct-production credit.
 
 The exact `director-orchestrator@cc791364e2f1ff1ac4c72e01c7122296e4ff7362`
 enforcer activates rolling hard thresholds only with a complete 20-assignment
-window. At two completed rows it reports `rolling_window_warming_up:2/20`.
-Accordingly, this baseline reports the current partial 50% Claude / 50%
-Antigravity distribution as severe drift, not as a pass and not as a hard-cap
-calculation over a fictitious complete window.
+window. At three completed rows it reports `rolling_window_warming_up:3/20`.
+Accordingly, this baseline reports the current effort-weighted partial 44.44%
+Claude / 55.56% Antigravity distribution as severe drift, not as a pass and not
+as a hard-cap calculation over a fictitious complete window.
 
 ## Routing correction
 
@@ -50,9 +57,10 @@ window warms:
   correction of Claude's existing authority candidate, not filler.
 - Cursor's broad native XR packet remains dependency-bound and non-dispatchable
   until its accepted interfaces exist.
-- Antigravity's new robot-dealer packet is prestaged but not dispatched while
-  its partial share is high. It remains a real code lane, not manufactured
-  credit, and must feed a later Cursor integration assignment.
+- Antigravity's robot-dealer assignment was dispatched only after the
+  under-target Grok route. It terminated unavailable with zero code because its
+  configured sandbox policy denied writes and commands. It contributes one
+  completed overall-effort row but no direct-production artifact or credit.
 
 Every future completion appends immutable overall-effort points. Only an exact
 OpenAI-accepted production outcome appends the same points to the separate

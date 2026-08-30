@@ -27,10 +27,12 @@ override; implementation work is not relabeled as review or coordination.
 
 Program allocation units in `provider-workload.yaml` are a scope-capacity
 forecast only. They are not rolling assignments and never become production
-credit. The canonical ledger records one ordered entry per actual packet using
-Director v1 size points `1`, `2`, `5`, or `8`; only an authenticated,
-OpenAI-accepted outcome earns those points. A broad response cannot be split
-retroactively, and filler work is prohibited.
+credit. The canonical overall-effort ledger records one ordered entry per
+actual terminal provider assignment using Director v1 size points `1`, `2`,
+`5`, or `8`, including rejected or unavailable provider outcomes after real
+execution. Only authenticated code that OpenAI accepts earns the same points in
+the separate direct-production ledger. Pre-model transport stops earn neither.
+A broad response cannot be split retroactively, and filler work is prohibited.
 
 ## Provider boundaries
 
