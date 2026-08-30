@@ -77,6 +77,23 @@ interfaces pass OpenAI QA. This split routes real dependency-independent work
 to an under-target provider; it is not filler and does not convert a local
 plugin pass into a combined-game or physical-Quest claim.
 
+### Cursor XR-core terminal R1 disposition
+
+Cursor's original exact candidate `72a805f` failed OpenAI's UE5.7 editor build
+and retained ten consolidated findings. The one immutable final revision packet
+then produced provider-authored plugin changes but could not run its shell,
+gates or local commit. OpenAI mechanically froze those unchanged files as exact
+candidate `de02a26`, tree `1faab10`, without editing production code.
+
+Independent OpenAI QA again rejected the candidate. UHT passed, but UE5.7 C++
+compilation failed on a nonexistent surrogate API; source review retained
+closed-schema, enum, overflow, load-phase, export, Unicode and test-validity
+defects. The final revision is therefore terminal
+`CHANGES_REQUIRED_REVISION_EXHAUSTED`, earns zero accepted-production credit and
+is not an integration dependency. No new Cursor correction may be disguised as
+a transport retry; a genuinely new assignment requires an explicit owner
+decision and a fresh authority packet.
+
 ## Robot-dealer ownership amendment
 
 The owner directed Claude, Cursor, Grok and Antigravity each to code a distinct

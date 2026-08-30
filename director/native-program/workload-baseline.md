@@ -1,4 +1,4 @@
-<!-- [[OpenAI Director | Codex | 2026-08-30 | 07:25 UTC | BEGIN]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 09:00 UTC | BEGIN]] -->
 # PR76 workload-adoption baseline
 
 ## Decision
@@ -45,12 +45,17 @@ The PR76 canonical rolling series begins with the first native-program packets:
    and exact candidate `72a805f`, terminal `CHANGES_REQUIRED` after OpenAI
    reproduced an Unreal editor-build failure and ten consolidated findings,
    zero direct-production credit.
+7. `LT-NATIVE-CURSOR-XRCORE-001-R1` — Cursor, medium/5, authenticated final
+   revision execution and exact mechanically frozen candidate `de02a26`,
+   terminal `CHANGES_REQUIRED_REVISION_EXHAUSTED` after OpenAI reproduced an
+   Unreal C++ build failure and retained substantive contract and test defects,
+   zero direct-production credit.
 
 The exact `director-orchestrator@cc791364e2f1ff1ac4c72e01c7122296e4ff7362`
 enforcer activates rolling hard thresholds only with a complete 20-assignment
-window. At four completed rows it reports `rolling_window_warming_up:4/20`.
-Accordingly, this baseline reports the current effort-weighted partial 34.78%
-Claude / 21.74% Cursor / 43.48% Antigravity distribution as severe drift, not
+window. At five completed rows it reports `rolling_window_warming_up:5/20`.
+Accordingly, this baseline reports the current effort-weighted partial 28.57%
+Claude / 35.71% Cursor / 35.71% Antigravity distribution as severe drift, not
 as a pass and not as a hard-cap calculation over a fictitious complete window.
 
 ## Routing correction
@@ -64,6 +69,9 @@ window warms:
 - Cursor's broad integration packet remains dependency-bound. Its new isolated
   self-registering XR-core plugin packet is dependency-independent,
   product-required, and dispatchable to the currently under-target Cursor lane.
+- Cursor's one XR-core revision reached terminal OpenAI rejection at `de02a26`.
+  Its revision budget is exhausted; no further Cursor correction or final
+  integration may be silently dispatched as a retry.
 - Antigravity's robot-dealer assignment was dispatched only after the
   under-target Grok route. It terminated unavailable with zero code because its
   configured sandbox policy denied writes and commands. It contributes one
@@ -80,11 +88,14 @@ The reconstruction used current records under `director/**` and
 `artifacts/native-program/**`. Committee turns, advisory Chrome reviews, legacy
 research, unavailable transports and old aggregate credits remain excluded from
 the canonical window when they lack any required identity or immutable point
-field. Firecrawl is a tool, never a workforce provider. Cursor and Antigravity
-retries stay inside their original assignment rather than being counted again.
+field. Firecrawl is a tool, never a workforce provider. A transport recovery
+inside one packet stays inside its original assignment. An immutable provider
+revision with its own pre-staged assignment ID, as used for Claude R1 and Cursor
+XR R1, is one separately ordered canonical assignment and cannot be split or
+counted again.
 
 This baseline is not permission to merge, release, spend, accept licenses,
 access accounts, claim device/human/store completion, or relax one-writer,
 privacy, security, exact-candidate or OpenAI QA gates.
 
-<!-- [[OpenAI Director | Codex | 2026-08-30 | 07:25 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 09:00 UTC | END]] -->

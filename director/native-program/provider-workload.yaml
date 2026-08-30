@@ -1,4 +1,4 @@
-# [[OpenAI Director | Codex | 2026-08-30 | 08:44 UTC | BEGIN]]
+# [[OpenAI Director | Codex | 2026-08-30 | 09:00 UTC | BEGIN]]
 schema_version: "long-table-provider-workload/v2"
 
 policy_binding:
@@ -10,7 +10,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_4_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists"
+  rolling_compliance_status: "WARMING_UP_5_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -180,22 +180,22 @@ overall_effort_ledger:
     assignment_id: "LT-NATIVE-CURSOR-XRCORE-001-R1"
     provider: cursor
     size: medium
-    canonical_points: 0
-    completed: false
-    terminal_status: "PRESTAGED_IMMUTABLE_R1_NOT_YET_DISPATCHED"
-    authenticated_run: null
+    canonical_points: 5
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_REVISION_EXHAUSTED_REJECTED"
+    authenticated_run: "cursor-chat:2818c90a-0ac8-420e-aa02-beb79cf06bf2;request:ef7e5029-d2b4-4dbe-85f1-c0ce80b8f820"
     direct_production_points: 0
-    exclusion_reason: "the single final Cursor revision is immutably pre-staged but unfinished; it earns no completed-window or direct-production points until authenticated execution reaches a terminal outcome"
+    exclusion_reason: "authenticated Cursor wrote the final provider revision and reached a terminal failed shell/result-envelope state; OpenAI mechanically froze exact candidate de02a26, reproduced an editor C++ build failure and retained substantive contract/test findings; revision authority is exhausted and no accepted production credit exists"
 
 accepted_direct_production_ledger: []
 
 rolling_window_projection:
-  completed_assignments: 4
+  completed_assignments: 5
   window_size: 20
-  current_canonical_points: {claude: 8, cursor: 5, grok: 0, openai: 0, gemini_antigravity: 10, perplexity: 0}
-  current_partial_shares_percent: {claude: 34.78, cursor: 21.74, grok: 0, openai: 0, gemini_antigravity: 43.48, perplexity: 0}
+  current_canonical_points: {claude: 8, cursor: 10, grok: 0, openai: 0, gemini_antigravity: 10, perplexity: 0}
+  current_partial_shares_percent: {claude: 28.57, cursor: 35.71, grok: 0, openai: 0, gemini_antigravity: 35.71, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass"
-  next_route: "dispatch the frozen Cursor XR-core R1 once through the authenticated same-chat route; resume exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; Grok and Antigravity require explicit human account/permission actions; final Cursor integration remains dependency-gated"
+  next_route: "resume exact Claude R1 only at or after its confirmed 2026-08-30T10:30:00Z reset; Grok and Antigravity require explicit human account/permission actions; Cursor XR revision authority is exhausted after rejected de02a26, so any new correction requires an explicit owner decision rather than a disguised retry; final integration remains dependency-gated"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -269,14 +269,14 @@ canonical_assignment_ledger:
     provider: cursor
     size: medium
     canonical_points: 5
-    status: "PRESTAGED_IMMUTABLE_R1_NOT_YET_DISPATCHED"
+    status: "OPENAI_CHANGES_REQUIRED_REVISION_EXHAUSTED_REJECTED"
     accepted_direct_production_points: 0
     packet_digest: "sha256:5ee54416767b74f2f0eaa98d5b880c5edbef69e9ca393f590ab19646182a0c24"
     work_packet_digest: "sha256:a10418f66b3dae080b58b68f8f1f3237fde0ebf13a33b9562bd96601e04a5803"
     accepted_outcome_digest: null
-    candidate_sha: null
-    candidate_tree: null
-    manual_overlay_reason: "one consolidated final revision of the same useful Cursor XR-core lane; no split credit, no completed-window credit before terminal execution, and no further Cursor revision authority"
+    candidate_sha: "de02a26d57065dfc52d5639ac6e2e5ae2baa0029"
+    candidate_tree: "1faab10219e3197e2e3b8db06814ab3674298812"
+    manual_overlay_reason: "one consolidated final revision of the same useful Cursor XR-core lane; terminal provider effort is recorded once, OpenAI rejection leaves direct-production credit at zero, and no further Cursor revision authority remains"
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -298,4 +298,4 @@ action_reduction:
   duplicate_validation_reduction_percent: 70
   total_action_reduction_percent: 60
 
-# [[OpenAI Director | Codex | 2026-08-30 | 08:44 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-30 | 09:00 UTC | END]]
