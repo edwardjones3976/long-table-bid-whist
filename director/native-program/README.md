@@ -57,14 +57,14 @@ physical headset, external account, human cohort, or owner gate.
 
 ## Provider code ownership
 
-- Claude: terminal TypeScript authority/protocol/core-table foundation output;
-  no active foundation lease, plus two later sequential exhausted-route
-  fallback leases described in the bound packets.
+- Claude: terminal historical TypeScript authority/protocol/core-table output
+  plus the sole ready foundation-safety v2 writer lease; later XR-test and
+  RobotDealer exhausted-route leases remain dependency-closed.
 - Cursor: the self-registering `Unreal/Plugins/LongTableXR/**` project plugin
   for hands/controllers, presence fallback, accessibility and MR/VR adapters.
-- Grok: the active seven-path authority-safety fallback, then separately gated
-  private-session, host, reconnect, voice/safety and social adapters plus the
-  prospective clean-room in-repository HouseCore fallback.
+- Grok: no active writer lease. Its seven-path authority-safety assignment is
+  terminal rejected; separately gated future private-session, host, reconnect,
+  voice/safety, social and clean-room HouseCore scope is unchanged.
 - Gemini Antigravity: no active writer lease. Its final source-only robot-dealer
   candidate and historical Long Table House core attempt are both rejected and
   quarantined; neither is an integration dependency or a fallback input.
@@ -88,11 +88,22 @@ reentrant configuration, and the processed-intent Map grows without bound.
 The no-revision Claude packet is terminal, unaccepted and worth zero production
 credit.
 
-`LT-NATIVE-GROK-AUTHORITY-SAFETY-001` is the new owner-authorized medium/5
-sequential fallback. It starts from `a6742a0`, gives under-target Grok one writer
-lease for seven exact defect/regression paths, and requires real loopback,
-bounded-memory and two-listener Unreal evidence. It is not a Claude or HouseCore
-retry. XR-test and RobotDealer remain queued until exact OpenAI acceptance.
+`LT-NATIVE-GROK-AUTHORITY-SAFETY-001` is now terminal
+`OPENAI_CHANGES_REQUIRED_RECOVERY_AND_DELIVERY_EXHAUSTED`. Its patch and result
+deliveries failed provenance/schema gates, its replacement archive was corrupt
+and hash-mismatched, and the owner's later usage-limit retry reproduced the
+same invalid bytes. No product candidate was materialized; exact base
+`a6742a0` remains unchanged and Grok earns medium/5 overall effort but zero
+direct-production credit.
+
+`LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002` is the fresh sequential medium/5
+fallback. It is the sole ready foundation writer lease and starts from
+`a6742a0` under `contracts/intent-idempotency-v2.json`: exactly five
+preallocated role lanes, server-issued role-grant identity and monotonic
+counters replace the impossible arbitrary-string lifetime-membership demand.
+It may not read or reuse any rejected Grok implementation artifact. XR-test and
+RobotDealer remain queued until OpenAI accepts the exact new foundation
+candidate.
 
 The dependency-independent Grok fallback is frozen by
 `contracts/long-table-house-public-v1.json`. That contract is the entire

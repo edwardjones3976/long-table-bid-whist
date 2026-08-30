@@ -329,6 +329,50 @@ cross-writing and not filler. One primary Grok dispatch is permitted; one
 recovery exists only for substantive OpenAI kickback or a genuinely temporary
 transport failure. OpenAI remains the sole acceptance authority.
 
+## Grok terminal rejection and Claude foundation-safety v2 transfer
+
+The Grok assignment is now terminal
+`OPENAI_CHANGES_REQUIRED_RECOVERY_AND_DELIVERY_EXHAUSTED`. It earns medium/5
+overall-effort points once and zero direct-production points. Its browser patch
+hash disagreed with its declaration and could not apply; both returned result
+documents failed the frozen result schema. The materially different final
+delivery returned a 37,659-byte ZIP whose actual SHA
+`b36d3a8fef0900694832cf7ec1ef69331a85428f3a41b1d9153605449e40e68a`
+disagreed with the manifest and result declaration, then failed CRC and
+decompression checks. No candidate or accepted-outcome digest exists.
+
+After the owner reported extended Grok limits and personally retried the
+request, OpenAI re-read the authenticated conversation. The retry reproduced
+the identical ZIP, manifest and result bytes, including the same mismatched
+hashes. It is corroborating evidence, not new provider output; no fourth Grok
+contact, coding retry or delivery retry is authorized.
+
+Independent source QA found three P1 failures: accepted `host-transfer` IDs are
+forgotten after authority changes, `attackerDependentUnits` reports zero while
+an ID Set grows to 8192, and a Bloom filter can reject a genuinely fresh intent
+and halt legitimate progress. Architecture review then proved the frozen
+seven-path Gate B impossible: exact lifetime membership for arbitrary unbounded
+client strings cannot use fixed memory without forgetfulness, false positives,
+probabilistic assumptions or an attacker-exhaustible stop.
+
+That materially new information authorizes one fresh medium/5 exhausted-route
+assignment, `LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002`, from exact
+`a6742a04a384a88e7342530041a1f0d3ab71db2c`. The new frozen
+`long-table-intent-idempotency/v2` contract uses exactly five preallocated
+server-issued role-grant lanes and monotonic counters, expands only the packet's
+exact protocol/authority/Unreal/fixture/test allowlist, and preserves structural
+role privacy. This is a new assignment, not another
+`LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001` revision. Claude is the sole writer;
+Grok implementation bytes are prohibited inputs. One primary and one bounded
+recovery are available. XR-test and RobotDealer remain closed until OpenAI
+accepts the exact new foundation candidate.
+
+The completed rolling window is 11 of 20 and 64 points: Claude 21 (32.81%),
+Cursor 20 (31.25%), Grok 13 (20.31%), Gemini Antigravity 10 (15.63%), OpenAI 0
+and Perplexity 0. This remains a warm-up advisory, not a compliance pass; Cursor
+is still above its target-plus-five planning ceiling. The ready Claude packet
+earns no points until terminal.
+
 ## Acceptance
 
 Manual routing never weakens acceptance. Each provider candidate still requires:

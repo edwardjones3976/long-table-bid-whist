@@ -39,14 +39,16 @@ Device acceptance: Android package/install/launch, hands, controllers,
 switching, haptics, placement, anchor recovery and two-headset privacy evidence
 pass on the unchanged candidate.
 
-Current stop: Claude foundation-final candidate `a6742a0` has green TypeScript
-and Windows target-build evidence but is OpenAI-rejected on two P1 and one P2
-source defects. No XR, RobotDealer, integration, Android or device gate may use
-it as an accepted dependency. Run the exact seven-path
-`LT-NATIVE-GROK-AUTHORITY-SAFETY-001` sequential fallback and independent QA;
-only after foundation acceptance run the XR test-only and RobotDealer clean-room
-fallbacks. A green browser, Windows or headless gate never substitutes for
-physical Quest evidence.
+Current stop: the Grok authority-safety recovery and delivery are terminal
+rejected. No valid candidate was materialized, so `a6742a0` remains the exact
+foundation base and no XR, RobotDealer, integration, Android or device gate may
+use it as an accepted dependency. Run the fresh
+`LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002` v2 gate: terminal WebSocket loop stop,
+exactly five bounded server-issued role-grant/counter lanes, two-listener Unreal
+epoch protection, full TypeScript/fixture/build/Unreal automation, and
+independent OpenAI source/privacy acceptance. Only then may the XR test-only and
+RobotDealer clean-room fallbacks run. A green browser, Windows or headless gate
+never substitutes for physical Quest evidence.
 
 ## Chunk B — Private Game Night
 

@@ -1,0 +1,55 @@
+{
+  "schema_version": "long-table-intent-idempotency/v2",
+  "status": "FROZEN_FOR_LT_NATIVE_CLAUDE_FOUNDATION_SAFETY_002",
+  "wire_protocol": "long-table-protocol/2",
+  "scope": "One externally non-reused table incarnation. A restarted authority must atomically restore the incarnation, five grants, grant high-water and counter high-waters, or issue a new externally unique table incarnation before accepting intents.",
+  "intent_identity": {
+    "format": "<server-issued-role-grant-sessionId>:<canonical-decimal-counter>",
+    "client_nonce_permitted": false,
+    "counter_minimum": 1,
+    "counter_maximum": 9007199254740991,
+    "leading_zero_permitted": false,
+    "wrap_permitted": false
+  },
+  "welcome": {
+    "player": {"sessionId": "stable current seat grant", "nextIntentCounter": "highestConsumedCounter + 1"},
+    "host": {"sessionId": "stable current host grant", "nextIntentCounter": "highestConsumedCounter + 1"},
+    "public": {"sessionId": "connection identifier only", "nextIntentCounter": null},
+    "dealer": {"sessionId": "connection identifier only", "nextIntentCounter": null}
+  },
+  "fixed_lanes": ["south", "west", "north", "east", "host"],
+  "lane_state": ["currentGrantSessionId", "highestConsumedCounter"],
+  "processing_order": [
+    "decode the closed client message",
+    "authenticate and revalidate the current table, role, seat and host entitlement",
+    "reject public and dealer intent attempts before lane lookup or allocation",
+    "select exactly one of the five preallocated role lanes",
+    "require the current server-issued grant sessionId and a canonical safe-integer counter",
+    "counter at or below high-water is duplicate with no mutation",
+    "exactly high-water plus one is reserved before semantic or version evaluation and remains consumed for every accepted, local or rejected outcome",
+    "a forward gap rejects atomically without advancing",
+    "maximum exhaustion fails closed and never wraps"
+  ],
+  "reconnect": [
+    "same participant, table and role grant survives socket replacement",
+    "welcome reports the stable grant and next counter",
+    "an in-flight id may be resent unchanged and cannot apply twice",
+    "a changed authenticated context discards the old in-flight intent"
+  ],
+  "authority_transitions": [
+    "seat rebinding rotates only that seat grant",
+    "human-to-AI substitution retires that seat grant",
+    "a later human occupant receives a strictly newer grant",
+    "host transfer consumes under the old host grant and atomically rotates the host lane",
+    "player and host grants remain independent when one participant holds both roles",
+    "a retired grant can never become current again"
+  ],
+  "privacy": [
+    "player and host receive only their own grant and next counter",
+    "public and dealer receive no usable intent counter",
+    "grants and counters never enter projections, dealer cues, telemetry, logs or another role welcome",
+    "closed role-specific construction is required; regex, blacklist, scanning and redaction are prohibited as disclosure controls"
+  ],
+  "memory_proof": "Exactly five preallocated lane records per table. No submitted-id Map, Set, array, receipt cache, probabilistic filter, digest collection, fallback store or queue may grow with request count.",
+  "known_tradeoff": "This replaces impossible exact lifetime membership for arbitrary unbounded client strings with a collision-free bounded server-issued grant and monotonic counter domain."
+}

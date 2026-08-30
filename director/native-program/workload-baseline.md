@@ -179,3 +179,35 @@ share is Claude 32.81%, Cursor 31.25%, Grok 20.31%, Gemini Antigravity 15.63%.
 The queued Claude XR and RobotDealer assignments move to sequences 12 and 13 and
 remain closed until the foundation is OpenAI-accepted.
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]] -->
+
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 20:20 UTC | BEGIN]] -->
+## Grok terminal recovery and foundation-safety v2 route
+
+Sequence 11, `LT-NATIVE-GROK-AUTHORITY-SAFETY-001`, is terminal
+`OPENAI_CHANGES_REQUIRED_RECOVERY_AND_DELIVERY_EXHAUSTED`. Authenticated Grok
+performed real work, so the assignment earns its immutable medium/5 overall
+effort once. It earns zero direct-production points: no candidate or accepted
+outcome exists, the patch/result provenance failed, the replacement ZIP was
+corrupt and hash-mismatched, and the owner's later usage-limit retry reproduced
+the same invalid bytes. The contact budget is exhausted. Exact evidence is in
+`artifacts/native-program/qa/2026-08-30-grok-authority-safety-terminal-rejection.md`.
+
+The completed window is now 11 of 20 and 64 points: Claude 21 (32.81%), Cursor
+20 (31.25%), Grok 13 (20.31%), Gemini Antigravity 10 (15.63%), OpenAI 0 and
+Perplexity 0. Exact PR76 enforcement remains a warm-up advisory, not a rolling
+compliance pass. Cursor remains above its target-plus-five planning ceiling.
+
+Sequence 12 is the fresh pending medium/5
+`LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002` assignment. It starts from exact
+`a6742a0`, uses the materially new frozen server-issued role-grant/monotonic-
+counter v2 contract, and prohibits Grok implementation artifacts as inputs. It
+earns zero workload and production points until terminal. XR-test and
+RobotDealer move to sequences 13 and 14 and remain dependency-closed until the
+new foundation is OpenAI-accepted.
+
+If the Claude foundation-safety packet terminates, Claude projects to 26/69 =
+37.68%. A later XR packet projects to 31/74 = 41.89%, and RobotDealer to 36/79 =
+45.57%. The latter two exceed Claude's 41% planning ceiling and therefore need
+a recorded useful-work variance or genuine rebalance; filler and duplicate
+research remain prohibited.
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 20:20 UTC | END]] -->

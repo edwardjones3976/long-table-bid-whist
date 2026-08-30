@@ -10,7 +10,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_10_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists; the project target-plus-five ceilings remain the stricter planning constraint"
+  rolling_compliance_status: "WARMING_UP_11_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists; the project target-plus-five ceilings remain the stricter planning constraint"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -90,7 +90,7 @@ native_code_assignments:
     scope_forecast_units: 22
     credit_rule: "forecast is not credit; HouseCore and later social work use separate actual packets"
     allocation: {native_foundation_first_deal: 10, private_game_night: 6, long_table_house: 6}
-    owned_surfaces: ["sequential authority-safety fallback paths in the active packet", "services/session-gateway", "Unreal/Source/LongTableSocial", "Unreal/Content/Social", "Unreal/Plugins/LongTableHouseCore"]
+    owned_surfaces: ["terminal historical authority-safety attempt", "services/session-gateway", "Unreal/Source/LongTableSocial", "Unreal/Content/Social", "Unreal/Plugins/LongTableHouseCore"]
     house_core_authority: "Grok clean-room CLI and final browser fallback are terminal unavailable with no complete downloadable bundle; quarantined Antigravity source remains prohibited and any later HouseCore route requires a new packet"
   gemini_antigravity:
     scope_forecast_units: 8
@@ -222,16 +222,30 @@ overall_effort_ledger:
     candidate_tree: "0489b183e70da5751c31e9b80ed40a8b631ba55a"
     terminal_result_digest: "sha256:f8c3248f22e91ba055091a9a90a85dc8d1433741e222ddf2dae004b833362dd7"
     exclusion_reason: "Claude resumed the single authenticated Cowork recovery and returned a schema-valid result archive. OpenAI composed the preserved provider checkpoint and final overlay onto the exact base, reproduced 45/45 focused tests, 193/193 full tests under CI-equivalent LF checkout, strict typing, fixture-current, production build and both UE5.7 Windows target builds, then rejected two P1 source defects and one P2 safety defect: coalesced frames continue after policy close, Unreal multicast reentrancy leaks an old-context event to later listeners, and the processed-intent Map permits authenticated unbounded heap growth. The packet has no revision budget, direct-production credit remains zero, and the owner-authorized sequential fallback transfers only seven exact paths to Grok."
+  - sequence: 11
+    assignment_id: "LT-NATIVE-GROK-AUTHORITY-SAFETY-001"
+    provider: grok
+    size: medium
+    canonical_points: 5
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_RECOVERY_AND_DELIVERY_EXHAUSTED"
+    authenticated_run: "grok-web-build:conversation:7c188d2d-1a1e-4628-86e1-e761277fb211;model:grok-4.6-build-beta;owner-retry-rid:fdc0c47b-70a6-4fbd-96de-d6af669c54ca"
+    direct_production_points: 0
+    candidate_sha: null
+    candidate_tree: null
+    accepted_outcome_digest: null
+    terminal_evidence: "artifacts/native-program/qa/2026-08-30-grok-authority-safety-terminal-rejection.md"
+    exclusion_reason: "The authenticated primary, bounded recovery and materially different delivery-only action are exhausted. Provider-declared patch/archive hashes disagreed with exact browser bytes, the replacement ZIP had CRC/decompression failures, the result packets failed the frozen schema, and independent source QA rejected the Bloom/Set design. The owner's later usage-limit retry reproduced the identical invalid ZIP, manifest and result bytes. No candidate was materialized and direct-production credit remains zero."
 
 accepted_direct_production_ledger: []
 
 rolling_window_projection:
-  completed_assignments: 10
+  completed_assignments: 11
   window_size: 20
-  current_canonical_points: {claude: 21, cursor: 20, grok: 8, openai: 0, gemini_antigravity: 10, perplexity: 0}
-  current_partial_shares_percent: {claude: 35.59, cursor: 33.90, grok: 13.56, openai: 0, gemini_antigravity: 16.95, perplexity: 0}
+  current_canonical_points: {claude: 21, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0}
+  current_partial_shares_percent: {claude: 32.81, cursor: 31.25, grok: 20.31, openai: 0, gemini_antigravity: 15.63, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "dispatch the new owner-authorized medium/5 Grok authority-safety fallback once from exact rejected candidate a6742a0; it is a sequential lease for seven exact paths and materially new OpenAI findings, not a Claude retry, HouseCore retry, concurrent writer or filler. Only after exact OpenAI QA accepts that foundation may the already frozen XR-test and RobotDealer fallbacks run sequentially"
+  next_route: "freeze and dispatch one fresh medium/5 Claude foundation-safety assignment from exact base a6742a0 under the materially new server-issued role-grant and monotonic-counter v2 contract. The ready assignment earns no points until terminal, uses no Grok implementation artifact, and is not a revision bypass. XR-test and RobotDealer remain closed until exact OpenAI acceptance of the new foundation candidate."
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -391,7 +405,7 @@ canonical_assignment_ledger:
     provider: grok
     size: medium
     canonical_points: 5
-    status: "PRIMARY_TERMINAL_PROVIDER_LIMIT_RECOVERY_AVAILABLE"
+    status: "OPENAI_CHANGES_REQUIRED_RECOVERY_AND_DELIVERY_EXHAUSTED"
     accepted_direct_production_points: 0
     packet_digest: "sha256:4dc2923a48df2bdbe452c8576f9c6bce84c998782a148e109521483337aed0c1"
     work_packet_digest: "sha256:47268f714722a19a783b5ebe47a4137a5abaf4b55f68d1363ff1cb576691ff6e"
@@ -400,20 +414,43 @@ canonical_assignment_ledger:
     starting_tree: "0489b183e70da5751c31e9b80ed40a8b631ba55a"
     sanitized_input_archive_digest: "sha256:126dd95b8628638d89b12ce25173dcede2fc0f54652f3235d23aedf01fa73d4c"
     pre_model_transport_status: "Chrome local-file upload was blocked by extension file-URL access and the local Grok Build CLI OAuth route timed out before authentication; neither pre-model stop earned workload or production credit"
-    authenticated_run: "grok-web-build:conversation:7c188d2d-1a1e-4628-86e1-e761277fb211;model:grok-4.6-build-beta;primary:terminal-provider-limit-incomplete"
+    authenticated_run: "grok-web-build:conversation:7c188d2d-1a1e-4628-86e1-e761277fb211;model:grok-4.6-build-beta;owner-retry-rid:fdc0c47b-70a6-4fbd-96de-d6af669c54ca"
     primary_terminal_at: "2026-08-30T12:14:00-07:00"
     primary_terminal_status: "PROVIDER_USAGE_LIMIT_NO_FINAL_PATCH_RESULT_OR_CANDIDATE"
     primary_attempt_evidence: "artifacts/native-program/providers/LT-NATIVE-GROK-AUTHORITY-SAFETY-001-primary-attempt.json"
     partial_provider_artifact: "artifacts/native-program/providers/LT-NATIVE-GROK-AUTHORITY-SAFETY-001.partial-websocket-server.ts.base64"
     partial_provider_artifact_decoded_sha256: "sha256:9ba1697022ed04fb6ce47ff4d56e8ee0c231053167b87cc07c009b497c7ea6e9"
-    recovery_status: "AVAILABLE_ONLY_AFTER_CONCRETE_GROK_RESET_OR_NEW_PROVIDER_AVAILABILITY_EVIDENCE"
-    manual_overlay_reason: "new owner-authorized sequential fallback for three materially new independent OpenAI safety findings after the terminal Claude packet. Its authenticated primary performed real work but hit a temporary Grok usage limit after only a partial WebSocket file and no result packet. The same assignment retains one bounded recovery; it remains absent from completed totals and earns zero direct-production credit until terminal."
+    recovery_status: "TERMINAL_EXHAUSTED_NO_FOURTH_CONTACT"
+    terminal_evidence: "artifacts/native-program/qa/2026-08-30-grok-authority-safety-terminal-rejection.md"
+    browser_patch_actual_sha256: "sha256:f1ac15be548b962c8e2b5d78d8a071037ea444a25a6178bd9b3c2e4a3c29e608"
+    browser_patch_declared_sha256: "sha256:5659b323f27350f7f3fbb79b3cc5fa64780c9d19cb5a490999ff7ad45a4c9fa7"
+    final_zip_actual_sha256: "sha256:b36d3a8fef0900694832cf7ec1ef69331a85428f3a41b1d9153605449e40e68a"
+    final_zip_declared_sha256: "sha256:0603e536fda97bca87424b193edc0ad4c0421e47b3aebb437714a8079b1bd41d"
+    user_retry_reproduced_identical_delivery: true
+    candidate_sha: null
+    candidate_tree: null
+    manual_overlay_reason: "The new sequential fallback ran, but every authorized route is terminal. The primary stopped on usage, the bounded recovery returned malformed/hash-mismatched patch and result bytes, and the materially different delivery-only action returned a corrupt hash-mismatched ZIP plus invalid result. The owner's later usage-limit retry reproduced those identical bytes. OpenAI found three P1 source failures and proved the arbitrary-string fixed-memory Gate B inconsistent. Overall medium/5 effort is recorded once; direct production remains zero."
   - sequence: 12
+    assignment_id: "LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002"
+    provider: claude
+    size: medium
+    canonical_points: 5
+    status: "FROZEN_READY_FOR_SINGLE_DISPATCH_AFTER_PACKET_BINDING"
+    accepted_direct_production_points: 0
+    accepted_outcome_digest: null
+    starting_ref: "a6742a04a384a88e7342530041a1f0d3ab71db2c"
+    starting_tree: "0489b183e70da5751c31e9b80ed40a8b631ba55a"
+    contract_file: "director/native-program/contracts/intent-idempotency-v2.json"
+    packet_file: "director/native-program/packets/LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002.json"
+    qa_contract: "artifacts/native-program/qa/2026-08-30-claude-foundation-safety-002-acceptance.md"
+    grok_artifacts_permitted_as_inputs: false
+    manual_overlay_reason: "Fresh exhausted-route assignment based on materially new OpenAI authority analysis. It replaces impossible arbitrary-string lifetime membership with the frozen bounded role-grant/counter v2 contract, is not a revision of LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001, and earns no points until terminal."
+  - sequence: 13
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
     provider: claude
     size: medium
     canonical_points: 5
-    status: "QUEUED_AFTER_FOUNDATION_FINAL_QA_TERMINAL"
+    status: "QUEUED_AFTER_FOUNDATION_SAFETY_OPENAI_ACCEPTANCE"
     accepted_direct_production_points: 0
     packet_digest: "sha256:2818b0cb6ff9fa507934a0b8a5a1d6b57a734886085c96c5864204d4c8a5db38"
     work_packet_digest: "sha256:06ea0377d7abc6d7a1fb41a104ac051929820e884c8494caff2c6db3309a9d58"
@@ -421,12 +458,12 @@ canonical_assignment_ledger:
     starting_ref: "33aca6106603342efcf43fb813482cb18fd4b18c"
     starting_tree: "04f65bc3c72202977312cb38bc039460545daeec"
     manual_overlay_reason: "new owner-authorized sequential ownership transfer after terminal Cursor; sole writable path is the XR transactional-decode test and no production decoder change is authorized; pending packets do not enter completed effort totals"
-  - sequence: 13
+  - sequence: 14
     assignment_id: "LT-NATIVE-CLAUDE-ROBOT-001"
     provider: claude
     size: medium
     canonical_points: 5
-    status: "QUEUED_AFTER_FOUNDATION_AND_XR_QA_TERMINAL"
+    status: "QUEUED_AFTER_FOUNDATION_SAFETY_AND_XR_QA_TERMINAL"
     accepted_direct_production_points: 0
     packet_digest: "sha256:4cd8d536d1500f776310e0814956b988cb03abe21cc670449c8658b7cad33cba"
     work_packet_digest: "sha256:5b7078b5d4c760609726f3a2f3fe2d9abbe36a581f3023337e385b159b17d750"
@@ -447,7 +484,7 @@ credit_rules:
   - "Provider identity never grants merge, deploy, publication, spending, permissions, store or final-acceptance authority."
   - "Pre-PR76 legacy units remain visible but are excluded from canonical rolling and direct-production ledgers until assignment ID, immutable points, order, authentication and outcome binding are all proven."
   - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
-  - "Claude's share is 35.59% after its terminal foundation assignment; after the Grok fallback it projects to 32.81%, after XR to 37.68% and after RobotDealer to 41.89%. The final projection exceeds the stricter project 41% planning ceiling during warm-up, so it requires an explicit useful-work variance and cannot be called compliant or repaired with filler."
+  - "After terminal Grok the partial share is Claude 21/64 = 32.81%. A terminal medium/5 Claude foundation-safety packet projects to 26/69 = 37.68%; a later XR packet projects to 31/74 = 41.89%; RobotDealer projects to 36/79 = 45.57%. XR and RobotDealer therefore require an explicit useful-work variance or genuine rebalance and cannot be called workload-compliant or repaired with filler."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
