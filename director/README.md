@@ -6,6 +6,15 @@
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]] -->
 # Director workflow for The Long Table
 
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 05:27 UTC | BEGIN]] -->
+
+> **Current native program:** [`native-program/README.md`](native-program/README.md)
+> is the canonical overlay for the complete UE5.7 Meta Quest product, current
+> PR #76 workload policy, provider code ownership, three large chunks and
+> release gates. Earlier browser-stage records below remain historical evidence.
+
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 05:27 UTC | END]] -->
+
 This directory applies the modular project-bootstrap workflow from
 [`edwardjones3976/director-orchestrator`](https://github.com/edwardjones3976/director-orchestrator)
 to this project.
