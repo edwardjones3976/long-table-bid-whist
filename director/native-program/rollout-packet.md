@@ -65,7 +65,7 @@ result is recorded locally before any optional milestone notice.
 - **Claude:** required implementation model remains `FABLE 5 ULTRA/MAX`; no active product lease until genuine workload rebalance, new immutable authority and exact repair-seed rules are committed
 - **Cursor:** no active lease; prior XR route remains terminal and current workload is above its planning ceiling
 - **Gemini/Antigravity:** no active lease; quarantined rejected artifacts remain prohibited inputs
-- **Budget and timeout:** each packet sets a `$0` incremental budget unless a separately recorded paid reservation exists; bounded timeout and attempt count are mandatory
+- **Budget and timeout:** the Perplexity sequence-13 packet reserves at most `$0.25` for one exact Search API request; every later packet defaults to `$0` unless it records a separate bounded reservation; timeout and attempt count are mandatory
 - **n8n/workflow identity:** `not_applicable` for provider-native research and isolated local QA
 - **Callback and internal-secret status:** `pending`; no callback is required for the current provider-native research lane
 - **Usage-monitor status:** manual exact run/result reconciliation; Director runtime writer is not activated

@@ -516,7 +516,7 @@ canonical_assignment_ledger:
     canonical_points: 5
     status: "PRESTAGED_READY_FOR_ONE_EXACT_PUBLIC_QUERY"
     accepted_direct_production_points: 0
-    packet_digest: "sha256:f27925cbb656812a160a8c3c8a5ff829f82fb961bc7e20dc1391ead2f6aaed8d"
+    packet_digest: "sha256:cd7c820a87e8096003fbd934a2fe32ea395f0a56babf22417d6c37a4e8c5853c"
     accepted_outcome_digest: null
     packet_file: "director/native-program/packets/LT-NATIVE-PERPLEXITY-QUEST-PLATFORM-001.json"
     public_query_sha256: "sha256:314b6865f5a27c72b1dd127a623ec0a56278b4cccebb6c448e5e0630c065f5af"
