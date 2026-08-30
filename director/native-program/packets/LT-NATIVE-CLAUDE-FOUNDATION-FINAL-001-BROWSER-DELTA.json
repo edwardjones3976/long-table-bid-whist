@@ -15,7 +15,7 @@
   },
   "recovery_classification": {
     "attempt": 2,
-    "basis": "authenticated Claude Code in Chrome is a materially different transport after the sole CLI provider run terminated with an explicit 429 session limit and reset time",
+    "basis": "authenticated Claude Cowork in Chrome is a materially different artifact transport after the sole CLI provider run terminated with an explicit 429 session limit; Claude Code web was checked before dispatch and shared the same 100 percent cap",
     "ambiguous_paid_dispatch": false,
     "prior_cli_route": "terminal api_error 429 after partial owned-path edits; no terminal result envelope and no local provider commit",
     "retry_after_this_transport": false
@@ -46,15 +46,24 @@
     "provider_authorship": "exact bytes were written by the authenticated Claude CLI run; OpenAI only froze the terminal filesystem state after the 429",
     "acceptance": "none; this checkpoint is incomplete and untested"
   },
+  "browser_code_preflight": {
+    "surface": "authenticated Claude Code at claude.ai",
+    "result": "UNAVAILABLE_BEFORE_PROMPT",
+    "evidence": "usage control displayed 100% of 5-hour limit with reset in 3 hours 21 minutes",
+    "provider_prompt_sent": false,
+    "provider_effort_or_workload_credit": false
+  },
   "transport": {
     "provider": "Claude",
-    "surface": "authenticated Claude Code at claude.ai in owner-selected Chrome",
+    "surface": "authenticated Claude Cowork at claude.ai in owner-selected Chrome",
     "model_label": "Fable 5",
-    "effort_label": "highest available Code-surface effort",
-    "repository": "edwardjones3976/long-table-bid-whist",
-    "branch": "codex/claude-foundation-web-sandbox",
-    "transport_head": "2f2a18765e25289ff42cc5740de5d07a7c4d6ea8",
-    "transport_tree": "5a486cab48e6cc88cf6c04b3da736865bdd0b7e5",
+    "effort_label": "High, the highest available Cowork effort",
+    "input_archive": "lt-claude-cowork-upload.zip",
+    "input_archive_sha256": "sha256:b5936893cb0e6c2fc3c1b072e9921dccc90db8c60a8299c682dabf0345c6a849",
+    "input_archive_bytes": 303005,
+    "transport_source_branch": "codex/claude-foundation-web-sandbox",
+    "transport_source_head": "2f2a18765e25289ff42cc5740de5d07a7c4d6ea8",
+    "transport_source_tree": "5a486cab48e6cc88cf6c04b3da736865bdd0b7e5",
     "web_search": false,
     "subagents": false
   },
@@ -65,9 +74,9 @@
     "transport_commit_is_not_candidate": true
   },
   "delivery_contract_delta": {
-    "provider_delivery": "one committed Claude Code branch state plus one model-result-packet-v1 JSON object in the terminal task response",
+    "provider_delivery": "one downloadable LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001.zip containing only changed repository-relative files, PROVIDER.patch and one schema-valid RESULT.json",
     "mechanical_materialization": "OpenAI may fetch and mechanically apply only exact Claude-authored owned-path changes onto the local checkpoint, then freeze one exact candidate tree; OpenAI may not alter production code",
-    "provider_checks": "Claude runs focused and full TypeScript checks available in the Chrome Code environment; Windows UE5.7 builds and automation are NOT_RUN if that environment lacks the verified engine",
+    "provider_checks": "Claude runs focused and full TypeScript checks available in Cowork; Windows UE5.7 builds and automation are NOT_RUN because the archive sandbox lacks the verified engine",
     "openai_qa": "OpenAI independently reviews exact source and runs the complete TypeScript, fixture, production build, UE5.7 editor/game and scoped/full automation gates on the mechanically frozen exact candidate",
     "revision_budget": "none after this authenticated browser recovery"
   },

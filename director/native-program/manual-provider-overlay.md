@@ -190,6 +190,14 @@ candidate. Only Claude-authored owned-path deltas may be materialized back onto
 the exact local `816824e` lineage, after which OpenAI runs all missing Windows
 and Unreal gates.
 
+The authenticated Claude Code web surface was then checked before prompt and
+reported 100% of its five-hour limit, so it received no assignment and no
+credit. The single browser recovery therefore uses Claude Cowork with a
+303,005-byte sanitized source archive bound to SHA-256
+`b5936893cb0e6c2fc3c1b072e9921dccc90db8c60a8299c682dabf0345c6a849`.
+Cowork must return only changed owned-path files, a provider diff and a valid
+result JSON; OpenAI may materialize those exact bytes but may not author a fix.
+
 ## Warm-up variance after the Grok route
 
 The required under-target Grok HouseCore lane was routed first. Its immutable
