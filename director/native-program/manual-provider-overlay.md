@@ -200,9 +200,11 @@ result JSON; OpenAI may materialize those exact bytes but may not author a fix.
 
 Cowork accepted that archive and the exact prompt, then returned no source,
 patch or result because the authenticated account reached its explicit plan
-limit. The UI identified `2026-08-30 10:10 America/Los_Angeles` as the reset.
-The assignment is paused—not terminal or credited—and the existing Cowork task
-is planned to resume once at or after 10:12 Pacific. This is a continuation of the
+limit. The UI initially identified `2026-08-30 10:10 America/Los_Angeles` as the
+reset. A live recheck at 10:12 still showed the usage cap and superseded that
+time with 10:40. No provider prompt was sent. The assignment is paused—not
+terminal or credited—and the existing Cowork task is planned to resume once at
+or after 10:42 Pacific. This is a continuation of the
 same task and transport after a concrete external-state change; it creates no
 new assignment, workload row, retry credit or concurrent provider lease. Buying
 credits is prohibited because the packet budget is zero and no purchase amount

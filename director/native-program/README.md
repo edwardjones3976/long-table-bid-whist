@@ -93,10 +93,11 @@ The authenticated CLI run stopped at a temporary usage limit after ten owned
 file edits; OpenAI preserved those bytes as an unaccepted mechanical checkpoint.
 The materially different Cowork transport accepted the sanitized checkpoint but
 returned no output when the same account reached its explicit plan limit. The
-existing Cowork task is paused until the observed `2026-08-30 10:10
-America/Los_Angeles` reset and is planned to resume once after 10:12. This pause adds no
-assignment, workload credit or permission to buy credits, and it does not open
-any downstream provider lease.
+existing Cowork task remained paused during the live 10:12 recheck, when the
+current usage banner superseded its earlier 10:10 reset with `2026-08-30 10:40
+America/Los_Angeles`. No prompt was sent. The same task is planned to resume once
+after 10:42. This pause adds no assignment, retry, workload credit or permission
+to buy credits, and it does not open any downstream provider lease.
 
 The dependency-independent Grok fallback is frozen by
 `contracts/long-table-house-public-v1.json`. That contract is the entire

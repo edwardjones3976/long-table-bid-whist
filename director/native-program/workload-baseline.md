@@ -133,12 +133,24 @@ direct-production points. The primary authenticated Claude CLI route stopped on
 an explicit temporary usage limit after a mechanically frozen ten-owned-path
 checkpoint. The materially different Cowork recovery then accepted the exact
 sanitized input but returned no output because the authenticated account reached
-its plan limit. The observed plan reset is `2026-08-30 10:10
-America/Los_Angeles`.
+its plan limit. The initial plan reset shown as `2026-08-30 10:10
+America/Los_Angeles` was superseded during the live 10:12 recheck by 10:40; the
+cap remained active and no provider prompt was sent.
 
-Only the existing Cowork task is planned to resume once at or after 10:12 Pacific. This is
+Only the existing Cowork task is planned to resume once at or after 10:42 Pacific. This is
 the same assignment and transport after a concrete external-state change, not a
 new dispatch or workload row. It earns no points until a real provider execution
 becomes terminal. The `$0` packet budget prohibits buying usage credits, and all
 downstream leases remain closed during the pause.
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 12:30 UTC | END]] -->
+
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 17:13 UTC | BEGIN]] -->
+## Live usage-reset correction
+
+The active one-shot heartbeat fired at 10:12 Pacific and rechecked the preserved
+Cowork task. The authenticated UI still reported an active plan cap and now
+identified 10:40 Pacific as the reset, superseding the earlier 10:10 display.
+OpenAI sent no provider prompt and performed no product mutation. The same
+heartbeat was moved to one 10:42 Pacific occurrence; sequence 10 remains pending
+with zero completed-window and direct-production points.
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 17:13 UTC | END]] -->

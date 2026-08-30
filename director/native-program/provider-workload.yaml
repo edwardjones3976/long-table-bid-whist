@@ -218,7 +218,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 16, cursor: 20, grok: 8, openai: 0, gemini_antigravity: 10, perplexity: 0}
   current_partial_shares_percent: {claude: 29.63, cursor: 37.04, grok: 14.81, openai: 0, gemini_antigravity: 18.52, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "resume the existing authenticated Cowork task once at or after 2026-08-30T10:12:00-07:00 following the observed 10:10 reset; this is the same assignment and transport, not a new dispatch, retry, row or credit; if the existing task cannot resume, mark the route unavailable; only after exact OpenAI QA is terminal may the already frozen XR-test fallback and separate clean-room RobotDealer fallback run sequentially"
+  next_route: "resume the existing authenticated Cowork task once at or after 2026-08-30T10:42:00-07:00 following the live 10:12 recheck that superseded the earlier 10:10 reset with 10:40; this is the same assignment and transport, not a new dispatch, retry, row or credit; if the existing task cannot resume, mark the route unavailable; only after exact OpenAI QA is terminal may the already frozen XR-test fallback and separate clean-room RobotDealer fallback run sequentially"
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -342,13 +342,13 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "PAUSED_AFTER_EXPLICIT_USAGE_CAP_RESUME_NOT_BEFORE_2026-08-30T10:12:00-07:00"
+    status: "PAUSED_AFTER_LIVE_USAGE_CAP_RESUME_NOT_BEFORE_2026-08-30T10:42:00-07:00"
     accepted_direct_production_points: 0
     packet_digest: "sha256:2314ec2d04333ddf97e7b4f7c7096fa7d2947c145377189402e5a035916e86df"
     work_packet_digest: "sha256:9bd9b846a9f8f42a9d149b77ad13c7b57a85fbef605a9a28e8163665ef68c144"
     transport_delta_file: "director/native-program/packets/LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001-BROWSER-DELTA.json"
-    transport_delta_file_sha256: "sha256:8442a0859aac6816a4592686311be87654f8218d0399fcb13511724e21a74fc1"
-    transport_delta_digest: "sha256:511fb3167fb8cbb6bd514a2b2d5a11ee281b74633670b40eb2329fc70177e156"
+    transport_delta_file_sha256: "sha256:867c415cbceb4188e28c174411428b27fcd64383e8bef5699963779edfd554ea"
+    transport_delta_digest: "sha256:397b66b2bf80755741089a803fb2f31092a2d1c01e08b643a4edc03b99085dd5"
     accepted_outcome_digest: null
     starting_ref: "816824ef85037caac11e90e34c090b54a1c3a7a1"
     starting_tree: "df89b69458fb90c58e619540bd7069445a23b461"
@@ -360,13 +360,15 @@ canonical_assignment_ledger:
     cowork_input_archive_sha256: "sha256:b5936893cb0e6c2fc3c1b072e9921dccc90db8c60a8299c682dabf0345c6a849"
     cowork_task_url: "https://claude.ai/cowork/cse_01J1WZXZMbRcQgYj3nS2dFJb"
     cowork_status: "PAUSED_EXPLICIT_USAGE_RESET_NO_OUTPUT"
-    cowork_usage_reset: "2026-08-30T10:10:00-07:00"
-    cowork_resume_not_before: "2026-08-30T10:12:00-07:00"
+    cowork_prior_usage_reset_superseded: "2026-08-30T10:10:00-07:00"
+    cowork_latest_usage_observed_at: "2026-08-30T10:12:56-07:00"
+    cowork_usage_reset: "2026-08-30T10:40:00-07:00"
+    cowork_resume_not_before: "2026-08-30T10:42:00-07:00"
     cowork_same_task_continuation_is_retry: false
     resume_heartbeat_id: "resume-claude-foundation-correction"
-    resume_heartbeat_status: "ACTIVE_ONE_SHOT"
+    resume_heartbeat_status: "ACTIVE_ONE_SHOT_RESCHEDULED_AFTER_LIVE_RESET_CHANGE"
     provider_evidence: "artifacts/native-program/providers/2026-08-30-claude-foundation-final.md"
-    manual_overlay_reason: "one final bounded medium assignment is justified by twelve materially new independent OpenAI source findings discovered only after the R1 terminal provider result; its primary Claude CLI route stopped explicitly at a temporary 429 after writing ten owned files, Claude Code web was unavailable before prompt at the same 100 percent cap, and the authenticated Cowork recovery accepted the sanitized archive but returned no work because the account reached its explicit plan limit; the same Cowork task is planned to resume once after the observed 10:10 Pacific reset with no new dispatch, row or credit, and no purchase is authorized under budget_usd zero; this is not R2, has no revision budget, and remains pending"
+    manual_overlay_reason: "one final bounded medium assignment is justified by twelve materially new independent OpenAI source findings discovered only after the R1 terminal provider result; its primary Claude CLI route stopped explicitly at a temporary 429 after writing ten owned files, Claude Code web was unavailable before prompt at the same 100 percent cap, and the authenticated Cowork recovery accepted the sanitized archive but returned no work because the account reached its explicit plan limit; the live 10:12 recheck still showed the cap and superseded the earlier 10:10 reset with 10:40, so no prompt was sent and the same Cowork task is planned to resume once after 10:42 with no new dispatch, retry, row or credit; no purchase is authorized under budget_usd zero, this is not R2, has no revision budget, and remains pending"
   - sequence: 11
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
     provider: claude

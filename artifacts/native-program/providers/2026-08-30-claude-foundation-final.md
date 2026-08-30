@@ -19,8 +19,9 @@ before fixtures, tests, Unreal work, a provider commit or a terminal result
 packet.
 
 The CLI terminal response stated a separate `2026-08-30 08:30
-America/Los_Angeles` reset for that route; later Cowork UI evidence superseded
-it for the shared plan state with the exact 10:10 reset below.
+America/Los_Angeles` reset for that route. Cowork later displayed 10:10 for the
+shared plan state, and the live heartbeat recheck below superseded that with
+10:40.
 
 OpenAI did not edit those bytes. It froze them mechanically for provenance:
 
@@ -47,13 +48,19 @@ sanitized archive and the frozen browser transport delta:
 
 Cowork accepted the prompt but returned no output artifact and no source change.
 Its terminal UI state reported that the session/plan usage limit had been
-reached and that plan usage resets at `2026-08-30 10:10
-America/Los_Angeles`. The offered purchase route was not used: the exact work
-packet has `budget_usd: 0`, and the owner did not authorize a purchase amount.
+reached and initially displayed `2026-08-30 10:10 America/Los_Angeles` as the
+plan reset. The offered purchase route was not used: the exact work packet has
+`budget_usd: 0`, and the owner did not authorize a purchase amount.
+
+At `2026-08-30 10:12:56 America/Los_Angeles`, the active heartbeat rechecked the
+same preserved Cowork task. Its live banner still reported no usage credits and
+now said to wait until 10:40 AM, superseding the earlier 10:10 display. The
+prompt composer was present, but usage was not available, so OpenAI sent no
+provider message and made no product mutation.
 
 ## Continuation rule
 
-The existing Cowork task is planned to resume once at or after `2026-08-30 10:12
+The existing Cowork task is planned to resume once at or after `2026-08-30 10:42
 America/Los_Angeles`, after the explicit external-state reset. This same-task
 continuation is not a retry, new assignment or concurrent provider dispatch. It
 adds no workload row, revision
@@ -62,10 +69,11 @@ concurrently. If the existing Cowork task cannot resume, this route is terminal
 unavailable and OpenAI must not author or transfer the production correction.
 
 One active, one-shot thread heartbeat is bound to this continuation:
-`resume-claude-foundation-correction`. It will wake this same Codex task at
-10:12 AM local time. It does not create a provider assignment or provider call;
-the resumed turn must still verify the reset before touching Cowork. An earlier
-rendered suggestion card is not active and requires no user action.
+`resume-claude-foundation-correction`. After the live reset changed, the same
+heartbeat was moved to 10:42 AM local time. It does not create a provider
+assignment or provider call; the resumed turn must still verify the current
+usage banner before touching Cowork. An earlier rendered suggestion card is not
+active and requires no user action.
 
 Downstream Claude XR-test, RobotDealer, integration, Android and physical Quest
 gates remain closed until a complete provider-authored foundation candidate is

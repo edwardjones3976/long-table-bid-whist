@@ -45,10 +45,12 @@ device gate may treat it as an accepted dependency. First run the exact
 `LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001` correction and independent QA; then run
 the XR test-only and RobotDealer clean-room fallbacks sequentially. A green
 browser, Windows or headless gate never substitutes for physical Quest evidence.
-The correction is currently paused at Claude's explicit plan reset after its
-Cowork transport returned no output; the same task is planned to resume once at or after
-`2026-08-30 10:12 America/Los_Angeles`. No downstream lease opens during this
-pause and the frozen partial checkpoint remains unaccepted.
+The correction is currently paused at Claude's explicit plan limit after its
+Cowork transport returned no output. A live 10:12 recheck still showed the cap
+and moved the current reset to 10:40; no prompt was sent. The same task is
+planned to resume once at or after `2026-08-30 10:42
+America/Los_Angeles`. No downstream lease opens during this pause and the frozen
+partial checkpoint remains unaccepted.
 
 ## Chunk B — Private Game Night
 
