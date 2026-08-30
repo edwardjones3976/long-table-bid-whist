@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-XRTEST-001",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "starting_ref": "33aca6106603342efcf43fb813482cb18fd4b18c",
+  "objective": "Perform one test-only exhausted-route ownership transfer from terminal Cursor to Claude. Correct the stale transactional-decode assertions in the exact LongTableXR final candidate and add the missing above-maximum ConfirmGeneration rejection coverage without changing production decoding or any other file. Run the focused UE5.7 build and XR automation, create one local commit, and return exactly one Director model-result-packet-v1 JSON document.",
+  "non_goals": [
+    "No production LongTableXR decoder, runtime, types, input, presence, accessibility, MR, VR or content change",
+    "No rules, protocol, table authority, social, HouseCore or RobotDealer implementation",
+    "No weakening, skipping, relabeling or deletion of an acceptance assertion",
+    "No physical Quest, Android, Meta SDK, multiplayer, human, cultural, rights, store or completion claim"
+  ],
+  "authority_snapshot": [
+    {"path": "director/native-program/manual-provider-overlay.md", "commit_sha": "3a174362be4515c4fdc444e23bc349fd9e9aeb61", "blob_sha": "38d370c6399651ea4bc994e7c0991cfc8b25e872"},
+    {"path": "director/native-program/provider-workload.yaml", "commit_sha": "3a174362be4515c4fdc444e23bc349fd9e9aeb61", "blob_sha": "e4ce2bc983c0f9a341cba6f3f00c825fe7064adf"},
+    {"path": "director/native-program/roles-and-responsibilities.md", "commit_sha": "3a174362be4515c4fdc444e23bc349fd9e9aeb61", "blob_sha": "3f87dde87a312f3601d956fad324677a3f769253"},
+    {"path": "director/native-program/contracts/long-table-xr-public-v1.json", "commit_sha": "3a174362be4515c4fdc444e23bc349fd9e9aeb61", "blob_sha": "e2eea682d0dee913c8d21d791211ad2bd6573792"},
+    {"path": "director/native-program/contracts/model-result-packet-v1.schema.json", "commit_sha": "3a174362be4515c4fdc444e23bc349fd9e9aeb61", "blob_sha": "3f68e59136c422ce84d79f874c0343fd5ffc0a9e"}
+  ],
+  "authority_snapshot_digest": "sha256:8dd593cb3a477ed7d45cba5fff011147286ee0b6a857c870079c6bb280a6b8a7",
+  "dependencies": [],
+  "constraints": [
+    "Work only in C:\\Users\\edwar\\.codex\\worktrees\\long-table-claude-xr-test on branch codex/claude-xr-test at exact starting_ref",
+    "The sole writable path is Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp",
+    "Every LongTableXR file other than the owned test file is a readable immutable dependency and must remain byte-identical",
+    "After each exact maximum InteractionId and TargetHandle decode, snapshot the actual successful DecodeOut immediately before submitting the above-maximum input and compare rejection output with that snapshot",
+    "After the exact maximum ConfirmGeneration decode, snapshot DecodeOut, submit MaxConfirmGeneration plus one, assert rejection and assert unchanged output",
+    "Do not change production decoding: LongTableXRCodec already parses into locals and assigns Out only after complete validation",
+    "Do not use regex, blacklist, keyword, substring, redaction, serialize-then-delete or concealed-object-then-delete privacy controls",
+    "Do not commit DefaultInput.ini, Binaries, Intermediate, Saved, logs, reports, caches or other generated output",
+    "Use the verified Unreal Engine 5.7.4 installation and preserve all existing tests"
+  ],
+  "prohibited_actions": [
+    "Do not edit another provider or production path",
+    "Do not read, write or reference sources/**, director/**, artifacts/**, packages/**, services/**, Unreal/Source/**, Unreal/Content/**, Unreal/Plugins/LongTableRobotDealer/**, Unreal/Plugins/LongTableHouseCore/** or .github/**",
+    "Do not read, write or reference any provider sandbox, frozen QA copy or provider transcript",
+    "Do not push, merge, deploy, publish, mutate GitHub/Slack/Linear, spend, change credentials or permissions",
+    "Do not read quarantined Antigravity code or evidence",
+    "Do not retry or duplicate another provider dispatch"
+  ],
+  "allowed_tools": [
+    "local filesystem and Git within the named worktree",
+    "UnrealBuildTool and UnrealEditor-Cmd for local build and focused automation",
+    "the authenticated Claude Code subscription transport"
+  ],
+  "allowed_external_effects": [
+    "Edit only the one owned test file",
+    "Run local build and test commands",
+    "Create one local commit and return its exact SHA",
+    "Return one JSON result packet in the authenticated terminal response"
+  ],
+  "acceptance_checks": [
+    "Exact starting SHA and tree are verified before editing and one exact revision head/tree is returned",
+    "git diff from starting_ref lists exactly the one owned test file",
+    "The stale baseline is replaced by the immediately prior successful decode for both InteractionId and TargetHandle rejection checks",
+    "Above-maximum ConfirmGeneration rejects and preserves the immediately prior DecodeOut",
+    "No production decoder or any other file changes",
+    "LongTableEditor Win64 Development builds with exit 0",
+    "Focused LongTable.XR automation reports all 10 tests succeeded, 0 failed and 0 not run",
+    "No generated build, input, cache, log or report artifact is committed",
+    "Terminal output is exactly one JSON document valid against model-result-packet-v1 and repeats this packet identity and correlation"
+  ],
+  "evidence_requirements": [
+    "Authenticated Claude session/run reference plus model and effort label",
+    "Exact base, head, tree and single-file changed allowlist",
+    "Exact UE5.7 editor build and LongTable.XR automation commands, exit codes and counts",
+    "Known limitations including absent physical Quest and Android evidence",
+    "A schema-valid terminal result with status, checks, acceptance, risks, blockers, decisions, side effects and revision recommendation"
+  ],
+  "approval_requirements": [
+    "LT-NATIVE-CLAUDE-001-R1 must be terminal before dispatch",
+    "OpenAI QA must independently build, rerun focused automation and accept the exact unchanged candidate before integration credit",
+    "No revision is authorized under this assignment",
+    "Owner separately authorizes merge, release, license, account, device, human or external effects"
+  ],
+  "limits": {"budget_usd": 0, "timeout_seconds": 3600, "max_hops": 0, "max_revisions": 0},
+  "idempotency_key": "LT-NATIVE-CLAUDE-XRTEST-001-33aca61",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-XRTEST-001",
+    "source_event_id": "owner-authorized-exhausted-route-transfer-20260830",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}

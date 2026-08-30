@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-001",
+  "project": "The Long Table - Bid Whist",
+  "repository": "local-synthetic/long-table-robot-dealer",
+  "starting_ref": "2f3ce02ba6a4339655a096066730c1ea12d96b5b",
+  "objective": "Create a clean-room source-only UE5.7 LongTableRobotDealer plugin from the exact public contract. Implement a visibly non-human presentation-only state machine with the frozen twelve-kind, six-field cue, monotonic sequence defense, bounded paused queue, reset replay defense, compile-safe native and Blueprint event seams, structural privacy and original code-native presentation. Run every available local check, create one local commit, and return exactly one Director model-result-packet-v1 JSON document.",
+  "non_goals": [
+    "No access to the Long Table repository, its source, diffs, worktrees, provider outputs, Slack, Linear or private project data",
+    "No access to any Antigravity implementation, sandbox, worktree, frozen copy, transcript, diff, hash inventory, result or QA evidence",
+    "No Bid Whist rules, authority, player intent, host command, credential, identity, session, room, networking, telemetry or concealed-state behavior",
+    "No Meta SDK, avatar, account, license, store, deployment, physical-device, human-event or completion claim",
+    "No bundled voice, jazz, blues, music, samples, images, likenesses, models, textures or third-party media"
+  ],
+  "authority_snapshot": [
+    {"path": "PUBLIC_CONTRACT.md", "commit_sha": "2f3ce02ba6a4339655a096066730c1ea12d96b5b", "blob_sha": "9dfbfa6923166462132d250c522a7664f2a604a6"},
+    {"path": "RESULT_SCHEMA.json", "commit_sha": "2f3ce02ba6a4339655a096066730c1ea12d96b5b", "blob_sha": "3f68e59136c422ce84d79f874c0343fd5ffc0a9e"}
+  ],
+  "authority_snapshot_digest": "sha256:02a759aeee87480b881e4e9922271410665cf47bc9cea4c7344657e1a3b264e2",
+  "dependencies": [],
+  "constraints": [
+    "Work only in C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-robot-dealer-claude-001 on branch codex/claude-robot-cleanroom at exact starting_ref",
+    "The sole writable path is LongTableRobotDealer/**; PUBLIC_CONTRACT.md and RESULT_SCHEMA.json remain byte-identical",
+    "Create only the descriptor, runtime module, public/private C++ source, README and focused automation tests required by the public contract",
+    "Implement exactly the frozen twelve cue kinds and six cue fields with no extension map, optional concealed member, string, identifier, UObject authority reference or opaque payload",
+    "Use one shared monotonic high-water acceptance function across direct and queued paths; an older queued cue can never lower the high-water mark after a newer direct cue",
+    "Only PresentationPaused enters pause and only PresentationResumed exits; ordinary paused cues queue without emitting or unpausing, then drain once in FIFO order",
+    "Reset clears pending presentation while preserving sequence replay defense; every rejection is atomic and emits nothing",
+    "Expose a native multicast test seam and, only if needed, a separate dynamic Blueprint multicast seam; never AddLambda to a dynamic multicast delegate",
+    "Use positive exact field inventories and counterfactual equality only; regex, blacklist, keyword, substring, redaction, serialize-then-delete and concealed-object-then-delete privacy controls are prohibited",
+    "Use original source only and commit no Binaries, Intermediate, Saved, logs, reports, caches, generated or packaged artifacts"
+  ],
+  "prohibited_actions": [
+    "Do not read, write or reference any path outside this synthetic sandbox",
+    "Do not read, copy, compare, patch, import or claim provenance from the rejected Antigravity candidate or any other provider implementation",
+    "Do not push, merge, deploy, publish, contact services, mutate GitHub/Slack/Linear, spend, change credentials or permissions",
+    "Do not download, install or access network content",
+    "Do not retry or duplicate another provider dispatch"
+  ],
+  "allowed_tools": [
+    "local filesystem and Git within the named synthetic sandbox",
+    "local static/source checks available without leaving the sandbox",
+    "the authenticated Claude Code subscription transport"
+  ],
+  "allowed_external_effects": [
+    "Create and edit only LongTableRobotDealer/**",
+    "Run local checks that remain inside the sandbox",
+    "Create one local commit and return its exact SHA",
+    "Return one JSON result packet in the authenticated terminal response"
+  ],
+  "acceptance_checks": [
+    "Exact starting SHA, tree, branch, clean sandbox and unchanged authority files are verified before work",
+    "Every changed file is below LongTableRobotDealer/** and one local commit contains no generated artifact",
+    "The plugin has the exact frozen cue, presentation-state and result inventories with no private, credential, authority, network, audio or extension member",
+    "Focused tests cover closed schema, valid single emission, invalid atomicity, exact duplicate, sequence conflict, stale rejection and every numeric/enum bound",
+    "Focused tests cover direct/queued monotonic interleaving, pause-only transition, ordinary-cue-cannot-resume, FIFO drain, capacity 64, overflow atomicity and reset replay defense",
+    "Focused tests cover deterministic state bytes, concealment counterfactual equivalence, AI-dealer/human-host authority equivalence, rights inventory and module boundary",
+    "Native lambda tests bind only the native delegate; Blueprint dynamic multicast uses valid UObject/UFUNCTION binding",
+    "No regex, blacklist, keyword, substring, redaction, serialize-then-delete or concealed-object-then-delete control exists",
+    "All actually available checks pass and unavailable Unreal build evidence is honestly NOT_RUN",
+    "Terminal output is exactly one JSON document valid against RESULT_SCHEMA.json and repeats this packet identity and correlation"
+  ],
+  "evidence_requirements": [
+    "Authenticated Claude session/run reference plus model and effort label",
+    "Exact base, head, tree, changed-file allowlist and unchanged authority-file digests",
+    "Named checks with exact commands, exit codes and PASS, FAIL or NOT_RUN results",
+    "Exact reflected cue/state field inventories and runtime module dependency inventory",
+    "Known limitations, side effects and zero external-write claim",
+    "A schema-valid terminal result with status, checks, acceptance, risks, blockers, decisions, side effects and revision recommendation"
+  ],
+  "approval_requirements": [
+    "LT-NATIVE-CLAUDE-001-R1 and LT-NATIVE-CLAUDE-XRTEST-001 must be terminal before dispatch",
+    "OpenAI QA must mechanically freeze the exact provider bytes, place them in an isolated target-project QA worktree, build and test them before any integration or direct-production credit",
+    "No revision is authorized under this assignment",
+    "Owner separately authorizes merge, release, license, account, device, human or external effects"
+  ],
+  "limits": {"budget_usd": 0, "timeout_seconds": 7200, "max_hops": 0, "max_revisions": 0},
+  "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-001-2f3ce02",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-ROBOT-001",
+    "source_event_id": "owner-authorized-clean-room-fallback-20260830",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}
