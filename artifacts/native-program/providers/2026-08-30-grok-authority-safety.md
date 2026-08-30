@@ -82,6 +82,16 @@ uses planned run reference `4a8eb506-d9be-426e-b5d2-fc98fe529bc6`, disables
 web/MCP/subagent access, and restricts edits to the seven leased paths. It has
 not been submitted to Grok.
 
+A no-new-permission fallback is also staged in the owner's already
+authenticated `grok.com` workspace. Grok 4.6 **Build Beta** is selected, and a
+sanitized 151,654-character packet containing the public repository identity,
+all three defect contracts and the exact seven leased source/test files is
+attached as `pasted-text.txt`. It contains no absolute local path. The browser
+shows one enabled **Send** action, but OpenAI has not clicked it because provider
+submission is an action-bound external communication. No model execution,
+response or code candidate is claimed. This route does not require accepting
+the pending persistent OAuth scopes.
+
 No provider prompt, model execution, output, candidate, workload point,
 production credit, integration or acceptance is claimed yet. The queued XR-test
 and RobotDealer leases remain closed until this foundation fallback is
