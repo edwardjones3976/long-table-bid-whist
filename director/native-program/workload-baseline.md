@@ -211,3 +211,22 @@ If the Claude foundation-safety packet terminates, Claude projects to 26/69 =
 a recorded useful-work variance or genuine rebalance; filler and duplicate
 research remain prohibited.
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 20:20 UTC | END]] -->
+
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 20:40 UTC | BEGIN]] -->
+## Claude foundation-safety pre-write control stop
+
+Sequence 12 remains incomplete and contributes zero points. Authenticated
+Claude Fable 5 Max session `4517d60a-0b4e-451d-8fb9-71a5f458565d` verified the
+exact clean base and performed reconnaissance, but OpenAI stopped it before any
+edit after finding a stale QA-header digest and undefined maximum-counter
+welcome semantics. The worktree was clean at exact `a6742a0` at
+`2026-08-30T20:40:04Z`.
+
+The Director fault is corrected by removing the circular hard-coded digest and
+freezing `nextIntentCounter: null` plus table-incarnation exhaustion after the
+maximum counter is consumed. The provider path lease is also replaced with one
+exact contract array rather than inferred test/fixture wording. One recovery is
+authorized only after the new control snapshot and packet are committed and
+revalidated. This is the same sequence-12 assignment, not a new workload row or
+duplicate provider dispatch.
+<!-- [[OpenAI Director | Codex | 2026-08-30 | 20:40 UTC | END]] -->

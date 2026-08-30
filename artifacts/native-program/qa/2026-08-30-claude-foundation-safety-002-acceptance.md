@@ -6,12 +6,15 @@
 - Provider: Claude, fresh sequential medium/5 assignment
 - Start: `a6742a04a384a88e7342530041a1f0d3ab71db2c`
 - Start tree: `0489b183e70da5751c31e9b80ed40a8b631ba55a`
-- Authority digest: `a12748a592bbd52995b40af7397dfa4e1a58c25c170110dfe5df38e2be00c8cb`
+- Authority digest: the exact value in the bound work packet; OpenAI recomputes
+  the RFC 8785 digest of `{"authority_snapshot":[...]}` before dispatch.
 - Budget: `$0`; one primary and one recovery only for a temporary failure or
   one consolidated substantive kickback.
 
 The provider may read the exact `a6742a0` source and the frozen v2 contract. It
 must not read any Grok or other rejected-provider implementation artifact.
+Its writable allowlist is exactly `provider_writable_paths` in that contract;
+no phrase such as “corresponding tests” or “affected fixtures” expands it.
 
 ## Gate A — terminal WebSocket dispatch
 
@@ -44,12 +47,25 @@ Required executable cases:
 8. role welcomes reveal only the recipient grant; public/dealer have null
    counters and no projection, cue or log contains grant state.
 
+After one lane consumes counter `9007199254740991`, every entitled welcome
+uses `nextIntentCounter: null`, the entire table incarnation rejects every new
+intent without mutation, and only a new externally non-reused table incarnation
+may resume. Clamping, wrapping, grant rotation, or advertising the maximum again
+fails this gate.
+
 ## Gate C — Unreal context epoch
 
 `LongTable.Table.Client.ContextEpochReentrancyStopsSiblingProjection` binds two
 listeners in order. Listener one reconfigures A to B; listener two receives no
 old projection while the public client exposes B. Every context-bound event
 uses a per-listener generation guard that compiles on UE5.7.
+
+UE5.7 copies a dynamic multicast's full invocation list before ordinary
+`Broadcast()`, so a generation check after broadcast, delegate clearing,
+`GetAllObjects()`, casts or engine-header changes fail source review. Preserve
+the reflected `BlueprintAssignable` API through a compile-safe guarded snapshot
+adapter that invokes one copied binding at a time and checks generation before
+the next, or record and test an explicitly authorized public API migration.
 
 The Unreal client also accepts only coherent protocol-v2 welcomes, never rolls
 a grant/counter backward, preserves an in-flight retry only under the same

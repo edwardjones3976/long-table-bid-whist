@@ -373,6 +373,27 @@ and Perplexity 0. This remains a warm-up advisory, not a compliance pass; Cursor
 is still above its target-plus-five planning ceiling. The ready Claude packet
 earns no points until terminal.
 
+### Claude pre-write control stop
+
+The first authenticated Claude Fable 5 Max primary for
+`LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002` was stopped by OpenAI before any edit,
+test or commit. Preflight found that the embedded QA page retained a pre-freeze
+authority digest while the work packet correctly used the committed
+snapshot-document digest. It also found that `highestConsumedCounter + 1` was
+undefined after consuming the maximum safe integer. The provider worktree was
+reverified clean at exact `a6742a0`; no provider output is accepted from the
+aborted run.
+
+The corrected authority removes the self-referential hard-coded digest from the
+QA page and makes maximum consumption exhaust the entire table incarnation:
+entitled welcomes report `nextIntentCounter: null`, no grant rotation may
+bypass exhaustion, and only a new externally non-reused incarnation may resume.
+It also replaces the packet's ambiguous test/fixture prose with the contract's
+exact `provider_writable_paths` array; no inferred path is writable.
+This is materially new control information, so the packet's one recovery is
+authorized after a fresh committed snapshot and packet binding. It does not add
+another workload row or award points before terminal.
+
 ## Acceptance
 
 Manual routing never weakens acceptance. Each provider candidate still requires:

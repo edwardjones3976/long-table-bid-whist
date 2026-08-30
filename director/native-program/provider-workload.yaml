@@ -435,7 +435,7 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "FROZEN_READY_FOR_SINGLE_DISPATCH_AFTER_PACKET_BINDING"
+    status: "PRIMARY_ABORTED_PREWRITE_DIRECTOR_AUTHORITY_CONFLICT_RECOVERY_PENDING"
     accepted_direct_production_points: 0
     accepted_outcome_digest: null
     starting_ref: "a6742a04a384a88e7342530041a1f0d3ab71db2c"
@@ -444,7 +444,12 @@ canonical_assignment_ledger:
     packet_file: "director/native-program/packets/LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002.json"
     qa_contract: "artifacts/native-program/qa/2026-08-30-claude-foundation-safety-002-acceptance.md"
     grok_artifacts_permitted_as_inputs: false
-    manual_overlay_reason: "Fresh exhausted-route assignment based on materially new OpenAI authority analysis. It replaces impossible arbitrary-string lifetime membership with the frozen bounded role-grant/counter v2 contract, is not a revision of LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001, and earns no points until terminal."
+    primary_run: "claude-code:session:4517d60a-0b4e-451d-8fb9-71a5f458565d;model:claude-fable-5;effort:max"
+    primary_disposition: "OPENAI_ABORTED_PREWRITE_CONTROL_MISMATCH"
+    primary_changed_paths: []
+    primary_clean_base_reverified_at: "2026-08-30T20:40:04Z"
+    recovery_status: "AUTHORIZED_ONLY_AFTER_DIGEST_AND_MAXIMUM_SEMANTICS_ARE_REBOUND"
+    manual_overlay_reason: "Fresh exhausted-route assignment based on materially new OpenAI authority analysis. The authenticated primary was stopped before edits when OpenAI found the QA header carried a pre-freeze digest and maximum-counter welcome behavior was ambiguous. This Director control fault earns no separate row or credit. One recovery is authorized only after a new exact authority snapshot and packet bind the corrected null/exhaustion semantics."
   - sequence: 13
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
     provider: claude
