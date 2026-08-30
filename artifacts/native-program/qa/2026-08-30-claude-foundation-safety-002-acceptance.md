@@ -3,13 +3,15 @@
 ## Frozen candidate
 
 - Assignment: `LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002`
-- Provider: Claude, fresh sequential medium/5 assignment
+- Provider: Claude, sole authorized recovery of the sequential medium/5
+  assignment after OpenAI's pre-write Director control stop
 - Start: `a6742a04a384a88e7342530041a1f0d3ab71db2c`
 - Start tree: `0489b183e70da5751c31e9b80ed40a8b631ba55a`
 - Authority digest: the exact value in the bound work packet; OpenAI recomputes
   the RFC 8785 digest of `{"authority_snapshot":[...]}` before dispatch.
-- Budget: `$0`; one primary and one recovery only for a temporary failure or
-  one consolidated substantive kickback.
+- Budget: `$0`; the stopped primary made no provider write and this dispatch
+  consumes the assignment's sole recovery. No further same-transport provider
+  retry or revision is authorized.
 
 The provider may read the exact `a6742a0` source and the frozen v2 contract. It
 must not read any Grok or other rejected-provider implementation artifact.

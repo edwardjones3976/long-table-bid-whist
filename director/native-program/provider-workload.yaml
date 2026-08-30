@@ -245,7 +245,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 21, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0}
   current_partial_shares_percent: {claude: 32.81, cursor: 31.25, grok: 20.31, openai: 0, gemini_antigravity: 15.63, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "freeze and dispatch one fresh medium/5 Claude foundation-safety assignment from exact base a6742a0 under the materially new server-issued role-grant and monotonic-counter v2 contract. The ready assignment earns no points until terminal, uses no Grok implementation artifact, and is not a revision bypass. XR-test and RobotDealer remain closed until exact OpenAI acceptance of the new foundation candidate."
+  next_route: "rebind and dispatch the one authorized recovery for the medium/5 Claude foundation-safety assignment from exact base a6742a0 under the corrected server-issued role-grant and monotonic-counter v2 authority. The stopped primary and recovery preflight earn no points, use no Grok implementation artifact, and do not create another workload row. XR-test and RobotDealer remain closed until exact OpenAI acceptance of the new foundation candidate."
 
 canonical_assignment_ledger:
   - sequence: 1
@@ -448,8 +448,9 @@ canonical_assignment_ledger:
     primary_disposition: "OPENAI_ABORTED_PREWRITE_CONTROL_MISMATCH"
     primary_changed_paths: []
     primary_clean_base_reverified_at: "2026-08-30T20:40:04Z"
-    recovery_status: "AUTHORIZED_ONLY_AFTER_DIGEST_AND_MAXIMUM_SEMANTICS_ARE_REBOUND"
-    manual_overlay_reason: "Fresh exhausted-route assignment based on materially new OpenAI authority analysis. The authenticated primary was stopped before edits when OpenAI found the QA header carried a pre-freeze digest and maximum-counter welcome behavior was ambiguous. This Director control fault earns no separate row or credit. One recovery is authorized only after a new exact authority snapshot and packet bind the corrected null/exhaustion semantics."
+    recovery_preflight: "OPENAI_BLOCKED_BEFORE_DISPATCH_TO_INCLUDE_ALL_PROTOCOL_V2_GENERATED_FIXTURES"
+    recovery_status: "AUTHORIZED_ONLY_AFTER_DIGEST_MAXIMUM_SEMANTICS_AND_35_PATH_LEASE_ARE_REBOUND"
+    manual_overlay_reason: "Fresh exhausted-route assignment based on materially new OpenAI authority analysis. The authenticated primary was stopped before edits when OpenAI found the QA header carried a pre-freeze digest and maximum-counter welcome behavior was ambiguous. The recovery preflight then found that five protocol-v2 generated fixtures were missing from the exact path lease and stopped before dispatch. These Director control faults earn no separate row or credit. One recovery is authorized only after a new exact authority snapshot and packet bind the corrected null/exhaustion semantics and complete 35-path lease."
   - sequence: 13
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
     provider: claude

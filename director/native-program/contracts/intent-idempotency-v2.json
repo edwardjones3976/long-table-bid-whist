@@ -79,8 +79,13 @@
     "fixtures/protocol/client-messages.json",
     "fixtures/protocol/authority-messages.json",
     "fixtures/protocol/manifest.json",
+    "fixtures/protocol/player-projection.json",
+    "fixtures/protocol/host-projection.json",
+    "fixtures/protocol/public-projection.json",
+    "fixtures/protocol/dealer-cues.json",
     "fixtures/protocol/receipts.json",
-    "fixtures/protocol/rejections.json"
+    "fixtures/protocol/rejections.json",
+    "fixtures/protocol/counterfactual.json"
   ],
   "memory_proof": "Exactly five preallocated lane records per table. No submitted-id Map, Set, array, receipt cache, probabilistic filter, digest collection, fallback store or queue may grow with request count.",
   "known_tradeoff": "This replaces impossible exact lifetime membership for arbitrary unbounded client strings with a collision-free bounded server-issued grant and monotonic counter domain."
