@@ -55,11 +55,14 @@ The packet and sanitized input are schema-valid. Chrome file upload was blocked
 before any provider prompt because the ChatGPT Chrome extension lacks local-file
 URL access. The materially different local Grok Build CLI is installed and the
 exact isolated provider worktree is ready, but its account was not yet
-authenticated. `grok login --oauth` opened the official xAI consent page and is
-waiting at the final **Allow** action. The requested scopes are profile and
-email, offline access, xAI API access, and Grok.com conversation/workspace
-read-write access. OpenAI did not grant that permission; owner confirmation is
-required at the action boundary.
+authenticated. `grok login --oauth` opened the official xAI consent page at the
+final **Allow** action. The requested scopes were profile and email, offline
+access, xAI API access, and Grok.com conversation/workspace read-write access.
+OpenAI did not grant that permission. At `2026-08-30T18:33:17Z` the CLI exited
+`1` after its ten-minute authorization-code timeout, before authentication,
+prompt submission or model execution. One materially temporary OAuth recovery
+is available, but owner confirmation is still required at the permission
+action boundary before it is started.
 
 Before dispatch, OpenAI froze the implementation-independent acceptance
 contract in
@@ -70,6 +73,14 @@ the ghost state exactly: transport connections `0`, session connections `1`
 and South connected `true`. Acceptance requires the unchanged probe to converge
 to `0`, `0`, `false`, plus the fixed-bound/non-reuse intent test and the ordered
 two-listener Unreal context-epoch test described there.
+
+The exact one-shot CLI prompt is staged outside the provider worktree at
+`C:\Users\edwar\.codex\provider-sandboxes\LT-NATIVE-GROK-AUTHORITY-SAFETY-001-CLI-PROMPT.md`.
+It is 180 lines, has SHA-256
+`7b4ef19300d0428a8b8c995132911bc39a3a7fd86b84b03ddbaf9d0afa229b36`,
+uses planned run reference `4a8eb506-d9be-426e-b5d2-fc98fe529bc6`, disables
+web/MCP/subagent access, and restricts edits to the seven leased paths. It has
+not been submitted to Grok.
 
 No provider prompt, model execution, output, candidate, workload point,
 production credit, integration or acceptance is claimed yet. The queued XR-test
