@@ -51,8 +51,19 @@ controls are prohibited.
 
 ## Current state
 
-The packet and sanitized input are schema-valid and ready for one primary
-authenticated dispatch.
-No provider output, candidate, production credit, integration or acceptance is
-claimed yet. The queued XR-test and RobotDealer leases remain closed until this
-foundation fallback is independently accepted by OpenAI.
+The packet and sanitized input are schema-valid. Chrome file upload was blocked
+before any provider prompt because the ChatGPT Chrome extension lacks local-file
+URL access. The materially different local Grok Build CLI is installed and the
+exact isolated provider worktree is ready, but its account was not yet
+authenticated. `grok login --oauth` opened the official xAI consent page and is
+waiting at the final **Allow** action. The requested scopes are profile and
+email, offline access, xAI API access, and Grok.com conversation/workspace
+read-write access. OpenAI did not grant that permission; owner confirmation is
+required at the action boundary.
+
+No provider prompt, model execution, output, candidate, workload point,
+production credit, integration or acceptance is claimed yet. The queued XR-test
+and RobotDealer leases remain closed until this foundation fallback is
+independently accepted by OpenAI. The existing Slack checkpoint reply was
+updated in place at message timestamp `1788093523.556419`; no duplicate notice
+was posted.

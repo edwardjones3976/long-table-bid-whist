@@ -391,7 +391,7 @@ canonical_assignment_ledger:
     provider: grok
     size: medium
     canonical_points: 5
-    status: "READY_FOR_SINGLE_PRIMARY_DISPATCH"
+    status: "AWAITING_OWNER_GROK_OAUTH_ALLOW_BEFORE_PRIMARY_DISPATCH"
     accepted_direct_production_points: 0
     packet_digest: "sha256:4dc2923a48df2bdbe452c8576f9c6bce84c998782a148e109521483337aed0c1"
     work_packet_digest: "sha256:47268f714722a19a783b5ebe47a4137a5abaf4b55f68d1363ff1cb576691ff6e"
@@ -399,6 +399,7 @@ canonical_assignment_ledger:
     starting_ref: "a6742a04a384a88e7342530041a1f0d3ab71db2c"
     starting_tree: "0489b183e70da5751c31e9b80ed40a8b631ba55a"
     sanitized_input_archive_digest: "sha256:126dd95b8628638d89b12ce25173dcede2fc0f54652f3235d23aedf01fa73d4c"
+    pre_model_transport_status: "Chrome local-file upload blocked by extension file-URL access; local Grok Build CLI OAuth consent page is waiting at the owner-only Allow action; no provider prompt, model run, workload credit or path mutation occurred"
     manual_overlay_reason: "new owner-authorized sequential fallback for three materially new independent OpenAI safety findings after the terminal Claude packet; Grok is under target, owns only seven exact paths, receives one primary attempt, cannot read rejected-provider evidence as authority, and earns no direct-production credit before exact OpenAI acceptance"
   - sequence: 12
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
