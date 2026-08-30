@@ -110,9 +110,9 @@ It does not reopen that route, create a candidate or satisfy a test gate.
 
 ## Disposition
 
-- **Current state:** `ready for sequence-16 activation recheck`; integration, Android/device, merge, release and Slack gateway activation remain blocked
-- **Blocking fields:** exact sequence-16 activation recheck and accepted replacement foundation; current XR/Robot authority deltas; Android package/install/launch; controller/hand/MR/anchor/two-headset evidence; cultural/rules/rights/human acceptance; exact Slack app isolation for gateway activation
-- **Next responsible party:** OpenAI for the one deterministic activation recheck, then Claude FABLE 5 ULTRA/MAX for the exact 17-path repair
-- **Next bounded action:** verify packet digest, assignment digest, clean seed/worktree, path lease and 80-point hard ceilings once; if green, dispatch sequence 16 without widening scope
+- **Current state:** `ready for one sequence-16 Claude dispatch`; integration, Android/device, merge, release and Slack gateway activation remain blocked
+- **Blocking fields:** accepted replacement foundation; current XR/Robot authority deltas; Android package/install/launch; controller/hand/MR/anchor/two-headset evidence; cultural/rules/rights/human acceptance; exact Slack app isolation for gateway activation
+- **Next responsible party:** Claude FABLE 5 ULTRA/MAX for the exact 17-path repair, then OpenAI for mechanical materialization and independent QA
+- **Next bounded action:** send the immutable sequence-16 packet once against exact clean seed `623ca52c`; do not widen paths or reuse the rejected commit as final ancestry
 - **Milestone stop:** stop only when Chunk A — Native Foundation / First Deal passes every code gate and every available unchanged-candidate physical Quest gate; unavailable physical devices remain explicitly missing evidence rather than inferred success
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 23:08 UTC | END]] -->

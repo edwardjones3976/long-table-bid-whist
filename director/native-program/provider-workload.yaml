@@ -594,7 +594,7 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "PRESTAGED_DEPENDS_ON_SEQUENCES_14_15_TERMINAL_AND_FINAL_WORKLOAD_RECHECK"
+    status: "READY_FOR_ONE_PRIMARY_CLAUDE_FABLE_5_ULTRA_MAX_DISPATCH"
     accepted_direct_production_points: 0
     packet_digest: "sha256:85ba252916b6496045e64285a9da1d9cca4de34821bbc333f113f572694f9a80"
     assignment_approval_digest: "sha256:57df50c0157b7304817cd8f99eb738c2f968f8bc06dac193719f80b217209acb"
@@ -604,7 +604,8 @@ canonical_assignment_ledger:
     final_product_parent_if_authorized: "a6742a04a384a88e7342530041a1f0d3ab71db2c"
     repair_paths: 17
     maximum_final_delta_paths: 36
-    manual_overlay_reason: "Genuinely new replacement-foundation assignment with a complete immutable 17-path repair contract. Rejected candidate 623ca52 is designated as repair seed only. After provider completion, OpenAI mechanically materializes the retained 35-path provider blobs plus exact repair blobs onto sole parent a6742a0; the rejected commit never becomes product ancestry. Dispatch stays closed until sequences 14 and 15 are terminal and the 80-point projection is reverified."
+    activation_evidence: "artifacts/native-program/coordination/2026-08-30-sequence-16-activation.md"
+    manual_overlay_reason: "Genuinely new replacement-foundation assignment with a complete immutable 17-path repair contract. Sequences 14/15 are terminal; exact PR76 evaluation allows the assignment during 15/20 warm-up; and the stricter 80-point project projection is at or below every target-plus-five ceiling. Rejected candidate 623ca52 is repair seed only. OpenAI mechanically materializes retained provider blobs plus exact repair blobs onto sole parent a6742a0; the rejected commit never becomes product ancestry."
   - sequence: 17
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
     provider: claude
