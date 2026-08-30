@@ -1,0 +1,39 @@
+# [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]]
+# ChatGPT project mirror material is local, replaceable, and read-only.
+sources/
+AGENTS.md
+
+# Secrets and local environment state.
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+
+# Editors, operating systems, and build/test output.
+_restart_archive/
+_provider_worktrees/
+.firecrawl/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+coverage/
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+TestResults/
+Build/
+Builds/
+Logs/
+Temp/
+Obj/
+Library/
+UserSettings/
+# [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]]
