@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:54 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 07:30 UTC | BEGIN]]
@@ -313,12 +314,12 @@ $Expected = [ordered]@{
     MainPacketSha256 = 'd4903468bcc4be006933c5ce6895ac76e6d7079ca622257d4c1a497ecd1616d2'
     PermissionDeltaSha256 = '52150e86c67faae07f3b13a7d02894206520b56617c43b4c303a96e19b4f1688'
     ResultBindingSha256 = 'aead3b2806d593f5505597d60fd5116ce4f461eba55336788093ad51aaf5585f'
-    RecoveryPermissionDeltaSha256 = 'd1ea5906e87203cf6ba6da4465236c9c1d911947c06c9ef7301b7913c37e0a2e'
-    RecoveryResultBindingSha256 = 'b486063747330dcde5ed502acac092f65164a55c5d6bedd71fe0428fd5f61075'
+    RecoveryPermissionDeltaSha256 = 'c88d1d5fcd045c3126bfbabaf601eae4e67b47214ba3d1de33aa505be7919b5c'
+    RecoveryResultBindingSha256 = '5cfc8a3f2495522105679a15e59fd1fb0dd996df14e86c8feef9f3a7e102e990'
     PromptSha256 = '39eb912cf4481d8a99d673acedff0f10d146d9300bcd0edd4014a3ebcde019d0'
     PromptLengthBytes = 9668
     ActivationSha256 = '58724bf93b12ee27609d46c2c204596f0ece29881d6d9a6a3a2ed6e19a262720'
-    RecoveryActivationSha256 = '3b1d4015ef56b7191c1cbcabc36f472424f0b212977090dedd74950c63fd940b'
+    RecoveryActivationSha256 = '787e60b165963bc899d4f87c468c5a13e3256dad75381e18f8daa47beabbda69'
     PrimaryFailureIncidentSha256 = '2c1c4723bbd02cf180d0df84ab4cc2d57404128ddae5b0a6be8df0231c0ac2a7'
     PrimaryFailureManifestSha256 = '3b1b114890433125d261abfe107da2159b5772cc46f5dd926169625bf9bc561e'
     PrimaryFailureManifestRowsSha256 = '3845f488694706ea1cab8a817368eb22f93eb236dc8d620d167fb9ab27aae533'
@@ -355,6 +356,43 @@ function Assert-ExactStringSet([string]$Name, [string[]]$Actual, [string[]]$Expe
 
 function Get-LowerSha256([string]$Path) {
     return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
+}
+
+function Get-SafeEvidenceHash {
+    param([AllowNull()][string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return [pscustomobject][ordered]@{
+            path = $Path
+            status = 'UNAVAILABLE'
+            sha256 = $null
+            error = 'Evidence path is null or empty.'
+        }
+    }
+    try {
+        if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+            return [pscustomobject][ordered]@{
+                path = $Path
+                status = 'UNAVAILABLE'
+                sha256 = $null
+                error = 'Evidence path is absent or is not a regular file.'
+            }
+        }
+        return [pscustomobject][ordered]@{
+            path = $Path
+            status = 'HASHED'
+            sha256 = Get-LowerSha256 $Path
+            error = $null
+        }
+    }
+    catch {
+        return [pscustomobject][ordered]@{
+            path = $Path
+            status = 'UNAVAILABLE'
+            sha256 = $null
+            error = $_.Exception.Message
+        }
+    }
 }
 
 function Write-NewBytes([string]$Path, [byte[]]$Bytes) {
@@ -1246,6 +1284,7 @@ function Assert-TransportSelfTestEvidence {
         'child_executable_path','child_output_sha256','child_stderr_sha256','child_bytes_read','child_prompt_sha256',
         'child_eof_observed','child_exit_code','created_with_job_list_attribute','job_bound_before_resume',
         'job_active_processes_after','provider_executable_launched','provider_identity_present',
+        'failure_receipt_probe',
         'canonical_global_pre_sha256','canonical_global_post_sha256','canonical_project_pre_sha256',
         'canonical_project_post_sha256','recorded_at'
     ) 'transport self-test summary'
@@ -1277,6 +1316,19 @@ function Assert-TransportSelfTestEvidence {
     Assert-Exact 'transport self-test final Job count' ([string]$summary.job_active_processes_after) '0'
     Assert-Exact 'transport self-test provider launch state' ([string]$summary.provider_executable_launched) 'False'
     Assert-Exact 'transport self-test provider identity state' ([string]$summary.provider_identity_present) 'False'
+    Assert-Exact 'transport self-test failure receipt probe status' ([string]$summary.failure_receipt_probe.status) 'FAILED_CLOSED'
+    Assert-Exact 'transport self-test failure receipt probe boundary' ([string]$summary.failure_receipt_probe.failure_boundary) 'PROVIDER_FREE_CANONICAL_UNAVAILABLE_PROBE'
+    Assert-Exact 'transport self-test failure receipt probe global hash' ([string]$summary.failure_receipt_probe.canonical_global_post_sha256) ''
+    Assert-Exact 'transport self-test failure receipt probe project hash' ([string]$summary.failure_receipt_probe.canonical_project_post_sha256) ''
+    Assert-Exact 'transport self-test failure receipt probe global status' ([string]$summary.failure_receipt_probe.evidence_hash_capture.canonical_global.status) 'UNAVAILABLE'
+    Assert-Exact 'transport self-test failure receipt probe project status' ([string]$summary.failure_receipt_probe.evidence_hash_capture.canonical_project.status) 'UNAVAILABLE'
+    Assert-Exact 'transport self-test failure receipt probe serialization' ([string]$summary.failure_receipt_probe.failure_receipt_serialization_complete) 'True'
+    Assert-ExactPropertySet $summary.failure_receipt_probe.evidence_hash_capture @('claim','transaction_record','provider_identity','guardian_ready','guardian_done','canonical_global','canonical_project','raw_result','stderr','cli_log','frozen_transcript') 'transport self-test failure receipt evidence capture'
+    foreach ($captureName in @('canonical_global','canonical_project')) {
+        $capture = $summary.failure_receipt_probe.evidence_hash_capture.PSObject.Properties[$captureName].Value
+        Assert-ExactPropertySet $capture @('path','status','sha256','error') "transport self-test failure receipt $captureName capture"
+        if ([string]::IsNullOrWhiteSpace([string]$capture.error)) { throw "Transport self-test failure receipt $captureName error must be explicit." }
+    }
     Assert-Exact 'transport self-test canonical global pre hash' ([string]$summary.canonical_global_pre_sha256) $Expected.GlobalSettingsSha256
     Assert-Exact 'transport self-test canonical global post hash' ([string]$summary.canonical_global_post_sha256) $Expected.GlobalSettingsSha256
     Assert-Exact 'transport self-test canonical project pre hash' ([string]$summary.canonical_project_pre_sha256) $Expected.ProjectSettingsSha256
@@ -1842,6 +1894,36 @@ $result=[ordered]@{schema_version='1.0';bytes_read=$bytes.Length;sha256=$sha;eof
     Write-NewUtf8 -Path $childOutputPath -Text $stdout
     Write-NewUtf8 -Path $childErrorPath -Text $stderr
     Assert-CanonicalSettingsState
+    $failureReceiptProbePath = Join-Path $TransportSelfTestRoot 'failure-receipt-probe.json'
+    $missingCanonicalGlobalPath = Join-Path $TransportSelfTestRoot 'missing-canonical-global.json'
+    $missingCanonicalProjectPath = Join-Path $TransportSelfTestRoot 'missing-canonical-project.json'
+    $originalCanonicalGlobalPath = $script:CanonicalGlobalSettingsPath
+    $originalCanonicalProjectPath = $script:CanonicalProjectSettingsPath
+    $originalFailureReceiptPath = $script:FailureReceiptPath
+    $failureReceiptProbe = $null
+    try {
+        $script:CanonicalGlobalSettingsPath = $missingCanonicalGlobalPath
+        $script:CanonicalProjectSettingsPath = $missingCanonicalProjectPath
+        $script:FailureReceiptPath = $failureReceiptProbePath
+        Write-RecoveryFailureEvidence -Boundary 'PROVIDER_FREE_CANONICAL_UNAVAILABLE_PROBE' -ProviderMessage $null -IsolationMessage 'Provider-free canonical evidence unavailability probe.' -JobMessage $null -StdoutCaptureComplete $true -StderrCaptureComplete $true
+        $failureReceiptProbe = Get-Content -LiteralPath $failureReceiptProbePath -Raw | ConvertFrom-Json -Depth 100 -DateKind String
+        Assert-Exact 'failure receipt probe status' ([string]$failureReceiptProbe.status) 'FAILED_CLOSED'
+        Assert-Exact 'failure receipt probe boundary' ([string]$failureReceiptProbe.failure_boundary) 'PROVIDER_FREE_CANONICAL_UNAVAILABLE_PROBE'
+        Assert-Exact 'failure receipt probe global hash' ([string]$failureReceiptProbe.canonical_global_post_sha256) ''
+        Assert-Exact 'failure receipt probe project hash' ([string]$failureReceiptProbe.canonical_project_post_sha256) ''
+        Assert-Exact 'failure receipt probe global evidence status' ([string]$failureReceiptProbe.evidence_hash_capture.canonical_global.status) 'UNAVAILABLE'
+        Assert-Exact 'failure receipt probe project evidence status' ([string]$failureReceiptProbe.evidence_hash_capture.canonical_project.status) 'UNAVAILABLE'
+        Assert-Exact 'failure receipt probe serialization complete' ([string]$failureReceiptProbe.failure_receipt_serialization_complete) 'True'
+    }
+    finally {
+        $script:CanonicalGlobalSettingsPath = $originalCanonicalGlobalPath
+        $script:CanonicalProjectSettingsPath = $originalCanonicalProjectPath
+        $script:FailureReceiptPath = $originalFailureReceiptPath
+        if (Test-Path -LiteralPath $failureReceiptProbePath -PathType Leaf) { [IO.File]::Delete($failureReceiptProbePath) }
+    }
+    if ($null -eq $failureReceiptProbe) { throw 'Provider-free failure receipt probe did not produce a parsed receipt.' }
+    if (Test-Path -LiteralPath $failureReceiptProbePath) { throw 'Provider-free failure receipt probe cleanup failed.' }
+    Assert-CanonicalSettingsState
     $launcherRelativePath = 'director/native-program/run-antigravity-robot-003-recovery1.ps1'
     $summary = [ordered]@{
         schema_version = '1.0'
@@ -1873,6 +1955,7 @@ $result=[ordered]@{schema_version='1.0';bytes_read=$bytes.Length;sha256=$sha;eof
         job_active_processes_after = [int]$jobDisposition.active_processes_after
         provider_executable_launched = $false
         provider_identity_present = Test-Path -LiteralPath $ProviderIdentityPath -PathType Leaf
+        failure_receipt_probe = $failureReceiptProbe
         canonical_global_pre_sha256 = $canonicalGlobalBefore
         canonical_global_post_sha256 = Get-LowerSha256 $CanonicalGlobalSettingsPath
         canonical_project_pre_sha256 = $canonicalProjectBefore
@@ -1894,6 +1977,19 @@ function Write-RecoveryFailureEvidence {
     )
     $messages = @(@($ProviderMessage,$IsolationMessage,$JobMessage) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
     if ($messages.Count -eq 0) { $messages = @('Unknown fail-closed recovery error.') }
+    $evidenceHashCapture = [ordered]@{
+        claim = Get-SafeEvidenceHash $ClaimPath
+        transaction_record = Get-SafeEvidenceHash $RollbackRecordPath
+        provider_identity = Get-SafeEvidenceHash $ProviderIdentityPath
+        guardian_ready = Get-SafeEvidenceHash $GuardianReadyPath
+        guardian_done = Get-SafeEvidenceHash $GuardianDonePath
+        canonical_global = Get-SafeEvidenceHash $CanonicalGlobalSettingsPath
+        canonical_project = Get-SafeEvidenceHash $CanonicalProjectSettingsPath
+        raw_result = Get-SafeEvidenceHash $OutputPath
+        stderr = Get-SafeEvidenceHash $ErrorPath
+        cli_log = Get-SafeEvidenceHash $LogPath
+        frozen_transcript = Get-SafeEvidenceHash $TranscriptPath
+    }
     $failure = [ordered]@{
         schema_version = '1.0'
         assignment_id = 'LT-NATIVE-ANTIGRAVITY-ROBOT-003'
@@ -1929,33 +2025,40 @@ function Write-RecoveryFailureEvidence {
         parent_finally_job_disposition = $parentFinallyJobDisposition
         parent_finally_job_error = $parentFinallyJobError
         claim_path = $ClaimPath
-        claim_sha256 = if (Test-Path -LiteralPath $ClaimPath -PathType Leaf) { Get-LowerSha256 $ClaimPath } else { $null }
+        claim_sha256 = $evidenceHashCapture.claim.sha256
         transaction_record_path = $RollbackRecordPath
-        transaction_record_sha256 = if (Test-Path -LiteralPath $RollbackRecordPath -PathType Leaf) { Get-LowerSha256 $RollbackRecordPath } else { $null }
+        transaction_record_sha256 = $evidenceHashCapture.transaction_record.sha256
         provider_identity_path = $ProviderIdentityPath
-        provider_identity_sha256 = if (Test-Path -LiteralPath $ProviderIdentityPath -PathType Leaf) { Get-LowerSha256 $ProviderIdentityPath } else { $null }
+        provider_identity_sha256 = $evidenceHashCapture.provider_identity.sha256
         guardian_ready_path = $GuardianReadyPath
-        guardian_ready_sha256 = if (Test-Path -LiteralPath $GuardianReadyPath -PathType Leaf) { Get-LowerSha256 $GuardianReadyPath } else { $null }
+        guardian_ready_sha256 = $evidenceHashCapture.guardian_ready.sha256
         guardian_done_path = $GuardianDonePath
-        guardian_done_sha256 = if (Test-Path -LiteralPath $GuardianDonePath -PathType Leaf) { Get-LowerSha256 $GuardianDonePath } else { $null }
-        canonical_global_post_sha256 = Get-LowerSha256 $CanonicalGlobalSettingsPath
-        canonical_project_post_sha256 = Get-LowerSha256 $CanonicalProjectSettingsPath
+        guardian_done_sha256 = $evidenceHashCapture.guardian_done.sha256
+        canonical_global_post_sha256 = $evidenceHashCapture.canonical_global.sha256
+        canonical_project_post_sha256 = $evidenceHashCapture.canonical_project.sha256
         raw_result_path = $OutputPath
-        raw_result_sha256 = if (Test-Path -LiteralPath $OutputPath -PathType Leaf) { Get-LowerSha256 $OutputPath } else { $null }
+        raw_result_sha256 = $evidenceHashCapture.raw_result.sha256
         stdout_capture_complete = $StdoutCaptureComplete
         stderr_path = $ErrorPath
-        stderr_sha256 = if (Test-Path -LiteralPath $ErrorPath -PathType Leaf) { Get-LowerSha256 $ErrorPath } else { $null }
+        stderr_sha256 = $evidenceHashCapture.stderr.sha256
         stderr_capture_complete = $StderrCaptureComplete
         cli_log_path = $LogPath
-        cli_log_present = Test-Path -LiteralPath $LogPath -PathType Leaf
-        cli_log_sha256 = if (Test-Path -LiteralPath $LogPath -PathType Leaf) { Get-LowerSha256 $LogPath } else { $null }
+        cli_log_present = ($evidenceHashCapture.cli_log.status -ceq 'HASHED')
+        cli_log_sha256 = $evidenceHashCapture.cli_log.sha256
         frozen_transcript_path = $TranscriptPath
-        frozen_transcript_sha256 = if (Test-Path -LiteralPath $TranscriptPath -PathType Leaf) { Get-LowerSha256 $TranscriptPath } else { $null }
+        frozen_transcript_sha256 = $evidenceHashCapture.frozen_transcript.sha256
+        evidence_hash_capture = $evidenceHashCapture
         evidence_capture_complete = ($StdoutCaptureComplete -and $StderrCaptureComplete -and [string]::IsNullOrWhiteSpace($JobMessage))
+        failure_receipt_serialization_complete = $true
         recorded_at = ([datetimeoffset]::UtcNow).ToString('o')
     } | ConvertTo-Json -Depth 20
     Write-NewUtf8 -Path $FailureReceiptPath -Text ($failure + "`n")
 }
+
+$stdout='';$stderr='';$processExitCode=$null;$outerStatus=$null;$conversationId=$null;$transcriptSourcePath=$null;$transcriptSha256=$null;$terminalInspectionError=$null;$projectPermissionGrantsLoaded=$false;$isolationLogMarkerObserved=$false;$canonicalPathMarkerObserved=$false
+$guardianProcess=$null;$guardianDone=$null;$guardianDeadlineAt=$null;$jobHandle=[IntPtr]::Zero;$jobCreatedAt=$null;$nativeLaunchContext=$null;$privateEnvironmentContext=$null;$nativeLaunch=$null;$process=$null;$providerProcessId=$null;$providerStartTimeUtcTicks=$null;$providerProcessStartedAt=$null;$providerResumedAt=$null;$providerIdentitySha256=$null;$jobAssignmentConfirmedAt=$null;$jobEmptyVerifiedAt=$null;$jobActiveProcessCountAtCompletion=$null;$jobKillOnClose=$false
+$parentFinallyJobDisposition='NOT_CREATED';$parentFinallyJobError=$null;$wrapperTimeoutTriggered=$false;$promptDeliveryStartedAt=$null;$promptDeliveryCompletedAt=$null;$promptDeliveryTimedOut=$false;$environmentBlockSha256=$null;$environmentKeySetSha256=$null;$environmentEntryCount=$null;$profileReparseFree=$false;$providerError=$null;$isolationFinalizationError=$null;$stdoutTask=$null;$stderrTask=$null;$stdoutCaptureComplete=$false;$stderrCaptureComplete=$false;$failureBoundary='PRECLAIM'
+$promptTransport=$null;$promptHandleSha256=$null;$promptHandleLengthBytes=$null;$promptHandleInitialOffset=$null;$promptHandleShareMode=$null;$promptHandleInheritable=$false;$promptHandleReadOnly=$false;$promptHandleOpenedAt=$null;$promptHandleVerifiedAt=$null;$promptOffsetBeforeCreate=$null
 
 if ($TransportSelfTestOnly) {
     Invoke-TransportSelfTest
@@ -1974,11 +2077,7 @@ if($null -ne $script:RecoveredTransactionArchive){
 }
 try{$claim=[IO.File]::Open($ClaimPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)}catch{throw "The one-shot recovery claim exists: $ClaimPath"}
 try{$cr=[ordered]@{assignment_id='LT-NATIVE-ANTIGRAVITY-ROBOT-003';idempotency_key='LT-NATIVE-ANTIGRAVITY-ROBOT-003-644d1b0-SEQUENCE26-RECOVERY1';project_id=$ProjectId;process_id=$PID;claimed_at=([datetimeoffset]::UtcNow).ToString('o');control_head=$AuthorityControlHead;control_tree=$AuthorityControlTree;prompt_sha256=$Expected.PromptSha256;isolation_protocol='PROCESS_PRIVATE_PROFILE_FILE_STDIN_V2'}|ConvertTo-Json -Compress;$b=[Text.UTF8Encoding]::new($false).GetBytes($cr+"`n");$claim.Write($b,0,$b.Length);$claim.Flush($true)}finally{$claim.Dispose()}
-
-$stdout='';$stderr='';$processExitCode=$null;$outerStatus=$null;$conversationId=$null;$transcriptSourcePath=$null;$transcriptSha256=$null;$terminalInspectionError=$null;$projectPermissionGrantsLoaded=$false;$isolationLogMarkerObserved=$false;$canonicalPathMarkerObserved=$false
-$guardianProcess=$null;$guardianDone=$null;$guardianDeadlineAt=$null;$jobHandle=[IntPtr]::Zero;$jobCreatedAt=$null;$nativeLaunchContext=$null;$privateEnvironmentContext=$null;$nativeLaunch=$null;$process=$null;$providerProcessId=$null;$providerStartTimeUtcTicks=$null;$providerProcessStartedAt=$null;$providerResumedAt=$null;$providerIdentitySha256=$null;$jobAssignmentConfirmedAt=$null;$jobEmptyVerifiedAt=$null;$jobActiveProcessCountAtCompletion=$null;$jobKillOnClose=$false
-$parentFinallyJobDisposition='NOT_CREATED';$parentFinallyJobError=$null;$wrapperTimeoutTriggered=$false;$promptDeliveryStartedAt=$null;$promptDeliveryCompletedAt=$null;$promptDeliveryTimedOut=$false;$environmentBlockSha256=$null;$environmentKeySetSha256=$null;$environmentEntryCount=$null;$profileReparseFree=$false;$providerError=$null;$isolationFinalizationError=$null;$stdoutTask=$null;$stderrTask=$null;$stdoutCaptureComplete=$false;$stderrCaptureComplete=$false;$failureBoundary='CLAIMED'
-$promptTransport=$null;$promptHandleSha256=$null;$promptHandleLengthBytes=$null;$promptHandleInitialOffset=$null;$promptHandleShareMode=$null;$promptHandleInheritable=$false;$promptHandleReadOnly=$false;$promptHandleOpenedAt=$null;$promptHandleVerifiedAt=$null;$promptOffsetBeforeCreate=$null
+$failureBoundary='CLAIMED'
 try{
     Assert-ControlState;Assert-ProviderState;Assert-CanonicalSettingsState;New-IsolatedConfiguration;$failureBoundary='PRIVATE_PROFILE_CREATED';Write-NewBytes -Path (Join-Path $RollbackRoot 'recovery1.claim.json') -Bytes ([IO.File]::ReadAllBytes($ClaimPath))
     $privateEnvironmentContext=New-PrivateEnvironmentContext;$environmentBlockSha256=[string]$privateEnvironmentContext.block_sha256_utf16le;$environmentKeySetSha256=[string]$privateEnvironmentContext.key_set_sha256;$environmentEntryCount=[int]$privateEnvironmentContext.total_entry_count
@@ -2047,3 +2146,4 @@ $stdout.TrimEnd()
 # [[OpenAI Director | Codex | 2026-08-31 | 07:30 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:54 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | END]]

@@ -442,7 +442,8 @@
     "Never kill by executable name and never treat other agy processes as an exclusivity boundary.",
     "Require full Job emptiness before normal completion and in the parent operational finally.",
     "Require the exact isolated appDataDir and permission markers and reject canonical Gemini-root log resolution.",
-    "Freeze exact stdout, stderr, log, authenticated private-profile transcript, guardian evidence, and a strict success or failure receipt before any terminal throw."
+    "Freeze exact stdout, stderr, log, authenticated private-profile transcript, guardian evidence, and a strict success or failure receipt before any terminal throw.",
+    "Failure receipt creation must convert absent or unreadable evidence inputs into explicit UNAVAILABLE status, null SHA-256, and an error string instead of throwing before the CreateNew receipt write."
   ],
   "safety_invariants": [
     "Keep --sandbox and accept-edits bound to the exact disposable provider sandbox.",
@@ -468,6 +469,7 @@
     "failure_evidence_manifest": "artifacts/native-program/qa/LT-NATIVE-ANTIGRAVITY-ROBOT-003.primary-pre-model-failure/manifest.json",
     "failure_evidence_incident": "artifacts/native-program/qa/2026-08-31-antigravity-robot-003-primary-prompt-transport-failure.md",
     "provider_free_selftest_required_before_recovery": true,
+    "provider_free_failure_receipt_probe_required": true,
     "provider_free_selftest_commit_rule": "The real recovery launch HEAD must be the sole child of the self-test control HEAD; the exact delta is only child-output.json, child.stderr and selftest-summary.json, and the launcher Git blob must remain identical."
   },
   "hash_binding": {

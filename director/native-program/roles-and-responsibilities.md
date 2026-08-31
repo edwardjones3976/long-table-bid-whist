@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:17 UTC | BEGIN]] -->
@@ -120,7 +121,8 @@ with no activation path.
   unchanged 9,668-byte prompt through a new inherited locked read-only file
   handle, distinct dispatch claim, transaction, Job and evidence namespace.
   Before that recovery can contact Antigravity, the exact recovery launcher
-  must pass its provider-free EOF/hash/Job/canonical-settings self-test, the
+  must pass its provider-free EOF/hash/Job/canonical-settings self-test plus a
+  total failure-receipt probe with unavailable canonical evidence, the
   three self-test files must be the sole child commit, and a different OpenAI
   reviewer must return `ACCEPT_RECOVERY` on the exact clean launch HEAD/tree.
   Any recovery failure closes this Antigravity route; no second recovery or
@@ -270,3 +272,4 @@ freeze, build, test, accept or reject the bytes, but cannot correct them.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:17 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | END]] -->

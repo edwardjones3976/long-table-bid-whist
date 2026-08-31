@@ -31,7 +31,7 @@
     "authenticated_transcript": "artifacts/native-program/providers/LT-NATIVE-ANTIGRAVITY-ROBOT-003.sequence-26-recovery1-transcript.jsonl",
     "audited_launcher": "director/native-program/run-antigravity-robot-003-recovery1.ps1",
     "permission_delta": "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-ROBOT-003-RECOVERY1-PERMISSION-DELTA.json",
-    "permission_delta_sha256": "d1ea5906e87203cf6ba6da4465236c9c1d911947c06c9ef7301b7913c37e0a2e",
+    "permission_delta_sha256": "c88d1d5fcd045c3126bfbabaf601eae4e67b47214ba3d1de33aa505be7919b5c",
     "primary_failure_manifest": "artifacts/native-program/qa/LT-NATIVE-ANTIGRAVITY-ROBOT-003.primary-pre-model-failure/manifest.json",
     "primary_failure_manifest_sha256": "3b1b114890433125d261abfe107da2159b5772cc46f5dd926169625bf9bc561e",
     "primary_failure_manifest_rows_sha256": "3845f488694706ea1cab8a817368eb22f93eb236dc8d620d167fb9ab27aae533",
@@ -48,6 +48,7 @@
       "required_job_active_processes_after": 0,
       "required_provider_executable_launched": false,
       "required_provider_identity_present": false,
+      "required_failure_receipt_probe": "selftest-summary.json must embed the exact parsed FAILED_CLOSED probe showing both unavailable canonical hashes as null, both evidence statuses UNAVAILABLE with explicit errors, and failure_receipt_serialization_complete=true.",
       "required_control_history": "The real recovery launch HEAD is the sole child of the self-test summary control HEAD; the exact committed delta is only child-output.json, child.stderr and selftest-summary.json.",
       "required_launcher_identity": "The recovery launcher Git blob is identical at the self-test control HEAD, real launch HEAD and launch worktree."
     },

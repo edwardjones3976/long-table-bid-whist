@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:17 UTC | BEGIN]] -->
@@ -129,7 +130,8 @@ Exactly one materially different Recovery 1 is authorized under the same
 private-profile, exact environment, canonical-no-write, Job and guardian
 controls. It uses the unchanged 9,668-byte prompt through a distinct claim and
 an inherited locked read-only regular-file stdin handle. Its gate remains
-closed until the exact launcher passes a provider-free byte/hash/EOF/Job test,
+closed until the exact launcher passes a provider-free byte/hash/EOF/Job test
+and serializes a strict failure receipt with unavailable canonical evidence,
 those three evidence files are the sole child commit, clean exact-head preflight
 passes, and an independent OpenAI reviewer returns `ACCEPT_RECOVERY`. A failed
 recovery closes the provider route; no second recovery or ambiguous resend is
@@ -228,3 +230,4 @@ ambiguity; unrelated mutation; failed exact-SHA binding; or cultural harm.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:17 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | END]] -->

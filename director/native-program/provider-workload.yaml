@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | BEGIN]]
@@ -1062,24 +1063,25 @@ canonical_assignment_ledger:
     primary_failure_manifest_digest: "sha256:3b1b114890433125d261abfe107da2159b5772cc46f5dd926169625bf9bc561e"
     primary_failure_manifest_rows_digest: "sha256:3845f488694706ea1cab8a817368eb22f93eb236dc8d620d167fb9ab27aae533"
     primary_completion_accounting: "One exact Antigravity process was created suspended, Job-bound, identity-published and resumed. The 9,668-byte parent-pipe WriteAsync never completed, stdin never flushed/closed, and no EOF prompt boundary, stdout, stderr, CLI log, transcript, conversation ID, success receipt, source edit, completed model request or authenticated terminal result exists. Record one primary, one provider-process launch/contact, zero accepted/direct points, and no duplicate paid dispatch."
-    recovery_status: "AUTHORIZED_PENDING_PROVIDER_FREE_FILE_HANDLE_SELFTEST_AND_EXACT_HEAD_REVIEW"
+    recovery_status: "AUTHORIZED_PENDING_PROVIDER_FREE_FILE_HANDLE_AND_FAILURE_RECEIPT_SELFTEST_AND_EXACT_HEAD_REVIEW"
     recovery_transport_idempotency_key: "LT-NATIVE-ANTIGRAVITY-ROBOT-003-644d1b0-SEQUENCE26-RECOVERY1"
     logical_result_idempotency_key: "LT-NATIVE-ANTIGRAVITY-ROBOT-003-644d1b0-SEQUENCE26"
     recovery_permission_delta_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-ROBOT-003-RECOVERY1-PERMISSION-DELTA.json"
-    recovery_permission_delta_digest: "sha256:d1ea5906e87203cf6ba6da4465236c9c1d911947c06c9ef7301b7913c37e0a2e"
+    recovery_permission_delta_digest: "sha256:c88d1d5fcd045c3126bfbabaf601eae4e67b47214ba3d1de33aa505be7919b5c"
     recovery_result_binding_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-ROBOT-003-RECOVERY1-RESULT-BINDING.json"
-    recovery_result_binding_digest: "sha256:b486063747330dcde5ed502acac092f65164a55c5d6bedd71fe0428fd5f61075"
+    recovery_result_binding_digest: "sha256:5cfc8a3f2495522105679a15e59fd1fb0dd996df14e86c8feef9f3a7e102e990"
     recovery_activation_evidence: "artifacts/native-program/coordination/2026-08-31-sequence-26-recovery1-activation.md"
-    recovery_activation_digest: "sha256:3b1d4015ef56b7191c1cbcabc36f472424f0b212977090dedd74950c63fd940b"
+    recovery_activation_digest: "sha256:787e60b165963bc899d4f87c468c5a13e3256dad75381e18f8daa47beabbda69"
     recovery_prompt_file: "artifacts/native-program/providers/LT-NATIVE-ANTIGRAVITY-ROBOT-003.sequence-26-recovery1.prompt.md"
     recovery_prompt_digest: "sha256:39eb912cf4481d8a99d673acedff0f10d146d9300bcd0edd4014a3ebcde019d0"
     recovery_prompt_byte_length: 9668
     recovery_launcher_file: "director/native-program/run-antigravity-robot-003-recovery1.ps1"
-    recovery_launcher_digest: "sha256:58089f1c51af9bba34cdcda44b3174d90a29632a9c63a7e668651c0b74f42bd4"
+    recovery_launcher_digest: "sha256:06331502a0c4ceacab14e10ada97e934263648d11dd43dfba6dc8bc52062a9b4"
     recovery_qa_harness_file: "director/native-program/qa/invoke-openai-antigravity-robot-003-recovery1-qa.ps1"
-    recovery_qa_harness_digest: "sha256:3019bfc27850aeef42d9ce96cce58878489d6eb1036e334b1e56b5deff1db8da"
+    recovery_qa_harness_digest: "sha256:0c06917e709bf4a54fbec691f73209ff6f4f43e846d419107bc2ac48b91aecde"
     recovery_transport_selftest_root: "artifacts/native-program/qa/LT-NATIVE-ANTIGRAVITY-ROBOT-003.file-stdin-selftest"
-    recovery_transport_selftest_status: "PENDING_PROVIDER_FREE_EXECUTION; earns no attempt, recovery, provider-contact or workload credit"
+    recovery_transport_selftest_status: "PENDING_PROVIDER_FREE_REEXECUTION_WITH_CANONICAL_UNAVAILABLE_FAILURE_RECEIPT_PROBE; earns no attempt, recovery, provider-contact or workload credit"
+    recovery_failure_receipt_rule: "Every evidence hash is captured through a non-throwing HASHED/UNAVAILABLE record. The provider-free summary must embed a parsed FAILED_CLOSED receipt with null canonical digests, explicit errors and failure_receipt_serialization_complete=true."
     recovery_retry_rule: "Exactly one Recovery 1 may launch after the provider-free transport proof and independent exact-head ACCEPT_RECOVERY review. Any recovery failure closes Antigravity for this assignment; no second recovery or ambiguous resend."
     isolation_boundary: "One assignment-private USERPROFILE/HOME tree, closed exact-name OS/runtime environment allowlist, custom UTF-16LE environment block, suspended Job-bound launch, exact private appData/project/transcript resolution and reparse-free evidence. No regex-based privacy control."
     canonical_settings_boundary: "C:\\Users\\edwar\\.gemini\\antigravity-cli\\settings.json and the canonical project record are read-only SHA-256 invariants; the launcher writes neither, creates no rollback byte copies, performs no restoration window, and treats no global mutex or whole-machine agy PID sample as an exclusivity boundary."
@@ -1135,3 +1137,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | END]]

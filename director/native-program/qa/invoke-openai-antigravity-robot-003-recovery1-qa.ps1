@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:54 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 07:30 UTC | BEGIN]]
@@ -461,8 +462,8 @@ $Expected = [ordered]@{
     ProjectSettingsSha256 = '5ce5b3178d47ff3516281a1298dcb7ca589d823c08f3b2545e5f187a5e706f25'
     IsolatedProjectSettingsSha256 = '33f1b2affad9480e02366568f5521e47861819ad1c6ca27c13c5bf7a16c3ec2c'
     AgyExeSha256 = '059b96c1069206158d340ee2a8912894eca5002195e62b8cd281c26c01cd794e'
-    LauncherSha256 = '58089f1c51af9bba34cdcda44b3174d90a29632a9c63a7e668651c0b74f42bd4'
-    PermissionDeltaSha256 = 'd1ea5906e87203cf6ba6da4465236c9c1d911947c06c9ef7301b7913c37e0a2e'
+    LauncherSha256 = '06331502a0c4ceacab14e10ada97e934263648d11dd43dfba6dc8bc52062a9b4'
+    PermissionDeltaSha256 = 'c88d1d5fcd045c3126bfbabaf601eae4e67b47214ba3d1de33aa505be7919b5c'
     PrimaryFailureManifestSha256 = '3b1b114890433125d261abfe107da2159b5772cc46f5dd926169625bf9bc561e'
     PrimaryFailureIncidentSha256 = '2c1c4723bbd02cf180d0df84ab4cc2d57404128ddae5b0a6be8df0231c0ac2a7'
     PrimaryFailureManifestRowsSha256 = '3845f488694706ea1cab8a817368eb22f93eb236dc8d620d167fb9ab27aae533'
@@ -1399,6 +1400,7 @@ function Assert-RecoveryPrelaunchEvidence {
         'child_executable_path','child_output_sha256','child_stderr_sha256','child_bytes_read','child_prompt_sha256',
         'child_eof_observed','child_exit_code','created_with_job_list_attribute','job_bound_before_resume',
         'job_active_processes_after','provider_executable_launched','provider_identity_present',
+        'failure_receipt_probe',
         'canonical_global_pre_sha256','canonical_global_post_sha256','canonical_project_pre_sha256',
         'canonical_project_post_sha256','recorded_at'
     )
@@ -1430,6 +1432,19 @@ function Assert-RecoveryPrelaunchEvidence {
     Assert-Exact -Name 'self-test final Job process count' -Actual (Get-NonNegativeJsonInteger -Name 'self-test final Job process count' -Value $summary.job_active_processes_after) -ExpectedValue 0
     Assert-JsonBoolean -Name 'self-test provider executable launch state' -Value $summary.provider_executable_launched -ExpectedValue $false
     Assert-JsonBoolean -Name 'self-test provider identity state' -Value $summary.provider_identity_present -ExpectedValue $false
+    Assert-Exact -Name 'self-test failure receipt probe status' -Actual $summary.failure_receipt_probe.status -ExpectedValue 'FAILED_CLOSED'
+    Assert-Exact -Name 'self-test failure receipt probe boundary' -Actual $summary.failure_receipt_probe.failure_boundary -ExpectedValue 'PROVIDER_FREE_CANONICAL_UNAVAILABLE_PROBE'
+    Assert-Exact -Name 'self-test failure receipt probe global hash' -Actual $summary.failure_receipt_probe.canonical_global_post_sha256 -ExpectedValue $null
+    Assert-Exact -Name 'self-test failure receipt probe project hash' -Actual $summary.failure_receipt_probe.canonical_project_post_sha256 -ExpectedValue $null
+    Assert-Exact -Name 'self-test failure receipt probe global status' -Actual $summary.failure_receipt_probe.evidence_hash_capture.canonical_global.status -ExpectedValue 'UNAVAILABLE'
+    Assert-Exact -Name 'self-test failure receipt probe project status' -Actual $summary.failure_receipt_probe.evidence_hash_capture.canonical_project.status -ExpectedValue 'UNAVAILABLE'
+    Assert-JsonBoolean -Name 'self-test failure receipt serialization' -Value $summary.failure_receipt_probe.failure_receipt_serialization_complete -ExpectedValue $true
+    Assert-ExactObjectProperties -Name 'self-test failure receipt evidence capture' -Object $summary.failure_receipt_probe.evidence_hash_capture -ExpectedNames @('claim','transaction_record','provider_identity','guardian_ready','guardian_done','canonical_global','canonical_project','raw_result','stderr','cli_log','frozen_transcript')
+    foreach ($captureName in @('canonical_global','canonical_project')) {
+        $capture = $summary.failure_receipt_probe.evidence_hash_capture.PSObject.Properties[$captureName].Value
+        Assert-ExactObjectProperties -Name "self-test failure receipt $captureName capture" -Object $capture -ExpectedNames @('path','status','sha256','error')
+        if ([string]::IsNullOrWhiteSpace([string]$capture.error)) { throw "Self-test failure receipt $captureName error must be explicit." }
+    }
     foreach ($binding in @(
         @('canonical_global_pre_sha256',$Expected.GlobalSettingsSha256),
         @('canonical_global_post_sha256',$Expected.GlobalSettingsSha256),
@@ -1524,12 +1539,14 @@ function Assert-LaunchProvenance {
         'Use one custom double-NUL Unicode environment and one atomic suspended Job-bound CreateProcessW call.',
         'Never kill by executable name and never treat other agy processes as an exclusivity boundary.',
         'Require the exact isolated appDataDir and permission markers and reject canonical Gemini-root log resolution.',
-        'Freeze exact stdout, stderr, log, authenticated private-profile transcript, guardian evidence, and a strict success or failure receipt before any terminal throw.'
+        'Freeze exact stdout, stderr, log, authenticated private-profile transcript, guardian evidence, and a strict success or failure receipt before any terminal throw.',
+        'Failure receipt creation must convert absent or unreadable evidence inputs into explicit UNAVAILABLE status, null SHA-256, and an error string instead of throwing before the CreateNew receipt write.'
     )) {
         if (@($oneShotControls | Where-Object { $_ -is [string] -and $_ -ceq $control }).Count -ne 1) {
             throw "Permission delta must contain exactly one audited private-profile control: $control"
         }
     }
+    Assert-JsonBoolean -Name 'permission provider-free failure receipt probe requirement' -Value $permissionDelta.retry_binding.provider_free_failure_receipt_probe_required -ExpectedValue $true
 
     $receipt = Get-RequiredJsonObject -Path $ReceiptPath -Name 'launch receipt'
     $claim = Get-RequiredJsonObject -Path $ClaimPath -Name 'one-shot claim'
@@ -2802,3 +2819,4 @@ finally {
 # [[OpenAI Director | Codex | 2026-08-31 | 07:30 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:54 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | END]]

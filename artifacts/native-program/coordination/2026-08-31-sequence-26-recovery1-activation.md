@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | BEGIN]] -->
 # Sequence 26 Recovery 1 activation — RobotDealer
 
@@ -30,9 +31,9 @@ and will not be contacted again for this assignment.
 - Original result binding SHA-256:
   `aead3b2806d593f5505597d60fd5116ce4f461eba55336788093ad51aaf5585f`
 - Recovery permission delta SHA-256:
-  `d1ea5906e87203cf6ba6da4465236c9c1d911947c06c9ef7301b7913c37e0a2e`
+  `c88d1d5fcd045c3126bfbabaf601eae4e67b47214ba3d1de33aa505be7919b5c`
 - Recovery result binding SHA-256:
-  `b486063747330dcde5ed502acac092f65164a55c5d6bedd71fe0428fd5f61075`
+  `5cfc8a3f2495522105679a15e59fd1fb0dd996df14e86c8feef9f3a7e102e990`
 - Exact original and recovery prompt SHA-256:
   `39eb912cf4481d8a99d673acedff0f10d146d9300bcd0edd4014a3ebcde019d0`
 - Exact prompt length: `9668` bytes
@@ -70,13 +71,21 @@ guardian, exact process identity, complete-Job termination, log, transcript,
 and raw-result control remains active. Privacy uses typed schemas and exact
 allowlists; regex-based privacy control is prohibited.
 
+The exact-head review found and closed one pre-contact failure-reporting gap:
+an absent or unreadable evidence file now becomes an explicit `UNAVAILABLE`
+capture with a null digest and error text, so canonical drift cannot prevent
+the strict `CreateNew` failure receipt from being serialized. The provider-free
+self-test must exercise this missing-canonical-file case and embed the parsed
+failure receipt probe in its three-file evidence packet.
+
 ## Mandatory pre-contact sequence
 
 1. Commit the complete recovery control package as one clean self-test parent.
 2. Run the recovery launcher's provider-free file-stdin self-test. It may start
    only a harmless local PowerShell reader and must prove exact bytes, SHA-256,
    EOF, Job binding, Job emptiness, no Antigravity launch, no provider identity,
-   and unchanged canonical settings.
+   unchanged canonical settings, and total failure-receipt serialization when
+   canonical evidence inputs are unavailable.
 3. Commit exactly the three self-test evidence files as the sole child of the
    self-test parent. The recovery launcher blob must remain unchanged.
 4. Run clean exact-head preflight and obtain an independent OpenAI
@@ -112,3 +121,4 @@ real terminal Recovery 1 records the assignment's medium/5 overall points once;
 direct-production credit remains zero unless the unchanged candidate passes
 independent OpenAI acceptance.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | END]] -->
