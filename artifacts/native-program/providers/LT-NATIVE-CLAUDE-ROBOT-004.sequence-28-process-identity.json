@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "state": "SUSPENDED_JOB_BOUND",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28",
+  "claim_sha256": "sha256:55b5d452bb61a0cc9bda7d0fb91a769314a47774842b916116046151301f6def",
+  "process_id": 49200,
+  "process_start_time_utc_ticks": 639237967463267731,
+  "started_at": "2026-08-31T18:12:26.3267731+00:00",
+  "job_bound_before_resume": true,
+  "recorded_at": "2026-08-31T18:12:26.4446574+00:00"
+}

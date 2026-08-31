@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "state": "CREATED",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28",
+  "primary_attempt": 1,
+  "control_head": "74fc96b142d18c59d2e3f8b15f984e271591b99f",
+  "provider_base_head": "a5ffeb93391c071d76c26a7459e4bc24724538f4",
+  "provider_base_tree": "91710e74f905a21afe56ef3ad4c62af2d6b44dc5",
+  "authority_snapshot_digest": "sha256:a171b144d499d289382feec34c108580ba6dca64d7106fb601c31822942dcf7a",
+  "packet_sha256": "sha256:0153c630cc7302965e57743d5316f7a4a0981ede3d0c6dd0339764ad12f874ec",
+  "prompt_sha256": "sha256:8e5a00251764a5161ba31b107334e5ae5aebea83048e0c700690ce8d118e3292",
+  "created_at": "2026-08-31T18:12:26.0020009+00:00"
+}

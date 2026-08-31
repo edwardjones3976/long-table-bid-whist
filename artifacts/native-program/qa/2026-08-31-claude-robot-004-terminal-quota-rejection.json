@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28",
+  "disposition": "TERMINAL_UNAVAILABLE_PRE_MODEL_MONTHLY_SPEND_LIMIT_PRIMARY_CONSUMED_ZERO_CREDIT",
+  "classified_at": "2026-08-31T18:20:13.6605248Z",
+  "control_head": "74fc96b142d18c59d2e3f8b15f984e271591b99f",
+  "provider_base_head": "a5ffeb93391c071d76c26a7459e4bc24724538f4",
+  "provider_base_tree": "91710e74f905a21afe56ef3ad4c62af2d6b44dc5",
+  "authority_snapshot_digest": "sha256:a171b144d499d289382feec34c108580ba6dca64d7106fb601c31822942dcf7a",
+  "attempt_runner_sha256": "sha256:c21221e08587f5bbe3c06397f6b49bcf881f2cab9c94295d17b6019735035c2f",
+  "provider": {
+    "name": "Claude",
+    "transport": "Claude Code CLI",
+    "version": "2.1.251",
+    "model_requested": "claude-fable-5",
+    "effort_requested": "high",
+    "primary_attempts": 1,
+    "provider_process_launches": 1,
+    "provider_service_contacts": 1,
+    "completed_model_requests": 0,
+    "inference_contacts": 0,
+    "recovery_attempts": 0,
+    "revisions": 0
+  },
+  "process_evidence": {
+    "claim_path": "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-primary-claim.json",
+    "claim_sha256": "sha256:55b5d452bb61a0cc9bda7d0fb91a769314a47774842b916116046151301f6def",
+    "process_identity_path": "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-process-identity.json",
+    "process_identity_sha256": "sha256:3b243e9bab99722bffc15fa35c8347969cc448babd0c00aa00304d3c914ac907",
+    "resume_path": "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-process-resumed.json",
+    "resume_sha256": "sha256:99b48898a1f1141af6cb005233863bf6dc07cf48bceef35162d25999acf2cd63",
+    "process_id": 49200,
+    "created_suspended_job_bound": true,
+    "resumed_once": true,
+    "active_at_classification": false,
+    "job_kill_on_close": true
+  },
+  "terminal_wrapper": {
+    "path": "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-cli-output.json",
+    "sha256": "sha256:66bd4d0d72c905f630d52c9384dc4e7ed98539af2db41288a2a1f43aa12ad0a6",
+    "stderr_path": "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-cli-stderr.txt",
+    "stderr_sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "type": "result",
+    "subtype": "success",
+    "is_error": true,
+    "terminal_reason": "api_error",
+    "api_error_status": 429,
+    "normalized_error": "CLAUDE_MONTHLY_SPEND_LIMIT",
+    "duration_api_ms": 0,
+    "duration_ms": 1375,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "model_usage_entries": 0,
+    "provider_reported_cost_usd": 0,
+    "session_id": "011cad78-466e-4375-a047-c8d0657a8eb1",
+    "result_uuid": "a09b3a3e-ccc4-44b5-a1ea-3dd0fa694628",
+    "raw_evidence_frozen_at": "2026-08-31T18:12:29.5117745Z"
+  },
+  "source_disposition": {
+    "provider_output_root_exists": false,
+    "provider_created_files": [],
+    "structured_result_exists": false,
+    "source_manifest_exists": false,
+    "provider_sandbox_clean": true,
+    "provider_sandbox_authority_only": true
+  },
+  "credit": {
+    "overall_effort_points_awarded": 0,
+    "accepted_direct_production_points": 0,
+    "reason": "The service rejected the request before model execution. Zero inference, zero tokens, zero cost and zero source do not enter the completed workload window."
+  },
+  "retry": {
+    "primary_consumed": true,
+    "initial_immediate_recovery_authorized": false,
+    "initial_reason": "A monthly spend ceiling is not a clearly transient pre-result transport failure and exposes no retry time. A same-route or browser resend would be predictable duplicate waste without verified new availability information.",
+    "owner_override_received": true,
+    "owner_override_text": "Retry Claude via Chrome!",
+    "resulting_transport_delta": "director/native-program/packets/LT-NATIVE-CLAUDE-ROBOT-004-BROWSER-RECOVERY1-DELTA.json",
+    "same_route_cli_relaunch_authorized": false,
+    "materially_different_chrome_recovery_authorized": true
+  },
+  "receipt_repair": {
+    "attempt_receipt_exists": false,
+    "failure_boundary": "POST_PROVIDER_RESULT_RECEIPT_SERIALIZATION",
+    "defect": "PowerShell receipt fields used bare true instead of $true after raw result capture.",
+    "provider_result_ambiguity_created": false,
+    "source_ambiguity_created": false,
+    "provider_relaunch_performed": false,
+    "repaired_runner_sha256": "sha256:66832487193ef0703a4827359f918b3dc5abaece99a1c2b6b0678407b4a06dfa"
+  },
+  "next_route": {
+    "status": "CLAUDE_BROWSER_RECOVERY1_AUTHORIZED_PENDING_EXACT_SUBMIT",
+    "conditions": "Use the exact public-only browser input archive once. No CLI relaunch, second browser submit, prior-provider source, private repository context or scope expansion. OpenAI remains QA-only."
+  }
+}

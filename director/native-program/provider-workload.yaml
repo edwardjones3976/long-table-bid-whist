@@ -38,7 +38,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20_AFTER_SEQUENCE_27; 83 total points; every target-plus-five hard ceiling passes. Cursor is 1.0964 percentage points above normal and Antigravity is 3.1807 below normal; neither is rounded green. Sequence 28 is authorized pending one Claude primary and has earned no point. If it reaches a real terminal result, the projected 80-point window passes every hard ceiling with Claude 33.75% and Cursor exactly 25%."
+  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20_AFTER_SEQUENCE_27; 83 total points; every target-plus-five hard ceiling passes. Cursor is 1.0964 percentage points above normal and Antigravity is 3.1807 below normal; neither is rounded green. Sequence 28 consumed one CLI primary at an unambiguous pre-model 429 with zero tokens, zero cost, zero source and zero credit. The owner's explicit Chrome-retry instruction authorizes exactly one materially different Browser Recovery 1 under the unchanged assignment; if that recovery reaches a real terminal model result, the projected 80-point window passes every hard ceiling with Claude 33.75% and Cursor exactly 25%."
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -113,7 +113,7 @@ native_code_assignments:
     allocation: {native_foundation_first_deal: 16, private_game_night: 16, long_table_house: 16}
     owned_surfaces: ["packages/rules-core", "packages/protocol", "services/table-authority", "Unreal/Source/LongTableProtocol", "Unreal/Source/LongTableTable", "Unreal/Source/LongTable"]
     required_model: "FABLE 5 ULTRA/MAX"
-    active_assignment: "sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 is authorized pending one primary in an exact public-only synthetic sandbox; it is a fresh medium/5 assignment, not a sequence-25 retry, and owns only the closed LongTableRobotDealer/** working-tree inventory"
+    active_assignment: "sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 consumed its sole CLI primary at an unambiguous pre-model monthly-spend 429; zero model tokens, cost, source and credit. Under the owner's explicit new Chrome-retry instruction, one materially different Browser Recovery 1 is authorized pending exact submit of the public-only six-file input archive and owns only the unchanged closed eight-file LongTableRobotDealer/** delivery inventory"
   cursor:
     scope_forecast_units: 4
     credit_rule: "forecast is not credit; isolated XR-core packet is medium/5 and final integration remains separately dependency-gated"
@@ -439,7 +439,7 @@ rolling_window_projection:
   current_shares_percent: {claude: 36.1446, cursor: 24.0964, grok: 21.6867, openai: 6.0241, gemini_antigravity: 4.8193, perplexity: 6.0241, github_copilot_cli: 1.2048}
   enforcement: "COMPLETE_ROLLING_20_AFTER_SEQUENCE_27; HARD_CEILINGS_PASS; NORMAL_BAND_MISS_CURSOR_PLUS_1.0964_AND_ANTIGRAVITY_MINUS_3.1807. This is not mislabeled as full normal-band compliance."
   direct_production_window_status: "WARMING_UP_ONE_ACCEPTED_POINT_ONLY; not a compliance pass; sequences 24, 25 and 27 earn zero direct production"
-  next_route: "ACTIVE_PENDING_PRIMARY_AFTER_PUSHED_EXACT_HEAD_PREFLIGHT: sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 has one fresh Claude medium/5 clean-room RobotDealer packet and one sandbox-scoped writer lease. No point enters the current window until a real terminal provider execution. OpenAI remains QA-only."
+  next_route: "ACTIVE_PENDING_ONE_BROWSER_RECOVERY1_AFTER_TERMINAL_CLI_PREMODEL_429_AND_EXPLICIT_OWNER_OVERRIDE: sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 retains its unchanged medium/5 scope and closed eight-file RobotDealer delivery lease. The CLI primary is consumed and may not be replayed. The exact public-only browser archive may be submitted once; no point enters the current window until a real terminal model execution. OpenAI remains QA-only."
   sequence_26_actual_terminal:
     rolled_out_assignment: null
     canonical_points_earned: 0
@@ -470,16 +470,22 @@ rolling_window_projection:
     denominator_if_real_terminal: 80
     projections_percent: {claude: 33.75, cursor: 25.0, grok: 22.5, openai: 6.25, gemini_antigravity: 5.0, perplexity: 6.25, github_copilot_cli: 1.25}
     workload_hard_gate: {claude: "PASS_41_ELIGIBLE", cursor: "PASS_EXACT_25_NO_ROUNDING", grok: "PASS_25", openai: "PASS_13_QA_ONLY", gemini_antigravity: "PASS_16_ROUTE_CLOSED", perplexity: "PASS_9_RESEARCH_ONLY", github_copilot_cli: "PASS_6"}
-    verdict: "AUTHORIZED_PENDING_ONE_PRIMARY_AFTER_PUSHED_EXACT_HEAD_PREFLIGHT"
+    verdict: "AUTHORIZED_PENDING_ONE_BROWSER_RECOVERY1_AFTER_TERMINAL_CLI_PREMODEL_429_AND_EXPLICIT_OWNER_OVERRIDE"
     assignment_id: "LT-NATIVE-CLAUDE-ROBOT-004"
     packet_digest: "sha256:0153c630cc7302965e57743d5316f7a4a0981ede3d0c6dd0339764ad12f874ec"
     prompt_digest: "sha256:8e5a00251764a5161ba31b107334e5ae5aebea83048e0c700690ce8d118e3292"
-    launcher_digest: "sha256:c21221e08587f5bbe3c06397f6b49bcf881f2cab9c94295d17b6019735035c2f"
+    primary_launcher_digest: "sha256:c21221e08587f5bbe3c06397f6b49bcf881f2cab9c94295d17b6019735035c2f"
+    repaired_launcher_digest: "sha256:66832487193ef0703a4827359f918b3dc5abaece99a1c2b6b0678407b4a06dfa"
     activation_digest: "sha256:f44ceb6b075c934f51638447569fa877b285e7daad967a4e0105458dd6e3d590"
     launch_ownership_selftest_digest: "sha256:5d430ccfcce076c19bccca2c101925a3671e90437a01766159fe903bb9047873"
     ue57_blueprint_storage_evidence_digest: "sha256:ea747325337f20718619bf45f026b56efe6d463770d23182e31e79ee3ba2adc9"
     authority_snapshot_digest: "sha256:a171b144d499d289382feec34c108580ba6dca64d7106fb601c31822942dcf7a"
-    writer_lease: "ISSUED_ONLY_TO_CLAUDE_FOR_CLOSED_EIGHT_FILE_LONGTABLEROBOTDEALER_WORKING_TREE_AFTER_EXACT_PREFLIGHT"
+    primary_disposition: "TERMINAL_PRE_MODEL_429_ZERO_CREDIT; one provider process/service contact; zero completed model requests, inference contacts, tokens, cost or source"
+    browser_recovery_delta_digest: "sha256:0fd2228c6e7d492083293ef14b19a217258fc1fa50919f6ddaef636064a72ca3"
+    browser_recovery_prompt_digest: "sha256:7659f709ec0af3560feec6763ebf79ff0607515bf1c5f042edc27c4aae0d0240"
+    browser_recovery_input_manifest_digest: "sha256:9e155a76707c187393b9d9d05dbccc97c70b81368fb3d9309bdc2989242d6a62"
+    browser_recovery_input_archive_digest: "sha256:d0b34aee16f4b2482e384b2089b598c41adebc6fbb109900164924947a7dd2c4"
+    writer_lease: "CLI working-tree lease closed without source; one browser archive-delivery Recovery 1 lease pending exact submit to Claude for the same closed eight-file inventory"
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -1168,14 +1174,15 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "AUTHORIZED_PENDING_PRIMARY"
+    status: "AUTHORIZED_PENDING_BROWSER_RECOVERY1_AFTER_TERMINAL_CLI_PREMODEL_429_AND_OWNER_OVERRIDE"
     accepted_direct_production_points: 0
     packet_file: "director/native-program/packets/LT-NATIVE-CLAUDE-ROBOT-004.json"
     packet_digest: "sha256:0153c630cc7302965e57743d5316f7a4a0981ede3d0c6dd0339764ad12f874ec"
     prompt_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28.prompt.md"
     prompt_digest: "sha256:8e5a00251764a5161ba31b107334e5ae5aebea83048e0c700690ce8d118e3292"
     launcher_file: "director/native-program/run-claude-robot-004.ps1"
-    launcher_digest: "sha256:c21221e08587f5bbe3c06397f6b49bcf881f2cab9c94295d17b6019735035c2f"
+    primary_launcher_digest: "sha256:c21221e08587f5bbe3c06397f6b49bcf881f2cab9c94295d17b6019735035c2f"
+    repaired_launcher_digest: "sha256:66832487193ef0703a4827359f918b3dc5abaece99a1c2b6b0678407b4a06dfa"
     activation_evidence: "artifacts/native-program/coordination/2026-08-31-sequence-28-activation.md"
     activation_digest: "sha256:f44ceb6b075c934f51638447569fa877b285e7daad967a4e0105458dd6e3d590"
     launch_ownership_selftest: "artifacts/native-program/qa/LT-NATIVE-CLAUDE-ROBOT-004.launch-ownership-selftest.json"
@@ -1189,10 +1196,28 @@ canonical_assignment_ledger:
     authority_snapshot_digest: "sha256:a171b144d499d289382feec34c108580ba6dca64d7106fb601c31822942dcf7a"
     owned_paths: ["LongTableRobotDealer/**"]
     closed_output_file_count: 8
-    attempts: {provider_free_launch_ownership_selftests: 1, primary: 0, transient_recoveries: 0, revisions: 0, provider_process_launches: 0, authenticated_terminal_results: 0}
-    writer_lease: "OPEN_AFTER_COMMITTED_PUSHED_EXACT_HEAD_AND_PROVIDER_FREE_PREFLIGHT; one provider; exact synthetic sandbox; no repository or prior-provider input"
+    attempts: {provider_free_launch_ownership_selftests: 1, primary: 1, browser_recoveries: 0, revisions: 0, provider_process_launches: 1, provider_service_contacts: 1, completed_model_requests: 0, inference_contacts: 0, terminal_pre_model_results: 1}
+    primary_claim_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-primary-claim.json"
+    primary_claim_digest: "sha256:55b5d452bb61a0cc9bda7d0fb91a769314a47774842b916116046151301f6def"
+    process_identity_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-process-identity.json"
+    process_identity_digest: "sha256:3b243e9bab99722bffc15fa35c8347969cc448babd0c00aa00304d3c914ac907"
+    process_resume_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-process-resumed.json"
+    process_resume_digest: "sha256:99b48898a1f1141af6cb005233863bf6dc07cf48bceef35162d25999acf2cd63"
+    primary_raw_result_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-cli-output.json"
+    primary_raw_result_digest: "sha256:66bd4d0d72c905f630d52c9384dc4e7ed98539af2db41288a2a1f43aa12ad0a6"
+    primary_stderr_digest: "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    primary_incident_file: "artifacts/native-program/qa/2026-08-31-claude-robot-004-terminal-quota-rejection.json"
+    primary_incident_digest: "sha256:c726738b2d6cd7d6d94939710f5a04ed6d443b45bc3271b46a3ee864a13faa80"
+    browser_recovery_delta_file: "director/native-program/packets/LT-NATIVE-CLAUDE-ROBOT-004-BROWSER-RECOVERY1-DELTA.json"
+    browser_recovery_delta_digest: "sha256:0fd2228c6e7d492083293ef14b19a217258fc1fa50919f6ddaef636064a72ca3"
+    browser_recovery_prompt_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-browser-recovery1.prompt.md"
+    browser_recovery_prompt_digest: "sha256:7659f709ec0af3560feec6763ebf79ff0607515bf1c5f042edc27c4aae0d0240"
+    browser_recovery_input_manifest_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-browser-recovery1-input-manifest.json"
+    browser_recovery_input_manifest_digest: "sha256:9e155a76707c187393b9d9d05dbccc97c70b81368fb3d9309bdc2989242d6a62"
+    browser_recovery_input_archive_digest: "sha256:d0b34aee16f4b2482e384b2089b598c41adebc6fbb109900164924947a7dd2c4"
+    writer_lease: "CLI working-tree lease closed without source; one browser archive-delivery Recovery 1 lease pending exact submit; same assignment, same provider, same public authority and closed eight-file inventory"
     accepted_outcome_digest: null
-    manual_overlay_reason: "Fresh useful RobotDealer assignment made eligible by the real sequence-27 research credit. Claude receives only three immutable public authority files and may create exactly eight source/prose files with restricted Read, Write, Edit and Glob; Bash, PowerShell, browser, network, MCP, memory, subagents, repository context and Sequence25/26 artifacts are excluded. Before provider contact, installed UE5.7 UHT authority forced the reflected numeric ABI from unsupported uint64/int8 to Blueprint-supported int64/int32 while preserving all narrower bounds; the exact evidence is frozen. A create-once claim precedes suspended Job-bound process creation, PID/start is frozen before resume, kill-on-close prevents an orphan, and a closed environment allowlist excludes unrelated tokens. The exact launcher passed one two-case provider-free ownership self-test and made no Claude/model contact. Activation earns no point; one real terminal execution records medium/5 overall once, while direct-production credit requires unchanged-byte OpenAI materialization, UE5.7 build/test and acceptance."
+    manual_overlay_reason: "Fresh useful RobotDealer assignment made eligible by the real sequence-27 research credit. The exact launcher passed one two-case provider-free ownership self-test, then the sole CLI primary created and resumed one Job-bound Claude process. Claude's service returned an unambiguous monthly-spend 429 before model execution: duration_api_ms=0, zero input/output/cache tokens, empty modelUsage, zero cost and no source. A post-result receipt-serialization typo did not make that outcome ambiguous and is repaired without replaying the CLI. The owner then supplied materially new routing authority by explicitly ordering a Chrome retry. Browser Recovery 1 keeps the same assignment, medium/5 scope, public contract, fixtures, result schema, budget and exact eight-file output; its six-file public/synthetic input archive is hash-frozen and may be submitted once. No repository, prior-provider source, transcript, finding, credential or private context is included. The primary earns zero and does not roll the window; one real terminal model execution records medium/5 overall once, while direct-production credit still requires unchanged-byte OpenAI materialization, UE5.7 build/test and acceptance."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -1210,7 +1235,7 @@ credit_rules:
   - "Sequence 26 is terminal pre-model and earns zero, so the completed rolling window remains the 20 assignments after sequence 25. Its primary and sole recovery are consumed, Antigravity is closed for the assignment, and no product source exists."
   - "The historical pre-sequence-27 RobotDealer projection was NO_ELIGIBLE_PROVIDER and earned no assignment or credit. Actual sequence 27 is LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002, a distinct useful research assignment. It completed one authenticated public-only request and earns medium/5 overall with zero direct production."
   - "After sequence 27, sequence 2 Antigravity long/8 rolls out and the completed 20-row window totals 83: Claude 36.1446%, Cursor 24.0964%, Grok 21.6867%, OpenAI 6.0241%, Antigravity 4.8193%, Perplexity 6.0241% and GitHub Copilot CLI 1.2048%. All hard ceilings pass; Cursor and Antigravity miss normal."
-  - "Sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 is now authorized pending one primary after a committed, pushed exact-head preflight. Its packet and one-writer sandbox lease are frozen; activation earns no point. A real terminal Claude medium/5 execution would roll out sequence 3 Claude long/8 and yield 80 points: Claude 33.75%, Cursor exactly 25%, Grok 22.5%, OpenAI 6.25%, Antigravity 5%, Perplexity 6.25% and GitHub Copilot CLI 1.25%."
+  - "Sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 consumed its sole CLI primary at an unambiguous pre-model monthly-spend 429 with zero tokens, cost, source and credit. The owner's explicit Chrome-retry instruction is materially new routing information and authorizes exactly one Browser Recovery 1 with the same assignment, scope, provider and frozen public authority; it is not a new workload row. No CLI replay or second browser submit is permitted. A real terminal Claude model execution would record medium/5 once, roll out sequence 3 Claude long/8 and yield 80 points: Claude 33.75%, Cursor exactly 25%, Grok 22.5%, OpenAI 6.25%, Antigravity 5%, Perplexity 6.25% and GitHub Copilot CLI 1.25%."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5

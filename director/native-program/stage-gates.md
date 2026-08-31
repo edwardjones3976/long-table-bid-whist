@@ -142,36 +142,33 @@ contradictory source-count sentence, and awarded medium/5 overall with zero
 direct production.
 
 The completed rolling window is now 83 points and every target-plus-five hard
-ceiling passes. Fresh sequence 28 `LT-NATIVE-CLAUDE-ROBOT-004` is authorized
-pending one primary after its activation commit is pushed and its provider-free
-exact-head preflight passes. Its projection leaves Cursor exactly at the 25%
-hard ceiling. The distinct packet freezes the public contract, synthetic
-fixtures, exact clean base, closed eight-file inventory, one-writer lease,
-budget, retry and result-binding evidence. Sequence-25/26 source, prompts,
-transcripts, findings, hashes, diffs, sandboxes, worktrees and quarantined bytes
-remain prohibited inputs. Before provider contact, installed UE5.7 UHT source
-proved the original Blueprint-visible `uint64`/`int8` fields non-viable; the
-authority now freezes Blueprint-supported `int64` sequence, `int32` seat/team
-and `uint8` counts while retaining the same explicit narrower bounds.
+ceiling passes. Fresh sequence 28 `LT-NATIVE-CLAUDE-ROBOT-004` passed its
+provider-free exact-head preflight, then consumed its sole CLI primary at an
+unambiguous pre-model monthly-spend 429: one process/service contact, zero
+completed model requests, inference contacts, tokens, cost, source and credit.
+The CLI route is closed and cannot be replayed. The owner's later explicit
+instruction, `Retry Claude via Chrome!`, supplies materially new routing
+authority for exactly one Browser Recovery 1 under the unchanged assignment.
+Its projection leaves Cursor exactly at the 25% hard ceiling after a real
+terminal model result.
 
-The provider lane uses restricted plus safe mode with only Read, Write, Edit and
-Glob in a no-remote synthetic sandbox and does not commit. Bash, PowerShell,
-browser, network, MCP, memory and subagents are closed. The launcher validates
-the result wrapper/schema/identity and exact authority, Git, inventory, byte,
-provenance and descriptor postflight before returning one structured result. A
-create-once primary claim precedes process creation; Claude is created suspended
-inside a kill-on-close Job, its PID/start identity is durably recorded before
-resume, and a closed process-environment allowlist excludes unrelated tokens.
-Safe mode ignores user/project/local customizations and no-session-persistence
-suppresses the transcript. This route makes no broader canonical-profile
-no-write claim, so the earlier Antigravity private-profile/settings gate does
-not apply to Sequence 28.
-That result plus the exact working-tree bytes is a source-delivery candidate
-only. OpenAI must hash and freeze those bytes,
-materialize them unchanged at accepted base `4d26680`, run both UE5.7 targets,
-all fifteen focused RobotDealer tests and the full LongTable automation suite,
-and independently accept or reject before direct-production credit or
-integration is legal.
+The browser recovery freezes a six-file, public/synthetic input archive: the
+unchanged assignment packet, public contract, public fixtures, result schema,
+browser transport delta and work order. Sequence-25/26 source, prompts,
+transcripts, findings, hashes, diffs, sandboxes, worktrees, repository context,
+credentials and quarantined bytes remain prohibited inputs. Chrome is transport
+only; Claude may not browse, use connectors or request repository access. It may
+return one named ZIP containing exactly the inherited eight-file
+`LongTableRobotDealer/**` inventory plus one schema-conforming result outside the
+ZIP. No second browser submit or later Claude contact is authorized.
+
+That archive plus the terminal result is a source-delivery candidate only.
+OpenAI must hash and freeze the exact bytes, reject any extra/wrapped/path-invalid
+entry, validate encoding/provenance/descriptor/contract conformance, materialize
+them unchanged at accepted base `4d26680`, run both UE5.7 targets, all fifteen
+focused RobotDealer tests and the full LongTable automation suite, and
+independently accept or reject before direct-production credit or integration is
+legal.
 
 The RobotDealer acceptance gate remains closed until exact result binding,
 immutable authority, restricted/safe/no-session-persistence flags, the closed

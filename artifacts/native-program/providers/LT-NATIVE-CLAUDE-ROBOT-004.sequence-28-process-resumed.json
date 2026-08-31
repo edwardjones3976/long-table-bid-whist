@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "state": "RESUMED",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28",
+  "claim_sha256": "sha256:55b5d452bb61a0cc9bda7d0fb91a769314a47774842b916116046151301f6def",
+  "process_identity_sha256": "sha256:3b243e9bab99722bffc15fa35c8347969cc448babd0c00aa00304d3c914ac907",
+  "process_id": 49200,
+  "resumed_at": "2026-08-31T18:12:26.4642261+00:00"
+}
