@@ -1,4 +1,5 @@
-<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:20 UTC | BEGIN]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | BEGIN]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:17 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]] -->
@@ -101,10 +102,38 @@ schema-valid failed result after sandbox permission denials prevented the
 mandatory provider commit. OpenAI proved the thirteen-file manifest still
 exactly matches the frozen primary bytes, but the failed/no-commit packet is
 quarantined evidence only and earns medium/5 overall with zero direct
-production. No third Claude contact or normalization is authorized. RobotDealer
-authoring, composition and every later Chunk A device/human gate remain closed
-until a fresh workload-eligible fallback packet produces an independently
-acceptable candidate.
+production. At that terminal coding stop, no third coding contact or
+normalization was authorized. The owner's later three-contact, no-tool advisory
+exchange did not edit, reopen or credit sequence 25 and is now closed.
+RobotDealer authoring, composition and every later Chunk A device/human gate
+remain closed until a fresh workload-eligible fallback packet produces an
+independently acceptable candidate.
+
+Sequence 26 opens only the fresh Antigravity clean-room RobotDealer authoring
+gate. It is a new medium/5 assignment with an assignment-private process
+profile, an assignment-private generated project record, a new synthetic
+authority root and sole `LongTableRobotDealer/**` writer lease. Canonical
+Antigravity settings are read and hashed only; the launcher may never write
+them. The provider
+may read only the unchanged public contract and generic result schema; those
+files plus the frozen standalone clarification in the sequence-26 prompt are
+the complete implementation authority. All Claude and historical Antigravity
+code/evidence remains prohibited. One shell-free primary is authorized under
+the exact private-profile, environment-contract and canonical-no-write
+controls.
+Provider Git is not required; a valid raw result plus exact source-only working
+manifest may be mechanically frozen unchanged by OpenAI into the accepted-base
+QA worktree with honest provider-author/OpenAI-committer provenance.
+
+The RobotDealer acceptance gate remains closed until exact result binding,
+immutable authority, private-profile/environment/canonical-no-write evidence,
+manifest/path/encoding/contribution, TypeScript, UE5.7 editor/game builds, all
+15 focused tests, full automation and
+independent source review are green on one exact candidate. Even that acceptance
+would prove only the standalone presentation plugin; composition, visible robot
+embodiment, authority integration, Android, Quest, hand/controller, Meta
+presence/avatar, two-device privacy, performance, accessibility, human,
+cultural, rights, store, merge and release gates remain open.
 
 ## Chunk B — Private Game Night
 
@@ -183,4 +212,5 @@ ambiguity; unrelated mutation; failed exact-SHA binding; or cultural harm.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | END]] -->
-<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:20 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:17 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | END]] -->

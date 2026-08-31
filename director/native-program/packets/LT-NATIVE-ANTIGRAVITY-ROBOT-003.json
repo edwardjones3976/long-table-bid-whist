@@ -1,0 +1,190 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-ANTIGRAVITY-ROBOT-003",
+  "activation_order": 26,
+  "execution_semantics": "FRESH_ISOLATED_FALLBACK_AFTER_TERMINAL_CLAUDE_ASSIGNMENT_WITH_DIRECTOR_RATIFIED_PUBLIC_SPECIFICATION",
+  "project": "The Long Table - Bid Whist",
+  "repository": "local-synthetic/long-table-robot-dealer",
+  "provider": "Gemini Antigravity",
+  "model": "gemini-3.1-pro-high",
+  "effort": "high",
+  "workload_size": "medium",
+  "canonical_points_on_terminal_execution": 5,
+  "status": "AUTHORIZED_PENDING_PRIMARY",
+  "fallback_boundary": {
+    "terminal_predecessor": "LT-NATIVE-CLAUDE-ROBOT-001",
+    "predecessor_disposition": "terminal failed; no provider commit; zero direct-production credit; no retry or byte transfer",
+    "new_assignment": true,
+    "non_overlapping_context": "Provider-readable authority is limited to the public contract, generic result schema and Director-ratified public acceptance clarification in this packet/prompt. The clarification may incorporate general advisory lessons recast as standalone public requirements. The sandbox excludes predecessor source bytes, private implementation context, raw prompts, transcripts, manifests, diffs, results, raw findings and QA evidence artifacts; none of those excluded materials conveys implementation authority.",
+    "director_control_base": "37fb4c1ce6bda5cc6742afb8f2be65eb2f7f1113",
+    "director_control_tree": "eafe4b067b50c641581c4ffcd7d9e44e749432df"
+  },
+  "sandbox": {
+    "path": "C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-robot-dealer-antigravity-003-clean",
+    "branch": "codex/antigravity-robot-cleanroom-003",
+    "starting_ref": "644d1b082347369f5c9665312946c6f5945fa925",
+    "starting_tree": "4085ca20ee26e081e0405d4820f3503c8f595b1c",
+    "starting_status": "clean",
+    "core_autocrlf": false,
+    "repository_shape": "new standalone root repository with one branch, no remote and no rejected provider object"
+  },
+  "transport": {
+    "surface": "authenticated agy CLI v1.1.22",
+    "project_id": "64ba9d6d-900c-4894-8bc8-b0e0a4f52906",
+    "agent_mode": "default-non-agent",
+    "sandbox_mode": "accept-edits",
+    "flags": [
+      "--project=64ba9d6d-900c-4894-8bc8-b0e0a4f52906",
+      "--sandbox",
+      "--mode=accept-edits",
+      "--model=gemini-3.1-pro-high",
+      "--effort=high",
+      "--output-format=json",
+      "--json-schema=RESULT_SCHEMA.json",
+      "--disable-slash-commands"
+    ],
+    "dangerously_skip_permissions": false
+  },
+  "authority_snapshot": [
+    {
+      "path": "PUBLIC_CONTRACT.json",
+      "commit_sha": "644d1b082347369f5c9665312946c6f5945fa925",
+      "blob_sha": "528ce90812d4c452ddc51a0cccc86dd990977abe",
+      "sha256": "56299bb63a352560f2a40fc1115db1eb276e87ada719054959b33498aef80c52"
+    },
+    {
+      "path": "RESULT_SCHEMA.json",
+      "commit_sha": "644d1b082347369f5c9665312946c6f5945fa925",
+      "blob_sha": "3f68e59136c422ce84d79f874c0343fd5ffc0a9e",
+      "sha256": "ebadc5bc45462ffa63ca5e6b28c09d1ccf86086389324a0c88f704bb14208d9c"
+    }
+  ],
+  "authority_snapshot_digest": "sha256:37608811b0034ba030df68309a18019b826354dec697bfec0beb217b6d4f851f",
+  "authority_snapshot_digest_method": "SHA-256 of the exact PUBLIC_CONTRACT.json bytes followed immediately by the exact RESULT_SCHEMA.json bytes",
+  "readable_paths": [
+    "PUBLIC_CONTRACT.json",
+    "RESULT_SCHEMA.json",
+    "LongTableRobotDealer/**"
+  ],
+  "owned_paths": [
+    "LongTableRobotDealer/**"
+  ],
+  "immutable_paths": [
+    "PUBLIC_CONTRACT.json",
+    "RESULT_SCHEMA.json"
+  ],
+  "implementation_constraints": [
+    "Read no path outside the isolated sandbox and no sandbox path except the two immutable authority files and files created below LongTableRobotDealer",
+    "Create only the UE5.7 descriptor, runtime module, public/private C++ source, README and focused automation tests required by PUBLIC_CONTRACT.json below LongTableRobotDealer/**",
+    "Implement the exact closed cue, motion, submit-result and reflected-state inventories plus all fifteen exact automation test IDs",
+    "Use one shared deterministic acceptance path, preserve a separate private immutable sequence high-water while queued cues drain, set the existing emitted-state PublicSequence to the exact cue being emitted even when this decreases across emission order, add no public field, correlate every emitted cue with the presentation state produced by that same cue, and keep reset replay defense atomic",
+    "Within the existing fifteen test IDs, cover idempotent-Boolean double-pause, pause-while-full and an older queued cue overtaken by a newer control cue; one resume exits pause and drains; a full queue rejects a new ordinary cue without eviction while controls consume no slot; every emitted cue must carry the exact sequence of the state produced for that cue, and an older cue must never be paired with a newer state",
+    "Interpret DealerModeAuthorityEquivalence only as proof that dealer mode is absent from the standalone runtime ABI: use two external test-fixture labels named AI-dealer and human-host, feed byte-identical accepted public cue sequences into two fresh plugin instances, require byte-identical complete reflected-state and cue histories, and assert no dealer-mode input, field or label exists in runtime state/result types; actual same-seed cards, legality, trick winners, score and authority digest remain a later composition gate",
+    "Implement ConcealmentCounterfactual with two fixture-only upstream containers that hold different synthetic concealed values, positively project each to the same accepted public input stream without passing either concealed value into the plugin, and assert identical complete plugin outputs plus absence of concealed fields from every reflected/result type",
+    "Use a compile-safe native lambda-test delegate and a separate Blueprint-safe dynamic delegate seam",
+    "Every new taggable .h, .cpp, .cs and .md file carries one fresh matching outer Gemini Antigravity contribution pair for this assignment; JSON and .uplugin files remain tag-free",
+    "Use positive exact construction and field inventories only; regex, blacklist, keyword, substring, redaction, serialize-then-delete and concealed-object-then-delete privacy controls are prohibited",
+    "Use original source only and bundle no voice, jazz, blues, music, samples, images, likenesses, models, textures, media or third-party asset",
+    "Write source files only; do not create a Git commit, build output, cache, log or generated artifact in the provider sandbox",
+    "View each immutable authority file exactly once in full before the first write and never afterward; every transcript tool row is terminal DONE; make exactly one finish call as the final tool call",
+    "Return exactly one schema-valid structured result bound to this assignment and authority digest, with only the eighteen declared top-level properties and no optional usage, cost, token, billing or latency claim"
+  ],
+  "prohibited_actions": [
+    "No access to any Long Table repository, accepted foundation source, XR source, Director repository, predecessor source bytes, private implementation context, raw prompt, transcript, diff, manifest, result, raw finding or QA evidence artifact; only the Director-ratified public requirements may embody general advisory lessons",
+    "No Bid Whist rules, player intent, host command, authority, credential, identity, session, room, networking, telemetry, concealed-state or Meta SDK behavior",
+    "No regex or other pattern-based privacy or rights control",
+    "No browser, web, URL, MCP, plugin, subagent, memory, download, install, remote repository or external service",
+    "No shell command, local Git mutation, push, pull request, merge, deploy, publish, Slack, Linear, GitHub mutation, purchase, credential, permission, device or release action",
+    "No product, Android, Quest-device, two-device, human, cultural, rights, store, merge or release acceptance claim"
+  ],
+  "allowed_tools": [
+    "Sandboxed read of PUBLIC_CONTRACT.json, RESULT_SCHEMA.json and provider-created LongTableRobotDealer/** only",
+    "Sandboxed write_file/edit operations below LongTableRobotDealer/** only",
+    "Authenticated Gemini Antigravity subscription transport with --sandbox and --mode=accept-edits inside one assignment-private USERPROFILE/HOME tree. Generate only the exact private global settings and saved-project permissionGrants.permissionGrants record: write_file(*) is allowed while command(*), immutable-authority writes, unsandboxed, URL and MCP operations remain denied. Inherit only the explicit ordinary OS/runtime environment-name allowlist, add the exact private-profile overrides, and pass one sorted double-NUL UTF-16LE block with CREATE_UNICODE_ENVIRONMENT. Create the provider suspended and already bound through PROC_THREAD_ATTRIBUTE_JOB_LIST to one random KILL_ON_JOB_CLOSE/no-breakaway Job Object; publish exact PID plus StartTime identity before one ResumeThread; deliver stdin asynchronously within 15 seconds; keep the process-only guardian on the same Job Object until complete-job emptiness. Canonical Antigravity settings are read/hash invariants only and are never written. Other agy processes are not an exclusivity boundary, and no path kills by executable name."
+  ],
+  "provider_delivery": {
+    "git_commit_required": false,
+    "working_tree_delivery": "An exact source-only LongTableRobotDealer/** working-tree manifest is the provider artifact.",
+    "result_required": true,
+    "result_schema": "RESULT_SCHEMA.json",
+    "raw_result_rule": "The raw terminal assistant payload must be exactly one schema-bound result object with no prose, Markdown fence, duplicate document or wrapper-only normalization.",
+    "result_exact_top_level_properties": ["schema_version", "task_id", "assignment_id", "idempotency_key", "authority_snapshot_digest", "correlation", "provider", "run_reference", "status", "outcome", "artifacts", "checks", "acceptance", "risks", "blockers", "requested_decisions", "side_effects", "revision_recommended"],
+    "optional_usage_cost_token_claims_allowed": false,
+    "authenticated_transcript_required": "Freeze the exact transcript_full.jsonl emitted below the assignment-private profile for the outer wrapper conversation ID plus the exact CLI log and launcher receipt; materialization is prohibited unless all three bind one successful private-profile project/model/conversation run, exactly one full pre-write view of each authority file, terminal-DONE closed-set source read/write calls, and exactly one final finish call.",
+    "provider_must_not_materialize_target": true
+  },
+  "openai_materialization_authority": {
+    "role": "independent exact-byte freeze and QA only; no product-code authorship or byte correction",
+    "source": "exact terminal provider working-tree files under LongTableRobotDealer/** after a valid SUCCEEDED result",
+    "target_base": "4d26680fb99abacb20ecb18807b7c8833646cfa3",
+    "target_path": "Unreal/Plugins/LongTableRobotDealer/**",
+    "mechanical_commit_allowed": true,
+    "author": "Gemini Antigravity <antigravity@users.noreply.github.com>",
+    "committer": "OpenAI QA <openai-qa@users.noreply.github.com>",
+    "byte_rule": "Copy exact file bytes and relative paths only. Any normalization, repair, insertion, deletion or reformatting is prohibited.",
+    "failure_rule": "Missing/invalid result, immutable drift, tool-boundary violation, generated artifact, manifest drift or source defect stops before acceptance. Provider-authored Build.cs or C++ must never execute before a different-non-author exact-candidate source/security review is frozen as ACCEPT."
+  },
+  "acceptance_checks": [
+    "Exact clean starting ref, tree, branch, immutable blobs and SHA-256 values pass before provider execution",
+    "Terminal provider result validates against RESULT_SCHEMA.json and binds exact assignment, idempotency key, authority digest, provider and run reference",
+    "The one-shot receipt, wrapper, CLI log and private-profile transcript bind process exit 0, outer SUCCESS, exact project/model/default mode/conversation, the exact private settings and environment-contract hashes, a non-null CREATE_UNICODE_ENVIRONMENT block, reparse-free profile paths, immutable canonical settings pre/post hashes with canonical_settings_written=false, the exact isolated appDataDir with no canonical Gemini-root log marker, one loaded project allow and seven denies, the transaction record, absolute guardian deadline, atomic provider PID/StartTime identity, complete-job emptiness, bounded asynchronous stdin, safe parent-finally disposition and the 3600-second wrapper deadline. DIRECTOR_SIGNAL_JOB_EMPTY must complete before guardian_deadline_at; transcript calls remain limited to sandbox file read/write and finish with no forbidden attempt",
+    "Only source files below LongTableRobotDealer/** are created; immutable files, repository metadata and every other path remain unchanged",
+    "Every new taggable file has one fresh matching outer provider contribution pair; JSON and .uplugin files remain valid and tag-free",
+    "OpenAI freezes an exact provider manifest into an isolated accepted-foundation QA worktree with honest author/committer separation",
+    "A different-non-author OpenAI source/security review binds the exact provider manifest plus materialized candidate HEAD/tree and returns ACCEPT before UnrealBuildTool, ModuleRules, module startup or provider automation is executed; absent or non-ACCEPT review stops at SOURCE_REVIEW_REQUIRED",
+    "Director contribution-tag validation passes against the exact materialized candidate",
+    "UE5.7 LongTableEditor and LongTable Win64 Development builds pass",
+    "All fifteen exact LongTable.RobotDealer.* tests and all forty-nine exact LongTable test IDs pass with zero failure or not-run",
+    "Unchanged 219/219 TypeScript baseline, strict typing, fixture-current check and browser production build pass",
+    "Independent OpenAI source QA verifies exact schema/dependencies; exact cue-to-state correlation in double-pause, pause-while-full and overtaken-queue cases; absence of dealer mode from runtime ABI/state/result plus byte-identical full outputs from fresh instances fed byte-identical public cues under two external fixture labels; two distinct fixture-only concealed worlds positively projected to the same accepted public stream with identical complete outputs; atomic rejection; replay defense; and rights-clean inventory"
+  ],
+  "workload_projection": {
+    "current_window_assignments": 20,
+    "current_window_points": 86,
+    "terminal_window_assignments": 20,
+    "terminal_window_points": 83,
+    "rolled_out_assignment": "sequence 2 Gemini Antigravity long/8",
+    "shares_percent": {
+      "claude": 36.1446,
+      "cursor": 24.0964,
+      "grok": 21.6867,
+      "openai": 6.0241,
+      "gemini_antigravity": 10.8434,
+      "perplexity": 0.0,
+      "github_copilot_cli": 1.2048
+    },
+    "hard_ceiling_status": "ALL_PASS",
+    "normal_band_misses": [
+      "Cursor is 1.0964 percentage points above its normal band",
+      "Perplexity is below its normal band"
+    ],
+    "eligibility": "Antigravity is the only workload-hard-limit-eligible configured production coding provider for this medium fallback; OpenAI and Perplexity are eligible numerically but are not product-code authoring lanes.",
+    "credit_boundary": "No credit at activation. Medium/5 overall credit records once after real terminal provider execution. Direct-production credit records only after exact OpenAI acceptance."
+  },
+  "retry_policy": {
+    "primary_attempts": 1,
+    "transient_recoveries": 1,
+    "recovery_condition": "objectively temporary failure before a terminal model result",
+    "qa_revision_attempts": 1,
+    "qa_revision_condition": "only after a valid terminal provider delivery and materially new exact OpenAI QA findings",
+    "maximum_provider_contacts": 3,
+    "third_contact_requires_new_information": true,
+    "ambiguous_resends": 0
+  },
+  "limits": {
+    "budget_usd": 0,
+    "timeout_seconds": 3600,
+    "max_hops": 0,
+    "max_source_revisions": 1
+  },
+  "idempotency_key": "LT-NATIVE-ANTIGRAVITY-ROBOT-003-644d1b0-SEQUENCE26",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-ANTIGRAVITY-ROBOT-003",
+    "source_event_id": "openai-first-deal-robot-cleanroom-antigravity-20260831",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  },
+  "acceptance_boundary": "A green result proves only the standalone deterministic RobotDealer presentation plugin. Composition, visible robot embodiment, authority integration, Android, Quest install/launch, hand/controller interaction, Meta presence/avatar use, two-headset privacy, performance, accessibility, human, cultural, rights, store, merge and release remain separate gates."
+}

@@ -1,3 +1,5 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | BEGIN]]
+# [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 07:15 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:36 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:12 UTC | BEGIN]]
@@ -30,7 +32,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20_AFTER_SEQUENCE_25; 86 total points; every target-plus-five hard ceiling passes. Cursor is 0.2558 percentage points above normal and Perplexity is below normal; neither is rounded green. Terminal Claude RobotDealer earns medium/5 overall and zero direct production."
+  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20_AFTER_SEQUENCE_25; 86 total points; every target-plus-five hard ceiling passes. Cursor is 0.2558 percentage points above normal and Perplexity is below normal; neither is rounded green. Sequence 26 is an authorized pending Antigravity medium/5 fallback and earns zero until real terminal execution."
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -118,11 +120,11 @@ native_code_assignments:
     owned_surfaces: ["terminal historical authority-safety attempt", "services/session-gateway", "Unreal/Source/LongTableSocial", "Unreal/Content/Social", "Unreal/Plugins/LongTableHouseCore"]
     house_core_authority: "Grok clean-room CLI and final browser fallback are terminal unavailable with no complete downloadable bundle; quarantined Antigravity source remains prohibited and any later HouseCore route requires a new packet"
   gemini_antigravity:
-    scope_forecast_units: 8
-    allocation: {historical_house_core_attempt: 8, terminal_robot_dealer_assignment: 2, generic_state_machine_scaffold: 1}
-    owned_surfaces: ["isolated historical LongTableHouseCore", "isolated terminal LongTableRobotDealer", "generic public-synthetic state-machine scaffold with no repository path"]
-    assignment_status: "HouseCore and RobotDealer are terminal rejected at zero direct-production credit; sequence 14 is a new fixed-vocabulary generic state-machine scaffold in plan mode, with no private or repository context and no writer lease"
-    integration_destination: "Grok HouseCore is terminal unavailable; Antigravity robot-dealer candidate 0ae3269 is provenance-frozen but rejected and any replacement must use a new non-overlapping fallback assignment"
+    scope_forecast_units: 16
+    allocation: {historical_house_core_attempt: 8, terminal_robot_dealer_assignment: 2, generic_state_machine_scaffold: 1, active_isolated_robot_dealer_fallback: 5}
+    owned_surfaces: ["isolated historical LongTableHouseCore", "isolated terminal LongTableRobotDealer", "generic public-synthetic state-machine scaffold with no repository path", "sequence 26 fresh synthetic LongTableRobotDealer/** writer lease"]
+    assignment_status: "Sequence 26 LT-NATIVE-ANTIGRAVITY-ROBOT-003 is authorized pending primary in a new isolated project and assignment-private Antigravity profile; shared canonical Antigravity settings remain read-only hash invariants. Historical source bytes, prompts, transcripts, findings, results, manifests, diffs and QA evidence remain unreadable; its Director-ratified public specification may incorporate general advisory lessons as standalone requirements."
+    integration_destination: "Only a valid sequence-26 source-only working-tree delivery may be mechanically frozen unchanged into Unreal/Plugins/LongTableRobotDealer/** on accepted base 4d26680 for independent OpenAI QA"
     outbound_boundary: "closed public contract, enums, bounded integers, fixed strings and synthetic fixtures only; no private repository context"
   openai:
     program_capacity_units: 0
@@ -138,25 +140,16 @@ native_code_assignments:
     assignment_status: "TERMINAL_RAW_RESULT_REJECTED; exact scoped working-tree blob is uncommitted evidence only and GitHub Copilot CLI remains distinct from GitHub repository tooling"
 
 non_credit_scope_forecast_mix:
-  total: 127
-  claude: {units: 72, percent: 56.69}
-  cursor: {units: 20, percent: 15.75}
-  grok: {units: 22, percent: 17.32}
-  gemini_antigravity: {units: 8, percent: 6.30}
-  perplexity: {units: 4, percent: 3.15}
-  external_openai_codex: {units: 1, percent: 0.79}
+  total: 135
+  claude: {units: 72, percent: 53.33}
+  cursor: {units: 20, percent: 14.81}
+  grok: {units: 22, percent: 16.30}
+  gemini_antigravity: {units: 16, percent: 11.85}
+  perplexity: {units: 4, percent: 2.96}
+  external_openai_codex: {units: 1, percent: 0.74}
   disposition: "scope arithmetic only; prohibited as rolling evidence, dispatch authority, accepted credit, or completion evidence"
 
 overall_effort_ledger:
-  - sequence: 1
-    assignment_id: "LT-NATIVE-CLAUDE-001"
-    provider: claude
-    size: long
-    canonical_points: 8
-    completed: true
-    terminal_status: "OPENAI_CHANGES_REQUIRED_SUPERSEDED_BY_R1"
-    authenticated_run: "claude-session:f0d909ff-0700-4846-b6d0-65f75598d745"
-    direct_production_points: 0
   - sequence: 2
     assignment_id: "LT-NATIVE-ANTIGRAVITY-001"
     provider: gemini_antigravity
@@ -392,6 +385,20 @@ overall_effort_ledger:
     normalized_result_digest: "sha256:f666f7dc082b78cd3e845b0c6ba19409af7e39c7e795166ccfac47d21ccce485"
     terminal_evidence: "artifacts/native-program/qa/2026-08-31-github-copilot-xrtest-005-terminal-rejection.md"
     exclusion_reason: "One GitHub Copilot CLI recovery run independently authored the correct one-file diff under the exact view/edit-only boundary and auto-routed to Anthropic claude-haiku-4.5. Its normalized inner result validates, but the raw final assistant payload is Markdown-fenced and the transcript contains intermediate prose. OpenAI did not correct or commit the bytes and stopped before build/test. Overall simple/1 records once; direct production is zero and no revision or delivery retry is legal."
+  - sequence: 25
+    assignment_id: "LT-NATIVE-CLAUDE-ROBOT-001"
+    provider: claude
+    size: medium
+    canonical_points: 5
+    completed: true
+    terminal_status: "TERMINAL_FAILED_SANDBOX_PERMISSION_DENIED_NO_PROVIDER_COMMIT"
+    authenticated_run: "claude-code:2.1.251;primary-session:884ec743-eb98-45ee-8d3f-5726e79381f3;recovery-session:45450110-0a92-41ff-835c-c9983aadb714;model:claude-fable-5;effort:high"
+    direct_production_points: 0
+    starting_ref: "39087f750c7af361393feb32926ea898f9dccecb"
+    starting_tree: "4085ca20ee26e081e0405d4820f3503c8f595b1c"
+    terminal_result_digest: "sha256:d2f1c44995c0b0b6b441dfa69893fb7428b3d8d6e33c460a4f2792b418644acb"
+    terminal_evidence: "artifacts/native-program/qa/2026-08-31-claude-robot-001-terminal-permission-failure.md"
+    exclusion_reason: "The authenticated primary created thirteen clean-room source files and hit an explicit temporary session limit. The one authorized post-reset recovery returned a schema-valid FAILED result after eight recorded Bash permission denials prevented the mandatory provider commit. OpenAI preserved the raw provider contradictions, independently proved the exact thirteen-file manifest remained unchanged, and rejected substantive cue/state-correlation, authority-equivalence and concealment-counterfactual defects. Overall medium/5 records once; direct production is zero, the bytes remain quarantined and no Claude retry or normalization is permitted."
 accepted_direct_production_ledger:
   - sequence: 19
     assignment_id: "LT-NATIVE-CLAUDE-PROVENANCE-004"
@@ -408,7 +415,12 @@ rolling_window_projection:
   current_shares_percent: {claude: 34.8837, cursor: 23.2558, grok: 20.9302, openai: 5.8140, gemini_antigravity: 13.9535, perplexity: 0.0, github_copilot_cli: 1.1628}
   enforcement: "COMPLETE_ROLLING_20_AFTER_SEQUENCE_25; HARD_CEILINGS_PASS; NORMAL_BAND_MISS_CURSOR_PLUS_0.2558_AND_PERPLEXITY_BELOW_TARGET. This is not mislabeled as full normal-band compliance."
   direct_production_window_status: "WARMING_UP_ONE_ACCEPTED_POINT_ONLY; not a compliance pass; sequences 24 and 25 earn zero direct production"
-  next_route: "Sequence 25 is terminal FAILED with no provider commit and no Claude retry. The exact 13-file manifest remains quarantined evidence only. A useful RobotDealer replacement requires a fresh non-overlapping fallback packet and workload preflight; OpenAI may not silently normalize or accept the failed packet."
+  next_route: "Sequence 26 authorizes one fresh non-overlapping Antigravity RobotDealer primary from an isolated synthetic authority root, assignment-private Antigravity profile and Director-ratified public specification. Shared canonical settings are read-only hash invariants. Predecessor artifacts remain excluded, while general advisory lessons may appear only as standalone public requirements. Pending earns zero. A real terminal medium/5 execution rolls out sequence 2 Antigravity long/8 and projects 83 total points with every hard ceiling passing; OpenAI remains exact-byte QA only."
+  sequence_26_terminal_projection:
+    rolled_out_assignment: "sequence 2 LT-NATIVE-ANTIGRAVITY-001 long/8"
+    canonical_points: {claude: 30, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 9, perplexity: 0, github_copilot_cli: 1}
+    shares_percent: {claude: 36.1446, cursor: 24.0964, grok: 21.6867, openai: 6.0241, gemini_antigravity: 10.8434, perplexity: 0.0, github_copilot_cli: 1.2048}
+    enforcement: "ALL_HARD_CEILINGS_PASS; NORMAL_BAND_MISS_CURSOR_PLUS_1.0964_AND_PERPLEXITY_BELOW_TARGET"
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -969,7 +981,7 @@ canonical_assignment_ledger:
     starting_ref: "39087f750c7af361393feb32926ea898f9dccecb"
     starting_tree: "4085ca20ee26e081e0405d4820f3503c8f595b1c"
     owned_paths: ["LongTableRobotDealer/**"]
-    attempts: {local_pre_model_configuration_failures: 1, primary: 1, transient_recoveries: 1, model_requests: 2, source_revisions: 0, third_attempts: 0}
+    attempts: {local_pre_model_configuration_failures: 1, primary: 1, transient_recoveries: 1, coding_model_requests: 2, source_revisions: 0, post_terminal_owner_advisory_contacts: 3, total_model_contacts: 5}
     authenticated_run: "claude-code:2.1.251;session:884ec743-eb98-45ee-8d3f-5726e79381f3;model:claude-fable-5;effort:high"
     primary_terminal_reason: "HTTP_429_SESSION_LIMIT_RESETS_12AM_AMERICA_LOS_ANGELES_BEFORE_STRUCTURED_RESULT"
     primary_raw_result_digest: "sha256:f749669ad260baa58d999ef735ee31e30e72c32716baec302492a6d6b1852f0e"
@@ -988,7 +1000,7 @@ canonical_assignment_ledger:
     recovery_prompt_digest: "sha256:e5f3872037427d0daa6949e6b46effa88d2739cd761aaae25c81ac52aff66810"
     recovery_runner: "director/native-program/run-claude-robot-001-recovery.ps1"
     recovery_runner_digest: "sha256:e480a2098ec9e3686c75acc4e729450fbd0354b3c563e3affecd8216aa079284"
-    recovery_launch_status: "TERMINAL; atomic one-shot claim consumed; exact pre-contact revalidation passed; later QA heartbeat deleted; no third contact"
+    recovery_launch_status: "TERMINAL_CODING_LANE_AND_CLOSED_ADVISORY_EXCHANGE; atomic one-shot claim consumed; exact pre-contact revalidation passed. Owner-authorized advisory contact 1 returned OWNER_DECISION_REQUIRED without repository/source scope; the owner explicitly authorized a Director response with exact inline inventory, which returned AVAILABLE correction guidance; at the owner's instruction to finish the exchange first, a final no-tool Director decision received terminal ACKNOWLEDGED — DIRECTOR_DECISION_RECORDED. No advisory contact made a tool, file, repository or external effect."
     qa_worktree: "C:\\Users\\edwar\\.codex\\worktrees\\long-table-claude-robot-qa-002"
     qa_branch: "codex/claude-robot-qa-002"
     qa_base: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
@@ -997,10 +1009,58 @@ canonical_assignment_ledger:
     qa_harness: "director/native-program/qa/invoke-openai-robot-dealer-qa.ps1"
     qa_harness_digest: "sha256:e2daeb6555c2b475970e88a0b68e3e38639eeb6eb0acbea191418824c80dd4b0"
     terminal_evidence: "artifacts/native-program/qa/2026-08-31-claude-robot-001-terminal-permission-failure.md"
-    terminal_evidence_digest: "sha256:3e964711745e567a646e6025bc98886ef0023d97ffb3d84340ccd83cdc5ee664"
+    terminal_evidence_digest: "sha256:2a22501d8521446b4844621a59db3b88abf00931755318cb434dbd1059039177"
     post_terminal_manifest_digest: "sha256:3fba90f9e9c782da2363272f8515d80eff0530a57e6e3588df5d84f14e8a1989"
     post_terminal_manifest_comparison: "EXACT_MATCH_TO_FROZEN_PRIMARY; 13 source-only files; no generated artifacts"
-    manual_overlay_reason: "The sequence-18 prestage never dispatched, so sequence 25 was the first execution of the same assignment under a narrow reauthorization delta. The authenticated primary created thirteen leased-path files and then hit an explicit temporary session limit. The single post-reset recovery returned a schema-valid completed wrapper with structured status FAILED: eight Bash permission denials prevented the mandatory provider commit, and Claude made no edit or external write. OpenAI recomputed the exact thirteen-file manifest and proved it still matches the frozen primary bytes. The packet is terminal medium/5 overall, zero direct production, and cannot be normalized, accepted or retried. The bytes remain quarantined evidence pending a fresh fallback authority decision."
+    owner_recontact_evidence: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-001.sequence-25-owner-recontact.md"
+    owner_recontact_evidence_digest: "sha256:a82c4035bf51137268cad3b89544000386eff757ab0b4af77ff83ddb4a99c68d"
+    manual_overlay_reason: "The sequence-18 prestage never dispatched, so sequence 25 was the first execution of the same assignment under a narrow reauthorization delta. The authenticated primary created thirteen leased-path files and then hit an explicit temporary session limit. The single post-reset recovery returned a schema-valid completed wrapper with structured status FAILED: eight Bash permission denials prevented the mandatory provider commit, and Claude made no edit or external write. OpenAI recomputed the exact thirteen-file manifest and proved it still matches the frozen primary bytes. The owner later authorized three post-terminal advisory contacts with zero code authority or workload credit: missing-scope OWNER_DECISION_REQUIRED, exact-inline-inventory AVAILABLE guidance, and a final no-tool Director decision acknowledged verbatim as DIRECTOR_DECISION_RECORDED. The Director used only guidance consistent with the frozen public contract to clarify the fresh sequence-26 prompt. Sequence 25 remains terminal medium/5 overall, zero direct production, cannot be normalized or accepted, and its bytes remain quarantined while fresh sequence 26 owns the fallback lane."
+  - sequence: 26
+    assignment_id: "LT-NATIVE-ANTIGRAVITY-ROBOT-003"
+    execution_semantics: "FRESH_PROCESS_PRIVATE_PROFILE_FALLBACK_AFTER_TERMINAL_CLAUDE_ASSIGNMENT_WITH_DIRECTOR_RATIFIED_PUBLIC_SPECIFICATION"
+    provider: gemini_antigravity
+    size: medium
+    canonical_points: 5
+    status: "AUTHORIZED_PENDING_PRIMARY"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:d4903468bcc4be006933c5ce6895ac76e6d7079ca622257d4c1a497ecd1616d2"
+    packet_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-ROBOT-003.json"
+    permission_delta_digest: "sha256:52150e86c67faae07f3b13a7d02894206520b56617c43b4c303a96e19b4f1688"
+    permission_delta_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-ROBOT-003-PERMISSION-DELTA.json"
+    result_binding_digest: "sha256:aead3b2806d593f5505597d60fd5116ce4f461eba55336788093ad51aaf5585f"
+    result_binding_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-ROBOT-003-RESULT-BINDING.json"
+    activation_digest: "sha256:58724bf93b12ee27609d46c2c204596f0ece29881d6d9a6a3a2ed6e19a262720"
+    activation_evidence: "artifacts/native-program/coordination/2026-08-31-sequence-26-activation.md"
+    prompt_digest: "sha256:39eb912cf4481d8a99d673acedff0f10d146d9300bcd0edd4014a3ebcde019d0"
+    prompt_file: "artifacts/native-program/providers/LT-NATIVE-ANTIGRAVITY-ROBOT-003.sequence-26.prompt.md"
+    launcher_digest: "sha256:d5b91525a29f428b5011c798a85df129b70f2a2ed87c4f498044008160be033d"
+    launcher_file: "director/native-program/run-antigravity-robot-003.ps1"
+    qa_harness_digest: "sha256:2c114d84da7c8431ddecf0b675ca252c7a7d38a23925f0d078d30145fd0486c8"
+    qa_harness_file: "director/native-program/qa/invoke-openai-antigravity-robot-003-qa.ps1"
+    starting_ref: "644d1b082347369f5c9665312946c6f5945fa925"
+    starting_tree: "4085ca20ee26e081e0405d4820f3503c8f595b1c"
+    sandbox: "C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-robot-dealer-antigravity-003-clean"
+    branch: "codex/antigravity-robot-cleanroom-003"
+    project_id: "64ba9d6d-900c-4894-8bc8-b0e0a4f52906"
+    model: "gemini-3.1-pro-high"
+    owned_paths: ["LongTableRobotDealer/**"]
+    attempts: {local_pre_provider_guardian_failures: 1, primary: 0, transient_recoveries: 0, qa_revisions: 0, provider_contacts: 0}
+    pre_model_failure_status: "FAILED_CLOSED_BEFORE_PROVIDER_CREATION_DATE_TOKEN_COERCION"
+    pre_model_failure_evidence: "artifacts/native-program/qa/2026-08-31-antigravity-robot-003-pre-model-guardian-failure.md"
+    pre_model_failure_evidence_digest: "sha256:b70f24b5862a04d47c61fa914fe1e93a7888a82ee55541f918bb6a35756e37f4"
+    guardian_selftest_evidence_root: "artifacts/native-program/qa/LT-NATIVE-ANTIGRAVITY-ROBOT-003.guardian-selftest"
+    guardian_selftest_guardian_digest: "sha256:0a19d6b890ae97300171a7ebbb6c0169793622487949bbd90693338b6fb37bb0"
+    guardian_selftest_summary_digest: "sha256:814bf6830be89fe7eef37f3b300f9ffa55008a779697dae4165e7f0948c1b79b"
+    guardian_selftest_accounting: "Provider-free exact-launcher-byte Job Object self-test; provider_process_created=false, provider_identity_present=false, provider_contacts=0; no attempt, retry or workload credit."
+    recovery_only_archive: "C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-robot-dealer-antigravity-003-clean-sequence26-settings-rollback-recovered-20260831T1404326982153Z-9714563b068542d0b55f528e491cd7d8"
+    pre_model_failure_accounting: "No provider process, model request, paid ambiguity, source delivery, workload point, retry credit or provider contact. The next provider launch remains the one primary."
+    isolation_boundary: "One assignment-private USERPROFILE/HOME tree, closed exact-name OS/runtime environment allowlist, custom UTF-16LE environment block, suspended Job-bound launch, exact private appData/project/transcript resolution and reparse-free evidence. No regex-based privacy control."
+    canonical_settings_boundary: "C:\\Users\\edwar\\.gemini\\antigravity-cli\\settings.json and the canonical project record are read-only SHA-256 invariants; the launcher writes neither, creates no rollback byte copies, performs no restoration window, and treats no global mutex or whole-machine agy PID sample as an exclusivity boundary."
+    qa_worktree: "C:\\Users\\edwar\\.codex\\worktrees\\long-table-antigravity-robot-qa-003"
+    qa_branch: "codex/antigravity-robot-qa-003"
+    qa_base: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
+    qa_base_tree: "1e0db56f1e85d66c93ab64bc3dca8c237947c210"
+    manual_overlay_reason: "Terminal sequence 25 cannot be retried or normalized. Workload projection makes Antigravity the only capable configured product-code provider inside the hard ceiling for a fresh medium fallback. Sequence 26 uses an isolated synthetic authority root and an assignment-private Antigravity profile with an exact generated private project record containing only the bounded configuration needed for the public contract, generic result schema and Director-ratified public specification. Shared canonical settings remain read-only and are never copied, mutated or restored. Historical source bytes, prompts, transcripts, findings, results, manifests, diffs and QA evidence are not readable; general advisory lessons may appear only as standalone public requirements. Provider Git is not required: exact source-only working-tree delivery may be mechanically materialized with provider author and OpenAI committer identities after private-profile, environment, Job-object, transcript and raw-result validation. Pending earns zero overall and direct-production credit."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -1015,6 +1075,7 @@ credit_rules:
   - "Pre-PR76 legacy units remain visible but are excluded from canonical rolling and direct-production ledgers until assignment ID, immutable points, order, authentication and outcome binding are all proven."
   - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
   - "Sequence 25 is terminal and earns medium/5 overall with zero direct production. Its completed rolling window is Claude 30/86 = 34.8837%, Cursor 20/86 = 23.2558%, Grok 18/86 = 20.9302%, OpenAI 5/86 = 5.8140%, Antigravity 12/86 = 13.9535%, Perplexity 0 and GitHub Copilot CLI 1/86 = 1.1628%. All hard ceilings pass; Cursor and Perplexity miss normal."
+  - "Sequence 26 is pending and earns zero. A real terminal Antigravity medium/5 execution rolls out sequence 2 Antigravity long/8 and yields Claude 30/83 = 36.1446%, Cursor 20/83 = 24.0964%, Grok 18/83 = 21.6867%, OpenAI 5/83 = 6.0241%, Antigravity 9/83 = 10.8434%, Perplexity 0 and GitHub Copilot CLI 1/83 = 1.2048%. All hard ceilings pass; Cursor and Perplexity miss normal."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
@@ -1044,3 +1105,5 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 06:12 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:36 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 07:15 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | END]]

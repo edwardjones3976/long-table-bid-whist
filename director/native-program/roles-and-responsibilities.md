@@ -1,4 +1,5 @@
-<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:20 UTC | BEGIN]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | BEGIN]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:17 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:22 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:16 UTC | BEGIN]] -->
@@ -24,7 +25,7 @@ with no activation path.
 | Claude / FABLE 5 ULTRA/MAX | Accepted foundation; sequence 25 clean-room `LT-NATIVE-CLAUDE-ROBOT-001` and sequence 22 XR-test fallback are terminal | Sequence 25 earns medium/5 overall and zero direct production; no active lease | No retry, XR or main-repository read/write, rejected provider input, self-review, merge/release, spending, credential change or final acceptance |
 | Cursor | Self-registering LongTableXR project plugin for hands/controllers, optional-presence seam/fallback, accessibility and MR/VR state; later separately gated integration | 4 scope-forecast units only; isolated core packet is medium/5 and production credit still requires OpenAI acceptance | No edits outside the plugin subtree, cross-lane edits, self-review, merge/deploy/publish, spending or permissions |
 | Grok | Sequence 21 pre-submit transport is terminal unavailable; earlier authority-safety/House routes stay closed; future clean-room HouseCore/session/social work remains separate | Zero sequence-21 points because no model request ran | No current writer lease, production XR byte, rejected-provider input, self-review, merge/deploy/publish, credentials, concealed data or acceptance |
-| Gemini Antigravity | Historical rejected HouseCore and RobotDealer attempts, sequence 14 generic scaffold and terminal sequence 23 XR-test fallback | Sequence 14 and sequence 23 each earned simple/1 overall; all Antigravity work remains zero direct production | No current writer lease, rejected-artifact transfer, self-review, merge, external write or acceptance |
+| Gemini Antigravity | Active sequence 26 fresh clean-room `LongTableRobotDealer/**` writer; historical rejected HouseCore, RobotDealer and XR-test routes plus sequence 14 generic scaffold remain isolated history | Pending earns zero; terminal execution earns medium/5 overall once and direct only after exact OpenAI acceptance | No predecessor/historical provider input, shell/Git, path outside the synthetic lease, self-review, merge, external write or acceptance |
 | GitHub Copilot CLI | Sequence 24 independently authored the one-file XR test-oracle correction from clean 33aca610 and is terminal raw-result rejected; it remains distinct from GitHub repository tooling | Simple/1 overall and zero direct production | No current writer lease, retry, result redelivery, GitHub action, self-review or acceptance |
 | Perplexity | Existing broad research evidence; sequence 13's exact current Quest query stopped before submission because the configured credential was empty | Zero sequence-13 overall/direct points because no request reached Perplexity; prior legacy research is not converted into PR76 credit | No retry/duplicate query, private context, code, vote, review verdict or external write |
 | Firecrawl | Primary-source retrieval used to verify research | Tool, never a workforce provider | No vote, authorship or acceptance authority |
@@ -41,8 +42,10 @@ with no activation path.
   are terminal OpenAI-rejected after the final authenticated Chrome transport.
   Provider commit `0eeb716e` and mechanically materialized local candidate
   `623ca52c` are evidence only; neither is an accepted dependency. Claude has no
-  active foundation path or revision authority. XR-test/RobotDealer remain
-  closed pending a new explicit Director assignment and authority decision.
+  active foundation path or revision authority. At that historical sequence-12
+  stop, XR-test/RobotDealer were closed pending a new explicit Director
+  assignment and authority decision; sequences 22, 25 and 26 below supersede
+  that old route state without reopening the rejected sequence-12 lease.
 - Cursor: `Unreal/Plugins/LongTableXR/**` only. Input, Presence, Environment,
   source, tests and any plugin-local configuration remain inside that subtree.
 - Grok: `LT-NATIVE-GROK-AUTHORITY-SAFETY-001` is terminal rejected with no
@@ -98,6 +101,21 @@ with no activation path.
   evidence and cannot be normalized, built or accepted under the exhausted
   packet. Claude owns no active RobotDealer path. A replacement requires a new
   fallback packet; OpenAI still cannot author the product correction.
+- Gemini Antigravity sequence 26 may work only in
+  C:\Users\edwar\.codex\provider-sandboxes\lt-robot-dealer-antigravity-003-clean
+  through the exact project ID resolved only from the assignment-private
+  generated project record. Canonical settings are read and hashed only and
+  may never be written. It may read
+  exact immutable `PUBLIC_CONTRACT.json` and `RESULT_SCHEMA.json`, then write
+  only new `LongTableRobotDealer/**` source files. It receives no Claude byte,
+  manifest, prompt, result, finding or QA record and no historical Antigravity
+  implementation. Shell, Git, browser, URL, MCP, external service and dangerous
+  permission bypass remain denied. Provider Git commit is not required.
+- OpenAI may freeze only an exact valid sequence-26 working-tree manifest into
+  `Unreal/Plugins/LongTableRobotDealer/**` on accepted base `4d26680`, using
+  Gemini Antigravity as commit author and OpenAI QA as committer. OpenAI may not
+  correct, normalize, supplement or reformat a product byte. Independent
+  executable and source-review gates decide acceptance or kickback.
 
 The shared integration contract is frozen before dispatch. Providers may add
 tests only within their owned module. They may not alter another provider's
@@ -235,4 +253,5 @@ freeze, build, test, accept or reject the bytes, but cannot correct them.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:16 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:22 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | END]] -->
-<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:20 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:17 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | END]] -->
