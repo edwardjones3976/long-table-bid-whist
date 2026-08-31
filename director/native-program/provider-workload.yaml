@@ -594,7 +594,7 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "TRANSIENT_RECOVERY_FROZEN_WAITING_FOR_2026-08-30T19:00:00-07:00_RESET"
+    status: "TRANSIENT_RECOVERY_PRECHECK_GREEN_WAITING_FOR_2026-08-30T19:00:00-07:00_RESET"
     accepted_direct_production_points: 0
     packet_digest: "sha256:85ba252916b6496045e64285a9da1d9cca4de34821bbc333f113f572694f9a80"
     assignment_approval_digest: "sha256:57df50c0157b7304817cd8f99eb738c2f968f8bc06dac193719f80b217209acb"
@@ -621,6 +621,8 @@ canonical_assignment_ledger:
     recovery_launcher_digest: "sha256:62a7b41886007cf446b159cd6dc0fcfbbf1bcc24dc98c7fb4c19d86205786ab2"
     recovery_launcher: "director/native-program/run-claude-replacement-003-recovery.ps1"
     result_schema_authority: "cc791364e2f1ff1ac4c72e01c7122296e4ff7362:ea3dbdf577b757a492ec4fcd53617a0fd9270800"
+    recovery_preflight_digest: "sha256:e522081a1c470c662c39e842b50f7f9ca42a14e57b7ff925e4643280f9af3867"
+    recovery_preflight_evidence: "artifacts/native-program/coordination/2026-08-30-sequence-16-recovery-preflight.md"
     manual_overlay_reason: "Genuinely new replacement-foundation assignment with a complete immutable 17-path repair contract. Sequences 14/15 are terminal; exact PR76 evaluation allows the assignment during 15/20 warm-up; and the stricter 80-point project projection is at or below every target-plus-five ceiling. The isolated Fable 5 Max primary made one in-lease partial edit, then ended unambiguously on a provider 429 session limit before commit or result packet. The exact provider-authored partial remains quarantined in the assignment worktree. One packet-authorized transient recovery may continue it only after the stated reset; no duplicate send occurs before then. Rejected candidate 623ca52 remains repair seed only. OpenAI mechanically materializes retained provider blobs plus exact repair blobs onto sole parent a6742a0 only after a complete accepted provider commit; the rejected commit never becomes product ancestry."
   - sequence: 17
     assignment_id: "LT-NATIVE-CLAUDE-XRTEST-001"
