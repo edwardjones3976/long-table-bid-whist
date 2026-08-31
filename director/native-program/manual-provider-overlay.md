@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
@@ -530,6 +531,18 @@ credit and does not change or reject the accepted foundation. The completed
 window is now 17/20 and 86 points: Claude 37.21%, Cursor 23.26%, Grok 20.93%,
 OpenAI 5.81%, Antigravity 12.79% and Perplexity 0%.
 
+### Grok one-file XR test fallback
+
+The Cursor XR route is exhausted, Claude's stale medium XR packet is
+workload-ineligible and OpenAI cannot author the correction. Sequence 21,
+`LT-NATIVE-GROK-XRTEST-001`, therefore transfers only
+`LongTableXRTests.cpp` on exact base `33aca610` to Grok. It is not a retry of
+Grok's authority-safety or House assignments and receives none of their bytes.
+The useful simple/1 projection is Grok `19/87 = 21.84%`, inside normal. One
+primary is authorized, one recovery exists only for an objectively temporary
+pre-result transport failure, and no source revision exists. OpenAI freezes and
+tests the exact result once.
+
 Manual routing never weakens acceptance. Each provider candidate still requires:
 
 1. exact base, head, tree, and origin evidence;
@@ -545,3 +558,4 @@ gates.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]] -->

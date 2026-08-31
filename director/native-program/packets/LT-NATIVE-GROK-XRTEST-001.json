@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-GROK-XRTEST-001",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "sequence": 21,
+  "provider": "Grok",
+  "model": "grok-4.6",
+  "workload_size": "simple",
+  "canonical_points_on_terminal_execution": 1,
+  "status": "AUTHORIZED_PENDING_PRIMARY",
+  "objective": "Correct only the two stale unchanged-output snapshots in LongTable.XR.SemanticParity and add above-maximum ConfirmGeneration rejection plus unchanged-output coverage, without changing any production XR byte or weakening any test.",
+  "starting_ref": "33aca6106603342efcf43fb813482cb18fd4b18c",
+  "starting_tree": "04f65bc3c72202977312cb38bc039460545daeec",
+  "worktree": "C:\\Users\\edwar\\.codex\\worktrees\\long-table-grok-xrtest-001",
+  "branch": "codex/grok-xrtest-001",
+  "authority_snapshot": [
+    {"path":"director/native-program/README.md","commit_sha":"3a324436762d33be2cfabd5dc6ea1b987c131dab","blob_sha":"c60e2c52e747a947fa010dcc6596ee7ee245607f"},
+    {"path":"director/native-program/manual-provider-overlay.md","commit_sha":"3a324436762d33be2cfabd5dc6ea1b987c131dab","blob_sha":"635f21bbd952bca6a6ffb7573d4a8e0654f945b7"},
+    {"path":"director/native-program/provider-workload.yaml","commit_sha":"3a324436762d33be2cfabd5dc6ea1b987c131dab","blob_sha":"efd45991eb58bb2175ed4b6d649b04d598d6e4e0"},
+    {"path":"director/native-program/roles-and-responsibilities.md","commit_sha":"3a324436762d33be2cfabd5dc6ea1b987c131dab","blob_sha":"d34e61ce6a2c1626684e565ecc3dd990a140eb59"},
+    {"path":"director/native-program/stage-gates.md","commit_sha":"3a324436762d33be2cfabd5dc6ea1b987c131dab","blob_sha":"8ecef32d7fe3d97dd1fd161931f24e4f0656cc65"},
+    {"path":"director/privacy-control-policy.md","commit_sha":"3a324436762d33be2cfabd5dc6ea1b987c131dab","blob_sha":"a31ce14bdaed03f3028480b7572cd9ccf7c0f859"},
+    {"path":"director/native-program/contracts/long-table-xr-public-v1.json","commit_sha":"3a324436762d33be2cfabd5dc6ea1b987c131dab","blob_sha":"e2eea682d0dee913c8d21d791211ad2bd6573792"},
+    {"path":"director/native-program/contracts/model-result-packet-v1.schema.json","commit_sha":"3a324436762d33be2cfabd5dc6ea1b987c131dab","blob_sha":"3f68e59136c422ce84d79f874c0343fd5ffc0a9e"},
+    {"path":"artifacts/native-program/qa/2026-08-31-first-deal-gap-audit.md","commit_sha":"3a324436762d33be2cfabd5dc6ea1b987c131dab","blob_sha":"3689c384061cae7702a2b40768fa963f6c6844db"},
+    {"path":"artifacts/native-program/providers/2026-08-30-cursor-xrcore-002.md","commit_sha":"3a324436762d33be2cfabd5dc6ea1b987c131dab","blob_sha":"e0915b0d1b5e2950b34a649228d7b671e2c8948b"}
+  ],
+  "authority_snapshot_digest": "sha256:f055425de8bee57b5eb0f855c858c74467f76472ad2f38da128a3525ab438fdf",
+  "owned_paths": [
+    "Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp"
+  ],
+  "starting_blob": "a17ff010bfae135be5f27796fcdd34b76f1601c7",
+  "constraints": [
+    "Verify the exact clean starting ref, tree, branch and sole writable file before editing",
+    "Read and edit only the sole owned test file; every production XR and non-XR byte is immutable",
+    "Immediately before each rejecting decode, snapshot the current DecodeOut value and compare the post-rejection output to that immediate snapshot rather than the earlier initial Baseline",
+    "Add a JSON object whose ConfirmGeneration is exactly MaxConfirmGeneration plus one, prove DecodeInteractionEventJson rejects it, and prove DecodeOut is unchanged from its immediate pre-call snapshot",
+    "Preserve all exact-minimum and exact-maximum acceptance checks and every existing test property",
+    "Do not weaken, delete, skip, relabel, invert or make tautological any assertion",
+    "Do not use regex, blacklist, keyword, substring, redaction or pattern-based privacy or rights logic",
+    "Create one commit on codex/grok-xrtest-001 and return one schema-valid model-result-packet-v1 object"
+  ],
+  "prohibited_actions": [
+    "No production code edit",
+    "No edit outside the sole owned file",
+    "No web search, web fetch, MCP, subagent, other provider, memory or external repository",
+    "No use of rejected Grok, Antigravity or Claude implementation artifacts",
+    "No push, pull request, merge, deploy, publish, permission, credential, purchase or device action",
+    "No product, milestone, device, human, rights, cultural, store or release acceptance claim"
+  ],
+  "allowed_tools": [
+    "Local read and edit of the sole owned file",
+    "Local git status, diff, add, commit and exact identity commands",
+    "Optional focused LongTable.XR automation only; OpenAI remains responsible for authoritative QA"
+  ],
+  "acceptance_checks": [
+    "Exact sole-parent provider commit descends from 33aca6106603342efcf43fb813482cb18fd4b18c",
+    "Only the sole owned test file changes and its mode and LF line endings remain unchanged",
+    "The two stale post-boundary comparisons use immediate snapshots",
+    "Above-maximum ConfirmGeneration rejection and unchanged-output coverage is present",
+    "No existing assertion or test case is weakened or removed",
+    "Provider result validates against model-result-packet-v1",
+    "OpenAI independently runs the UE5.7 editor build and all ten LongTable.XR tests"
+  ],
+  "evidence_requirements": [
+    "Authenticated Grok run/session and exact model identity",
+    "Exact base, head, tree, parent, changed path, blob and line-ending evidence",
+    "Honest commands, exit codes and NOT_RUN values",
+    "One concise mapping from each of the three required test corrections to changed lines",
+    "Known limits: no combined product, Android package, Quest device or human gate is proven"
+  ],
+  "limits": {
+    "budget_usd": 0.25,
+    "timeout_seconds": 900,
+    "max_hops": 0,
+    "primary_attempts": 1,
+    "transient_recoveries": 1,
+    "max_revisions": 0
+  },
+  "retry_policy": "No resend after an ambiguous paid dispatch. One recovery exists only for an objectively temporary pre-result transport failure; no source revision is authorized.",
+  "idempotency_key": "LT-NATIVE-GROK-XRTEST-001-33aca61",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-GROK-XRTEST-001",
+    "source_event_id": "openai-first-deal-xrtest-fallback-20260831",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}

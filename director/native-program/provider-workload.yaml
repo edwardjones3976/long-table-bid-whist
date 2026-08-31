@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]]
@@ -337,7 +338,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 32, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 11, perplexity: 0}
   current_partial_shares_percent: {claude: 37.21, cursor: 23.26, grok: 20.93, openai: 5.81, gemini_antigravity: 12.79, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "Sequence 20 is a real exact-state OpenAI QA assignment, not denominator work. It proves First Deal is incomplete and identifies a one-file XR test-only fallback as the next useful implementation. A new Grok simple/1 packet may be considered because 19/87 = 21.84% is inside Grok's normal 17-23% band; Cursor's exhausted route and the stale Claude XR/Robot packets remain closed."
+  next_route: "Sequence 21 is authorized pending one Grok primary. It is a genuinely new one-file XR test-only fallback at 19/87 = 21.84% projected, inside Grok's normal band. Cursor's exhausted route and stale Claude XR/Robot packets remain closed; no other implementation may overlap."
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -351,6 +352,9 @@ rolling_window_projection:
     sequence_20_openai_gap_audit_after_terminal_points: {claude: 32, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 11, perplexity: 0, total: 86}
     projected_sequence_20_shares_percent: {claude: 37.21, cursor: 23.26, grok: 20.93, openai: 5.81, gemini_antigravity: 12.79, perplexity: 0.0}
     projected_sequence_20_status: "USEFUL_OPENAI_QA_INSIDE_OPENAI_NORMAL_5_TO_11; zero production credit; Cursor 0.26 above normal but below hard; Perplexity remains below normal"
+    projected_sequence_21_grok_xrtest_simple_after_terminal_points: {claude: 32, cursor: 20, grok: 19, openai: 5, gemini_antigravity: 11, perplexity: 0, total: 87}
+    projected_sequence_21_shares_percent: {claude: 36.78, cursor: 22.99, grok: 21.84, openai: 5.75, gemini_antigravity: 12.64, perplexity: 0.0}
+    projected_sequence_21_status: "AUTHORIZED_USEFUL_ONE_FILE_TEST_ONLY_FALLBACK; Grok inside normal 17_to_23; no filler; points enter only after terminal provider execution"
     authority: "projection only; useful assignment completion and fresh exact packet validation are required before each next dispatch; no filler, duplicate query or denominator-only work"
 
 canonical_assignment_ledger:
@@ -755,6 +759,25 @@ canonical_assignment_ledger:
     starting_ref: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
     starting_tree: "1e0db56f1e85d66c93ab64bc3dca8c237947c210"
     manual_overlay_reason: "One bounded OpenAI exact-state milestone audit derives the native First Deal requirements, proves the accepted authority foundation and identifies missing XR, room/card presentation, robot embodiment, Android/package, two-device and human/device gates. It is useful QA/control work, not filler or product authorship, and earns medium/5 overall points with zero direct production."
+  - sequence: 21
+    assignment_id: "LT-NATIVE-GROK-XRTEST-001"
+    provider: grok
+    size: simple
+    canonical_points: 1
+    status: "AUTHORIZED_PENDING_PRIMARY"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:79ad4890404188145237fa93fd50af2f9392da46a7d3ad7a2946ff8ba36ebe31"
+    packet_file: "director/native-program/packets/LT-NATIVE-GROK-XRTEST-001.json"
+    activation_digest: "sha256:47f19de7ac6e256c02dd5dcc55599831c021e9b11300a1ebf5b98c7425076491"
+    activation_evidence: "artifacts/native-program/coordination/2026-08-31-sequence-21-activation.md"
+    prompt_digest: "sha256:3ac9c2b41f3c478b75698e304550002596511d93661700d0abfe64a26cce58af"
+    prompt_file: "artifacts/native-program/providers/LT-NATIVE-GROK-XRTEST-001.prompt.md"
+    accepted_outcome_digest: null
+    starting_ref: "33aca6106603342efcf43fb813482cb18fd4b18c"
+    starting_tree: "04f65bc3c72202977312cb38bc039460545daeec"
+    owned_paths: ["Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp"]
+    attempts: {primary: 0, transient_recoveries: 0, revisions: 0}
+    manual_overlay_reason: "New simple/1 one-file test-only fallback from terminal Cursor to Grok. It corrects only two stale immediate-snapshot assertions and adds missing above-maximum ConfirmGeneration rejection/unchanged-output coverage. Production XR bytes remain immutable. Points enter the completed ledger only after actual terminal provider execution."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -781,3 +804,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]]

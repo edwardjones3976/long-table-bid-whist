@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
@@ -66,9 +67,10 @@ physical headset, external account, human cohort, or owner gate.
   XR-test and RobotDealer require a fresh workload-eligible authority decision.
 - Cursor: the self-registering `Unreal/Plugins/LongTableXR/**` project plugin
   for hands/controllers, presence fallback, accessibility and MR/VR adapters.
-- Grok: no active writer lease. Its seven-path authority-safety assignment is
-  terminal rejected; separately gated future private-session, host, reconnect,
-  voice/safety, social and clean-room HouseCore scope is unchanged.
+- Grok: active sequence-21 writer lease is exactly the one
+  `LongTableXRTests.cpp` file on frozen XR base `33aca610`; every production XR
+  byte is immutable. Its earlier authority-safety and House routes remain
+  terminal and prohibited inputs.
 - Gemini Antigravity: no active writer lease. Its final source-only robot-dealer
   candidate and historical Long Table House core attempt are both rejected and
   quarantined; neither is an integration dependency or a fallback input.
@@ -164,3 +166,4 @@ accepted authority and robot-cue contracts.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]] -->

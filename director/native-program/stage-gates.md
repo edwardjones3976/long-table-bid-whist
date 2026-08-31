@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
@@ -74,6 +75,13 @@ points. Stale Claude XR-test and RobotDealer packets remain closed; a new exact
 workload-eligible fallback authority is required. Physical Quest and every
 human, cultural, accessibility, rights, store and owner gate remain open.
 
+Sequence 21, `LT-NATIVE-GROK-XRTEST-001`, is now the sole active implementation
+lease. It owns only `LongTableXRTests.cpp` on frozen independent XR base
+`33aca610`; it may correct two stale snapshots and add missing above-maximum
+ConfirmGeneration coverage. Production XR bytes remain immutable. Passing this
+test-only gate would permit OpenAI to evaluate mechanical XR composition onto
+`4d26680`; it would not satisfy Android, Quest or First Deal acceptance.
+
 ## Chunk B — Private Game Night
 
 - Full strict Bid Whist match, validated house-rules manifest, scoring, replay,
@@ -147,3 +155,4 @@ ambiguity; unrelated mutation; failed exact-SHA binding; or cultural harm.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]] -->
