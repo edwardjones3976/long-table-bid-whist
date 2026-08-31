@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-PERPLEXITY-QUEST-INTERACTION-EVIDENCE-002",
+  "provider": "Perplexity",
+  "project": "Public Quest interaction and two-device validation evidence for a seated multiplayer application",
+  "status": "READY_FOR_SINGLE_RESEARCH_DISPATCH",
+  "workload": {
+    "sequence": 19,
+    "size": "medium",
+    "canonical_points_on_terminal_execution": 5,
+    "reason": "The current official-source matrix still marks haptics, spatial audio, accessibility and two-headset validation constraints not established. This assignment is narrower and materially distinct from the terminal pre-submit broad Quest-platform query."
+  },
+  "public_research_query": "Using only current official public primary sources published or updated through August 30, 2026, produce a dated evidence matrix for testing four unresolved capabilities in a native Unreal Engine 5.7 seated multiplayer application on Meta Quest 3 and Quest 3S: (1) controller and hand-tracking feedback, including available haptics when hands replace controllers and safe modality-switch behavior; (2) spatial audio implementation and device validation, including supported Meta or Unreal interfaces and objective on-device checks; (3) accessibility and seated-comfort controls for dominant hand, reach, scale, contrast, text scale, reduced motion, recentering, tracking loss, and controller/hand switching; and (4) a two-headset test procedure that proves each client receives only its own concealed state while exercising reconnect and role changes. For each capability identify the exact official API or documentation path, supported versions and devices, required permissions or project settings, observable test procedure, pass/fail evidence, limitation, and contradiction. Use no more than 10 sources from Meta, Epic Games, Khronos, Android, or recognized accessibility standards bodies; prefer pages updated within 18 months and mark NOT ESTABLISHED when official evidence does not support a claim. Do not use repositories, private data, code, forums, blogs, social media, third-party tutorials, product recommendations, legal or store conclusions, or implementation verdicts.",
+  "public_research_query_sha256": "sha256:63331b9a6f0542040948642fe1adfe914e51107afcd7bd75b45254819100328f",
+  "objective": "Return one bounded, cited, current primary-source packet that resolves four still-missing implementation and physical-validation evidence areas without receiving product context or authority.",
+  "non_goals": [
+    "No repository, source-code, architecture, private-project, credential, account, Slack, Linear, provider-output or concealed-gameplay context",
+    "No repeat of the broad Quest compatibility matrix, audience research, comparable-product survey, cultural research, music-rights research or product-direction debate",
+    "No programming, voting, review verdict, acceptance decision, security conclusion, store conclusion, implementation authority or external write"
+  ],
+  "constraints": [
+    "Execute the exact query text and digest once through the official Perplexity API using the configured research-only Director adapter",
+    "Use at most 10 official primary sources from the allowlisted publisher classes",
+    "Record source URL, title, publisher, visible date, supported version or limitation, confidence and contradictions",
+    "Mark unsupported facts NOT ESTABLISHED instead of inferring them",
+    "Transmit no repository context, credentials, environment values, user data, browsing history or private material",
+    "No revision, duplicate query, browser transport or polling; the Search API response is synchronous"
+  ],
+  "allowed_tools": [
+    "Official Perplexity Search API through the configured Director adapter"
+  ],
+  "allowed_external_effects": [
+    "One exact-digest public research request",
+    "One authenticated terminal research response with at most 10 citations"
+  ],
+  "acceptance_checks": [
+    "Authenticated Perplexity request identifier and terminal status are recorded",
+    "Executed query digest equals sha256:63331b9a6f0542040948642fe1adfe914e51107afcd7bd75b45254819100328f",
+    "No private or repository context is transmitted",
+    "Every returned item has a direct URL and supporting excerpt or is excluded",
+    "No more than 10 sources are retained and contradictions or unknowns are explicit",
+    "OpenAI independently verifies cited official pages before the evidence influences implementation"
+  ],
+  "evidence_requirements": [
+    "Provider, API surface, authenticated request identifier and terminal status",
+    "Exact query text and SHA-256",
+    "Raw terminal response retained without secrets",
+    "Normalized source matrix with retrieval timestamp",
+    "Independent official-page verification status",
+    "Known gaps and an explicit no-verdict, no-authority disclaimer"
+  ],
+  "approval_requirements": [
+    "The owner has already authorized Perplexity research for this project, directed the team to use best judgment, and authorized continuation without another prompt",
+    "This exact query is a new assignment because it addresses four evidence gaps left unresolved after the earlier broad query was never submitted",
+    "OpenAI may evaluate the evidence; Perplexity cannot vote, program, issue an implementation verdict or perform any external write"
+  ],
+  "limits": {
+    "budget_usd": 0.25,
+    "timeout_seconds": 180,
+    "max_hops": 0,
+    "max_revisions": 0,
+    "max_sources": 10,
+    "adapter_retry_count": 0
+  },
+  "idempotency_key": "LT-NATIVE-PERPLEXITY-QUEST-INTERACTION-EVIDENCE-002-63331b9a",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-PERPLEXITY-QUEST-INTERACTION-EVIDENCE-002",
+    "source_event_id": "owner-authorized-next-major-milestone-20260830",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}
