@@ -1,0 +1,127 @@
+{
+  "schema_version": "perplexity-search-evidence/v1",
+  "assignment_id": "LT-NATIVE-PERPLEXITY-QUEST-INTERACTION-EVIDENCE-002",
+  "idempotency_key": "LT-NATIVE-PERPLEXITY-QUEST-INTERACTION-EVIDENCE-002-63331b9a",
+  "packet_commit": "83e63c24dc3072e2fdaf7f619714e8739058588c",
+  "packet_raw_sha256": "45520b01ed3a9690a2f7526cf03abddf959354556eecd05df6478249c68f91f3",
+  "query_sha256": "sha256:63331b9a6f0542040948642fe1adfe914e51107afcd7bd75b45254819100328f",
+  "provider": "Perplexity",
+  "api_surface": "POST /search",
+  "provider_request_id": "fd4478d4-0734-4370-9b1b-ec7921da5143",
+  "http_status": 200,
+  "started_at": "2026-08-31T01:44:41.3148696+00:00",
+  "completed_at": "2026-08-31T01:44:43.9548016+00:00",
+  "attempt_count": 1,
+  "max_results": 10,
+  "search_context_size": "high",
+  "raw_terminal_evidence": {
+    "tool_call_chunk_id": "42fe00",
+    "retention": "The complete provider response is retained in the task tool transcript. This normalized artifact deliberately omits a long third-party excerpt and contains no credential or request header."
+  },
+  "results": [
+    {
+      "url": "https://developers.meta.com/horizon/resources/publish-quest-req/",
+      "title": "Meta Quest Virtual Reality Check (VRC) guidelines",
+      "publisher": "Meta",
+      "provider_last_updated": "2026-08-21",
+      "accepted_for_review": true,
+      "relevance": "Direct store test requirements for seated mode, supported input modes, hand/controller switching, accessibility feedback, one-handed use and spatial audio.",
+      "independent_verification": "Firecrawl HTTP 200, scrape 01a0557e-a8ae-7690-b589-db72a32b6fd0"
+    },
+    {
+      "url": "https://developers.meta.com/horizon/documentation/unreal/unreal-debug-android/",
+      "title": "Testing and Performance Analysis",
+      "publisher": "Meta",
+      "provider_last_updated": "2026-08-23",
+      "accepted_for_review": true,
+      "relevance": "On-device performance guidance; the targeted Firecrawl extraction returned no direct text for the four requested gaps.",
+      "independent_verification": "Firecrawl HTTP 200, scrape 01a0557e-8e02-758c-86e8-a1fcb0fc5bff"
+    },
+    {
+      "url": "https://developers.meta.com/horizon/documentation/unreal/unreal-engine/",
+      "title": "Unreal Engine | Meta Horizon OS Developers",
+      "publisher": "Meta",
+      "provider_last_updated": "2026-08-21",
+      "accepted_for_review": true,
+      "relevance": "Documentation hub only; it does not itself establish an implementation or test requirement.",
+      "independent_verification": "Not separately scraped because a stronger direct child page was verified."
+    },
+    {
+      "url": "https://developers.meta.com/horizon/release-notes/",
+      "title": "Release notes | Meta Horizon OS Developers",
+      "publisher": "Meta",
+      "provider_last_updated": "2026-08-25",
+      "accepted_for_review": true,
+      "relevance": "Mentions Meta XR Operator for controller-driven automated verification; no requirement for the requested four gaps was established.",
+      "independent_verification": "Not separately scraped; retained as a discovery lead only."
+    },
+    {
+      "url": "https://developers.meta.com/horizon/documentation/unreal/unreal-reference/",
+      "title": "Unreal Developer Reference",
+      "publisher": "Meta",
+      "provider_last_updated": "2026-08-20",
+      "accepted_for_review": true,
+      "relevance": "Legacy controller-action reference hub; not used as controlling evidence.",
+      "independent_verification": "Not separately scraped."
+    },
+    {
+      "url": "https://developers.meta.com/horizon/documentation/unreal/",
+      "title": "Unreal Integration - Settings and Tools",
+      "publisher": "Meta",
+      "provider_last_updated": "2026-05-02",
+      "accepted_for_review": true,
+      "relevance": "Current Unreal documentation hub; not used as a direct requirement.",
+      "independent_verification": "Not separately scraped."
+    },
+    {
+      "url": "https://developers.meta.com/horizon/documentation/unreal/unreal-openxr/",
+      "title": "Choosing an OpenXR Backend",
+      "publisher": "Meta",
+      "provider_last_updated": "2026-08-26",
+      "accepted_for_review": true,
+      "relevance": "Direct hand-tracking plugin and hand/controller switching setup guidance.",
+      "independent_verification": "Firecrawl HTTP 200, scrape 01a0557e-c856-758d-9c45-1e1b505334e9"
+    },
+    {
+      "url": "https://developers.meta.com/horizon/blog/building-mixed-reality-MR-meta-quest-3-connect-developers-presence-platform/",
+      "title": "Building for Mixed Reality on Meta Quest 3",
+      "publisher": "Meta",
+      "provider_date": "2026-08-18",
+      "provider_last_updated": "2026-08-26",
+      "accepted_for_review": true,
+      "relevance": "Official multi-user mixed-reality discovery lead, but it does not prove concealed-state isolation.",
+      "independent_verification": "Not separately scraped; not used for a pass claim."
+    },
+    {
+      "url": "https://www.strayspark.studio/blog/vr-game-development-meta-quest-ue5-2026",
+      "title": "VR Game Development for Meta Quest with UE5: The 2026 Guide",
+      "publisher": "Third party",
+      "provider_date": "2026-03-25",
+      "provider_last_updated": "2026-05-05",
+      "accepted_for_review": false,
+      "exclusion_reason": "The exact query prohibited third-party tutorials. No claim or excerpt from this result is adopted."
+    },
+    {
+      "url": "https://developers.meta.com/horizon/blog/start-developing-Meta-Quest-3-tips-performance-mixed-reality/",
+      "title": "Start Building with Meta Quest 3",
+      "publisher": "Meta",
+      "provider_date": "2026-08-18",
+      "provider_last_updated": "2026-08-26",
+      "accepted_for_review": true,
+      "relevance": "Official performance-tool discovery lead; not used to establish the four missing implementation contracts.",
+      "independent_verification": "Not separately scraped."
+    }
+  ],
+  "firecrawl_verification": {
+    "first_attempt": "Pre-fetch failure because the optional zero-data-retention feature is unavailable; no page was fetched.",
+    "recovery_attempt": "Succeeded after removing only the unsupported ZDR flag because every target was public and no private data was sent.",
+    "verified_official_pages": 3,
+    "credits_used": 15
+  },
+  "openai_disposition": "INCOMPLETE_EVIDENCE_ACCEPTED_WITH_EXPLICIT_GAPS_NO_IMPLEMENTATION_VERDICT",
+  "workload_credit": {
+    "overall_effort_points": 5,
+    "direct_production_points": 0,
+    "basis": "One authenticated, attributable, terminal medium research request executed successfully. Its incompleteness is preserved and no product byte or verdict is credited."
+  }
+}
