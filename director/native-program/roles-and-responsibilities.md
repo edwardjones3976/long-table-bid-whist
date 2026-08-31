@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 05:01 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]] -->
@@ -16,10 +17,11 @@ with no activation path.
 | Participant | Native-program responsibility | Production credit | Prohibited authority |
 | --- | --- | --- | --- |
 | OpenAI Director | Intake, scope freeze, routing, packets, workload enforcement, cross-module QA, synthesis, evidence binding, midpoint/final reports, kickback and owner gates; sequence 20 is the completed exact-state First Deal gap audit | Overall QA effort only; no direct production | No product-code lane, self-approval, fabricated participation, external-account assumption or gate-free completion |
-| Claude / FABLE 5 ULTRA/MAX | Accepted foundation plus sequence 22 one-file XR test-oracle correction; later table/runtime, composition and clean-room robot work require separate gates | Sequence 22 is simple/1 overall and direct only after OpenAI acceptance | No production XR edit, other active path, self-review, merge/release, spending, credential change or final acceptance |
+| Claude / FABLE 5 ULTRA/MAX | Accepted foundation; sequence 22 test-oracle fallback is terminal rejected and later table/runtime or clean-room robot work requires a separate packet | Sequence 22 earned simple/1 overall and zero direct production | No current writer lease, production XR edit, self-review, merge/release, spending, credential change or final acceptance |
 | Cursor | Self-registering LongTableXR project plugin for hands/controllers, optional-presence seam/fallback, accessibility and MR/VR state; later separately gated integration | 4 scope-forecast units only; isolated core packet is medium/5 and production credit still requires OpenAI acceptance | No edits outside the plugin subtree, cross-lane edits, self-review, merge/deploy/publish, spending or permissions |
 | Grok | Sequence 21 pre-submit transport is terminal unavailable; earlier authority-safety/House routes stay closed; future clean-room HouseCore/session/social work remains separate | Zero sequence-21 points because no model request ran | No current writer lease, production XR byte, rejected-provider input, self-review, merge/deploy/publish, credentials, concealed data or acceptance |
-| Gemini Antigravity | Historical rejected HouseCore and RobotDealer attempts plus completed sequence 14 fixed-vocabulary generic TypeScript state-machine scaffold | Historical candidates remain zero direct production; sequence 14 earned simple/1 overall effort from one authenticated turn and zero direct-production credit | No project/task prose, repository or owner context, private data, file writes, commands, credentials, rejected artifacts, self-review, merge, external writes or acceptance |
+| Gemini Antigravity | Historical rejected HouseCore and RobotDealer attempts, sequence 14 generic scaffold and terminal sequence 23 XR-test fallback | Sequence 14 and sequence 23 each earned simple/1 overall; all Antigravity work remains zero direct production | No current writer lease, rejected-artifact transfer, self-review, merge, external write or acceptance |
+| GitHub Copilot CLI | Sequence 24 independently authors three one-file XR test-oracle corrections from clean 33aca610; it is distinct from GitHub repository tooling | Pending simple/1 overall; direct production only after exact-result and OpenAI acceptance gates | No shell, web, MCP, remote operation, rejected-provider context, production-code edit, GitHub action, self-review or acceptance |
 | Perplexity | Existing broad research evidence; sequence 13's exact current Quest query stopped before submission because the configured credential was empty | Zero sequence-13 overall/direct points because no request reached Perplexity; prior legacy research is not converted into PR76 credit | No retry/duplicate query, private context, code, vote, review verdict or external write |
 | Firecrawl | Primary-source retrieval used to verify research | Tool, never a workforce provider | No vote, authorship or acceptance authority |
 | GitHub | Canonical branch, commit, PR, check, review and release evidence | Tool | No substitution for human/device/rights/owner gates |
@@ -76,6 +78,12 @@ with no activation path.
   commit mechanically identical provider bytes for QA provenance but may not
   author a product correction; corrections are kicked back to the owning
   provider under new authority.
+- GitHub Copilot CLI sequence 24 may read and edit only
+  Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp
+  in the clean codex/copilot-xrtest-005 worktree. Shell, web, MCP, remote
+  operations and rejected Claude/Antigravity bytes or transcripts are denied.
+  OpenAI may mechanically freeze the exact provider-authored bytes, then build,
+  test, accept or reject them; it may not correct them.
 
 The shared integration contract is frozen before dispatch. Providers may add
 tests only within their owned module. They may not alter another provider's
@@ -179,6 +187,16 @@ contact or delivery retry.
     edit, and projects Claude to `33/87 = 37.93%`, inside normal. One primary,
     one objectively temporary transport recovery and no source revision exist.
 
+13. Sequence 23, LT-NATIVE-ANTIGRAVITY-XRTEST-004, is terminal
+    OPENAI_CHANGES_REQUIRED_PROTOCOL_AND_RAW_RESULT_FAILED. Its diagnostic
+    two-deletion candidate is rejected and never becomes a sequence-24 input.
+14. Sequence 24, LT-NATIVE-GITHUB-COPILOT-XRTEST-005, admits GitHub Copilot
+    CLI before dispatch at target 1%, normal band 0-4% and hard ceiling 6%.
+    One primary starts at clean 33aca610, owns only the one test file, receives
+    the requirements but no rejected implementation, and returns one raw
+    result object. No provider shell or commit is required; OpenAI may
+    mechanically freeze unchanged provider bytes for QA.
+
 Each lease ends when its exact provider result becomes terminal. OpenAI may
 freeze, build, test, accept or reject the bytes, but cannot correct them.
 
@@ -189,3 +207,4 @@ freeze, build, test, accept or reject the bytes, but cannot correct them.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 05:01 UTC | END]] -->

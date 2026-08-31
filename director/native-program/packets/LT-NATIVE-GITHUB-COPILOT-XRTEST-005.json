@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-GITHUB-COPILOT-XRTEST-005",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "sequence": 24,
+  "provider": "GitHub Copilot CLI",
+  "provider_cli_version": "1.0.82",
+  "model": "auto",
+  "provider_classification": "workforce provider distinct from GitHub repository tooling",
+  "workload_size": "simple",
+  "canonical_points_on_terminal_execution": 1,
+  "workforce_target_percent": 1,
+  "normal_band_percent": [0, 4],
+  "hard_ceiling_percent": 6,
+  "status": "AUTHORIZED_PENDING_PRIMARY",
+  "objective": "Independently correct the two stale immediate-state assertions and add above-maximum ConfirmGeneration rejection plus unchanged-output coverage in the sole XR test file, starting from the clean Cursor recovery candidate and without receiving rejected-provider implementation bytes.",
+  "starting_ref": "33aca6106603342efcf43fb813482cb18fd4b18c",
+  "starting_tree": "04f65bc3c72202977312cb38bc039460545daeec",
+  "worktree": "C:\\Users\\edwar\\.codex\\worktrees\\long-table-copilot-xrtest-005",
+  "branch": "codex/copilot-xrtest-005",
+  "starting_status": "clean",
+  "authority_snapshot": [
+    {"path":"director/native-program/README.md","commit_sha":"09df6a7c3382d1d21d7cfe16a717e3c59d94ace8","blob_sha":"42060b5f86b029bc61c5e1c138fa5624adce4f63"},
+    {"path":"director/native-program/manual-provider-overlay.md","commit_sha":"09df6a7c3382d1d21d7cfe16a717e3c59d94ace8","blob_sha":"3c95c4bfa776741ea20ccb6074fc78f7133dda6d"},
+    {"path":"director/native-program/provider-workload.yaml","commit_sha":"09df6a7c3382d1d21d7cfe16a717e3c59d94ace8","blob_sha":"e85d8f97b63de7e41ed2ce757dc4bf725362c004"},
+    {"path":"director/native-program/roles-and-responsibilities.md","commit_sha":"09df6a7c3382d1d21d7cfe16a717e3c59d94ace8","blob_sha":"15df923932d3a3d65188b416569adcf06e64314b"},
+    {"path":"director/native-program/stage-gates.md","commit_sha":"09df6a7c3382d1d21d7cfe16a717e3c59d94ace8","blob_sha":"ec2203fce58b3ce66233b7c69b68cba288dc31ce"},
+    {"path":"director/privacy-control-policy.md","commit_sha":"09df6a7c3382d1d21d7cfe16a717e3c59d94ace8","blob_sha":"a31ce14bdaed03f3028480b7572cd9ccf7c0f859"},
+    {"path":"director/native-program/contracts/long-table-xr-public-v1.json","commit_sha":"09df6a7c3382d1d21d7cfe16a717e3c59d94ace8","blob_sha":"e2eea682d0dee913c8d21d791211ad2bd6573792"},
+    {"path":"director/native-program/contracts/model-result-packet-v1.schema.json","commit_sha":"09df6a7c3382d1d21d7cfe16a717e3c59d94ace8","blob_sha":"3f68e59136c422ce84d79f874c0343fd5ffc0a9e"},
+    {"path":"artifacts/native-program/qa/2026-08-31-antigravity-xrtest-004-terminal-rejection.md","commit_sha":"09df6a7c3382d1d21d7cfe16a717e3c59d94ace8","blob_sha":"b431b538c4379224859a2f804fc4db9a36a066b6"},
+    {"path":"artifacts/native-program/providers/2026-08-30-cursor-xrcore-002.md","commit_sha":"09df6a7c3382d1d21d7cfe16a717e3c59d94ace8","blob_sha":"e0915b0d1b5e2950b34a649228d7b671e2c8948b"}
+  ],
+  "authority_snapshot_digest": "sha256:3a27e06fbd96a346f6befbe74c52af2046e323a27b59316dc9fd81d9f4da05b6",
+  "owned_paths": [
+    "Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp"
+  ],
+  "starting_blob": "a17ff010bfae135be5f27796fcdd34b76f1601c7",
+  "starting_mode": "100644",
+  "starting_line_endings": "LF",
+  "requirements": [
+    "Add the exact fresh outer first-line contribution marker specified in the provider prompt: contributor GitHub Copilot CLI, system github-copilot-cli/1.0.82-auto, timestamp 2026-08-31 05:01 UTC, boundary BEGIN",
+    "Immediately before the above-maximum InteractionId decode, snapshot the current DecodeOut and compare the rejected call's post-state to that snapshot",
+    "Immediately before the above-maximum TargetHandle decode, snapshot the current DecodeOut and compare the rejected call's post-state to that snapshot",
+    "After exact-maximum ConfirmGeneration acceptance, add an above-maximum ConfirmGeneration JSON case, prove rejection, and prove DecodeOut equals its immediate pre-call snapshot",
+    "Add the exact matching last-nonblank contribution marker specified in the provider prompt with boundary END"
+  ],
+  "constraints": [
+    "Read and edit only the sole owned test file; every production XR and non-XR byte is immutable",
+    "Independently implement from the clean starting file and this requirements list; do not read or use rejected Claude or Antigravity implementation bytes, worktrees, evidence or transcripts",
+    "Preserve every exact-minimum and exact-maximum acceptance check and every existing test property",
+    "Do not weaken, delete, skip, relabel, invert or make tautological any assertion",
+    "Preserve mode 100644 and LF line endings",
+    "The exact fresh contribution BEGIN line must be the first file line and the matching END line must be the last nonblank line",
+    "No provider shell or commit is required; OpenAI may mechanically freeze the exact provider-authored working-tree bytes without changing them",
+    "Return exactly one raw JSON object valid against model-result-packet-v1 with no prose, fence or second document"
+  ],
+  "prohibited_actions": [
+    "No production code edit or edit outside the sole owned file",
+    "No shell, terminal, Git, web, URL fetch, MCP, plugin, subagent, memory, remote operation, custom instruction or temporary-directory tool",
+    "No GitHub API, issue, pull request, push, merge, deploy, publish, Slack, Linear, credential, permission, purchase or device action",
+    "No regex, blacklist, keyword, substring, redaction or pattern-based privacy or rights logic",
+    "No product, milestone, Android, Quest-device, human, rights, cultural, store or release acceptance claim"
+  ],
+  "allowed_tools": [
+    "Read the sole owned file through the constrained GitHub Copilot CLI file-view tool",
+    "Edit the sole owned file through the constrained GitHub Copilot CLI edit or patch tool",
+    "Return one raw JSON result object"
+  ],
+  "acceptance_checks": [
+    "The provider working-tree diff contains only the sole owned test file and exactly the three required corrections",
+    "The provider diff adds the exact fresh outer GitHub Copilot CLI contribution-marker pair",
+    "No existing assertion or test case is weakened or removed",
+    "Mode 100644 and LF line endings remain unchanged",
+    "The raw final response is exactly one object and validates against model-result-packet-v1",
+    "OpenAI mechanically freezes unchanged provider bytes, builds UE5.7 and requires all ten LongTable.XR tests to pass",
+    "No rejected provider byte or transcript enters the candidate"
+  ],
+  "limits": {
+    "budget_usd": 1.0,
+    "max_provider_requests": 1,
+    "cli_soft_ai_credit_cap": 30,
+    "cli_soft_ai_credit_cap_reason": "GitHub Copilot CLI 1.0.82 rejects lower explicit values; one provider request remains the effective action cap",
+    "timeout_seconds": 600,
+    "max_hops": 0,
+    "primary_attempts": 1,
+    "transient_recoveries": 1,
+    "max_revisions": 0
+  },
+  "retry_policy": "One primary. One recovery only for an objectively temporary pre-result transport failure. No third attempt, ambiguous resend, source revision or delivery retry.",
+  "transport_controls": {
+    "working_directory": "C:\\Users\\edwar\\.codex\\worktrees\\long-table-copilot-xrtest-005\\Unreal\\Plugins\\LongTableXR\\Source\\LongTableXR\\Private\\Tests",
+    "available_tools": ["view", "edit", "str_replace_editor", "apply_patch"],
+    "exact_write_rule": "C:\\Users\\edwar\\.codex\\worktrees\\long-table-copilot-xrtest-005\\Unreal\\Plugins\\LongTableXR\\Source\\LongTableXR\\Private\\Tests\\LongTableXRTests.cpp",
+    "disabled_mcp_servers": ["builtin", "firecrawl"],
+    "denied_tools": ["shell", "url", "github-mcp-server", "firecrawl"],
+    "remote": false,
+    "custom_instructions": false,
+    "temporary_directory": false,
+    "output_format": "plain final assistant text on stdout; stderr captured separately",
+    "actual_routed_model_evidence": "OpenAI must capture the actual route from CLI/session evidence; the provider result may report auto when the model itself is not told the route"
+  },
+  "idempotency_key": "LT-NATIVE-GITHUB-COPILOT-XRTEST-005-33aca61",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-GITHUB-COPILOT-XRTEST-005",
+    "source_event_id": "openai-antigravity-xrtest-terminal-new-provider-fallback-20260831",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}
