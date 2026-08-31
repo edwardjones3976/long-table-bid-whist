@@ -18,6 +18,7 @@
 # [[OpenAI Director | Codex | 2026-08-31 | 04:37 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:34 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:31 UTC | BEGIN]]
+# [[OpenAI Director | Codex | 2026-08-31 | 16:45 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]]
@@ -36,7 +37,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20_AFTER_SEQUENCE_25; 86 total points; every target-plus-five hard ceiling passes. Cursor is 0.2558 percentage points above normal and Perplexity is below normal; neither is rounded green. Sequence 26 is terminal pre-model and earns zero, so it does not enter or roll the window. The sequence-27 medium/5 RobotDealer fallback gate is NO_ELIGIBLE_PROVIDER."
+  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20_AFTER_SEQUENCE_27; 83 total points; every target-plus-five hard ceiling passes. Cursor is 1.0964 percentage points above normal and Antigravity is 3.1807 below normal; neither is rounded green. Sequence 26 remains terminal zero-credit. Sequence 27 is completed Perplexity research, earns medium/5 overall and zero direct production, and makes a fresh sequence-28 Claude medium RobotDealer packet workload-eligible."
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -136,7 +137,7 @@ native_code_assignments:
     responsibility: "cross-module QA, exact-candidate acceptance, findings and kickback; Director work is excluded from production credit"
   perplexity:
     program_capacity_units: 0
-    responsibility: "sequence 13 stopped before submission because the configured credential was empty; no request, response or workload credit exists. Firecrawl independently supplied the bounded official-platform evidence matrix as a tool action."
+    responsibility: "sequence 13 stopped before submission and remains zero-credit. Sequence 27 completed one distinct owner-authorized authenticated-browser research assignment under a project-specific transport override, earns medium/5 overall and zero direct production, and produced a source-verified Quest acceptance protocol with two claims rejected by OpenAI. Perplexity has no code, vote, review, acceptance or external-write authority."
   github_copilot_cli:
     program_capacity_units: 1
     credit_rule: "sequence 24 earns simple/1 overall only after one real terminal CLI execution and direct production only if its exact bytes, raw result and OpenAI gates pass"
@@ -403,6 +404,24 @@ overall_effort_ledger:
     terminal_result_digest: "sha256:d2f1c44995c0b0b6b441dfa69893fb7428b3d8d6e33c460a4f2792b418644acb"
     terminal_evidence: "artifacts/native-program/qa/2026-08-31-claude-robot-001-terminal-permission-failure.md"
     exclusion_reason: "The authenticated primary created thirteen clean-room source files and hit an explicit temporary session limit. The one authorized post-reset recovery returned a schema-valid FAILED result after eight recorded Bash permission denials prevented the mandatory provider commit. OpenAI preserved the raw provider contradictions, independently proved the exact thirteen-file manifest remained unchanged, and rejected substantive cue/state-correlation, authority-equivalence and concealment-counterfactual defects. Overall medium/5 records once; direct production is zero, the bytes remain quarantined and no Claude retry or normalization is permitted."
+  - sequence: 27
+    assignment_id: "LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002"
+    provider: perplexity
+    size: medium
+    canonical_points: 5
+    completed: true
+    terminal_status: "COMPLETED_RESEARCH_ONLY_OPENAI_PROVENANCE_ACCEPTED_OWNER_TRANSPORT_OVERRIDE_TWO_CLAIMS_REJECTED"
+    authenticated_run: "perplexity-browser:conversation:ff3ce4a6-7903-43e5-8a47-8596efcfd9d5;transport:chrome"
+    direct_production_points: 0
+    public_query_sha256: "sha256:0b7014ef88d3a8b95fc47e5df75d732cf75d78c04cffac2e67b6f001c3284347"
+    packet_digest: "sha256:9ff7fdd9558ca93125615dd542daaef8497786a94658b015e97635728786178f"
+    raw_result_digest: "sha256:24c4f0b15542c87ed46f6cce83d2b912f33cea8e5fed2b01e209858310706225"
+    receipt_digest: "sha256:59ce223ad37562f3b50ae6903ef71144f0893789140212050cb645f8e9e56e3d"
+    firecrawl_verification_digest: "sha256:5817cffbe3e6d1600444d85fbaf79b273917abc0e4a52e5e1da048256324d739"
+    normalized_research_digest: "sha256:4f5a04e8ff4ec559b084b59c490c588965838c091c11488e2f0c4fd2ed8fcedb"
+    terminal_evidence: "artifacts/native-program/qa/2026-08-31-perplexity-quest-acceptance-002-provenance-review.md"
+    terminal_evidence_digest: "sha256:2110270bdfcab49d54b8f3ffa143f05750d40aab5c5e0c97ee3a445e5165a8e9"
+    exclusion_reason: "One exact public-only query completed in the owner-authorized authenticated Perplexity Chrome surface under the frozen project-specific transport override, with no retry or revision. Firecrawl fetched all ten official URLs; OpenAI accepted nine substantive claim groups, rejected the unsupported Meta code-sample-catalog description and the provider's internally contradictory seven-source sentence, and preserved every project-defined test as non-official methodology. The real terminal provider execution earns medium/5 overall once. It authored no product byte, vote or verdict and earns zero direct-production credit."
 accepted_direct_production_ledger:
   - sequence: 19
     assignment_id: "LT-NATIVE-CLAUDE-PROVENANCE-004"
@@ -415,25 +434,43 @@ accepted_direct_production_ledger:
 rolling_window_projection:
   completed_assignments: 20
   window_size: 20
-  current_canonical_points: {claude: 30, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0, github_copilot_cli: 1}
-  current_shares_percent: {claude: 34.8837, cursor: 23.2558, grok: 20.9302, openai: 5.8140, gemini_antigravity: 13.9535, perplexity: 0.0, github_copilot_cli: 1.1628}
-  enforcement: "COMPLETE_ROLLING_20_AFTER_SEQUENCE_25; HARD_CEILINGS_PASS; NORMAL_BAND_MISS_CURSOR_PLUS_0.2558_AND_PERPLEXITY_BELOW_TARGET. This is not mislabeled as full normal-band compliance."
-  direct_production_window_status: "WARMING_UP_ONE_ACCEPTED_POINT_ONLY; not a compliance pass; sequences 24 and 25 earn zero direct production"
-  next_route: "NO_ELIGIBLE_PROVIDER for a fresh medium/5 RobotDealer fallback. Claude, Cursor, Grok and GitHub Copilot CLI exceed hard ceilings; Antigravity is workload-eligible but its recovery and lease are exhausted; OpenAI is QA-only; Perplexity is research-only. No packet may issue until credited workload changes or the owner explicitly changes the target/cap policy."
+  current_canonical_points: {claude: 30, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 4, perplexity: 5, github_copilot_cli: 1}
+  current_shares_percent: {claude: 36.1446, cursor: 24.0964, grok: 21.6867, openai: 6.0241, gemini_antigravity: 4.8193, perplexity: 6.0241, github_copilot_cli: 1.2048}
+  enforcement: "COMPLETE_ROLLING_20_AFTER_SEQUENCE_27; HARD_CEILINGS_PASS; NORMAL_BAND_MISS_CURSOR_PLUS_1.0964_AND_ANTIGRAVITY_MINUS_3.1807. This is not mislabeled as full normal-band compliance."
+  direct_production_window_status: "WARMING_UP_ONE_ACCEPTED_POINT_ONLY; not a compliance pass; sequences 24, 25 and 27 earn zero direct production"
+  next_route: "ELIGIBLE_AFTER_COMMITTED_SEQUENCE_27_CLOSURE: one fresh Claude medium/5 clean-room RobotDealer assignment at sequence 28. It is not a sequence-25 retry, no writer lease or packet exists yet, and only the public contract plus synthetic fixtures may be supplied. OpenAI remains QA-only."
   sequence_26_actual_terminal:
     rolled_out_assignment: null
     canonical_points_earned: 0
     canonical_points: {claude: 30, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0, github_copilot_cli: 1}
     shares_percent: {claude: 34.8837, cursor: 23.2558, grok: 20.9302, openai: 5.8140, gemini_antigravity: 13.9535, perplexity: 0.0, github_copilot_cli: 1.1628}
     enforcement: "TERMINAL_PRE_MODEL_ZERO_CREDIT; WINDOW_UNCHANGED_AFTER_SEQUENCE_25"
-  sequence_27_medium_fallback_gate:
+  denied_pre_sequence_27_medium_robotdealer_projection:
     rolled_out_assignment_if_real_terminal: "sequence 2 LT-NATIVE-ANTIGRAVITY-001 long/8"
     denominator_if_real_terminal: 83
     projections_percent: {claude: 42.1687, cursor: 30.1205, grok: 27.7108, openai: 12.0482, gemini_antigravity: 10.8434, perplexity: 6.0241, github_copilot_cli: 7.2289}
     workload_hard_gate: {claude: "FAIL_41", cursor: "FAIL_25", grok: "FAIL_25", openai: "PASS_13_QA_ONLY", gemini_antigravity: "PASS_16_ROUTE_EXHAUSTED", perplexity: "PASS_9_RESEARCH_ONLY", github_copilot_cli: "FAIL_6"}
-    verdict: "NO_ELIGIBLE_PROVIDER"
+    verdict: "HISTORICAL_DENIED_PROSPECTIVE_ONLY_NO_ASSIGNMENT_NO_CREDIT"
     evidence: "artifacts/native-program/qa/2026-08-31-sequence-27-workload-gate.md"
     evidence_digest: "sha256:d967ee8fe814cd258f4954aa13c6c4897affe033a41c8fa90181e762246346ae"
+  sequence_27_actual_terminal:
+    assignment_id: "LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002"
+    rolled_out_assignment: "sequence 2 LT-NATIVE-ANTIGRAVITY-001 long/8"
+    canonical_points_earned: 5
+    direct_production_points_earned: 0
+    canonical_points: {claude: 30, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 4, perplexity: 5, github_copilot_cli: 1}
+    shares_percent: {claude: 36.1446, cursor: 24.0964, grok: 21.6867, openai: 6.0241, gemini_antigravity: 4.8193, perplexity: 6.0241, github_copilot_cli: 1.2048}
+    workload_hard_gate: {claude: "PASS_41", cursor: "PASS_25", grok: "PASS_25", openai: "PASS_13_QA_ONLY", gemini_antigravity: "PASS_16_ROUTE_CLOSED", perplexity: "PASS_9_RESEARCH_ONLY", github_copilot_cli: "PASS_6"}
+    enforcement: "TERMINAL_AUTHENTICATED_RESEARCH_OVERALL_ONLY; HARD_CEILINGS_PASS; CURSOR_AND_ANTIGRAVITY_MISS_NORMAL"
+    evidence: "artifacts/native-program/qa/2026-08-31-perplexity-quest-acceptance-002-provenance-review.md"
+    evidence_digest: "sha256:2110270bdfcab49d54b8f3ffa143f05750d40aab5c5e0c97ee3a445e5165a8e9"
+  sequence_28_claude_robotdealer_gate:
+    rolled_out_assignment_if_real_terminal: "sequence 3 LT-NATIVE-CLAUDE-001 long/8"
+    denominator_if_real_terminal: 80
+    projections_percent: {claude: 33.75, cursor: 25.0, grok: 22.5, openai: 6.25, gemini_antigravity: 5.0, perplexity: 6.25, github_copilot_cli: 1.25}
+    workload_hard_gate: {claude: "PASS_41_ELIGIBLE", cursor: "PASS_EXACT_25_NO_ROUNDING", grok: "PASS_25", openai: "PASS_13_QA_ONLY", gemini_antigravity: "PASS_16_ROUTE_CLOSED", perplexity: "PASS_9_RESEARCH_ONLY", github_copilot_cli: "PASS_6"}
+    verdict: "CLAUDE_ELIGIBLE_FOR_ONE_FRESH_CLEAN_ROOM_MEDIUM_PACKET_AFTER_EXACT_PACKET_FREEZE"
+    writer_lease: "NOT_ISSUED"
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -1116,7 +1153,7 @@ canonical_assignment_ledger:
     qa_branch: "codex/antigravity-robot-qa-003"
     qa_base: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
     qa_base_tree: "1e0db56f1e85d66c93ab64bc3dca8c237947c210"
-    manual_overlay_reason: "Terminal sequence 25 could not be retried or normalized, so the workload gate selected Antigravity for the fresh sequence-26 medium fallback. Its primary created and resumed one Job-bound provider process but never completed the prompt/EOF boundary. The sole materially different Recovery 1 passed the provider-free file-handle and total-failure-receipt proof, then ran once from exact control HEAD 25eb993 and failed closed at PROMPT_HANDLE_VERIFIED while reading guardian-ready. It created no provider process, model request, result or source. The later guardian record proves Job 0 -> 0, provider identity absent and canonical settings unchanged. The distinct claim is consumed; the route and writer lease are terminal closed. Sequence 26 earns zero overall and direct-production points and does not roll the credited window. Exact sequence-27 medium projections produce NO_ELIGIBLE_PROVIDER, so no new RobotDealer packet may issue under the current target/cap policy."
+    manual_overlay_reason: "Terminal sequence 25 could not be retried or normalized, so the workload gate selected Antigravity for the fresh sequence-26 medium fallback. Its primary created and resumed one Job-bound provider process but never completed the prompt/EOF boundary. The sole materially different Recovery 1 passed the provider-free file-handle and total-failure-receipt proof, then ran once from exact control HEAD 25eb993 and failed closed at PROMPT_HANDLE_VERIFIED while reading guardian-ready. It created no provider process, model request, result or source. The later guardian record proves Job 0 -> 0, provider identity absent and canonical settings unchanged. The distinct claim is consumed; the route and writer lease are terminal closed. Sequence 26 earns zero overall and direct-production points and does not roll the credited window. At that exact closure, the prospective next medium RobotDealer calculation produced NO_ELIGIBLE_PROVIDER. Actual sequence 27 later became a distinct useful Perplexity research assignment, completed terminally, changed the credited window and superseded only the future routing outcome—not this historical sequence-26 disposition."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -1132,7 +1169,9 @@ credit_rules:
   - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
   - "Sequence 25 is terminal and earns medium/5 overall with zero direct production. Its completed rolling window is Claude 30/86 = 34.8837%, Cursor 20/86 = 23.2558%, Grok 18/86 = 20.9302%, OpenAI 5/86 = 5.8140%, Antigravity 12/86 = 13.9535%, Perplexity 0 and GitHub Copilot CLI 1/86 = 1.1628%. All hard ceilings pass; Cursor and Perplexity miss normal."
   - "Sequence 26 is terminal pre-model and earns zero, so the completed rolling window remains the 20 assignments after sequence 25. Its primary and sole recovery are consumed, Antigravity is closed for the assignment, and no product source exists."
-  - "For a fresh sequence-27 medium/5 terminal assignment, sequence 2 Antigravity long/8 would roll out and the denominator would be 83. Claude 42.1687%, Cursor 30.1205%, Grok 27.7108% and GitHub Copilot CLI 7.2289% exceed their hard ceilings. Antigravity 10.8434% is route-exhausted, OpenAI 12.0482% is QA-only and Perplexity 6.0241% is research-only. Verdict: NO_ELIGIBLE_PROVIDER."
+  - "The historical pre-sequence-27 RobotDealer projection was NO_ELIGIBLE_PROVIDER and earned no assignment or credit. Actual sequence 27 is LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002, a distinct useful research assignment. It completed one authenticated public-only request and earns medium/5 overall with zero direct production."
+  - "After sequence 27, sequence 2 Antigravity long/8 rolls out and the completed 20-row window totals 83: Claude 36.1446%, Cursor 24.0964%, Grok 21.6867%, OpenAI 6.0241%, Antigravity 4.8193%, Perplexity 6.0241% and GitHub Copilot CLI 1.2048%. All hard ceilings pass; Cursor and Antigravity miss normal."
+  - "A fresh sequence-28 Claude medium/5 RobotDealer packet would roll out sequence 3 Claude long/8 and yield 80 points: Claude 33.75%, Cursor exactly 25%, Grok 22.5%, OpenAI 6.25%, Antigravity 5%, Perplexity 6.25% and GitHub Copilot CLI 1.25%. Claude is workload-eligible, but no packet or writer lease exists until the exact clean-room authority is frozen."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
@@ -1168,3 +1207,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 15:57 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 16:09 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 16:45 UTC | END]]

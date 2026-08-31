@@ -131,12 +131,23 @@ Antigravity contact is permitted. Sequence 26 earns zero overall and direct-
 production points and has no candidate to freeze into the accepted-base QA
 worktree.
 
-The fresh sequence-27 medium/5 fallback gate is `NO_ELIGIBLE_PROVIDER` under
-the current rolling-20 target-plus-five policy. Claude, Cursor, Grok and GitHub
-Copilot CLI exceed their hard ceilings; Antigravity is within workload limits
-but its route and lease are exhausted; OpenAI is QA-only; Perplexity is
-research-only. RobotDealer authoring remains closed until credited workload
-changes or the owner explicitly changes the governing target/cap policy.
+The pre-sequence-27 medium/5 RobotDealer projection remains historical
+`NO_ELIGIBLE_PROVIDER` evidence and earned no assignment or credit. Actual
+sequence 27 is `LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002`: one owner-authorized,
+authenticated-browser, public-only Perplexity research response under the frozen
+project-specific transport override, independently checked against ten
+Firecrawl-fetched official pages. OpenAI accepted useful acceptance-test design,
+rejected one unsupported source-description claim and one internally
+contradictory source-count sentence, and awarded medium/5 overall with zero
+direct production.
+
+The completed rolling window is now 83 points and every target-plus-five hard
+ceiling passes. A fresh sequence-28 Claude medium/5 clean-room RobotDealer packet
+is workload-eligible; its projection leaves Cursor exactly at the 25% hard
+ceiling. RobotDealer authoring remains closed until that distinct packet freezes
+the public contract, synthetic fixtures, exact clean base, one-writer lease,
+budget, retry and result-binding evidence. Sequence-25/26 source, transcripts,
+findings and quarantined bytes remain prohibited inputs.
 
 The RobotDealer acceptance gate remains closed until exact result binding,
 immutable authority, private-profile/environment/canonical-no-write evidence,

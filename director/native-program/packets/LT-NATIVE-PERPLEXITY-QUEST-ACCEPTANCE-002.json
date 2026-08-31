@@ -4,7 +4,7 @@
   "assignment_id": "LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002",
   "provider": "Perplexity",
   "project": "Public acceptance-evidence protocol for a seated Meta Quest application",
-  "status": "AUTHORIZED_PENDING_PRIMARY",
+  "status": "COMPLETED_RESEARCH_ONLY_OPENAI_PROVENANCE_ACCEPTED_WITH_OWNER_TRANSPORT_OVERRIDE_AND_TWO_CLAIMS_REJECTED",
   "workload": {
     "sequence": 27,
     "size": "medium",
@@ -67,6 +67,7 @@
   "transport": {
     "primary": "owner-authorized authenticated Chrome browser at perplexity.ai",
     "reason": "The Director API profile was checked at activation and remains disabled with an empty PERPLEXITY_API_KEY. Browser transport is materially different and was explicitly authorized by the owner.",
+    "governing_override": "The default Perplexity workflow prefers and normally requires the API Platform/Director adapter. The owner explicitly directed use of Perplexity, identified the authenticated Chrome surface as available, directed browser fallback when other formats were unavailable, and later granted standing authority to complete the provider work without another request. That project-specific owner instruction overrides the skill's default API-only transport for this assignment only; it does not relax public-only scope, privacy, retry, evidence, cost, or no-code/no-verdict controls.",
     "api_profile_used": false,
     "browser_session_contains_only_public_query": true
   },
@@ -81,6 +82,34 @@
     "head": "2f01a9b84a423ca7d3e46aac054429283e6fcb39",
     "tree": "dbfa327c4564f32c45c3be8ff66c21d01bd71df8",
     "worktree_clean": true
+  },
+  "terminal_disposition": {
+    "submitted_at": "2026-08-31T16:30:00Z",
+    "captured_at": "2026-08-31T16:33:21.656Z",
+    "transport": "authenticated_chrome_browser",
+    "conversation_url": "https://www.perplexity.ai/search/ff3ce4a6-7903-43e5-8a47-8596efcfd9d5",
+    "conversation_id": "ff3ce4a6-7903-43e5-8a47-8596efcfd9d5",
+    "terminal_marker": "Finished",
+    "visible_steps": 4,
+    "model_identity": "NOT_ESTABLISHED_IN_VISIBLE_SURFACE",
+    "usage_or_cost": "NOT_ESTABLISHED_IN_VISIBLE_SURFACE",
+    "query_exactly_matched": true,
+    "provider_primary_attempts": 1,
+    "provider_recovery_attempts": 0,
+    "provider_revisions": 0,
+    "official_unique_source_urls": 10,
+    "provider_declared_source_count": 7,
+    "provider_source_count_disposition": "REJECTED_INTERNAL_CONTRADICTION_TABLE_AND_RECEIPT_HAVE_10_UNIQUE_OFFICIAL_URLS",
+    "private_context_transmitted": false,
+    "repository_context_transmitted": false,
+    "raw_response_file": "artifacts/native-program/providers/LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002.raw.txt",
+    "raw_response_sha256": "sha256:24c4f0b15542c87ed46f6cce83d2b912f33cea8e5fed2b01e209858310706225",
+    "receipt_file": "artifacts/native-program/providers/LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002.receipt.json",
+    "receipt_sha256": "sha256:59ce223ad37562f3b50ae6903ef71144f0893789140212050cb645f8e9e56e3d",
+    "firecrawl_verification_file": "artifacts/native-program/research/2026-08-31-quest-acceptance-protocol-firecrawl.json",
+    "normalized_research_file": "artifacts/native-program/research/2026-08-31-quest-acceptance-protocol.md",
+    "provider_scope_result": "COMPLETED_USEFUL_RESEARCH_NO_CODE_NO_VERDICT_TWO_CLAIMS_REJECTED",
+    "direct_production_points": 0
   },
   "idempotency_key": "LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002-0b7014ef",
   "created_at": "2026-08-31T16:28:45.1672717Z"

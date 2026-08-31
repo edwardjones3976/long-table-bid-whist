@@ -1,0 +1,175 @@
+Answer
+Links
+Images
+Share
+Download Comet
+Using only current official public primary sources from Meta, Epic Games, Khronos, and Android, design a reproducible acceptance evidence protocol for a seated Meta Quest 3/3S application built with Unreal Engine 5.7.4. Focus on observable proof, not implementation advice. Cover: unchanged APK/AAB identity across tests; package signing, install, cold launch, relaunch, and log capture; controller and hand-tracking operation plus safe live modality switching; haptics and spatial-audio checks; mixed-reality passthrough/table placement/anchor recovery with a deliberate VR fallback; frame-time, thermal, memory, draw-call and battery evidence; accessibility/comfort checks suitable for adults ages 30-70; and two-headset tests that prove concealed card state is never exposed to the wrong player. For each test state the official source URL and title, supported observable signal, exact command/tool or device UI where officially documented, pass/fail evidence to retain, version/date limits, and any contradiction. Use at most 10 sources. Mark NOT ESTABLISHED whenever official sources do not define a method or threshold. Do not use private data, repositories, code, forums, blogs, social media, or third-party tutorials. Research only: no product verdict, legal conclusion, security certification, store approval, implementation decision, or external action.
+Read more
+9:30 AM
+Finished
+4 steps
+
+Below is a research-only acceptance-evidence protocol, constrained to official public primary material from Meta, Epic Games, Khronos, and Android. It does not prescribe how to implement the application or assert store/security certification. Where the official sources do not provide a test procedure, measurement definition, or acceptance threshold, the protocol explicitly says NOT ESTABLISHED.
+
+Scope and evidence rules
+
+Test article: one designated release artifact for a seated Quest 3 / Quest 3S build made with Unreal Engine 5.7.4. Record the engine version as a declared test condition; the official Epic page located confirms Android requirements apply to UE 5.7 or newer, but it does not independently establish a Quest-specific UE 5.7.4 acceptance suite.
+epicgames
+
+Run controls for every test
+
+Use two individually identified headsets: H1 and H2. Retain the headset model, serial or locally assigned device ID, Horizon OS build, battery percentage at start/end, controller firmware/state, test date/time/time zone, package name, and tester ID.
+
+Assign a unique RunID, such as Q3S-H1-2026-08-31-R03, to every recorded execution.
+
+Preserve original, unedited artifacts. Screenshots and videos should include the visible device clock or a separate synchronized time record where feasible.
+
+Retain command text and raw terminal output, rather than only screenshots of “success.”
+
+For each scenario, create a brief evidence index linking the test case, artifact hash, device, capture filenames, and verdict.
+
+Keep source snapshots or access dates. The documentation cited below was available as of August 31, 2026; Meta and Android tooling, headset OS behavior, and Unreal point releases can change.
+
+Acceptance convention: an item passes only when its documented observable signal is present, the retained evidence is complete, and no contradictory signal is found. Any requirement without a publicly documented official method or threshold is not silently inferred; it is marked NOT ESTABLISHED.
+
+Source set
+
+This protocol uses seven official primary sources—within the ten-source cap.
+
+ID	Publisher	Official title and URL	Used for
+M1	Meta	
+Compositor layers
+	Quest VrApi performance logs; compositor-layer logs/properties/overlay; documented commands
+M2	Meta	
+Code Samples | Meta Horizon OS Developers
+	Official Meta catalog showing ADB, logcat, Perfetto, performance tools, and metrics resources
+M3	Meta	
+Oculus ADB Drivers
+	Official statement that the drivers are required for ADB use with Android-based Quest devices
+E1	Epic Games	
+Android Development Requirements for Unreal Engine
+	UE 5.7-or-newer Android documentation scope
+K1	Khronos	
+OpenXR API Reference Pages
+	OpenXR API/runtime capability boundary
+A1	Android	
+apksigner
+	APK signature verification and certificate output
+A2	Android	
+dumpsys
+	Documented Android service-state capture mechanism
+A3	Android	
+Capture and read bug reports
+	adb bugreport capture
+A4	Android	
+Profile battery usage with Batterystats and Battery Historian
+	Battery-stat reset, dump, and bugreport procedure
+A5	Android	
+Test your app’s accessibility
+	TalkBack/manual accessibility evidence, user testing, and accessibility inspection methods
+
+The Android and Meta materials document tool availability and some commands, but they do not define Quest 3/3S product-level pass thresholds for launch time, frame time, thermal behavior, memory, draw calls, battery, hand/controller switching, tabletop placement, concealed-state isolation, or age-specific comfort.
+
+Identity, signing, lifecycle, and logs
+Test	Official source URL/title	Supported observable signal	Officially documented command, tool, or device UI	Pass evidence to retain	Version/date limits and contradiction
+I-01: Immutable artifact identity	A1, 
+apksigner
+	apksigner confirms whether the APK signature verifies; it can print signer certificate information.	apksigner verify --verbose --print-certs app.apk	Original APK; cryptographic digest produced by the test organization; full apksigner stdout/stderr; artifact filename/size; signer-certificate output; signed evidence manifest. Run the identical verification command against the exact APK before each headset session and retain each output.	Android documents signature verification, not SHA-256 workflow nor cross-run byte-identity criteria. NOT ESTABLISHED: an official Meta/Epic/Khronos/Android rule that defines “unchanged APK/AAB identity across Quest tests,” required hash algorithm, or required AAB-to-device split identity proof. An AAB cannot itself be directly installed as an APK by the documented apksigner procedure.
+I-02: Package identity on both headsets	A2, 
+dumpsys
+	dumpsys is an Android command-line facility for information exposed by device services.	adb shell dumpsys package <packageName>; exact package-service fields are device/OS dependent.	Raw output for H1 and H2 after installation; evidence sheet records package name, version code/name where present, installer/source field where present, and command exit status.	Android documents dumpsys generally, not a stable Quest-specific package-output schema. NOT ESTABLISHED: a required package-field set, AAB split enumeration method, or exact identity equivalence rule between the source AAB and installed artifact.
+I-03: Signing verification	A1, 
+apksigner
+	APK signature validates on supported Android versions; certificate details can be emitted with --print-certs. Android also states changes after signing invalidate the APK signature.	apksigner verify --verbose --print-certs app.apk	Full command output showing successful verification; certificate digest/issuer/subject output; artifact digest; tool version; capture date. Failure evidence is the complete output, not merely a nonzero exit code.	apksigner is documented for APKs. NOT ESTABLISHED: an official source-based threshold for signer choice, certificate continuity across releases, or a requirement that Quest accepts a particular signing scheme beyond successful Android verification.
+L-01: Install	M3, 
+Oculus ADB Drivers
+; A2	Meta states Oculus ADB Drivers are required when using ADB with Android-based Oculus/Quest devices. dumpsys can capture service state after installation.	Use the documented ADB-capable Quest connection environment; retain the exact ADB install command used. Post-install: adb shell dumpsys package <packageName>.	Terminal transcript including detected serial, executed install command, exit status, package dump, and in-headset recording/screenshot showing the installed app tile or app entry where visible.	Meta’s driver page establishes ADB availability, not a canonical adb install command, install-time target, or Quest 3/3S acceptance threshold. NOT ESTABLISHED: official pass/fail timing, required installation UI state, or AAB installation procedure for Quest.
+L-02: Cold launch	A2, 
+dumpsys
+; A3, 
+Capture and read bug reports
+	A device-state dump and bug report can preserve observable process/system state and logs; they do not prove a universal definition of “cold launch.”	Before launch retain adb shell dumpsys package <packageName> and a baseline adb bugreport <output-directory>. Use the device UI to launch the app from its app tile. Capture screen video from launch until stable main/menu/table state.	Baseline and post-launch bugreports; terminal log capture; uncut headset/observer video; timestamped “launch initiated” and “interactive state reached” annotations; visible app identity. Pass only if the predeclared app-ready observable is reached with no crash/forced close visible in retained evidence.	NOT ESTABLISHED: official Meta/Epic/Android definition of Quest cold launch, launch-performance threshold, stable-ready screen, or a documented generic command that forces a Quest application cold-start state. Do not label a simple foreground resume as cold launch.
+L-03: Relaunch and log capture	M1, 
+Compositor layers
+; A3	Meta documents adb logcat -s VrApi for detailed real-time Quest application performance statistics, including OpenXR-based apps. Android documents adb bugreport capture.	adb logcat -s VrApi; capture an adb bugreport <output-directory> before/after the run as needed. Use app/device UI to leave the app and reopen it; preserve the exact observed steps.	Start/stop timestamps; raw VrApi log; generic adb logcat capture if separately recorded; uncut relaunch video; post-run bugreport; final package dump. Pass if the declared relaunch endpoint is observed and no contradictory crash/error observation appears in retained logs/video.	Meta specifically documents the VrApi tag for performance stats, not app lifecycle correctness or universal crash parsing. NOT ESTABLISHED: official relaunch threshold, a generic app-log tag/filter for UE 5.7.4, or a requirement to use any particular launch/force-stop command.
+L-04: Failure forensics bundle	A3, 
+Capture and read bug reports
+; A2	Android documents bugreport capture via adb bugreport, and dumpsys service inspection.	adb bugreport <report-directory>; adb shell dumpsys [-t timeout] ... as applicable.	For every fail/inconclusive outcome: original video, all command outputs, bugreport archive, package dump, VrApi capture if rendering was active, and a one-line chronology.	A bugreport is diagnostic evidence, not proof of root cause. NOT ESTABLISHED: required retention duration, privacy-redaction procedure, and a Quest-specific list of decisive log lines. Do not collect or publish personal account content; minimize retained device data.
+Interaction, XR, and mixed reality
+Test	Official source URL/title	Supported observable signal	Officially documented command, tool, or device UI	Pass evidence to retain	Version/date limits and contradiction
+XR-01: Controller operation	K1, 
+OpenXR API Reference Pages
+	The Khronos OpenXR reference defines the API surface and runtime feature model; the supplied official reference does not establish a Quest/UE visual controller test.	No official source in the allowed set provides a documented Quest 3/3S device-UI or command-line controller acceptance procedure.	Two uncut in-headset/observer videos per headset: both controllers visible/active as applicable; each declared gameplay action performed; corresponding in-app observable response; session timestamps and controller status captured at start.	NOT ESTABLISHED: official controller-button coverage, pose-accuracy threshold, loss/recovery threshold, Quest-specific UI route, or UE 5.7.4 controller evidence method. This is a project-defined black-box test, not an official compliance test.
+XR-02: Hand-tracking operation	K1, 
+OpenXR API Reference Pages
+	Khronos provides the OpenXR reference boundary; it does not, in the cited reference, define an end-user Quest hand-tracking acceptance procedure or threshold.	NOT ESTABLISHED for an official allowed-source command or device-UI method that proves hand input works in this UE application.	Uncut video for each headset showing hands become the active input, the predeclared selection/manipulation action completes, and the observable app state changes. Include a tester-spoken run ID/time in capture and retain logs.	NOT ESTABLISHED: tracking accuracy, latency, gesture-recognition rate, lighting/environment range, seated reach envelope, or required failure behavior.
+XR-03: Safe live modality switching	K1; A3	OpenXR documents runtime/API context, and Android documents failure-capture tooling; neither source defines safe live hand/controller switching criteria.	NOT ESTABLISHED for an official command/UI test. Perform a predeclared sequence: controller action → hands active → hand action → controllers active → controller action, without restarting the app.	Continuous video with the entire transition; VrApi/app log capture; post-run bugreport; event ledger noting input mode seen and action result. Pass only if every declared action goes to the intended visible interaction and no unintended game/table action is visible.	NOT ESTABLISHED: official safety definition, debounce interval, simultaneous-input behavior, loss-of-tracking threshold, or formal state-machine requirements. This protocol can prove observed behavior only.
+XR-04: Haptics	K1	OpenXR is the governing public API specification family for XR interaction, but the cited reference does not yield a Quest-specific externally measurable haptic conformance test.	NOT ESTABLISHED for an allowed-source command/device UI that measures controller vibration amplitude, duration, waveform, or latency.	Per headset, uncut video with an external microphone or synchronized observer narration: execute each event intended to cause haptics; record event time, controller side, and tester-confirmed felt response. Preserve run log.	NOT ESTABLISHED: a public official sensory threshold, repeatability count, objective measurement tool, or requirement that every event produce haptics. Tester attestation is subjective evidence, not instrumentation-grade proof.
+XR-05: Spatial audio	K1	The allowed official Khronos OpenXR reference does not define a Quest-specific spatial-audio acceptance procedure/threshold for this application.	NOT ESTABLISHED for a qualifying official command or device UI.	Record a standardized, predeclared observer test: seated user turns head left/center/right while the application emits separately identified left/right/front/back audio cues. Retain external video/audio, headset-volume setting, scenario state, and participant response sheet.	NOT ESTABLISHED: official localization error, SPL, frequency response, occlusion, latency, intelligibility, or recording method. Consumer video audio cannot by itself establish rendered binaural/spatial pipeline correctness.
+MR-01: Passthrough and table placement	M1, 
+Compositor layers
+	Meta documents a compositor-layer visualization overlay that shows bounds in contrasting colors and documents per-frame layer logging, including layer type, transform, anchor ID/version fields in sample output.	Activate layer visualization: adb shell setprop debug.oculus.sysPropDebug 1 && adb shell input keyevent "KEYCODE_POWER" && adb shell input keyevent "KEYCODE_POWER" && adb shell setprop debug.oculus.visualizeLayers 1. For per-frame layer records: adb shell setprop debug.oculus.logLayers 1, then adb logcat -s CompositorClient.	Normal-view and layer-overlay video, showing real-world passthrough, visible table reference, and application object positioned at the intended table location. Retain CompositorClient output; retain physical table marker photo and a predeclared seating position. Clean up afterward using Meta’s documented disable command: adb shell setprop debug.oculus.sysPropDebug 0 && adb shell setprop debug.oculus.visualizeLayers 0 && adb shell input keyevent "KEYCODE_POWER" && adb shell input keyevent "KEYCODE_POWER".	The output can evidence compositor layers, transforms, and fields named “anchor” in layer logs; it does not prove semantic tabletop recognition or spatial-anchor persistence. NOT ESTABLISHED: table-plane accuracy, drift threshold, passthrough quality, room-mesh requirement, or a guarantee that a logged layer anchor equals the app’s table anchor.
+MR-02: Anchor recovery	M1	CompositorClient layer logs include sample anchor translation, rotation, ID, and version fields, but Meta’s cited page does not document a persistence/relocalization acceptance workflow.	adb logcat -s CompositorClient after enabling debug.oculus.logLayers 1.	Test sequence video: place object; record baseline table-relative position; deliberately interrupt the session/environment according to a predeclared reversible scenario; return to the test seat; trigger recovery; capture recovered placement and logs. Retain baseline/recovery videos and raw logs side by side.	NOT ESTABLISHED: what interruption qualifies, durable-anchor semantics, recovery deadline, maximum spatial displacement/orientation change, or a standard “anchor recovered” signal. Do not claim an anchor was recovered solely from a matching visual position.
+MR-03: Deliberate VR fallback	M1	Meta’s visual compositor-layer overlay can demonstrate a different submitted-layer composition; VrApi can provide real-time runtime stats. It does not define MR-to-VR fallback policy.	Use the documented layer overlay command and adb logcat -s VrApi; capture normal and fallback visual state.	Continuous video showing: MR/table mode active → deliberate test trigger → clearly distinguishable VR fallback → table gameplay remains usable or the predeclared safe halt appears → if applicable, MR return. Retain raw VrApi log and compositor-layer visualization capture.	NOT ESTABLISHED: conditions that must trigger fallback, required user notification, transition time, whether passthrough loss is detectable through a public API, or whether gameplay must continue.
+XR-06: Seated operation and comfort	A5, 
+Test your app’s accessibility
+	Android recommends manual accessibility testing and user testing; it describes TalkBack’s linear navigation/explore-by-touch. It does not define XR comfort or seated ergonomics standards.	Android’s documented device path for TalkBack is Settings → Accessibility → TalkBack → On/Off, then confirmation. For native XR interaction, NOT ESTABLISHED that TalkBack applies to in-headset controls.	A structured adult participant run: seated height/posture recorded non-identifiably, fit/comfort check, 20–30 minute predeclared gameplay session, interruption/recenter/fallback exposure, post-session 0–10 discomfort ratings, ability to pause/exit, and observed issues. Use consent and minimize data; retain anonymized IDs only.	NOT ESTABLISHED: age-30–70 comfort threshold, sample size, session duration, motion-sickness threshold, fit/vision criteria, re-centering criterion, or accessibility equivalence of Android TalkBack to Unreal/OpenXR VR UI. No official source in scope establishes those.
+Performance, resources, accessibility, and privacy-state tests
+Test	Official source URL/title	Supported observable signal	Officially documented command, tool, or device UI	Pass evidence to retain	Version/date limits and contradiction
+P-01: Frame-time/compositor evidence	M1, 
+Compositor layers
+	Meta documents adb logcat -s VrApi. Its example includes TW, App, GD, CPU&GPU, LCnt, and LM; Meta defines TW as compositor time and LCnt as the number of combined layers. Meta states the VrApi tag continues to emit runtime stats for OpenXR-based apps despite VrApi API deprecation in August 2022.	adb logcat -s VrApi	Full raw log for each workload: cold launch, standard seated play, controller↔hand switch, MR/table placement, recovery, VR fallback, and two-player session. Extracted timestamped samples may be tabulated, but preserve the original raw capture.	These are runtime performance fields, not a complete, documented frame-time conformance specification. NOT ESTABLISHED: Quest 3/3S frame-time target, percentile/worst-frame threshold, test duration, dropped-frame pass rule, or required refresh rate. Do not relabel CPU&GPU as a universal per-frame GPU-only measurement.
+P-02: Compositor layers / layer-cost evidence	M1	Meta documents LCnt, LM, per-frame CompositorClient logs, property logs, and a layer overlay. Meta says Quest supports up to 16 compositor layers per frame; layers beyond that limit are not rendered.	adb shell setprop debug.oculus.logLayers 1; adb logcat -s CompositorClient; for property logs: adb shell setprop debug.oculus.sysPropDebug 1, sleep/wake via two documented power-key commands, adb shell setprop debug.oculus.layerProperties 1, then adb logcat -s CompositorVR.	Raw logs; overlay video; count of layers attributable to app session; property records containing texture and recommended texture resolutions; cleanup transcript. Pass the factual limit check only if logs show no application reliance on more than 16 rendered layers.	Meta’s cost examples are explicitly for Quest 2 at CPU/GPU level 4, so they must not be used as Quest 3/3S thresholds. Contradiction/limit: layer logs can include non-app services such as notifications or the Metrics HUD; isolate the app client/package before attributing layer count.
+P-03: Thermal evidence	A2; A3; M2	Android documents general dumpsys and bugreport capture; Meta’s code-sample catalog lists performance tools/Perfetto resources but does not itself define thermal thresholds.	adb shell dumpsys [-t timeout] ... only after confirming the service name exposed on the device; adb bugreport <output-directory>.	Start/end bugreports; raw dumpsys outputs for whatever thermal/power services the installed OS exposes; environmental conditions, headset charge/start temperature if visible, test duration, and performance log synchronized to the stress scenario.	NOT ESTABLISHED: a public official Quest 3/3S thermal service/schema, temperature threshold, throttling signal, ambient-condition protocol, or acceptable throttling duration. A missing/changed dumpsys field is not a pass or fail by itself.
+P-04: Memory evidence	A2; A3	Android’s dumpsys and bugreport facilities can preserve system diagnostic state.	adb shell dumpsys [-t timeout] ... using services exposed by the device; adb bugreport <output-directory>.	Baseline, peak-workload, and post-relaunch raw dumps/bugreports; launch/relaunch video; test-duration and workload record; explicit note of whether an out-of-memory/crash dialog was observed.	NOT ESTABLISHED: a public official Quest memory-budget threshold for UE 5.7.4, a required dumpsys subcommand/field, or an Android-to-Quest mapping for memory pass/fail. Do not infer memory safety simply from no visible crash in a short run.
+P-05: Draw-call evidence	M1; E1	Meta’s cited tools identify compositor layers and runtime timing. Epic’s UE 5.7-or-newer Android requirements page establishes Android documentation scope, not a Quest draw-call acceptance measurement.	NOT ESTABLISHED for an allowed-source official command/tool that produces UE 5.7.4 Quest application draw-call counts. Meta’s LCnt is compositor-layer count, not draw-call count.	Record a project-generated on-screen metric only if the test article already exposes it, accompanied by uncut video and VrApi logs; otherwise report “no official-source draw-call method available.”	Contradiction: treating LCnt or CompositorClient layers as UE draw calls is invalid. NOT ESTABLISHED: draw-call budget/threshold or official UE 5.7.4 Quest capture procedure in the allowed source set.
+P-06: Battery evidence	A4, 
+Profile battery usage with Batterystats and Battery Historian
+; A3	Android documents resetting battery statistics, dumping battery stats, enabling full wakelock history, and creating a bugreport.	adb shell dumpsys batterystats --reset; optionally adb shell dumpsys batterystats --enable full-wake-history; after test, adb shell dumpsys batterystats > batterystats.txt; adb bugreport <output-directory>.	Battery percentage at start/end from headset UI; session duration; raw batterystats.txt; bugreport archive; exact workload script; headset/OS identity; charger disconnected/connected state as observed. For comparisons, repeat identical scenario on H1/H2 and retain all raw outputs.	Android’s Battery Historian material is general Android guidance, not Quest battery-life certification. NOT ESTABLISHED: Quest 3/3S drain-rate threshold, controlled-load methodology, battery health correction, or a valid conversion from batterystats to XR runtime.
+A-01: Android-accessibility UI checks	A5, 
+Test your app’s accessibility
+	Android recommends manual testing, analysis tools, automated checks, and user testing. It documents TalkBack navigation and evaluation questions: appropriate spoken feedback, reachability of every element, readable alerts, and completion of main workflows.	Device UI: Settings → Accessibility → TalkBack → On/Off → OK. Then use documented linear navigation: swipe right/left; double-tap to select; and explore-by-tapping.	Video or screen recording of the tested Android-visible UI; tester checklist for each reachable element, spoken label, alerts, and core workflow; TalkBack developer settings evidence if used: Settings → Accessibility → TalkBack → Settings → Advanced settings → Developer settings → Log output level: VERBOSE; Display speech output: on.	Contradiction/limit: Android’s page applies to Android-powered device UI and does not establish that an immersive Unreal/OpenXR in-headset interface exposes TalkBack semantics. NOT ESTABLISHED: a TalkBack-based proof for world-space VR UI, age-specific accessibility threshold, or Quest headset accessibility acceptance rule.
+A-02: Adults 30–70 usability/comfort panel	A5	Android explicitly recognizes user testing as valuable accessibility evidence, including feedback from people who interact with the app.	No age-band-specific official device UI/tool is documented. Use a predeclared observation form; do not portray it as an official certification instrument.	Recruit or use a documented panel spanning the requested 30–70 range if available; retain anonymized participant age bands, prior XR familiarity band, seated session completion, task outcomes, pause/exit discoverability, discomfort ratings, and free-text observations. Capture only consented, minimized data.	NOT ESTABLISHED: required number of participants, demographic distribution, pass percentage, comfort scale, clinical screening, or interpretation of the age band. This can substantiate observed usability in the tested panel, not population-wide accessibility.
+S-01: Two-headset concealed-card isolation—positive and adversarial observations	A3; A2; M1	Android bugreport and dumpsys can retain diagnostics; Meta VrApi logs retain runtime performance signals. None of the allowed sources define a multiplayer secrecy/security test.	adb bugreport <output-directory> on H1 and H2 before/after each test case; adb logcat -s VrApi during rendering. Use synchronized external video of both headsets/observer displays and a written randomized deal ledger maintained outside the videos.	For each round, retain: H1/H2 package/signing identity; synchronized dual capture; concealed card truth ledger; each player’s visible state at deal, turn, reveal, reconnect/relaunch, modality transition, MR→VR fallback, and end-of-round; logs/bugreports; explicit reviewer attestation. Pass criterion for this protocol: across all recorded checkpoints, neither video nor device-visible output shows Player A’s concealed card state to Player B or vice versa before the predeclared authorized reveal.	NOT ESTABLISHED: any official Meta/Epic/Khronos/Android standard proving “never exposed,” cryptographic secrecy, network confidentiality, server authority, screenshot prevention, memory confidentiality, or security certification. This is bounded empirical evidence only: it proves no exposure in the observed cases, not universal non-exposure.
+S-02: Cross-device identity and contamination control	A1; A2; A3	Android signing verification plus package/device-state and bugreport records can tie each session to an APK/package observation.	apksigner verify --verbose --print-certs app.apk; adb shell dumpsys package <packageName>; adb bugreport <output-directory>.	Before every two-headset run, retain H1/H2 package dumps and current artifact verification output. Make the device role conspicuous in video: H1 = Player A, H2 = Player B; reverse roles in a separate run. Record the exact artifacts used on both headsets.	NOT ESTABLISHED: official proof that the same cryptographic APK bytes were installed on both devices merely from a matching package dump; nor an official “two-player state-isolation” requirement. Report any uncertainty about AAB/split delivery explicitly.
+Required scenario matrix
+
+Run the following as a minimum observable-evidence matrix on both H1 and H2, with the same artifact verification attached to each session:
+
+Scenario	Required evidence combination
+Baseline seated VR, controllers	Uncut video, VrApi log, package dump, artifact verification record
+Baseline seated VR, hands	Uncut video, input-transition ledger, VrApi log, post-run bugreport
+Controller ↔ hand live switching	One continuous capture spanning all transitions, action-result checklist, logs
+Haptics + spatial cues	Synchronized observer/video/audio capture; participant confirmation sheets; disclose subjectivity
+MR passthrough/table placement	Normal-view capture, compositor visualization capture, CompositorClient log
+Anchor-recovery attempt	Baseline/recovery capture, physical-table reference, raw layer logs, outcome marked recovered/not recovered/inconclusive
+Deliberate VR fallback	Continuous MR-to-VR capture, fallback state visible, VrApi and layer evidence
+Sustained workload	VrApi log, battery start/end, batterystats, start/end bugreports, available dumpsys captures
+Accessibility and comfort	Android-visible UI/TalkBack test where applicable; anonymized adult user-test record; clearly separate unsupported immersive-UI claims
+Two-player concealment	Synchronized H1/H2 capture, truth ledger, role reversal, relaunch/reconnect/fallback/modality-switch checkpoints, pre/post bugreports
+Interpretation boundaries
+
+A successful apksigner verify demonstrates Android signature verification for the tested APK; it does not establish product security certification or identical installed AAB split composition.
+
+A clean VrApi capture demonstrates observed runtime fields during that run. It does not establish a published Quest 3/3S frame-time, thermal, memory, or battery acceptance target. Meta’s cited documentation also makes clear that VrApi’s development API was deprecated, while its logcat tag remains available for OpenXR runtime statistics.
+developers.meta
+
+Meta’s compositor diagnostics can visibly and textually support claims about submitted compositor layers, their order, transforms, layer counts, and certain texture properties. They cannot by themselves prove a real-world table was semantically detected, that an anchor is durable, or that a visible object has a specified physical accuracy.
+developers.meta
+
+Android accessibility guidance supports manual testing, accessibility-service testing, analysis tools, and user testing. It does not create a Quest XR comfort standard, and TalkBack evidence should be claimed only for surfaces that actually participate in Android accessibility behavior.
+developer.android
+
+The two-headset protocol provides test-bounded observational evidence. The strongest accurate conclusion is: “No wrong-player concealment exposure was observed in the retained, predefined scenarios.” It cannot honestly establish “never exposed” across all code paths, future OS versions, network conditions, memory inspection, or untested sequences because no official source in the allowed set defines that proof standard.
+
+Run as a separate task in Computer for better results
+Computer produces a richer output using more tools and context.
+Run task
+
+
+
+
+Ask a follow-up
+Search
+Computer
+Model

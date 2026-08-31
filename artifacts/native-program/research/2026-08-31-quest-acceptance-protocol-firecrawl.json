@@ -1,0 +1,150 @@
+{
+  "schema_version": "long-table-firecrawl-verification/v1",
+  "assignment_id": "LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002",
+  "verified_at": "2026-08-31T16:37:05Z",
+  "tool": "Firecrawl CLI 1.23.3",
+  "provider_role": "independent public-source retrieval tool; zero workforce credit and no acceptance authority",
+  "search": {
+    "job_id": "01a058a5-d8ec-712b-a211-3c51d6181a29",
+    "credits_used": 9,
+    "result_quality": "PARTIAL_ONLY_THREE_OF_EIGHT_RESULTS_OFFICIAL",
+    "feedback_attempt": "REJECTED_FEEDBACK_WINDOW_EXPIRED",
+    "feedback_retry": false
+  },
+  "verification_attempts": [
+    {
+      "attempt": 1,
+      "mode": "concurrent_cache_only_lockdown",
+      "result": "0_OF_10",
+      "failure": "NO_CACHED_DATA_NO_SOURCE_FETCH"
+    },
+    {
+      "attempt": 2,
+      "mode": "concurrent_fresh",
+      "result": "0_OF_10",
+      "failure": "MINUTE_RATE_LIMIT",
+      "new_information": "reset time was supplied"
+    },
+    {
+      "attempt": 3,
+      "mode": "materially_different_rate_aware_sequential_fresh",
+      "result": "10_OF_10_HTTP_200",
+      "failure": null,
+      "further_attempt_authorized": false
+    }
+  ],
+  "sources": [
+    {
+      "index": 1,
+      "url": "https://dev.epicgames.com/documentation/unreal-engine/android-development-requirements-for-unreal-engine",
+      "title": "Android Development Requirements for Unreal Engine | Unreal Engine 5.8 Documentation | Epic Developer Community",
+      "http_status": 200,
+      "scrape_id": "01a058ac-8d4f-768d-a9ed-1efbaad959a6",
+      "local_capture_bytes": 9785,
+      "local_capture_sha256": "sha256:26769756082c0633843a02bc0fa349ae71ab9c236f44a3a401765f5c8f246dbf",
+      "verification": "PASS_UE_5_7_SDK_35_AND_NDK_R27C_VISIBLE"
+    },
+    {
+      "index": 2,
+      "url": "https://developers.meta.com/horizon/documentation/spatial-sdk/os-compositor-layers/",
+      "title": "Compositor layers | Meta Horizon OS Developers",
+      "http_status": 200,
+      "scrape_id": "01a058ac-b3af-74f8-aeb3-08b2c80128bc",
+      "local_capture_bytes": 27591,
+      "local_capture_sha256": "sha256:d2ce4b58089789250f33a4664e63e2de9955322f5be8038c8a3948ab7a90be52",
+      "verification": "PASS_LAYER_OVERLAY_COMPOSITOR_LOG_VRAPI_AND_16_LAYER_CLAIMS"
+    },
+    {
+      "index": 3,
+      "url": "https://developers.meta.com/horizon/code-samples/native/",
+      "title": "Code Samples | Meta Horizon OS Developers",
+      "http_status": 200,
+      "scrape_id": "01a058ac-e5a3-718f-8dfe-c9a042fe7c97",
+      "local_capture_bytes": 7360,
+      "local_capture_sha256": "sha256:6b78044afa5d48fb5f11eb2acfbb4cb63ce03da6506714606c0e53fd48e6d98b",
+      "verification": "SOURCE_EXISTS_BUT_PERPLEXITY_PERFETTO_ADB_PERFORMANCE_CATALOG_CLAIM_NOT_FOUND"
+    },
+    {
+      "index": 4,
+      "url": "https://developers.meta.com/horizon/downloads/package/oculus-adb-drivers/",
+      "title": "Meta for Developers",
+      "http_status": 200,
+      "scrape_id": "01a058ad-2c59-75c7-9c68-631422b99338",
+      "local_capture_bytes": 7941,
+      "local_capture_sha256": "sha256:c4efc75bf6e8268bfecd4c6e9c1dc10b9e95823897e07beaf08f26a03b1b8714",
+      "verification": "PASS_ADB_DRIVERS_REQUIRED_FOR_ANDROID_BASED_QUEST_DEVICES"
+    },
+    {
+      "index": 5,
+      "url": "https://registry.khronos.org/OpenXR/specs/1.1/man/html/openxr.html",
+      "title": "OpenXR API Reference Pages",
+      "http_status": 200,
+      "scrape_id": "01a058ad-5bdb-7027-9400-485f0778027a",
+      "local_capture_bytes": 6993907,
+      "local_capture_sha256": "sha256:984328ba2ebb50560eb5c619e9102c1261dd5f2112d120dfd6e54d81d8b57957",
+      "verification": "PASS_OFFICIAL_API_REFERENCE_ONLY_NO_QUEST_ACCEPTANCE_THRESHOLD"
+    },
+    {
+      "index": 6,
+      "url": "https://developer.android.com/tools/apksigner",
+      "title": "apksigner | Android Studio | Android Developers",
+      "http_status": 200,
+      "scrape_id": "01a058ad-af6e-758a-88e4-f36c88181995",
+      "local_capture_bytes": 21441,
+      "local_capture_sha256": "sha256:e67ea38dea2a235d08a80d0fadf7ecec0ac6f4824ad9bfecea24ec18d24b2255",
+      "verification": "PASS_VERIFY_AND_PRINT_CERTS_OPTIONS"
+    },
+    {
+      "index": 7,
+      "url": "https://developer.android.com/tools/dumpsys",
+      "title": "dumpsys | Android Studio | Android Developers",
+      "http_status": 200,
+      "scrape_id": "01a058ad-e637-774a-befd-d3d8efdc89c7",
+      "local_capture_bytes": 51351,
+      "local_capture_sha256": "sha256:c0b168ee42e3dce720a4b88f9af3c957255e45373054523304242822b74edd2a",
+      "verification": "PASS_GENERAL_DUMPSYS_SYNTAX_NO_STABLE_QUEST_PACKAGE_SCHEMA"
+    },
+    {
+      "index": 8,
+      "url": "https://developer.android.com/studio/debug/bug-report",
+      "title": "Capture and read bug reports | Android Studio | Android Developers",
+      "http_status": 200,
+      "scrape_id": "01a058ae-10bb-7378-ab41-973ade621704",
+      "local_capture_bytes": 10213,
+      "local_capture_sha256": "sha256:b8c40c012c6c904ecf3eafd7ef38979e182090c6a22bf9e009a265cc8eb8b21d",
+      "verification": "PASS_ADB_BUGREPORT_CAPTURE"
+    },
+    {
+      "index": 9,
+      "url": "https://developer.android.com/topic/performance/power/setup-battery-historian",
+      "title": "Profile battery usage with Batterystats and Battery Historian | App quality | Android Developers",
+      "http_status": 200,
+      "scrape_id": "01a058ae-3cb9-731b-bbcd-b273d1e90e86",
+      "local_capture_bytes": 17170,
+      "local_capture_sha256": "sha256:9165e7d0b7c4d8267f7cc2b06bd44de5285bb61d2f35b2df3b51c76cc7ffbeb6",
+      "verification": "PASS_BATTERYSTATS_RESET_DUMP_AND_BUGREPORT_PROCEDURE"
+    },
+    {
+      "index": 10,
+      "url": "https://developer.android.com/guide/topics/ui/accessibility/testing",
+      "title": "Test your app's accessibility | App quality | Android Developers",
+      "http_status": 200,
+      "scrape_id": "01a058ae-73a5-7409-9d6d-4f2869bfa88f",
+      "local_capture_bytes": 21900,
+      "local_capture_sha256": "sha256:e7811f3f259d857c8f49b629dc81b022b3557694a2acfb2d24c62b1f3388689c",
+      "verification": "PASS_TALKBACK_MANUAL_AUTOMATED_AND_USER_TESTING_GENERAL_ANDROID_ONLY"
+    }
+  ],
+  "summary": {
+    "official_urls_fetched": 10,
+    "http_200": 10,
+    "direct_claim_groups_verified": 9,
+    "source_exists_but_specific_claim_not_found": 1,
+    "provider_declared_source_count": 7,
+    "unique_official_urls_in_provider_table_and_receipt": 10,
+    "provider_source_count_disposition": "REJECTED_INTERNAL_CONTRADICTION",
+    "accepted_as_product_or_device_verdict": false,
+    "committed_raw_firecrawl_pages": false,
+    "reason_raw_pages_not_committed": "Ignored retrieval cache includes a 6.99 MB OpenXR reference; compact URL, title, HTTP, scrape-ID, byte and SHA-256 evidence is retained instead."
+  }
+}

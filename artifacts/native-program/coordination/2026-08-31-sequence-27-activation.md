@@ -11,6 +11,15 @@
 - API readiness: disabled and credential empty; no API request will be attempted
 - Retry ceiling: one primary; one recovery only for a clearly transient pre-result failure; no repeat after an ambiguous successful submission
 
+The reusable Perplexity workflow defaults to the API Platform/Director adapter
+and otherwise prohibits a personal browser session. The owner explicitly asked
+to use Perplexity, identified the authenticated Chrome surface as available,
+directed browser fallback when other formats were unavailable, and later granted
+standing authority to complete provider actions without another confirmation.
+That project-specific instruction is the governing transport override for this
+assignment only. It does not relax public-only scope, privacy, retry, evidence,
+budget, no-code or no-verdict controls.
+
 ## Useful-work test
 
 This assignment is not denominator work. Sequence 13 asked for a broad platform
@@ -40,13 +49,18 @@ sequence 2 (Antigravity long / 8) rolls out and Perplexity medium / 5 enters:
 | Grok | 18 | 21.6867% | 25% | pass |
 | OpenAI | 5 | 6.0241% | 13% | pass; QA only |
 | Antigravity | 4 | 4.8193% | 16% | pass; prior RobotDealer route remains closed |
-| Perplexity | 5 | 6.0241% | 13% | pass; research only |
+| Perplexity | 5 | 6.0241% | 9% | pass; research only |
 | GitHub Copilot CLI | 1 | 1.2048% | 6% | pass |
 
-Total: 83 points. This would restore every provider to its hard ceiling and
+Total: 83 points. This would place every provider below its hard ceiling and
 make a later fresh Claude medium / 5 coding assignment eligible after the next
 oldest credited assignment rolls. That later assignment remains separately
 gated and cannot issue from this activation record alone.
+
+The earlier phrase "sequence-27 medium/5 RobotDealer fallback" in the frozen
+sequence-26 gate was a prospective calculation, not a credited assignment.
+Actual sequence 27 is this research packet. The denied prospective calculation
+retains its historical evidence but earns no sequence row and no points.
 
 ## Acceptance boundary
 

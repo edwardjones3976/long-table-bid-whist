@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "assignment_id": "LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002",
+  "provider": "Perplexity",
+  "transport": "authenticated_chrome_browser",
+  "conversation_url": "https://www.perplexity.ai/search/ff3ce4a6-7903-43e5-8a47-8596efcfd9d5",
+  "conversation_id": "ff3ce4a6-7903-43e5-8a47-8596efcfd9d5",
+  "captured_at": "2026-08-31T16:33:21.656Z",
+  "terminal_marker": "Finished",
+  "steps_visible": 4,
+  "query_sha256": "sha256:0b7014ef88d3a8b95fc47e5df75d732cf75d78c04cffac2e67b6f001c3284347",
+  "query_exactly_present": true,
+  "raw_response_sha256": "sha256:24c4f0b15542c87ed46f6cce83d2b912f33cea8e5fed2b01e209858310706225",
+  "raw_response_utf8_bytes": 32431,
+  "raw_response_characters": 32275,
+  "official_source_count": 10,
+  "official_sources": [
+    {
+      "url": "https://dev.epicgames.com/documentation/unreal-engine/android-development-requirements-for-unreal-engine",
+      "title": "epicgames"
+    },
+    {
+      "url": "https://developers.meta.com/horizon/documentation/spatial-sdk/os-compositor-layers/",
+      "title": "Compositor layers"
+    },
+    {
+      "url": "https://developers.meta.com/horizon/code-samples/native/",
+      "title": "Code Samples | Meta Horizon OS Developers"
+    },
+    {
+      "url": "https://developers.meta.com/horizon/downloads/package/oculus-adb-drivers/",
+      "title": "Oculus ADB Drivers"
+    },
+    {
+      "url": "https://registry.khronos.org/OpenXR/specs/1.1/man/html/openxr.html",
+      "title": "OpenXR API Reference Pages"
+    },
+    {
+      "url": "https://developer.android.com/tools/apksigner",
+      "title": "apksigner"
+    },
+    {
+      "url": "https://developer.android.com/tools/dumpsys",
+      "title": "dumpsys"
+    },
+    {
+      "url": "https://developer.android.com/studio/debug/bug-report",
+      "title": "Capture and read bug reports"
+    },
+    {
+      "url": "https://developer.android.com/topic/performance/power/setup-battery-historian",
+      "title": "Profile battery usage with Batterystats and Battery Historian"
+    },
+    {
+      "url": "https://developer.android.com/guide/topics/ui/accessibility/testing",
+      "title": "Test your app’s accessibility"
+    }
+  ],
+  "usage_or_cost": "NOT_ESTABLISHED_IN_VISIBLE_SURFACE",
+  "recovery_attempts": 0,
+  "revisions": 0,
+  "private_context_transmitted": false,
+  "repository_context_transmitted": false
+}
