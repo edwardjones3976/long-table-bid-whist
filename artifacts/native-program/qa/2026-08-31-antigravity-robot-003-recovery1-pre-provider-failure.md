@@ -64,9 +64,9 @@ and
 ## Preserved archive and accounting
 
 All twelve available recovery records were copied byte-for-byte into
-`artifacts/native-program/qa/LT-NATIVE-ANTIGRAVITY-ROBOT-003.recovery1-pre-provider-failure/`.
+`artifacts/native-program/qa/LT-AGR-ROBOT-003.r1-failure/`.
 Its exact inventory is frozen by `manifest.json`; the sorted twelve-row digest
-is `f68ac93d04b0cc8050d085bf28b3a4aaa1e21e64112cd5c6e2036a5aa460b67e`.
+is `dbcafc8997bfbdd0250dd34ffbf95c25947ca7466dcdd414e41bf2681fe17cd1`.
 The external transaction root and the external one-shot claim remain preserved
 in place; neither was deleted, overwritten or reused.
 
