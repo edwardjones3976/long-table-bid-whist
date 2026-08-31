@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 06:36 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:12 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:10 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:07 UTC | BEGIN]]
@@ -954,7 +955,7 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "TEMPORARY_SESSION_LIMIT_RECOVERY_PENDING"
+    status: "TEMPORARY_SESSION_LIMIT_RECOVERY_ARMED_FOR_2026-08-31T00:00:05-07:00"
     accepted_direct_production_points: 0
     base_packet_digest: "sha256:4cd8d536d1500f776310e0814956b988cb03abe21cc670449c8658b7cad33cba"
     packet_digest: "sha256:8d2b31bd997636438fc8ed4ba21d20671c5d1fa4bf41e4021a3928c04a6db111"
@@ -978,12 +979,17 @@ canonical_assignment_ledger:
     preterminal_static_qa_digest: "sha256:04d3930a9b276a87b2c584b08a91dafb6d5ce47c8e39f1d6312d42fb3e4f15cb"
     recovery_prompt: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-001.sequence-25-recovery.prompt.md"
     recovery_prompt_digest: "sha256:e5f3872037427d0daa6949e6b46effa88d2739cd761aaae25c81ac52aff66810"
+    recovery_runner: "director/native-program/run-claude-robot-001-recovery.ps1"
+    recovery_runner_digest: "sha256:e480a2098ec9e3686c75acc4e729450fbd0354b3c563e3affecd8216aa079284"
+    recovery_launch_status: "ARMED; local background runner atomically claims the one recovery, revalidates exact authority, working manifest and first-party Max authentication immediately before contact; superseded 12:10 heartbeat deleted to prevent duplicate dispatch"
     qa_worktree: "C:\\Users\\edwar\\.codex\\worktrees\\long-table-claude-robot-qa-002"
     qa_branch: "codex/claude-robot-qa-002"
     qa_base: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
     qa_base_tree: "1e0db56f1e85d66c93ab64bc3dca8c237947c210"
     qa_preflight: "CLEAN_ACCEPTED_FOUNDATION_WITH_ROBOT_PLUGIN_PATH_ABSENT; no provider bytes materialized before exact commit/result"
-    manual_overlay_reason: "The sequence-18 prestage never dispatched, so sequence 25 is the first execution of the same assignment under a narrow reauthorization delta, not a duplicate row. One malformed empty-MCP launcher stopped locally before provider contact. The corrected authorized primary reached Claude Fable 5, created thirteen leased-path files, used no web or subagents, then hit an explicit temporary session limit before commit or structured output. The uncommitted bytes are frozen by manifest. One post-reset transient recovery remains; there is still no terminal workload or direct-production credit."
+    qa_harness: "director/native-program/qa/invoke-openai-robot-dealer-qa.ps1"
+    qa_harness_digest: "sha256:e2daeb6555c2b475970e88a0b68e3e38639eeb6eb0acbea191418824c80dd4b0"
+    manual_overlay_reason: "The sequence-18 prestage never dispatched, so sequence 25 is the first execution of the same assignment under a narrow reauthorization delta, not a duplicate row. One malformed empty-MCP launcher stopped locally before provider contact. The corrected authorized primary reached Claude Fable 5, created thirteen leased-path files, used no web or subagents, then hit an explicit temporary session limit before commit or structured output. The uncommitted bytes are frozen by manifest. At the user's explicit direction the one post-reset transient recovery is armed for the provider's stated reset, with a fail-closed exact-state runner and no duplicate heartbeat. There is still no terminal workload or direct-production credit until that run finishes."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -1025,3 +1031,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 06:07 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:10 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:12 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 06:36 UTC | END]]
