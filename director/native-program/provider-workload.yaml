@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 04:56 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:37 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:34 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:31 UTC | BEGIN]]
@@ -19,7 +20,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_18_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists; terminal Claude sequence 22 brings Claude to 37.93% inside normal; its exact candidate failed immutable scope/result requirements and XR automation, so direct production remains zero and only a fresh useful-work fallback packet may proceed"
+  rolling_compliance_status: "WARMING_UP_19_OF_20 canonical completed assignments; sequence 23 records one real Antigravity model turn at simple/1 but zero direct production because immutable preflight/tool/commit/raw-result gates failed. All configured providers except Perplexity remain inside normal; no replacement coding dispatch is legal until a newly classified provider target, ceiling and packet are frozen"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -341,6 +342,20 @@ overall_effort_ledger:
     terminal_result_digest: "sha256:e55478c482c2bd56c51a97272e0fa79b2f6b8ba86ad636c7ef0f7f27e61d5c20"
     terminal_evidence: "artifacts/native-program/qa/2026-08-31-claude-xrtest-002-terminal-rejection.md"
     exclusion_reason: "Authenticated Claude produced one exact test-only commit, but retained both known-stale Baseline assertions, returned no standalone schema-valid result object and read outside the sole allowed test file. The materially different third transport followed new CLI information and the global exception but lacked a precommitted sequence-22 transport delta, so it is recorded as a control defect rather than retroactively normalized. OpenAI reproduced a green UE5.7 editor build and a failing 9/10 LongTable.XR report with exactly those two assertions red. Overall simple/1 effort records once; direct production remains zero and no fourth Claude contact is permitted."
+  - sequence: 23
+    assignment_id: "LT-NATIVE-ANTIGRAVITY-XRTEST-004"
+    provider: gemini_antigravity
+    size: simple
+    canonical_points: 1
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_PROTOCOL_AND_RAW_RESULT_FAILED"
+    authenticated_run: "antigravity-project:078d0f61-1252-40e5-a802-3c4da65f2756;conversation:f50aae62-bee5-42e0-a21f-b79f22272e2c;candidate:cb62417aa4fca68b9864bb80a5a0608ac444c66b"
+    direct_production_points: 0
+    candidate_sha: "cb62417aa4fca68b9864bb80a5a0608ac444c66b"
+    candidate_tree: "6896a338788dcc861fddb9123f7ded2cd8fa8ff1"
+    terminal_result_digest: "sha256:62b0502a57f3e8aa3f248e3ac5f355ed7242e41964d70146d73c004c5276a0f2"
+    terminal_evidence: "artifacts/native-program/qa/2026-08-31-antigravity-xrtest-004-terminal-rejection.md"
+    exclusion_reason: "One authenticated Antigravity turn authored the exact two deletion bytes, but could not verify mandatory base metadata, requested bypass/evasion commands outside the packet, created no provider commit and emitted two invalid raw JSON documents. Wrapper-normalized structured output and OpenAI mechanical freeze/build/10-of-10 diagnostics cannot cure immutable protocol failure. Overall simple/1 records once; direct production is zero and the route is terminal."
 
 accepted_direct_production_ledger:
   - sequence: 19
@@ -352,12 +367,12 @@ accepted_direct_production_ledger:
     accepted_outcome_digest: "sha256:55e150cc1ac75bb9cdcf4cd1255442b569f910e9857ca91661ffb9d9d9ebf83f"
 
 rolling_window_projection:
-  completed_assignments: 18
+  completed_assignments: 19
   window_size: 20
-  current_canonical_points: {claude: 33, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 11, perplexity: 0}
-  current_partial_shares_percent: {claude: 37.93, cursor: 22.99, grok: 20.69, openai: 5.75, gemini_antigravity: 12.64, perplexity: 0}
+  current_canonical_points: {claude: 33, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0}
+  current_partial_shares_percent: {claude: 37.5, cursor: 22.73, grok: 20.45, openai: 5.68, gemini_antigravity: 13.64, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "Sequence 23 is authorized pending one sandboxed Antigravity primary. It may delete only the two exact stale assertions from frozen candidate 0d397d5; terminal execution projects Antigravity to 12/88 = 13.64%, inside normal. Claude, Cursor and Grok correction routes remain closed; OpenAI may QA but may not author product bytes."
+  next_route: "Sequence 23 is terminal rejected and no recovery or revision is legal. No coding fallback is active. A new provider may proceed only after its truthful identity, target, normal band, hard ceiling, clean 33aca61 base, exact packet and one-writer lease are committed; rejected Claude/Antigravity bytes remain prohibited."
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -383,6 +398,9 @@ rolling_window_projection:
     projected_sequence_23_antigravity_xrtest_simple_after_terminal_points: {claude: 33, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0, total: 88}
     projected_sequence_23_shares_percent: {claude: 37.5, cursor: 22.73, grok: 20.45, openai: 5.68, gemini_antigravity: 13.64, perplexity: 0.0}
     projected_sequence_23_status: "ELIGIBLE_USEFUL_TWO_ASSERTION_FALLBACK; Antigravity inside normal 8_to_14 and below hard 16; requires fresh packet before dispatch"
+    sequence_23_terminal_points: {claude: 33, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0, total: 88}
+    sequence_23_terminal_shares_percent: {claude: 37.5, cursor: 22.73, grok: 20.45, openai: 5.68, gemini_antigravity: 13.64, perplexity: 0.0}
+    sequence_23_terminal_status: "OPENAI_CHANGES_REQUIRED_PROTOCOL_AND_RAW_RESULT_FAILED; overall simple/1 only; zero direct production"
     authority: "projection only; useful assignment completion and fresh exact packet validation are required before each next dispatch; no filler, duplicate query or denominator-only work"
 
 canonical_assignment_ledger:
@@ -836,7 +854,7 @@ canonical_assignment_ledger:
     provider: gemini_antigravity
     size: simple
     canonical_points: 1
-    status: "AUTHORIZED_PENDING_PRIMARY"
+    status: "OPENAI_CHANGES_REQUIRED_PROTOCOL_AND_RAW_RESULT_FAILED"
     accepted_direct_production_points: 0
     packet_digest: "sha256:7951538c03d6ed318a8396150d0dd3f828021b54feaa6b253f5bd33dcfce32c4"
     packet_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-XRTEST-004.json"
@@ -850,8 +868,15 @@ canonical_assignment_ledger:
     starting_ref: "0d397d51deef9784400b9e6f90132309bedb71d4"
     starting_tree: "dbe19eaa3575327848ff3d8f64c8ae53b0e39207"
     owned_paths: ["Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp"]
-    attempts: {primary: 0, transient_recoveries: 0, revisions: 0}
-    manual_overlay_reason: "New disposable exact-two-deletion fallback after terminal Claude rejection. Antigravity is within its overall normal band, receives one specifically approved public-code test file, uses sandboxed accept-edits and has no authority over production XR, acceptance or external systems. Points enter only after real terminal provider execution."
+    attempts: {primary: 1, transient_recoveries: 0, revisions: 0, model_requests: 1}
+    authenticated_run: "antigravity-project:078d0f61-1252-40e5-a802-3c4da65f2756;conversation:f50aae62-bee5-42e0-a21f-b79f22272e2c"
+    mechanical_candidate_sha: "cb62417aa4fca68b9864bb80a5a0608ac444c66b"
+    mechanical_candidate_tree: "6896a338788dcc861fddb9123f7ded2cd8fa8ff1"
+    raw_stdout_digest: "sha256:62b0502a57f3e8aa3f248e3ac5f355ed7242e41964d70146d73c004c5276a0f2"
+    raw_response_digest: "sha256:bebfc219fc169b036c433a5b373a9e396970ef073577ed5df352d6c9c0fee16d"
+    structured_output_digest: "sha256:a89550a6d4e406c17068fd59fd84d85abefb1924195f57bfe6f2c4642dcb3353"
+    terminal_evidence: "artifacts/native-program/qa/2026-08-31-antigravity-xrtest-004-terminal-rejection.md"
+    manual_overlay_reason: "The one authenticated primary produced exact two-deletion working-tree bytes but violated mandatory base verification and tool boundaries, created no provider commit and emitted two raw result documents. OpenAI restored temporary settings exactly, mechanically froze unchanged bytes and passed UE5.7 plus 10/10 focused tests only as diagnostic evidence. The immutable packet still fails; overall simple/1 records once, direct production is zero and no recovery/revision or composition is permitted."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -865,7 +890,7 @@ credit_rules:
   - "Provider identity never grants merge, deploy, publication, spending, permissions, store or final-acceptance authority."
   - "Pre-PR76 legacy units remain visible but are excluded from canonical rolling and direct-production ledgers until assignment ID, immutable points, order, authentication and outcome binding are all proven."
   - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
-  - "Sequence 22 completed one real Claude model turn and is terminal rejected. The completed useful-work window is Claude 33/87 = 37.93%, Cursor 20/87 = 22.99%, Grok 18/87 = 20.69%, OpenAI 5/87 = 5.75%, Antigravity 11/87 = 12.64% and Perplexity 0. A new useful Antigravity simple/1 exact-test fallback projects Antigravity to 12/88 = 13.64%, inside normal; Claude, Cursor and Grok correction routes are exhausted for this cycle."
+  - "Sequence 23 completed one real Antigravity model turn and is terminal rejected. The completed warm-up window is Claude 33/88 = 37.50%, Cursor 20/88 = 22.73%, Grok 18/88 = 20.45%, OpenAI 5/88 = 5.68%, Antigravity 12/88 = 13.64% and Perplexity 0. No coding fallback is active until a newly classified provider target, ceiling and clean-room packet are committed."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
@@ -884,3 +909,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 04:31 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:34 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:37 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 04:56 UTC | END]]
