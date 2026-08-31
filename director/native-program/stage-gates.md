@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]] -->
@@ -83,6 +84,12 @@ clean and no workload point was earned. Production XR bytes remain immutable.
 The one-file correction requires a genuinely new fallback assignment before
 OpenAI can evaluate mechanical XR composition onto `4d26680`.
 
+Sequence 22, `LT-NATIVE-CLAUDE-XRTEST-002`, is that new simple/1 fallback. It
+supersedes the stale undispatched medium packet and owns only the same test file
+on exact base `33aca610`. Claude projects to `33/87 = 37.93%`, inside normal.
+One primary and one objectively temporary transport recovery are available; no
+source revision or production XR edit is authorized.
+
 ## Chunk B — Private Game Night
 
 - Full strict Bid Whist match, validated house-rules manifest, scoring, replay,
@@ -158,3 +165,4 @@ ambiguity; unrelated mutation; failed exact-SHA binding; or cultural harm.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | END]] -->

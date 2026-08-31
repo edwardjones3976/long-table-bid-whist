@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]] -->
@@ -550,6 +551,16 @@ timed out before any Grok prompt control was returned. No model request, edit,
 paid ambiguity or workload credit exists. After three transport failures the
 route is unavailable for this cycle and its one-file lease is closed.
 
+### Claude simple XR-test fallback
+
+The newly proven change is three bounded assertions in one test file, not the
+medium production scope assumed by stale `LT-NATIVE-CLAUDE-XRTEST-001`.
+Sequence 22, `LT-NATIVE-CLAUDE-XRTEST-002`, therefore supersedes that
+undispatched packet. From the real 86-point window, simple/1 execution projects
+Claude to `33/87 = 37.93%`, inside normal. It owns only the test file on
+`33aca610`; production XR remains immutable. One primary, one objectively
+temporary transport recovery and no source revision are available.
+
 Manual routing never weakens acceptance. Each provider candidate still requires:
 
 1. exact base, head, tree, and origin evidence;
@@ -567,3 +578,4 @@ gates.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | END]] -->

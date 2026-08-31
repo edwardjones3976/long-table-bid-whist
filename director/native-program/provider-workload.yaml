@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]]
@@ -339,7 +340,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 32, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 11, perplexity: 0}
   current_partial_shares_percent: {claude: 37.21, cursor: 23.26, grok: 20.93, openai: 5.81, gemini_antigravity: 12.79, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "Sequence 21 ended UNAVAILABLE_PRE_SUBMIT_TRANSPORT with zero model requests or points after CLI authentication and two bounded Chrome transport failures. Its lease is closed and the 17/20, 86-point window is unchanged. A genuinely new one-file fallback may be assigned to a workload-eligible provider; no Grok retry or overlap is permitted."
+  next_route: "Sequence 22 is authorized pending one Claude primary. It supersedes the stale undispatched medium XR-test packet with a newly proven simple/1 one-file test-only scope. Claude projects to 33/87 = 37.93%, inside normal; no Grok retry, production XR edit or overlapping implementation is permitted."
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -356,6 +357,9 @@ rolling_window_projection:
     projected_sequence_21_grok_xrtest_simple_after_terminal_points: {claude: 32, cursor: 20, grok: 19, openai: 5, gemini_antigravity: 11, perplexity: 0, total: 87}
     projected_sequence_21_shares_percent: {claude: 36.78, cursor: 22.99, grok: 21.84, openai: 5.75, gemini_antigravity: 12.64, perplexity: 0.0}
     projected_sequence_21_status: "AUTHORIZED_USEFUL_ONE_FILE_TEST_ONLY_FALLBACK; Grok inside normal 17_to_23; no filler; points enter only after terminal provider execution"
+    projected_sequence_22_claude_xrtest_simple_after_terminal_points: {claude: 33, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 11, perplexity: 0, total: 87}
+    projected_sequence_22_shares_percent: {claude: 37.93, cursor: 22.99, grok: 20.69, openai: 5.75, gemini_antigravity: 12.64, perplexity: 0.0}
+    projected_sequence_22_status: "AUTHORIZED_USEFUL_ONE_FILE_TEST_ONLY_FALLBACK; Claude inside normal 33_to_39; no filler; points enter only after terminal provider execution"
     authority: "projection only; useful assignment completion and fresh exact packet validation are required before each next dispatch; no filler, duplicate query or denominator-only work"
 
 canonical_assignment_ledger:
@@ -700,14 +704,14 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "DEPENDENCY_CLOSED_REQUIRES_ACCEPTED_REPLACEMENT_FOUNDATION_AND_DIRECTOR_REAUTHORIZATION"
+    status: "SUPERSEDED_UNDISPATCHED_BY_SEQUENCE_22"
     accepted_direct_production_points: 0
     packet_digest: "sha256:2818b0cb6ff9fa507934a0b8a5a1d6b57a734886085c96c5864204d4c8a5db38"
     work_packet_digest: "sha256:06ea0377d7abc6d7a1fb41a104ac051929820e884c8494caff2c6db3309a9d58"
     accepted_outcome_digest: null
     starting_ref: "33aca6106603342efcf43fb813482cb18fd4b18c"
     starting_tree: "04f65bc3c72202977312cb38bc039460545daeec"
-    manual_overlay_reason: "frozen future sequential ownership transfer after terminal Cursor; sole writable path is the XR transactional-decode test and no production decoder change is authorized. Rejected foundation candidate 623ca52 cannot satisfy its dependency, so this row has no current dispatch authority and requires an accepted replacement foundation plus explicit Director reauthorization; pending packets do not enter completed effort totals"
+    manual_overlay_reason: "The stale medium/5 future transfer was never dispatched. Exact OpenAI evidence later reduced the useful correction to three assertions in one test file, and workload-balanced sequence 22 supersedes it as simple/1. This row earns no points and owns no path."
   - sequence: 18
     assignment_id: "LT-NATIVE-CLAUDE-ROBOT-001"
     provider: claude
@@ -780,6 +784,25 @@ canonical_assignment_ledger:
     attempts: {cli_preflight_failures: 1, chrome_primary_transport_failures: 1, chrome_recovery_transport_failures: 1, model_requests: 0, revisions: 0}
     terminal_evidence: "artifacts/native-program/providers/2026-08-31-grok-xrtest-001-pre-submit-unavailable.md"
     manual_overlay_reason: "The installed Grok CLI was unauthenticated. Chrome could list tabs after its documented retry, but the bounded Grok page open and fresh-tab recovery both timed out before any page or prompt control was returned. No assignment text, provider request, edit, paid ambiguity or output exists. After three pre-submit transport failures the route is unavailable for this cycle, earns zero points and owns no path."
+  - sequence: 22
+    assignment_id: "LT-NATIVE-CLAUDE-XRTEST-002"
+    provider: claude
+    size: simple
+    canonical_points: 1
+    status: "AUTHORIZED_PENDING_PRIMARY"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:47e5babf14826698b4c0d7be250aa72f2954382c0a9ef301fab40e5ac00ca427"
+    packet_file: "director/native-program/packets/LT-NATIVE-CLAUDE-XRTEST-002.json"
+    activation_digest: "sha256:e490761d34a4629844fd4b8c86bb88fd43d648999ef4999cda4cb4cbc4244ea7"
+    activation_evidence: "artifacts/native-program/coordination/2026-08-31-sequence-22-activation.md"
+    prompt_digest: "sha256:067ea87a1eb61bc88311784bb1561395fcd11f11f7efefdb6432b4a899348466"
+    prompt_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-XRTEST-002.prompt.md"
+    accepted_outcome_digest: null
+    starting_ref: "33aca6106603342efcf43fb813482cb18fd4b18c"
+    starting_tree: "04f65bc3c72202977312cb38bc039460545daeec"
+    owned_paths: ["Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp"]
+    attempts: {primary: 0, transient_recoveries: 0, revisions: 0}
+    manual_overlay_reason: "New simple/1 one-file test-only fallback after Grok pre-submit transport closure. It supersedes stale undispatched medium packet LT-NATIVE-CLAUDE-XRTEST-001, corrects only two immediate-snapshot assertions and missing above-maximum ConfirmGeneration rejection/unchanged-output coverage, and leaves every production XR byte immutable. Points enter only after actual terminal provider execution."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -808,3 +831,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | END]]

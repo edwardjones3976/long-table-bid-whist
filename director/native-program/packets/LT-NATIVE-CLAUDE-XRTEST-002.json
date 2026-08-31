@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-XRTEST-002",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "sequence": 22,
+  "provider": "Claude",
+  "model": "claude-fable-5",
+  "workload_size": "simple",
+  "canonical_points_on_terminal_execution": 1,
+  "status": "AUTHORIZED_PENDING_PRIMARY",
+  "objective": "Correct only the two stale unchanged-output snapshots in LongTable.XR.SemanticParity and add above-maximum ConfirmGeneration rejection plus unchanged-output coverage, without changing any production XR byte or weakening any test.",
+  "starting_ref": "33aca6106603342efcf43fb813482cb18fd4b18c",
+  "starting_tree": "04f65bc3c72202977312cb38bc039460545daeec",
+  "worktree": "C:\\Users\\edwar\\.codex\\worktrees\\long-table-claude-xrtest-002",
+  "branch": "codex/claude-xrtest-002",
+  "authority_snapshot": [
+    {"path":"director/native-program/README.md","commit_sha":"d3fc318d9422a0bb9c6f0be6ac5a93e83b9a3458","blob_sha":"ab32002e08c37795cb38f8a7270eb4eba0053e3a"},
+    {"path":"director/native-program/manual-provider-overlay.md","commit_sha":"d3fc318d9422a0bb9c6f0be6ac5a93e83b9a3458","blob_sha":"8566d404a71d383e055095d130d128d3292f876d"},
+    {"path":"director/native-program/provider-workload.yaml","commit_sha":"d3fc318d9422a0bb9c6f0be6ac5a93e83b9a3458","blob_sha":"0a02758a447107d615b8208b125b722444aa471e"},
+    {"path":"director/native-program/roles-and-responsibilities.md","commit_sha":"d3fc318d9422a0bb9c6f0be6ac5a93e83b9a3458","blob_sha":"d73874ad2a7f6e9c29ff837a1bc197f26971cec6"},
+    {"path":"director/native-program/stage-gates.md","commit_sha":"d3fc318d9422a0bb9c6f0be6ac5a93e83b9a3458","blob_sha":"cb95e15822d8c92f4558eeb2c6763076c76a7af9"},
+    {"path":"director/privacy-control-policy.md","commit_sha":"d3fc318d9422a0bb9c6f0be6ac5a93e83b9a3458","blob_sha":"a31ce14bdaed03f3028480b7572cd9ccf7c0f859"},
+    {"path":"director/native-program/contracts/long-table-xr-public-v1.json","commit_sha":"d3fc318d9422a0bb9c6f0be6ac5a93e83b9a3458","blob_sha":"e2eea682d0dee913c8d21d791211ad2bd6573792"},
+    {"path":"director/native-program/contracts/model-result-packet-v1.schema.json","commit_sha":"d3fc318d9422a0bb9c6f0be6ac5a93e83b9a3458","blob_sha":"3f68e59136c422ce84d79f874c0343fd5ffc0a9e"},
+    {"path":"artifacts/native-program/qa/2026-08-31-first-deal-gap-audit.md","commit_sha":"d3fc318d9422a0bb9c6f0be6ac5a93e83b9a3458","blob_sha":"3689c384061cae7702a2b40768fa963f6c6844db"},
+    {"path":"artifacts/native-program/providers/2026-08-30-cursor-xrcore-002.md","commit_sha":"d3fc318d9422a0bb9c6f0be6ac5a93e83b9a3458","blob_sha":"e0915b0d1b5e2950b34a649228d7b671e2c8948b"},
+    {"path":"artifacts/native-program/providers/2026-08-31-grok-xrtest-001-pre-submit-unavailable.md","commit_sha":"d3fc318d9422a0bb9c6f0be6ac5a93e83b9a3458","blob_sha":"a6ff9aca8a2ec714806e408be84fbf414748083f"}
+  ],
+  "authority_snapshot_digest": "sha256:ad49386c042d04c494a76f4c49901093b423e14579e4519cabe55e592bc89f47",
+  "owned_paths": [
+    "Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp"
+  ],
+  "starting_blob": "a17ff010bfae135be5f27796fcdd34b76f1601c7",
+  "constraints": [
+    "Verify the exact clean starting ref, tree, branch and sole writable file before editing",
+    "Read and edit only the sole owned test file; every production XR and non-XR byte is immutable",
+    "Immediately before each rejecting decode, snapshot the current DecodeOut value and compare the post-rejection output to that immediate snapshot rather than the earlier initial Baseline",
+    "Add a JSON object whose ConfirmGeneration is exactly MaxConfirmGeneration plus one, prove DecodeInteractionEventJson rejects it, and prove DecodeOut is unchanged from its immediate pre-call snapshot",
+    "Preserve all exact-minimum and exact-maximum acceptance checks and every existing test property",
+    "Do not weaken, delete, skip, relabel, invert or make tautological any assertion",
+    "Do not use regex, blacklist, keyword, substring, redaction or pattern-based privacy or rights logic",
+    "Create one commit on codex/claude-xrtest-002 and return one schema-valid model-result-packet-v1 object"
+  ],
+  "prohibited_actions": [
+    "No production code edit",
+    "No edit outside the sole owned file",
+    "No web search, web fetch, MCP, subagent, memory, other provider or external repository",
+    "No use of rejected Grok, Antigravity or Claude implementation artifacts",
+    "No push, pull request, merge, deploy, publish, permission, credential, purchase or device action",
+    "No product, milestone, device, human, rights, cultural, store or release acceptance claim"
+  ],
+  "allowed_tools": [
+    "Local read and edit of the sole owned file",
+    "Local git status, diff, add, commit and exact identity commands",
+    "Optional focused LongTable.XR automation only; OpenAI remains responsible for authoritative QA"
+  ],
+  "acceptance_checks": [
+    "Exact sole-parent provider commit descends from 33aca6106603342efcf43fb813482cb18fd4b18c",
+    "Only the sole owned test file changes and its mode and LF line endings remain unchanged",
+    "The two stale post-boundary comparisons use immediate snapshots",
+    "Above-maximum ConfirmGeneration rejection and unchanged-output coverage is present",
+    "No existing assertion or test case is weakened or removed",
+    "Provider result validates against model-result-packet-v1",
+    "OpenAI independently runs the UE5.7 editor build and all ten LongTable.XR tests"
+  ],
+  "evidence_requirements": [
+    "Authenticated Claude run/session and exact model identity",
+    "Exact base, head, tree, parent, changed path, blob and line-ending evidence",
+    "Honest commands, exit codes and NOT_RUN values",
+    "One concise mapping from each of the three required test corrections to changed lines",
+    "Known limits: no combined product, Android package, Quest device or human gate is proven"
+  ],
+  "limits": {
+    "budget_usd": 2.0,
+    "timeout_seconds": 900,
+    "max_hops": 0,
+    "primary_attempts": 1,
+    "transient_recoveries": 1,
+    "max_revisions": 0
+  },
+  "retry_policy": "No resend after an ambiguous paid dispatch. One recovery exists only for an objectively temporary pre-result transport failure; no source revision is authorized.",
+  "idempotency_key": "LT-NATIVE-CLAUDE-XRTEST-002-33aca61",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-XRTEST-002",
+    "source_event_id": "openai-first-deal-xrtest-fallback-20260831",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}
