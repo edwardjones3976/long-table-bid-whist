@@ -1,18 +1,25 @@
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | BEGIN]]
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | BEGIN]]
 /**
  * Local development entry point.
  *
- *   node scripts/native/run-ts.mjs services/table-authority/src/main.ts --room fixtures/protocol/dev-room.json [--port 8765]
+ *   node scripts/native/run-ts.mjs services/table-authority/src/main.ts --room fixtures/protocol/dev-room.json --incarnation <id> [--port 8765]
  *
  * The room file is a typed, closed description of one table and the tokens
  * that may join it. Invitations, room codes and account binding belong to the
  * session gateway (another provider's lane); this harness only seats what the
  * file declares so the Unreal client can be exercised on loopback.
+ *
+ * `--incarnation` is mandatory. Every grant the authority issues is scoped to
+ * that externally allocated, never-reused incarnation id; there is no fallback
+ * derived from the table id, the room file, the process or a clock, so two
+ * launches that share a room file can never honour each other's identities.
  */
 import { readFileSync } from "node:fs";
 import { OCCUPANTS, SEATS, schema as s, type Seat } from "../../../packages/protocol/src";
 import { AuthoritySessions, staticDirectory, type DirectoryEntry } from "./session";
-import { TableAuthority, type SeatBinding } from "./table";
+import { TableAuthority, isValidIncarnationId, type IncarnationBundle, type SeatBinding } from "./table";
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | END]]
 import { startAuthorityServer } from "./websocket-server";
 import { handleClose, handleText } from "./wire";
 
@@ -58,7 +65,10 @@ function argumentValue(name: string, fallback: string): string {
   return index >= 0 && index + 1 < process.argv.length ? process.argv[index + 1] : fallback;
 }
 
-export function buildRoom(room: RoomFile): { table: TableAuthority; sessions: AuthoritySessions } {
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | BEGIN]]
+/** The one incarnation bundle for this launch. `buildRoom` never invents one. */
+export function buildRoom(room: RoomFile, incarnation: IncarnationBundle): { table: TableAuthority; sessions: AuthoritySessions } {
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | END]]
   const directory: Record<string, DirectoryEntry> = {};
   const seats: Partial<Record<Seat, SeatBinding>> = {};
   for (const seat of SEATS) {
@@ -80,6 +90,9 @@ export function buildRoom(room: RoomFile): { table: TableAuthority; sessions: Au
     seed: room.seed,
     hostParticipantId: room.host?.participantId ?? null,
     seats,
+    // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | BEGIN]]
+    incarnation,
+    // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | END]]
   });
   const sessions = new AuthoritySessions({ directory: staticDirectory(directory), tables: new Map([[table.tableId, table]]) });
   return { table, sessions };
@@ -90,7 +103,15 @@ export async function main(): Promise<void> {
   const port = Number.parseInt(argumentValue("--port", "8765"), 10);
   const decoded = ROOM_FILE.decode(JSON.parse(readFileSync(roomPath, "utf8")), "room");
   if (!decoded.ok) throw new Error(`room file rejected: ${decoded.rejection.code} at ${decoded.rejection.path}`);
-  const { sessions } = buildRoom(decoded.value);
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | BEGIN]]
+  // The incarnation id is explicit and external. An absent or malformed id
+  // stops the launch; nothing is derived from the table id or the process.
+  const incarnationId = argumentValue("--incarnation", "");
+  if (!isValidIncarnationId(incarnationId)) {
+    throw new Error("--incarnation <id> is required: a non-reused, colon-free, printable-ASCII id allocated outside this process");
+  }
+  const { sessions } = buildRoom(decoded.value, { kind: "new", incarnationId });
+  // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | END]]
 
   const server = await startAuthorityServer({
     port,

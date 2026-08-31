@@ -72,6 +72,16 @@ struct LONGTABLEPROTOCOL_API FLongTableWelcome
 	UPROPERTY(BlueprintReadOnly, Category = "Long Table") ELongTableSeat Seat = ELongTableSeat::South;
 	UPROPERTY(BlueprintReadOnly, Category = "Long Table") FString TableId;
 	UPROPERTY(BlueprintReadOnly, Category = "Long Table") int32 Version = 0;
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	/**
+	 * long-table-intent-idempotency/v2: an entitled (player or host) welcome's
+	 * SessionId is that lane's current server-issued grant and this is its
+	 * exact next counter — absent once the table incarnation is exhausted. A
+	 * public or dealer welcome never carries a counter.
+	 */
+	UPROPERTY(BlueprintReadOnly, Category = "Long Table") bool bHasNextIntentCounter = false;
+	UPROPERTY(BlueprintReadOnly, Category = "Long Table") int64 NextIntentCounter = 0;
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 	/** False only for the dealer role, which receives cues alone. The payload itself is retained on the envelope. */
 	UPROPERTY(BlueprintReadOnly, Category = "Long Table") bool bHasProjection = false;
 };

@@ -1,5 +1,5 @@
 {
-  "protocolVersion": "long-table-protocol/1",
+  "protocolVersion": "long-table-protocol/2",
   "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
   "manifestDigest": "bc5f1e39",
   "rulesManifest": {
@@ -26,6 +26,12 @@
     "openingLead": "bidder-after-kitty",
     "exclusionNotice": "Not included in Alpha 0.1; available after the published-rules stage."
   },
+  "intentIdentity": {
+    "schema": "long-table-intent-idempotency/v2",
+    "format": "<server-issued-role-grant-sessionId>:<canonical-decimal-counter>",
+    "counterMin": 1,
+    "counterMax": 9007199254740991
+  },
   "vocabulary": {
     "seats": [
       "south",
@@ -39,6 +45,13 @@
       "north": "North",
       "east": "East"
     },
+    "intentLanes": [
+      "south",
+      "west",
+      "north",
+      "east",
+      "host"
+    ],
     "suits": [
       "clubs",
       "diamonds",
@@ -221,7 +234,9 @@
       "unauthenticated",
       "not-welcomed",
       "unknown-table",
-      "role-unavailable"
+      "role-unavailable",
+      "intent-identity",
+      "intent-exhausted"
     ]
   },
   "keys": {
@@ -482,6 +497,7 @@
       "seat",
       "tableId",
       "version",
+      "nextIntentCounter",
       "projection"
     ],
     "ErrorMessage": [

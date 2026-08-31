@@ -23,6 +23,8 @@ import {
 } from "./projections";
 import { INTENT_RECEIPT, type IntentReceipt } from "./receipts";
 import {
+  INTENT_COUNTER_MAX,
+  INTENT_COUNTER_MIN,
   LIMITS,
   PROTOCOL_VERSION,
   ROLES,
@@ -66,6 +68,14 @@ export const WIRE_ERROR_CODES = [
   "not-welcomed",
   "unknown-table",
   "role-unavailable",
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+  // Intent-identity violations are protocol-level errors, never receipts: a
+  // malformed identity, a non-current grant or a forward counter gap answers
+  // `intent-identity`; any new intent on an exhausted table incarnation
+  // answers `intent-exhausted`. Neither consumes a counter or mutates a lane.
+  "intent-identity",
+  "intent-exhausted",
+  // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 ] as const;
 export type WireErrorCode = (typeof WIRE_ERROR_CODES)[number];
 
@@ -84,29 +94,43 @@ interface WelcomeBase {
   version: number;
 }
 
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+/**
+ * Protocol v2 identity fields. A player or host welcome's `sessionId` is the
+ * current server-issued role-grant of that seat or host lane, and
+ * `nextIntentCounter` is that lane's exact next counter — or null once the
+ * table incarnation is exhausted. A public or dealer welcome's `sessionId` is
+ * a connection identifier only and its `nextIntentCounter` accepts JSON null
+ * and nothing else, so no usable intent counter ever reaches those roles.
+ */
 export interface PlayerWelcome extends WelcomeBase {
   role: "player";
   seat: Seat;
+  nextIntentCounter: number | null;
   projection: PlayerProjection;
 }
 
 export interface HostWelcome extends WelcomeBase {
   role: "host";
   seat: null;
+  nextIntentCounter: number | null;
   projection: HostProjection;
 }
 
 export interface PublicWelcome extends WelcomeBase {
   role: "public";
   seat: null;
+  nextIntentCounter: null;
   projection: PublicProjection;
 }
 
 export interface DealerWelcome extends WelcomeBase {
   role: "dealer";
   seat: null;
+  nextIntentCounter: null;
   projection: null;
 }
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 export type WelcomeMessage = PlayerWelcome | HostWelcome | PublicWelcome | DealerWelcome;
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
@@ -170,6 +194,10 @@ const NULL_ONLY: Schema<null> = {
   canonical: () => null,
 };
 
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+/** The exact next canonical counter of an entitled lane, or null once the incarnation is exhausted. */
+const NEXT_INTENT_COUNTER = s.nullable(s.int({ min: INTENT_COUNTER_MIN, max: INTENT_COUNTER_MAX }));
+
 export const WELCOME_PLAYER_MESSAGE = s.object<PlayerWelcome>({
   type: s.literal("welcome"),
   protocolVersion: s.literal(PROTOCOL_VERSION),
@@ -178,6 +206,7 @@ export const WELCOME_PLAYER_MESSAGE = s.object<PlayerWelcome>({
   seat: s.enumOf(SEATS),
   tableId: ID,
   version: VERSION,
+  nextIntentCounter: NEXT_INTENT_COUNTER,
   projection: PLAYER_PROJECTION,
 });
 
@@ -189,6 +218,7 @@ export const WELCOME_HOST_MESSAGE = s.object<HostWelcome>({
   seat: NULL_ONLY,
   tableId: ID,
   version: VERSION,
+  nextIntentCounter: NEXT_INTENT_COUNTER,
   projection: HOST_PROJECTION,
 });
 
@@ -200,6 +230,7 @@ export const WELCOME_PUBLIC_MESSAGE = s.object<PublicWelcome>({
   seat: NULL_ONLY,
   tableId: ID,
   version: VERSION,
+  nextIntentCounter: NULL_ONLY,
   projection: PUBLIC_PROJECTION,
 });
 
@@ -211,8 +242,10 @@ export const WELCOME_DEALER_MESSAGE = s.object<DealerWelcome>({
   seat: NULL_ONLY,
   tableId: ID,
   version: VERSION,
+  nextIntentCounter: NULL_ONLY,
   projection: NULL_ONLY,
 });
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 /** The four closed welcome shapes; every one declares the same ordered key inventory. */
 export const WELCOME_MESSAGE_VARIANTS: readonly s.ObjectSchema<object>[] = [

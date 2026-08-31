@@ -150,6 +150,23 @@ bool FLongTableProtocolVocabularyTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	// The frozen v2 intent-identity constants: the manifest and this build
+	// must agree exactly on the counter domain and the identity format.
+	const TSharedPtr<FJsonObject>* IntentIdentity = nullptr;
+	if (!Manifest->TryGetObjectField(TEXT("intentIdentity"), IntentIdentity))
+	{
+		AddError(TEXT("manifest.json has no intentIdentity"));
+	}
+	else
+	{
+		TestEqual(TEXT("intentIdentity schema"), (*IntentIdentity)->GetStringField(TEXT("schema")), FString(TEXT("long-table-intent-idempotency/v2")));
+		TestEqual(TEXT("intentIdentity format"), (*IntentIdentity)->GetStringField(TEXT("format")), FString(TEXT("<server-issued-role-grant-sessionId>:<canonical-decimal-counter>")));
+		TestEqual(TEXT("intentIdentity counterMin"), (*IntentIdentity)->GetNumberField(TEXT("counterMin")), static_cast<double>(LongTableProtocol::IntentCounterMin));
+		TestEqual(TEXT("intentIdentity counterMax"), (*IntentIdentity)->GetNumberField(TEXT("counterMax")), static_cast<double>(LongTableProtocol::IntentCounterMax));
+	}
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
+
 	for (const FLongTableVocabularyList& List : LongTableProtocol::VocabularyLists())
 	{
 		const TArray<TSharedPtr<FJsonValue>>* Items = nullptr;
@@ -348,8 +365,10 @@ bool FLongTableProtocolClosedTypesTest::RunTest(const FString& Parameters)
 	CheckInventory(*this, TEXT("FLongTableIntentReceipt"), FLongTableIntentReceipt::StaticStruct(), EFieldIteratorFlags::IncludeSuper,
 		{ TEXT("IntentId"), TEXT("IntentKind"), TEXT("Outcome"), TEXT("bHasCode"), TEXT("Code"), TEXT("Message"), TEXT("bCommitted"), TEXT("Version") });
 	CheckInventory(*this, TEXT("FLongTableErrorMessage"), FLongTableErrorMessage::StaticStruct(), EFieldIteratorFlags::IncludeSuper, { TEXT("Code"), TEXT("Detail") });
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
 	CheckInventory(*this, TEXT("FLongTableWelcome"), FLongTableWelcome::StaticStruct(), EFieldIteratorFlags::IncludeSuper,
-		{ TEXT("SessionId"), TEXT("Role"), TEXT("bHasSeat"), TEXT("Seat"), TEXT("TableId"), TEXT("Version"), TEXT("bHasProjection") });
+		{ TEXT("SessionId"), TEXT("Role"), TEXT("bHasSeat"), TEXT("Seat"), TEXT("TableId"), TEXT("Version"), TEXT("bHasNextIntentCounter"), TEXT("NextIntentCounter"), TEXT("bHasProjection") });
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 	CheckInventory(*this, TEXT("FLongTableProjectionMessage"), FLongTableProjectionMessage::StaticStruct(), EFieldIteratorFlags::IncludeSuper, { TEXT("TableId"), TEXT("Version") });
 	CheckInventory(*this, TEXT("FLongTableReplayMessage"), FLongTableReplayMessage::StaticStruct(), EFieldIteratorFlags::IncludeSuper,
 		{ TEXT("TableId"), TEXT("FromVersion"), TEXT("ToVersion"), TEXT("bTruncated"), TEXT("FrameVersions") });

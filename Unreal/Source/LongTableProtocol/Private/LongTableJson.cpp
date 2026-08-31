@@ -381,7 +381,9 @@ namespace
 	const TCHAR* const HelloKeys[] = { TEXT("type"), TEXT("protocolVersion"), TEXT("token"), TEXT("role"), TEXT("tableId"), TEXT("displayName"), TEXT("lastVersion") };
 	const TCHAR* const IntentMessageKeys[] = { TEXT("type"), TEXT("tableId"), TEXT("intentId"), TEXT("expectedVersion"), TEXT("intent") };
 	const TCHAR* const ResyncKeys[] = { TEXT("type"), TEXT("tableId"), TEXT("lastVersion") };
-	const TCHAR* const WelcomeKeys[] = { TEXT("type"), TEXT("protocolVersion"), TEXT("sessionId"), TEXT("role"), TEXT("seat"), TEXT("tableId"), TEXT("version"), TEXT("projection") };
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	const TCHAR* const WelcomeKeys[] = { TEXT("type"), TEXT("protocolVersion"), TEXT("sessionId"), TEXT("role"), TEXT("seat"), TEXT("tableId"), TEXT("version"), TEXT("nextIntentCounter"), TEXT("projection") };
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 	const TCHAR* const ProjectionMessageKeys[] = { TEXT("type"), TEXT("tableId"), TEXT("version"), TEXT("projection") };
 	const TCHAR* const ReceiptMessageKeys[] = { TEXT("type"), TEXT("tableId"), TEXT("receipt") };
 	const TCHAR* const ReplayMessageKeys[] = { TEXT("type"), TEXT("tableId"), TEXT("fromVersion"), TEXT("toVersion"), TEXT("truncated"), TEXT("frames") };
@@ -669,7 +671,40 @@ namespace
 	}
 	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
-	bool DecodeAuthorityInner(FReader& R, FLongTableAuthorityMessage& Out)
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	/**
+	 * The welcome's `nextIntentCounter`, with the exact TypeScript rejections:
+	 * an entitled (player/host) welcome accepts null or an integral number in
+	 * [IntentCounterMin, IntentCounterMax] (a non-number is `type-mismatch`, an
+	 * out-of-range or non-integral value is `value-out-of-range` or
+	 * `type-mismatch` respectively); a public or dealer welcome accepts JSON
+	 * null and nothing else (`value-out-of-range`). The counter exceeds int32,
+	 * so it is read from the raw root value the closed reader already vetted
+	 * with BeginObject.
+	 */
+	bool ReadWelcomeNextIntentCounter(FReader& R, const TSharedPtr<FJsonValue>& Root, FLongTableWelcome& Out)
+	{
+		if (R.Failed()) { return false; }
+		const FString FieldPath = R.ChildPath(TEXT("nextIntentCounter"));
+		if (!Root.IsValid() || Root->Type != EJson::Object) { return R.Reject(TEXT("not-an-object"), R.Path); }
+		const TSharedPtr<FJsonValue>* Found = Root->AsObject()->Values.Find(TEXT("nextIntentCounter"));
+		if (!Found || !Found->IsValid()) { return R.Reject(TEXT("missing-field"), FieldPath); }
+		Out.bHasNextIntentCounter = false;
+		Out.NextIntentCounter = 0;
+		if ((*Found)->Type == EJson::Null) { return true; }
+		const bool bEntitledRole = Out.Role == ELongTableRole::Player || Out.Role == ELongTableRole::Host;
+		if (!bEntitledRole) { return R.Reject(TEXT("value-out-of-range"), FieldPath); }
+		if ((*Found)->Type != EJson::Number) { return R.Reject(TEXT("type-mismatch"), FieldPath); }
+		const double Number = (*Found)->AsNumber();
+		if (Number != FMath::FloorToDouble(Number)) { return R.Reject(TEXT("type-mismatch"), FieldPath); }
+		if (Number < static_cast<double>(IntentCounterMin) || Number > static_cast<double>(IntentCounterMax)) { return R.Reject(TEXT("value-out-of-range"), FieldPath); }
+		Out.bHasNextIntentCounter = true;
+		Out.NextIntentCounter = static_cast<int64>(Number);
+		return true;
+	}
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
+
+	bool DecodeAuthorityInner(FReader& R, const TSharedPtr<FJsonValue>& Root, FLongTableAuthorityMessage& Out)
 	{
 		Out = FLongTableAuthorityMessage();
 		FString Tag;
@@ -709,6 +744,9 @@ namespace
 			{
 				return false;
 			}
+			// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+			if (!ReadWelcomeNextIntentCounter(R, Root, Out.Welcome)) { return false; }
+			// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 			bool bHasProjection = false;
 			bool bProjectionOk = false;
 			switch (Out.Welcome.Role)
@@ -1098,6 +1136,9 @@ namespace
 			W.Key(TEXT("seat")); if (V.Welcome.bHasSeat) { W.String(Wire(V.Welcome.Seat)); } else { W.Null(); }
 			W.Key(TEXT("tableId")); W.String(V.Welcome.TableId);
 			W.Key(TEXT("version")); W.Int(V.Welcome.Version);
+			// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+			W.Key(TEXT("nextIntentCounter")); if (V.Welcome.bHasNextIntentCounter) { W.Int(V.Welcome.NextIntentCounter); } else { W.Null(); }
+			// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 			W.Key(TEXT("projection")); if (V.Welcome.bHasProjection) { WriteProjectionSlot(W, Texts, Cursor); } else { W.Null(); }
 			break;
 		case ELongTableAuthorityMessageType::Projection:
@@ -1168,9 +1209,20 @@ LONGTABLE_DECODE_ENTRY(DecodeDealerCueFrame, FLongTableDealerCueFrame, DecodeDea
 LONGTABLE_DECODE_ENTRY(DecodeIntentReceipt, FLongTableIntentReceipt, DecodeReceiptInner)
 LONGTABLE_DECODE_ENTRY(DecodeIntent, FLongTableIntent, DecodeIntentInner)
 LONGTABLE_DECODE_ENTRY(DecodeClientMessage, FLongTableClientMessage, DecodeClientInner)
-LONGTABLE_DECODE_ENTRY(DecodeAuthorityMessage, FLongTableAuthorityMessage, DecodeAuthorityInner)
 
 #undef LONGTABLE_DECODE_ENTRY
+
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+// Hand-written (not the macro): the welcome's nextIntentCounter exceeds int32,
+// so the inner decoder also receives the raw root value the reader wraps.
+bool FLongTableProtocolCodec::DecodeAuthorityMessage(const TSharedPtr<FJsonValue>& Value, const FString& Label, FLongTableAuthorityMessage& Out, FLongTableSchemaRejection& Rejection)
+{
+	Rejection = FLongTableSchemaRejection();
+	FLongTableClosedReader Reader(Value, Label, Rejection);
+	const bool bOk = DecodeAuthorityInner(Reader, Value, Out);
+	return bOk && !Rejection.IsSet();
+}
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 bool FLongTableProtocolCodec::DecodeAuthorityMessageText(const FString& Text, FLongTableAuthorityMessage& Out, FLongTableSchemaRejection& Rejection)
 {

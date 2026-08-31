@@ -82,6 +82,69 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLongTableConnectionStateEvent, ELon
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLongTableWireErrorEvent, ELongTableWireError, Code, const FString&, Detail);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLongTableFrameRejectedEvent, ELongTableFrameFault, Fault, const FString&, Detail);
 
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+/**
+ * Single-binding twins of the context-bound events above, used only by the
+ * guarded snapshot adapter: UE5.7's ordinary `Broadcast()` copies the full
+ * invocation list before invoking, so a reentrant Configure inside listener
+ * one could not stop listener two. The adapter instead copies the invocation
+ * list itself and invokes ONE copied binding at a time through these
+ * signatures, re-checking the context generation before each next binding.
+ * The reflected BlueprintAssignable API above is unchanged.
+ */
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLongTablePlayerProjectionSingle, const FLongTablePlayerProjection&, Projection);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLongTableHostProjectionSingle, const FLongTableHostProjection&, Projection);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLongTablePublicProjectionSingle, const FLongTablePublicProjection&, Projection);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLongTableReceiptSingle, const FLongTableIntentReceipt&, Receipt);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLongTableDealerCueSingle, const FLongTableDealerCueFrame&, Frame);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLongTableConnectionStateSingle, ELongTableConnectionState, State);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FLongTableWireErrorSingle, ELongTableWireError, Code, const FString&, Detail);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FLongTableFrameRejectedSingle, ELongTableFrameFault, Fault, const FString&, Detail);
+// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
+
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | BEGIN]]
+/**
+ * Project-owned by-value binding snapshot of one dynamic multicast event.
+ *
+ * Every dynamic multicast delegate class is a TMulticastScriptDelegate whose
+ * invocation list is a protected member with no public accessor. Deriving
+ * from the event's own class and copy-constructing from the live event is
+ * legal protected-base access: the copy is a private, by-value snapshot of
+ * the bindings at the moment a fanout starts, which the guarded adapter walks
+ * one binding at a time. The live event is never read again during the
+ * fanout, and no engine header, private member, layout cast, GetAllObjects
+ * or ordinary Broadcast() takes part.
+ */
+template <typename MulticastType>
+class TLongTableBindingSnapshot final : public MulticastType
+{
+public:
+	explicit TLongTableBindingSnapshot(const MulticastType& Source)
+		: MulticastType(Source)
+	{
+	}
+
+	/** The copied bindings; each exposes its target and function through the public script-delegate API. */
+	typename MulticastType::InvocationListType& Bindings()
+	{
+		return this->InvocationList;
+	}
+};
+
+/**
+ * Two independent clocks govern the client. The logical context generation
+ * (below) advances only when a genuinely different authority context is
+ * configured and resets every cached projection, session and intent. The
+ * transport dispatch epoch advances on EVERY transport binding or replacement,
+ * identical configuration included: every transport callback is bound with
+ * the epoch it belongs to and returns before reading configuration or sending
+ * once that epoch has passed; every fanout re-checks the epoch before each
+ * next sibling; and Connect, Disconnect, SendHello, client sends, resends and
+ * resync capture epoch, transport and configuration before any synchronous
+ * callback and re-check after it.
+ */
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | END]]
+
 UCLASS(BlueprintType)
 class LONGTABLETABLE_API ULongTableAuthorityClient : public UObject
 {
@@ -131,8 +194,16 @@ public:
 	int32 AppliedFrameCount() const { return AppliedFrames; }
 	const FString& InFlightIntentId() const { return Commit.InFlightId(); }
 	int32 InFlightExpectedVersion() const { return Commit.InFlightVersion(); }
-	void SetIdentityNonceForTests(const FString& Nonce) { Identity = FLongTableIntentIdentity(Nonce); }
-	const FString& IdentityNonce() const { return Identity.GetNonce(); }
+
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	/** True while this client can form a v2 intent identity: a welcomed grant with an unexhausted counter domain. */
+	UFUNCTION(BlueprintPure, Category = "Long Table") bool HasIntentIdentity() const { return Identity.CanIssue(); }
+	/** The exact next counter this client would issue under its welcomed grant. */
+	UFUNCTION(BlueprintPure, Category = "Long Table") int64 GetNextIntentCounter() const { return Identity.PeekNextCounter(); }
+	/** True once the table incarnation reported exhaustion (a null welcome counter or the maximum consumed). */
+	UFUNCTION(BlueprintPure, Category = "Long Table") bool IsIntentExhausted() const { return Identity.IsExhausted(); }
+	const FLongTableIntentIdentity& IntentIdentityForTests() const { return Identity; }
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 
 	UPROPERTY(BlueprintAssignable, Category = "Long Table") FLongTablePlayerProjectionEvent OnPlayerProjection;
 	UPROPERTY(BlueprintAssignable, Category = "Long Table") FLongTableHostProjectionEvent OnHostProjection;
@@ -147,6 +218,15 @@ public:
 	/** Increments whenever the authenticated context resets; a change under a callback aborts the old frame's continuation. */
 	uint64 GetContextGenerationForTests() const { return ContextGeneration; }
 	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
+
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | BEGIN]]
+	/** Increments on every transport binding or replacement, identical configuration included; stops old siblings, callbacks and sends. */
+	uint64 GetDispatchEpochForTests() const { return DispatchEpoch; }
+	/** True while an issued identity awaits its receipt: its counter is reserved, not advanced. */
+	UFUNCTION(BlueprintPure, Category = "Long Table") bool HasIntentReservation() const { return Identity.HasReservation(); }
+	/** True after the authority refused this client's identity; submission stays disabled until a fresh welcome. */
+	UFUNCTION(BlueprintPure, Category = "Long Table") bool IsIntentIdentityInvalidated() const { return Identity.IsInvalidated(); }
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | END]]
 
 private:
 	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | BEGIN]]
@@ -176,10 +256,29 @@ private:
 	bool ApplyStaged(const FStagedPayloads& Staged);
 	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
 
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
+	/**
+	 * The guarded snapshot adapter behind every context-bound event: copies the
+	 * multicast's invocation list, then invokes one copied binding at a time
+	 * through the matching single-delegate signature, checking the context
+	 * generation before each next binding. Returns false when a reentrant
+	 * context change aborted the fanout, so the caller drops the old frame's
+	 * continuation. Compiles against the reflected dynamic-delegate API alone.
+	 */
+	template <typename MulticastType, typename SingleType, typename... TArgs>
+	bool BroadcastGuarded(const MulticastType& Delegate, TArgs&&... Args);
+	// [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
+
 	void ResetContext();
 	void SetState(ELongTableConnectionState NewState);
 	void SendHello();
 	void SendClientMessage(const FLongTableClientMessage& Message);
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | BEGIN]]
+	/** Sends on the captured transport only while `Epoch` is still the current dispatch epoch. */
+	void SendOn(const TSharedPtr<ILongTableTransport>& Captured, uint64 Epoch, const FLongTableClientMessage& Message);
+	/** Removes this client's callbacks from the bound transport and closes it. */
+	void UnbindTransport();
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | END]]
 	void ResendInFlight();
 	bool Fault(ELongTableFrameFault Fault, const FString& Detail);
 	bool ShouldApply(int32 Version, int32 Revision) const;
@@ -196,6 +295,10 @@ private:
 	bool bHasActiveContext = false;
 	/** Bumped by every context reset; captured before callbacks and re-checked after each one. */
 	uint64 ContextGeneration = 0;
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | BEGIN]]
+	/** Bumped by every transport binding or replacement; every callback, fanout and send is checked against it. */
+	uint64 DispatchEpoch = 0;
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | END]]
 	/** The version held when the outstanding resync was requested; -1 when none is outstanding. */
 	int32 ResyncBaseVersion = -1;
 	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-FINAL-001 | END]]
@@ -253,6 +356,33 @@ public:
 		CueTableIds.Add(Frame.TableId);
 		if (OnEvent) { OnEvent(); }
 	}
+
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | BEGIN]]
+	UFUNCTION()
+	void HandleWireError(ELongTableWireError Code, const FString& Detail)
+	{
+		WireErrors.Add(Code);
+		if (OnEvent) { OnEvent(); }
+	}
+
+	UFUNCTION()
+	void HandleFrameRejected(ELongTableFrameFault Fault, const FString& Detail)
+	{
+		FrameFaults.Add(Fault);
+		if (OnEvent) { OnEvent(); }
+	}
+
+	UFUNCTION()
+	void HandleReceipt(const FLongTableIntentReceipt& Receipt)
+	{
+		ReceiptIds.Add(Receipt.IntentId);
+		if (OnEvent) { OnEvent(); }
+	}
+
+	TArray<ELongTableWireError> WireErrors;
+	TArray<ELongTableFrameFault> FrameFaults;
+	TArray<FString> ReceiptIds;
+	// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003 | END]]
 
 	TArray<ELongTableConnectionState> States;
 	TArray<int32> PlayerVersions;
