@@ -1,0 +1,165 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "project": "The Long Table - Bid Whist",
+  "status": "AUTHORIZED_PENDING_PRIMARY",
+  "workload": {
+    "sequence": 28,
+    "size": "medium",
+    "canonical_points_on_real_terminal_execution": 5,
+    "direct_production_points_only_after_openai_acceptance": 5,
+    "eligibility": "Sequence 27 closed terminally. A real sequence-28 Claude medium/5 execution rolls out the oldest Claude long/8 row and yields 27/80 = 33.75%, below Claude's 41% hard ceiling; every other provider also remains at or below its hard ceiling, with Cursor exactly 25%."
+  },
+  "objective": "Create the exact eight-file source-only UE5.7 LongTableRobotDealer plugin from the immutable public contract and synthetic fixtures. Implement a visibly non-human presentation-only deterministic state machine with the frozen closed cue/state/result inventories, raise-only private replay defense, bounded paused FIFO, exact cue-to-state emission correlation, compile-safe native and Blueprint delegates, structural privacy, rights-clean original source, and all fifteen focused automation test IDs.",
+  "non_goals": [
+    "No access to the Long Table repository, its source, diffs, worktrees, provider outputs, findings, transcripts, QA artifacts, Slack, Linear, memory, browser, MCP, network, private project data, or hidden context",
+    "No access to or reuse of any Sequence 25 or Sequence 26 source, prompt, result, transcript, finding, sandbox, worktree, frozen copy, hash inventory, diff, or provider implementation",
+    "No Bid Whist rules, AI decisions, authoritative state, card values, concealed state, identity, account, credential, session, room, player intent, human-host command, networking, analytics, telemetry, file or process behavior",
+    "No Meta SDK, avatar, account, store, deployment, Android package, physical-device, performance, human-event, cultural-acceptance, merge, release, or completion claim",
+    "No bundled voice, jazz, blues, music, sample, image, likeness, model, texture, archival media, URL, or third-party asset"
+  ],
+  "sandbox": {
+    "path": "CURRENT_SYNTHETIC_SANDBOX",
+    "branch": "codex/claude-robot-cleanroom-004",
+    "starting_ref": "a5ffeb93391c071d76c26a7459e4bc24724538f4",
+    "starting_tree": "91710e74f905a21afe56ef3ad4c62af2d6b44dc5",
+    "starting_clean": true,
+    "remote_count": 0,
+    "sole_writable_root": "LongTableRobotDealer/**"
+  },
+  "authority_snapshot": {
+    "digest_algorithm": "SHA-256 of the UTF-8 bytes of six LF-joined lines in this order: branch, head, tree, PUBLIC_CONTRACT row, PUBLIC_FIXTURES row, RESULT_SCHEMA row; no terminal LF",
+    "digest": "sha256:a171b144d499d289382feec34c108580ba6dca64d7106fb601c31822942dcf7a",
+    "canonical_lines": [
+      "branch=codex/claude-robot-cleanroom-004",
+      "head=a5ffeb93391c071d76c26a7459e4bc24724538f4",
+      "tree=91710e74f905a21afe56ef3ad4c62af2d6b44dc5",
+      "PUBLIC_CONTRACT.json|sha256:3668f7e5bcdb9fc32d06fef76fdbd7eef0f96597f89449607c92ff997dbd34c9|blob:1bbf7844f2296929e5e0a5fdc56633a8fa11fbdf",
+      "PUBLIC_FIXTURES.json|sha256:b437a31c6203c6e8f2fa402c836a6c4340d8e739d55d2040c9d1ba9d5b1a3e23|blob:d71d62a216fa42f02a1fc055ae8bdf7488d07da1",
+      "RESULT_SCHEMA.json|sha256:ebadc5bc45462ffa63ca5e6b28c09d1ccf86086389324a0c88f704bb14208d9c|blob:3f68e59136c422ce84d79f874c0343fd5ffc0a9e"
+    ],
+    "files": [
+      {
+        "path": "PUBLIC_CONTRACT.json",
+        "bytes": 8592,
+        "sha256": "sha256:3668f7e5bcdb9fc32d06fef76fdbd7eef0f96597f89449607c92ff997dbd34c9",
+        "git_blob": "1bbf7844f2296929e5e0a5fdc56633a8fa11fbdf"
+      },
+      {
+        "path": "PUBLIC_FIXTURES.json",
+        "bytes": 17128,
+        "sha256": "sha256:b437a31c6203c6e8f2fa402c836a6c4340d8e739d55d2040c9d1ba9d5b1a3e23",
+        "git_blob": "d71d62a216fa42f02a1fc055ae8bdf7488d07da1"
+      },
+      {
+        "path": "RESULT_SCHEMA.json",
+        "bytes": 4148,
+        "sha256": "sha256:ebadc5bc45462ffa63ca5e6b28c09d1ccf86086389324a0c88f704bb14208d9c",
+        "git_blob": "3f68e59136c422ce84d79f874c0343fd5ffc0a9e"
+      }
+    ]
+  },
+  "closed_output_inventory": [
+    "LongTableRobotDealer/LongTableRobotDealer.uplugin",
+    "LongTableRobotDealer/README.md",
+    "LongTableRobotDealer/Source/LongTableRobotDealer/LongTableRobotDealer.Build.cs",
+    "LongTableRobotDealer/Source/LongTableRobotDealer/Public/LongTableRobotDealerCueInterface.h",
+    "LongTableRobotDealer/Source/LongTableRobotDealer/Public/LongTableRobotDealerPresenter.h",
+    "LongTableRobotDealer/Source/LongTableRobotDealer/Private/LongTableRobotDealerModule.cpp",
+    "LongTableRobotDealer/Source/LongTableRobotDealer/Private/LongTableRobotDealerPresenter.cpp",
+    "LongTableRobotDealer/Source/LongTableRobotDealer/Private/Tests/LongTableRobotDealerTests.cpp"
+  ],
+  "constraints": [
+    "Read each immutable authority file in full before the first write; never edit or delete it",
+    "The synthetic Git metadata is a generic Director-only clean-room boundary with empty reflogs and no reachable predecessor object; do not read, edit, or depend on .git",
+    "Create exactly the eight closed-output files and no other path",
+    "Implement exactly the public contract and fixtures; where prose could be read more than one way, PUBLIC_FIXTURES.json is the frozen acceptance interpretation without changing the closed ABI",
+    "Use the exact UE5.7 Blueprint-supported reflected numeric storage: int64 PublicSequence, int32 FocusSeat and TeamIndex, uint8 PrimaryCount and SecondaryCount; enforce the narrower contract bounds explicitly before mutation",
+    "Use one private raise-only acceptance high-water and last-accepted exact bytes; rejected queue-full input must not advance replay defense or evict accepted work",
+    "Public state PublicSequence belongs to the exact cue being emitted and may step backward when a newer immediate control cue is followed by older queued cues; never expose the private high-water as a public field",
+    "Every valid repeated pause may emit but remains an idempotent Boolean state; controls consume no queue slot; one resume exits pause and drains once in FIFO order",
+    "DealerModeAuthorityEquivalence uses external test labels only and adds no dealer-mode runtime input, field, branch, state or result",
+    "ConcealmentCounterfactual positively constructs identical public streams from two fixture-only upstream worlds and passes no concealed value into the plugin",
+    "Declare separate native and dynamic multicast delegates; use lambda handles only on the native delegate and valid UObject/UFUNCTION binding for the dynamic delegate",
+    "Use positive closed structures and direct comparisons only; regex, blacklist, keyword or substring privacy scans, redaction, serialize-then-delete and concealed-object-then-delete controls are prohibited",
+    "Emit all eight files as UTF-8 without BOM, LF only, no CR bytes, and exactly one final LF; apply the exact frozen Claude provenance marker pair to each of the seven taggable files and no marker or comment to the JSON descriptor",
+    "Emit the exact closed plugin descriptor from PUBLIC_FIXTURES.json, including EnabledByDefault true and exactly one Runtime module row, so target-project materialization requires no project-file edit",
+    "Use original source and prose only; create no Binaries, Intermediate, Saved, generated, packaged, cache, report, log, media or third-party artifact",
+    "Do not create a provider commit or alter Git metadata; OpenAI will freeze the exact working-tree bytes after terminal delivery"
+  ],
+  "tool_boundary": {
+    "allowed": ["Read", "Write", "Edit", "Glob"],
+    "disallowed": ["Bash", "WebFetch", "WebSearch", "Task", "NotebookEdit", "browser", "MCP", "memory", "network", "subagent"],
+    "reason": "A source-only working-tree delivery avoids the prior commit-permission failure while retaining authenticated one-provider authorship and exact postflight byte binding."
+  },
+  "acceptance_checks": [
+    "The sandbox remains at the exact base HEAD/tree/branch with no remote; only the three authority files plus the exact eight output files exist",
+    "The current commit author and committer are exactly OpenAI Director <director@local.invalid>; reflogs are empty, the pre-sanitization object is unreachable and absent, and no private Git identity or machine path is provider-reachable",
+    "All three authority files remain byte-identical and every changed path is in the closed output inventory",
+    "Every output is UTF-8 without BOM, LF-only with one final LF; the seven taggable files contain exactly one frozen provenance marker pair in the required boundary positions and the descriptor contains no comment",
+    "The descriptor is the exact frozen eleven-property JSON object, including EnabledByDefault true, with exactly one LongTableRobotDealer Runtime/Default module and no Plugins array",
+    "The descriptor and Build.cs expose one Runtime module with only Core, CoreUObject, and Engine dependencies",
+    "The exact twelve cue kinds, eleven motion kinds, seven submit results, six cue fields, seven state fields, UE5.7 Blueprint-supported reflected storage int64 for PublicSequence, int32 for FocusSeat/TeamIndex, uint8 for counts, the narrower explicit bounds, capacity 64 and no extension fields are present",
+    "All fifteen exact automation test IDs exist and exercise the fixture-defined direct, queued, replay, double-pause, pause-while-full, reset, cue-state, concealment, external-mode, rights and module cases",
+    "No project dependency, authority, rules, concealed-state, credential, identity, account, network, analytics, telemetry, process, file, audio, media, URL or third-party asset capability exists",
+    "No regex or other prohibited privacy control exists",
+    "The immutable primary claim exists before process creation; the provider PID/start record is created while Claude is suspended and already in a kill-on-close Job, then a distinct resume record is frozen; any one of those records permanently prevents a duplicate primary",
+    "Claude receives only the closed process-environment allowlist plus memory/telemetry-disable flags; unrelated process tokens are not inherited. Safe mode, restricted mode and no-session-persistence are active, without claiming a broader canonical-profile no-write invariant",
+    "Claude reports unavailable Unreal builds/tests as NOT_RUN; no source-only result may claim target-project, Android, Quest, device, human, Store, merge or release acceptance",
+    "Terminal output is exactly one JSON object valid against RESULT_SCHEMA.json and repeats the exact task, assignment, idempotency, authority digest and correlation values"
+  ],
+  "evidence_requirements": [
+    "Authenticated Claude run reference, model and effort label",
+    "Exact base HEAD/tree/branch and unchanged authority SHA-256 values",
+    "Create-once primary-claim digest, suspended job-bound provider PID/start digest, resume digest, kill-on-close disposition and exact attempt count",
+    "Each of the eight output paths with SHA-256 or an explicit statement that OpenAI must compute the digest postflight",
+    "Named checks with exact result and honest NOT_RUN status when no compiler or target project is available",
+    "Explicit zero network, external write, repository, device, deployment, publication, purchase and permission side effects",
+    "Known limitations, blockers, requested decisions and revision recommendation"
+  ],
+  "transport": {
+    "provider": "Claude Code",
+    "executable": "authenticated local Claude Code CLI",
+    "version": "2.1.251",
+    "authentication": "claude.ai first-party Max subscription; verified before activation",
+    "model": "claude-fable-5",
+    "effort": "high",
+    "mode": "noninteractive print, restricted mode, safe mode, no Chrome, no session persistence, empty MCP configuration, schema-constrained JSON result",
+    "launch_safety": "Create-once durable claim before process creation; CreateProcessW suspended with a pre-attached anonymous KILL_ON_JOB_CLOSE Job and closed inherited-handle list; durable PID/start record before resume; durable resume record immediately after resume.",
+    "environment": "Only the exact environment_allowlist names are present. The four Claude/telemetry flags are forced to 1; the remaining names are copied only when present. Unrelated inherited tokens are excluded. This route does not assert an Antigravity-style private-profile or canonical-settings no-write invariant.",
+    "environment_allowlist": [
+      "SystemRoot", "WINDIR", "ComSpec", "PATH", "PATHEXT", "TEMP", "TMP",
+      "USERPROFILE", "HOME", "APPDATA", "LOCALAPPDATA", "ProgramData",
+      "ProgramFiles", "ProgramFiles(x86)", "ProgramW6432", "OS",
+      "PROCESSOR_ARCHITECTURE", "NUMBER_OF_PROCESSORS",
+      "CLAUDE_CODE_DISABLE_AUTO_MEMORY", "CLAUDE_CODE_DISABLE_ORG_MEMORY",
+      "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC", "DISABLE_TELEMETRY"
+    ],
+    "provider_contact_before_activation": false
+  },
+  "limits": {
+    "budget_usd": 0,
+    "timeout_seconds": 5400,
+    "max_hops": 0,
+    "max_primary_attempts": 1,
+    "max_transient_recovery_attempts": 1,
+    "max_revisions": 0,
+    "ambiguous_resend_prohibited": true
+  },
+  "result_rules": {
+    "source_delivery": "One authenticated terminal result plus the exact eight-file sandbox working tree is the provider artifact.",
+    "status": "Use SUCCEEDED only if all eight output files are complete and internally consistent with the public authority. Build/test availability may be honestly NOT_RUN because the sandbox contains no target project.",
+    "acceptance_authority": "Provider success is not acceptance. OpenAI alone freezes, materializes, builds, tests and accepts or rejects the unchanged bytes.",
+    "revision": "No QA revision is authorized. A recovery is legal only for a clearly transient transport failure before an unambiguous usable result."
+  },
+  "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+    "source_event_id": "owner-authorized-complete-all-large-chunks-20260831",
+    "slack_thread_ts": null,
+    "github_issue": null,
+    "github_pull_request": null
+  },
+  "created_at": "2026-08-31T17:08:00Z"
+}

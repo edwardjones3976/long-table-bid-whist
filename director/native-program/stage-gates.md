@@ -142,16 +142,41 @@ contradictory source-count sentence, and awarded medium/5 overall with zero
 direct production.
 
 The completed rolling window is now 83 points and every target-plus-five hard
-ceiling passes. A fresh sequence-28 Claude medium/5 clean-room RobotDealer packet
-is workload-eligible; its projection leaves Cursor exactly at the 25% hard
-ceiling. RobotDealer authoring remains closed until that distinct packet freezes
-the public contract, synthetic fixtures, exact clean base, one-writer lease,
-budget, retry and result-binding evidence. Sequence-25/26 source, transcripts,
-findings and quarantined bytes remain prohibited inputs.
+ceiling passes. Fresh sequence 28 `LT-NATIVE-CLAUDE-ROBOT-004` is authorized
+pending one primary after its activation commit is pushed and its provider-free
+exact-head preflight passes. Its projection leaves Cursor exactly at the 25%
+hard ceiling. The distinct packet freezes the public contract, synthetic
+fixtures, exact clean base, closed eight-file inventory, one-writer lease,
+budget, retry and result-binding evidence. Sequence-25/26 source, prompts,
+transcripts, findings, hashes, diffs, sandboxes, worktrees and quarantined bytes
+remain prohibited inputs. Before provider contact, installed UE5.7 UHT source
+proved the original Blueprint-visible `uint64`/`int8` fields non-viable; the
+authority now freezes Blueprint-supported `int64` sequence, `int32` seat/team
+and `uint8` counts while retaining the same explicit narrower bounds.
+
+The provider lane uses restricted plus safe mode with only Read, Write, Edit and
+Glob in a no-remote synthetic sandbox and does not commit. Bash, PowerShell,
+browser, network, MCP, memory and subagents are closed. The launcher validates
+the result wrapper/schema/identity and exact authority, Git, inventory, byte,
+provenance and descriptor postflight before returning one structured result. A
+create-once primary claim precedes process creation; Claude is created suspended
+inside a kill-on-close Job, its PID/start identity is durably recorded before
+resume, and a closed process-environment allowlist excludes unrelated tokens.
+Safe mode ignores user/project/local customizations and no-session-persistence
+suppresses the transcript. This route makes no broader canonical-profile
+no-write claim, so the earlier Antigravity private-profile/settings gate does
+not apply to Sequence 28.
+That result plus the exact working-tree bytes is a source-delivery candidate
+only. OpenAI must hash and freeze those bytes,
+materialize them unchanged at accepted base `4d26680`, run both UE5.7 targets,
+all fifteen focused RobotDealer tests and the full LongTable automation suite,
+and independently accept or reject before direct-production credit or
+integration is legal.
 
 The RobotDealer acceptance gate remains closed until exact result binding,
-immutable authority, private-profile/environment/canonical-no-write evidence,
-manifest/path/encoding/contribution, TypeScript, UE5.7 editor/game builds, all
+immutable authority, restricted/safe/no-session-persistence flags, the closed
+environment allowlist, atomic claim/process ownership, manifest/path/encoding/
+contribution, TypeScript, UE5.7 editor/game builds, all
 15 focused tests, full automation and
 independent source review are green on one exact candidate. Even that acceptance
 would prove only the standalone presentation plugin; composition, visible robot

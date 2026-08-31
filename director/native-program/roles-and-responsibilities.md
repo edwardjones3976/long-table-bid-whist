@@ -25,7 +25,7 @@ with no activation path.
 | Participant | Native-program responsibility | Production credit | Prohibited authority |
 | --- | --- | --- | --- |
 | OpenAI Director | Intake, scope freeze, routing, packets, workload enforcement, cross-module QA, synthesis, evidence binding, midpoint/final reports, kickback and owner gates; sequence 20 is the completed exact-state First Deal gap audit | Overall QA effort only; no direct production | No product-code lane, self-approval, fabricated participation, external-account assumption or gate-free completion |
-| Claude / FABLE 5 ULTRA/MAX | Accepted foundation; sequence 25 clean-room `LT-NATIVE-CLAUDE-ROBOT-001` and sequence 22 XR-test fallback are terminal | Sequence 25 earns medium/5 overall and zero direct production; no active lease | No retry, XR or main-repository read/write, rejected provider input, self-review, merge/release, spending, credential change or final acceptance |
+| Claude / FABLE 5 ULTRA/MAX | Accepted foundation; fresh sequence 28 `LT-NATIVE-CLAUDE-ROBOT-004` owns one public-only synthetic `LongTableRobotDealer/**` writer lease after exact preflight | Activation earns zero; one real terminal execution earns medium/5 overall once; direct production remains zero unless OpenAI accepts the unchanged bytes | No sequence-25 retry, repository/accepted-base read, Sequence25/26 artifact or finding, Bash, browser, network, MCP, memory, subagent, cross-path write, self-review, merge/release, spending, credential change or final acceptance |
 | Cursor | Self-registering LongTableXR project plugin for hands/controllers, optional-presence seam/fallback, accessibility and MR/VR state; later separately gated integration | 4 scope-forecast units only; isolated core packet is medium/5 and production credit still requires OpenAI acceptance | No edits outside the plugin subtree, cross-lane edits, self-review, merge/deploy/publish, spending or permissions |
 | Grok | Sequence 21 pre-submit transport is terminal unavailable; earlier authority-safety/House routes stay closed; future clean-room HouseCore/session/social work remains separate | Zero sequence-21 points because no model request ran | No current writer lease, production XR byte, rejected-provider input, self-review, merge/deploy/publish, credentials, concealed data or acceptance |
 | Gemini Antigravity | Sequence 26 clean-room `LongTableRobotDealer/**` route is terminal: the primary stopped without a completed prompt boundary and the sole Recovery 1 failed before provider creation | Zero overall and direct-production points; no source candidate and no active lease | No primary replay, second recovery, resend, predecessor/historical provider input, new RobotDealer packet under the closed route, self-review, merge, external write or acceptance |
@@ -125,8 +125,17 @@ with no activation path.
   `NO_ELIGIBLE_PROVIDER` and earned no assignment or credit. Actual sequence 27
   is the completed Perplexity research packet. Its medium/5 overall-only credit
   changes the rolling window and makes Claude workload-eligible for one fresh
-  sequence-28 medium clean-room RobotDealer packet. No packet or writer lease
-  exists until the exact public-contract authority is separately frozen.
+  sequence-28 medium clean-room RobotDealer packet. That exact packet, public
+  fixtures, synthetic base and one-writer lease are now frozen. The lease opens
+  only after the activation commit is pushed and provider-free preflight passes.
+  Claude runs in restricted plus safe mode with only Read, Write, Edit and Glob;
+  the Director independently binds the structured result, canonical authority
+  digest, exact eight-file inventory, UTF-8/LF/provenance policy and closed
+  descriptor before any source can enter OpenAI QA. One create-once claim,
+  suspended kill-on-close Job ownership, PID/start-before-resume evidence and a
+  closed environment allowlist make the primary non-repeatable and fail-closed.
+  Installed UE5.7 UHT authority fixes reflected numeric storage at Blueprint-
+  supported `int64`/`int32`/`uint8` with the narrower public bounds unchanged.
 
 The shared integration contract is frozen before dispatch. Providers may add
 tests only within their owned module. They may not alter another provider's
@@ -268,12 +277,22 @@ contact or delivery retry.
     certification. The assignment earns medium/5 overall and zero direct
     production. It owns no code path and grants no vote or verdict.
 
-18. The resulting 83-point rolling window passes every hard ceiling. A fresh
-    sequence-28 Claude medium/5 RobotDealer assignment is workload-eligible and
-    would leave Cursor exactly at its 25% hard ceiling. It must be a new
-    clean-room assignment, not a sequence-25 retry, and may receive none of the
-    quarantined sequence-25/26 source, transcripts, findings or provider bytes.
-    No lease exists until its exact packet is frozen and committed.
+18. The resulting 83-point rolling window passes every hard ceiling. Fresh
+    sequence 28, `LT-NATIVE-CLAUDE-ROBOT-004`, is authorized pending one primary
+    and would leave Cursor exactly at its 25% hard ceiling after a real terminal
+    execution. It is not a sequence-25 retry and receives none of the
+    quarantined sequence-25/26 source, prompts, transcripts, findings, hashes,
+    diffs, sandboxes, worktrees or provider bytes.
+
+19. Sequence 28 owns exactly eight files below the synthetic sandbox's
+    `LongTableRobotDealer/**`. Its only readable authority is the frozen public
+    contract, public synthetic fixtures and result schema. Claude has Read,
+    Write, Edit and Glob only under restricted plus safe mode; it does not
+    commit. The seven taggable files must carry the exact frozen Claude marker
+    pair, all eight files must be UTF-8/no-BOM/LF-only with one final LF, and the
+    descriptor must match the closed eleven-property fixture. OpenAI may freeze
+    and materialize the exact terminal working-tree bytes into an isolated
+    accepted-base QA worktree, but may not correct or supplement product source.
 
 Each lease ends when its exact provider result becomes terminal. OpenAI may
 freeze, build, test, accept or reject the bytes, but cannot correct them.

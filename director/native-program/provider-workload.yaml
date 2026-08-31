@@ -18,6 +18,7 @@
 # [[OpenAI Director | Codex | 2026-08-31 | 04:37 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:34 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:31 UTC | BEGIN]]
+# [[OpenAI Director | Codex | 2026-08-31 | 17:12 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 16:45 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]]
@@ -37,7 +38,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20_AFTER_SEQUENCE_27; 83 total points; every target-plus-five hard ceiling passes. Cursor is 1.0964 percentage points above normal and Antigravity is 3.1807 below normal; neither is rounded green. Sequence 26 remains terminal zero-credit. Sequence 27 is completed Perplexity research, earns medium/5 overall and zero direct production, and makes a fresh sequence-28 Claude medium RobotDealer packet workload-eligible."
+  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20_AFTER_SEQUENCE_27; 83 total points; every target-plus-five hard ceiling passes. Cursor is 1.0964 percentage points above normal and Antigravity is 3.1807 below normal; neither is rounded green. Sequence 28 is authorized pending one Claude primary and has earned no point. If it reaches a real terminal result, the projected 80-point window passes every hard ceiling with Claude 33.75% and Cursor exactly 25%."
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -112,7 +113,7 @@ native_code_assignments:
     allocation: {native_foundation_first_deal: 16, private_game_night: 16, long_table_house: 16}
     owned_surfaces: ["packages/rules-core", "packages/protocol", "services/table-authority", "Unreal/Source/LongTableProtocol", "Unreal/Source/LongTableTable", "Unreal/Source/LongTable"]
     required_model: "FABLE 5 ULTRA/MAX"
-    active_assignment: "none; sequence 25 LT-NATIVE-CLAUDE-ROBOT-001 is terminal FAILED after its single recovery, earns medium/5 overall and zero direct production; any replacement requires a fresh fallback packet"
+    active_assignment: "sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 is authorized pending one primary in an exact public-only synthetic sandbox; it is a fresh medium/5 assignment, not a sequence-25 retry, and owns only the closed LongTableRobotDealer/** working-tree inventory"
   cursor:
     scope_forecast_units: 4
     credit_rule: "forecast is not credit; isolated XR-core packet is medium/5 and final integration remains separately dependency-gated"
@@ -438,7 +439,7 @@ rolling_window_projection:
   current_shares_percent: {claude: 36.1446, cursor: 24.0964, grok: 21.6867, openai: 6.0241, gemini_antigravity: 4.8193, perplexity: 6.0241, github_copilot_cli: 1.2048}
   enforcement: "COMPLETE_ROLLING_20_AFTER_SEQUENCE_27; HARD_CEILINGS_PASS; NORMAL_BAND_MISS_CURSOR_PLUS_1.0964_AND_ANTIGRAVITY_MINUS_3.1807. This is not mislabeled as full normal-band compliance."
   direct_production_window_status: "WARMING_UP_ONE_ACCEPTED_POINT_ONLY; not a compliance pass; sequences 24, 25 and 27 earn zero direct production"
-  next_route: "ELIGIBLE_AFTER_COMMITTED_SEQUENCE_27_CLOSURE: one fresh Claude medium/5 clean-room RobotDealer assignment at sequence 28. It is not a sequence-25 retry, no writer lease or packet exists yet, and only the public contract plus synthetic fixtures may be supplied. OpenAI remains QA-only."
+  next_route: "ACTIVE_PENDING_PRIMARY_AFTER_PUSHED_EXACT_HEAD_PREFLIGHT: sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 has one fresh Claude medium/5 clean-room RobotDealer packet and one sandbox-scoped writer lease. No point enters the current window until a real terminal provider execution. OpenAI remains QA-only."
   sequence_26_actual_terminal:
     rolled_out_assignment: null
     canonical_points_earned: 0
@@ -469,8 +470,16 @@ rolling_window_projection:
     denominator_if_real_terminal: 80
     projections_percent: {claude: 33.75, cursor: 25.0, grok: 22.5, openai: 6.25, gemini_antigravity: 5.0, perplexity: 6.25, github_copilot_cli: 1.25}
     workload_hard_gate: {claude: "PASS_41_ELIGIBLE", cursor: "PASS_EXACT_25_NO_ROUNDING", grok: "PASS_25", openai: "PASS_13_QA_ONLY", gemini_antigravity: "PASS_16_ROUTE_CLOSED", perplexity: "PASS_9_RESEARCH_ONLY", github_copilot_cli: "PASS_6"}
-    verdict: "CLAUDE_ELIGIBLE_FOR_ONE_FRESH_CLEAN_ROOM_MEDIUM_PACKET_AFTER_EXACT_PACKET_FREEZE"
-    writer_lease: "NOT_ISSUED"
+    verdict: "AUTHORIZED_PENDING_ONE_PRIMARY_AFTER_PUSHED_EXACT_HEAD_PREFLIGHT"
+    assignment_id: "LT-NATIVE-CLAUDE-ROBOT-004"
+    packet_digest: "sha256:0153c630cc7302965e57743d5316f7a4a0981ede3d0c6dd0339764ad12f874ec"
+    prompt_digest: "sha256:8e5a00251764a5161ba31b107334e5ae5aebea83048e0c700690ce8d118e3292"
+    launcher_digest: "sha256:c21221e08587f5bbe3c06397f6b49bcf881f2cab9c94295d17b6019735035c2f"
+    activation_digest: "sha256:f44ceb6b075c934f51638447569fa877b285e7daad967a4e0105458dd6e3d590"
+    launch_ownership_selftest_digest: "sha256:5d430ccfcce076c19bccca2c101925a3671e90437a01766159fe903bb9047873"
+    ue57_blueprint_storage_evidence_digest: "sha256:ea747325337f20718619bf45f026b56efe6d463770d23182e31e79ee3ba2adc9"
+    authority_snapshot_digest: "sha256:a171b144d499d289382feec34c108580ba6dca64d7106fb601c31822942dcf7a"
+    writer_lease: "ISSUED_ONLY_TO_CLAUDE_FOR_CLOSED_EIGHT_FILE_LONGTABLEROBOTDEALER_WORKING_TREE_AFTER_EXACT_PREFLIGHT"
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -1154,6 +1163,36 @@ canonical_assignment_ledger:
     qa_base: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
     qa_base_tree: "1e0db56f1e85d66c93ab64bc3dca8c237947c210"
     manual_overlay_reason: "Terminal sequence 25 could not be retried or normalized, so the workload gate selected Antigravity for the fresh sequence-26 medium fallback. Its primary created and resumed one Job-bound provider process but never completed the prompt/EOF boundary. The sole materially different Recovery 1 passed the provider-free file-handle and total-failure-receipt proof, then ran once from exact control HEAD 25eb993 and failed closed at PROMPT_HANDLE_VERIFIED while reading guardian-ready. It created no provider process, model request, result or source. The later guardian record proves Job 0 -> 0, provider identity absent and canonical settings unchanged. The distinct claim is consumed; the route and writer lease are terminal closed. Sequence 26 earns zero overall and direct-production points and does not roll the credited window. At that exact closure, the prospective next medium RobotDealer calculation produced NO_ELIGIBLE_PROVIDER. Actual sequence 27 later became a distinct useful Perplexity research assignment, completed terminally, changed the credited window and superseded only the future routing outcome—not this historical sequence-26 disposition."
+  - sequence: 28
+    assignment_id: "LT-NATIVE-CLAUDE-ROBOT-004"
+    provider: claude
+    size: medium
+    canonical_points: 5
+    status: "AUTHORIZED_PENDING_PRIMARY"
+    accepted_direct_production_points: 0
+    packet_file: "director/native-program/packets/LT-NATIVE-CLAUDE-ROBOT-004.json"
+    packet_digest: "sha256:0153c630cc7302965e57743d5316f7a4a0981ede3d0c6dd0339764ad12f874ec"
+    prompt_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28.prompt.md"
+    prompt_digest: "sha256:8e5a00251764a5161ba31b107334e5ae5aebea83048e0c700690ce8d118e3292"
+    launcher_file: "director/native-program/run-claude-robot-004.ps1"
+    launcher_digest: "sha256:c21221e08587f5bbe3c06397f6b49bcf881f2cab9c94295d17b6019735035c2f"
+    activation_evidence: "artifacts/native-program/coordination/2026-08-31-sequence-28-activation.md"
+    activation_digest: "sha256:f44ceb6b075c934f51638447569fa877b285e7daad967a4e0105458dd6e3d590"
+    launch_ownership_selftest: "artifacts/native-program/qa/LT-NATIVE-CLAUDE-ROBOT-004.launch-ownership-selftest.json"
+    launch_ownership_selftest_digest: "sha256:5d430ccfcce076c19bccca2c101925a3671e90437a01766159fe903bb9047873"
+    ue57_blueprint_storage_evidence: "artifacts/native-program/qa/LT-NATIVE-CLAUDE-ROBOT-004.ue57-blueprint-storage-evidence.json"
+    ue57_blueprint_storage_evidence_digest: "sha256:ea747325337f20718619bf45f026b56efe6d463770d23182e31e79ee3ba2adc9"
+    sandbox: "C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-robot-dealer-claude-004-clean"
+    sandbox_branch: "codex/claude-robot-cleanroom-004"
+    starting_ref: "a5ffeb93391c071d76c26a7459e4bc24724538f4"
+    starting_tree: "91710e74f905a21afe56ef3ad4c62af2d6b44dc5"
+    authority_snapshot_digest: "sha256:a171b144d499d289382feec34c108580ba6dca64d7106fb601c31822942dcf7a"
+    owned_paths: ["LongTableRobotDealer/**"]
+    closed_output_file_count: 8
+    attempts: {provider_free_launch_ownership_selftests: 1, primary: 0, transient_recoveries: 0, revisions: 0, provider_process_launches: 0, authenticated_terminal_results: 0}
+    writer_lease: "OPEN_AFTER_COMMITTED_PUSHED_EXACT_HEAD_AND_PROVIDER_FREE_PREFLIGHT; one provider; exact synthetic sandbox; no repository or prior-provider input"
+    accepted_outcome_digest: null
+    manual_overlay_reason: "Fresh useful RobotDealer assignment made eligible by the real sequence-27 research credit. Claude receives only three immutable public authority files and may create exactly eight source/prose files with restricted Read, Write, Edit and Glob; Bash, PowerShell, browser, network, MCP, memory, subagents, repository context and Sequence25/26 artifacts are excluded. Before provider contact, installed UE5.7 UHT authority forced the reflected numeric ABI from unsupported uint64/int8 to Blueprint-supported int64/int32 while preserving all narrower bounds; the exact evidence is frozen. A create-once claim precedes suspended Job-bound process creation, PID/start is frozen before resume, kill-on-close prevents an orphan, and a closed environment allowlist excludes unrelated tokens. The exact launcher passed one two-case provider-free ownership self-test and made no Claude/model contact. Activation earns no point; one real terminal execution records medium/5 overall once, while direct-production credit requires unchanged-byte OpenAI materialization, UE5.7 build/test and acceptance."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -1171,7 +1210,7 @@ credit_rules:
   - "Sequence 26 is terminal pre-model and earns zero, so the completed rolling window remains the 20 assignments after sequence 25. Its primary and sole recovery are consumed, Antigravity is closed for the assignment, and no product source exists."
   - "The historical pre-sequence-27 RobotDealer projection was NO_ELIGIBLE_PROVIDER and earned no assignment or credit. Actual sequence 27 is LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002, a distinct useful research assignment. It completed one authenticated public-only request and earns medium/5 overall with zero direct production."
   - "After sequence 27, sequence 2 Antigravity long/8 rolls out and the completed 20-row window totals 83: Claude 36.1446%, Cursor 24.0964%, Grok 21.6867%, OpenAI 6.0241%, Antigravity 4.8193%, Perplexity 6.0241% and GitHub Copilot CLI 1.2048%. All hard ceilings pass; Cursor and Antigravity miss normal."
-  - "A fresh sequence-28 Claude medium/5 RobotDealer packet would roll out sequence 3 Claude long/8 and yield 80 points: Claude 33.75%, Cursor exactly 25%, Grok 22.5%, OpenAI 6.25%, Antigravity 5%, Perplexity 6.25% and GitHub Copilot CLI 1.25%. Claude is workload-eligible, but no packet or writer lease exists until the exact clean-room authority is frozen."
+  - "Sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 is now authorized pending one primary after a committed, pushed exact-head preflight. Its packet and one-writer sandbox lease are frozen; activation earns no point. A real terminal Claude medium/5 execution would roll out sequence 3 Claude long/8 and yield 80 points: Claude 33.75%, Cursor exactly 25%, Grok 22.5%, OpenAI 6.25%, Antigravity 5%, Perplexity 6.25% and GitHub Copilot CLI 1.25%."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
@@ -1208,3 +1247,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 15:57 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 16:09 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 16:45 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 17:12 UTC | END]]

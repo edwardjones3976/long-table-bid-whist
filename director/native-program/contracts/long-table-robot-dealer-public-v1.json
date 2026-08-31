@@ -80,22 +80,22 @@
     "FLongTableRobotDealerCue": {
       "fields_in_order": [
         "Kind:cue_kind",
-        "PublicSequence:uint64[0,9007199254740991]",
-        "FocusSeat:int8[-1,3]",
+        "PublicSequence:int64[0,9007199254740991]",
+        "FocusSeat:int32[-1,3]",
         "PrimaryCount:uint8[0,255]",
         "SecondaryCount:uint8[0,255]",
-        "TeamIndex:int8[-1,1]"
+        "TeamIndex:int32[-1,1]"
       ],
       "additional_fields": false,
       "forbidden_representation": "No string, UObject reference, optional member, variant payload, property bag, map, extension field or opaque bytes."
     },
     "FLongTableRobotDealerPresentationState": {
       "fields_in_order": [
-        "PublicSequence:uint64[0,9007199254740991]",
-        "FocusSeat:int8[-1,3]",
+        "PublicSequence:int64[0,9007199254740991]",
+        "FocusSeat:int32[-1,3]",
         "PrimaryCount:uint8[0,255]",
         "SecondaryCount:uint8[0,255]",
-        "TeamIndex:int8[-1,1]",
+        "TeamIndex:int32[-1,1]",
         "Paused:bool",
         "Motion:motion_kind"
       ],

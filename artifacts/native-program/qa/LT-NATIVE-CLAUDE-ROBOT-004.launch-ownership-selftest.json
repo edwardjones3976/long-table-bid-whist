@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "tested_at": "2026-08-31T18:08:05.0810173Z",
+  "runner_sha256": "sha256:c21221e08587f5bbe3c06397f6b49bcf881f2cab9c94295d17b6019735035c2f",
+  "provider_contact": false,
+  "provider_process_created": false,
+  "model_request_created": false,
+  "tests": [
+    {
+      "name": "suspended_job_bound_redirected_io",
+      "executable": "local pwsh self-test child",
+      "result": "PASS",
+      "evidence": "The child was created suspended with PROC_THREAD_ATTRIBUTE_JOB_LIST and the exact inherited-handle list, the Job active-process count was 1 before resume, stdin/stdout/stderr round-tripped PING/PING/ERR, exit was 0, and the Job returned to 0 active processes."
+    },
+    {
+      "name": "kill_on_close_host_failure_boundary",
+      "executable": "local pwsh self-test child",
+      "result": "PASS",
+      "evidence": "A suspended job-bound 60-second child was resumed, the anonymous Job handle was closed without an explicit terminate call, and the child exited within 5 seconds."
+    }
+  ],
+  "verdict": "PASS_EXACT_RUNNER_PROVIDER_FREE"
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "engine": "Unreal Engine 5.7 installed authority",
+  "finding": "The original uint64/int8 reflected ABI was not viable for Blueprint-visible struct members. The frozen authority now uses Blueprint-supported int64/int32 storage while retaining the same narrower validation bounds; uint8 counts remain supported.",
+  "sources": [
+    {
+      "path": "Engine/Source/Programs/Shared/EpicGames.UHT/Types/Properties/UhtInt64Property.cs",
+      "sha256": "sha256:5a7418350fe7d29c22f8a05107e7ba7b74f5dcfc3916b0e579ab805bf484469b",
+      "lines": "16,30",
+      "evidence": "UhtInt64Property exists and its constructor sets IsParameterSupportedByBlueprint and IsMemberSupportedByBlueprint."
+    },
+    {
+      "path": "Engine/Source/Programs/Shared/EpicGames.UHT/Types/Properties/UhtIntProperty.cs",
+      "sha256": "sha256:93fecf5dd96236f97861e00e32cf8d3bfd1b032fcdcc8335b6e25c3b8d22ab9e",
+      "lines": "16,30",
+      "evidence": "UhtIntProperty, the int32 reflected property, sets both Blueprint parameter and member capabilities."
+    },
+    {
+      "path": "Engine/Source/Programs/Shared/EpicGames.UHT/Types/Properties/UhtByteProperty.cs",
+      "sha256": "sha256:fbfb6d2f6df09a1f23ea9a659645c9499f34be2b2666d8c62a6ced92e4f589eb",
+      "lines": "87-92",
+      "evidence": "UnsignedInt8 byte properties set both Blueprint parameter and member capabilities."
+    },
+    {
+      "path": "Engine/Source/Programs/Shared/EpicGames.UHT/Types/Properties/UhtUInt64Property.cs",
+      "sha256": "sha256:b8f8607793894107d54504295959821ae1561f81525ad1b9deb7d9e69d4427fc",
+      "lines": "17-31",
+      "evidence": "UhtUInt64Property does not add either Blueprint support capability."
+    },
+    {
+      "path": "Engine/Source/Programs/Shared/EpicGames.UHT/Types/Properties/UhtInt8Property.cs",
+      "sha256": "sha256:663347a08e4e57b2671e9c4f8bb1decd0c5eb4fa129947066f50e0ec59167014",
+      "lines": "16-30",
+      "evidence": "UhtInt8Property does not add either Blueprint support capability."
+    },
+    {
+      "path": "Engine/Source/Programs/Shared/EpicGames.UHT/Types/UhtScriptStruct.cs",
+      "sha256": "sha256:0715c7b2abd80f46457e8fa0ea0016eef74bed7efb2632d4724ea982d39081ee",
+      "lines": "957-965",
+      "evidence": "A Blueprint-visible struct member without IsMemberSupportedByBlueprint produces the UHT not-supported-by-blueprint error."
+    }
+  ],
+  "authority_change": {
+    "PublicSequence": "int64 with explicit inclusive bound 0..9007199254740991",
+    "FocusSeat": "int32 with explicit inclusive bound -1..3",
+    "PrimaryCount": "uint8 with inclusive storage/contract bound 0..255",
+    "SecondaryCount": "uint8 with inclusive storage/contract bound 0..255",
+    "TeamIndex": "int32 with explicit inclusive bound -1..1"
+  },
+  "verdict": "ABI_STORAGE_CORRECTED_BEFORE_PROVIDER_CONTACT"
+}

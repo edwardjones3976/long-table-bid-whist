@@ -1,0 +1,184 @@
+{
+  "schema_version": "long-table-robot-dealer-public-fixtures/v1.0",
+  "fixture_id": "LT-ROBOT-DEALER-PUBLIC-FIXTURES-1.0",
+  "contract_id": "LT-ROBOT-DEALER-PUBLIC-1.0",
+  "purpose": "Public synthetic acceptance fixtures for a standalone UE5.7 presentation-only robot dealer. These fixtures contain no game rules, repository facts, identity, account, session, network, host command, card value, concealed state, media, or provider implementation.",
+  "closed_output_inventory": [
+    "LongTableRobotDealer.uplugin",
+    "README.md",
+    "Source/LongTableRobotDealer/LongTableRobotDealer.Build.cs",
+    "Source/LongTableRobotDealer/Public/LongTableRobotDealerCueInterface.h",
+    "Source/LongTableRobotDealer/Public/LongTableRobotDealerPresenter.h",
+    "Source/LongTableRobotDealer/Private/LongTableRobotDealerModule.cpp",
+    "Source/LongTableRobotDealer/Private/LongTableRobotDealerPresenter.cpp",
+    "Source/LongTableRobotDealer/Private/Tests/LongTableRobotDealerTests.cpp"
+  ],
+  "source_provenance_and_encoding": {
+    "encoding": "All eight output files are UTF-8 without a byte-order mark, use LF line endings only, contain no CR bytes, and end with exactly one LF.",
+    "taggable_files": [
+      "README.md",
+      "Source/LongTableRobotDealer/LongTableRobotDealer.Build.cs",
+      "Source/LongTableRobotDealer/Public/LongTableRobotDealerCueInterface.h",
+      "Source/LongTableRobotDealer/Public/LongTableRobotDealerPresenter.h",
+      "Source/LongTableRobotDealer/Private/LongTableRobotDealerModule.cpp",
+      "Source/LongTableRobotDealer/Private/LongTableRobotDealerPresenter.cpp",
+      "Source/LongTableRobotDealer/Private/Tests/LongTableRobotDealerTests.cpp"
+    ],
+    "code_begin_line": "// [[Claude | Fable 5 | 2026-08-31 | LT-NATIVE-CLAUDE-ROBOT-004 | BEGIN]]",
+    "code_end_line": "// [[Claude | Fable 5 | 2026-08-31 | LT-NATIVE-CLAUDE-ROBOT-004 | END]]",
+    "readme_begin_line": "<!-- [[Claude | Fable 5 | 2026-08-31 | LT-NATIVE-CLAUDE-ROBOT-004 | BEGIN]] -->",
+    "readme_end_line": "<!-- [[Claude | Fable 5 | 2026-08-31 | LT-NATIVE-CLAUDE-ROBOT-004 | END]] -->",
+    "marker_rule": "Each taggable file contains exactly one matching marker pair. The begin marker is the first line and the end marker is the final content line immediately before the required final LF. The descriptor is valid JSON and contains no marker or comment."
+  },
+  "plugin_descriptor": {
+    "FileVersion": 3,
+    "Version": 1,
+    "VersionName": "1.0.0",
+    "FriendlyName": "Long Table Robot Dealer",
+    "Description": "Original rights-clean presentation-only robot dealer for The Long Table.",
+    "Category": "Long Table",
+    "CanContainContent": false,
+    "IsBetaVersion": false,
+    "Installed": false,
+    "EnabledByDefault": true,
+    "Modules": [
+      {
+        "Name": "LongTableRobotDealer",
+        "Type": "Runtime",
+        "LoadingPhase": "Default"
+      }
+    ],
+    "closed_shape": "The descriptor contains exactly these eleven top-level properties and no Plugins array, third-party dependency, URL, media reference, or additional property."
+  },
+  "public_abi": {
+    "cue_header": "Source/LongTableRobotDealer/Public/LongTableRobotDealerCueInterface.h",
+    "presenter_header": "Source/LongTableRobotDealer/Public/LongTableRobotDealerPresenter.h",
+    "types": [
+      "ELongTableRobotDealerCueKind",
+      "ELongTableRobotDealerMotionKind",
+      "ELongTableRobotDealerSubmitResult",
+      "FLongTableRobotDealerCue",
+      "FLongTableRobotDealerPresentationState",
+      "FLongTableRobotDealerCueAppliedNative",
+      "FLongTableRobotDealerCueAppliedDynamic",
+      "ULongTableRobotDealerPresenter"
+    ],
+    "presenter_base": "UActorComponent",
+    "presenter_methods": [
+      "UFUNCTION(BlueprintCallable, Category=\"Long Table|Robot Dealer\") ELongTableRobotDealerSubmitResult SubmitCue(const FLongTableRobotDealerCue& Cue)",
+      "UFUNCTION(BlueprintPure, Category=\"Long Table|Robot Dealer\") FLongTableRobotDealerPresentationState GetPresentationState() const",
+      "UFUNCTION(BlueprintPure, Category=\"Long Table|Robot Dealer\") int32 GetQueuedCueCount() const",
+      "FLongTableRobotDealerCueAppliedNative& OnCueAppliedNative()"
+    ],
+    "blueprint_event_property": "UPROPERTY(BlueprintAssignable) FLongTableRobotDealerCueAppliedDynamic OnCueApplied",
+    "delegate_payload": "Both delegates carry const FLongTableRobotDealerCue& and const FLongTableRobotDealerPresentationState& for the same emission.",
+    "annotations": "All three enums use UENUM(BlueprintType). Both structures use USTRUCT(BlueprintType), GENERATED_BODY, LONGTABLEROBOTDEALER_API, and exactly their ordered contract fields as UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=\"Long Table|Robot Dealer\"). The component uses UCLASS(BlueprintType, Blueprintable, ClassGroup=(LongTable), meta=(BlueprintSpawnableComponent)), GENERATED_BODY, and LONGTABLEROBOTDEALER_API.",
+    "blueprint_numeric_storage": "Use int64 for PublicSequence, int32 for FocusSeat and TeamIndex, and uint8 for PrimaryCount and SecondaryCount in both reflected structures. These are UE5.7 Blueprint-supported native property types. The narrower contract bounds remain mandatory validation rules and are not widened to the storage ranges.",
+    "delegate_order_and_reentrancy": "For each emission, apply its state, capture cue/state value copies, broadcast the native delegate first and the dynamic delegate second with those same copies. A private application FIFO and dispatch guard preserve whole-pair order: a cue submitted reentrantly from either callback is accepted or rejected normally, but any accepted application/emission is appended after work already pending and is processed only after the current native/dynamic pair completes. The private application FIFO is distinct from the bounded paused queue, exposes no public field, and never changes paused-queue capacity.",
+    "visibility": "Enums, structs, SubmitCue, value-returning state/queue getters and the dynamic delegate are Blueprint-visible. The native delegate accessor is C++ only. No other public runtime method, field, mode, identifier, authority reference or extension seam is permitted."
+  },
+  "canonical_cues": {
+    "open": {"Kind": "TableOpened", "PublicSequence": 1, "FocusSeat": -1, "PrimaryCount": 0, "SecondaryCount": 0, "TeamIndex": -1},
+    "deal": {"Kind": "DealStarted", "PublicSequence": 2, "FocusSeat": 0, "PrimaryCount": 13, "SecondaryCount": 0, "TeamIndex": -1},
+    "pause": {"Kind": "PresentationPaused", "PublicSequence": 3, "FocusSeat": -1, "PrimaryCount": 0, "SecondaryCount": 0, "TeamIndex": -1},
+    "queued_trick": {"Kind": "TrickStarted", "PublicSequence": 4, "FocusSeat": 1, "PrimaryCount": 2, "SecondaryCount": 0, "TeamIndex": 0},
+    "queued_card": {"Kind": "PublicCardPlayed", "PublicSequence": 5, "FocusSeat": 2, "PrimaryCount": 3, "SecondaryCount": 1, "TeamIndex": 1},
+    "repeat_pause": {"Kind": "PresentationPaused", "PublicSequence": 6, "FocusSeat": -1, "PrimaryCount": 0, "SecondaryCount": 0, "TeamIndex": -1},
+    "resume": {"Kind": "PresentationResumed", "PublicSequence": 7, "FocusSeat": -1, "PrimaryCount": 0, "SecondaryCount": 0, "TeamIndex": -1},
+    "reset": {"Kind": "PresentationReset", "PublicSequence": 8, "FocusSeat": -1, "PrimaryCount": 0, "SecondaryCount": 0, "TeamIndex": -1}
+  },
+  "state_machine_rulings": {
+    "initial_state": "Before any accepted cue, replay defense is uninitialized and the public state is exactly PublicSequence 0, FocusSeat -1, PrimaryCount 0, SecondaryCount 0, TeamIndex -1, Paused false, Motion Idle. Because replay defense is uninitialized, a fully valid first cue with PublicSequence 0 is fresh and may be accepted.",
+    "validation_before_mutation": "Validate the complete cue, including enum values and every numeric bound, before high-water, last-accepted, queue, public state, or delegate mutation.",
+    "replay_defense": "The internal acceptance high-water is private and raise-only. An exact byte-for-byte duplicate of the last accepted cue returns ExactDuplicate and emits nothing. A different cue at that same sequence returns RejectedSequenceConflict. Any lower sequence returns RejectedStale.",
+    "cue_state_correlation": "Every emission carries the exact accepted cue and the presentation state produced from that same cue. Public state PublicSequence equals the emitted cue PublicSequence. It may decrease across emission order when an immediate control cue is followed by older queued ordinary work; this never lowers the private acceptance high-water and adds no public field.",
+    "cue_field_application": "Every emitted ordinary, pause, or resume cue copies FocusSeat, PrimaryCount, SecondaryCount, and TeamIndex exactly into its state, sets PublicSequence to that cue's exact sequence, and applies only its defined Paused value and motion mapping. Reset is the sole exception: it uses the reset cue's PublicSequence but restores FocusSeat -1, both counts 0, TeamIndex -1, Paused false, and Motion Reset.",
+    "pause_controls": "Each valid PresentationPaused cue is accepted immediately, consumes no queue slot, sets Paused true, uses Pause motion, and may emit even if already paused. A valid PresentationResumed cue is accepted immediately, consumes no queue slot, sets Paused false, emits Resume, and then drains all queued ordinary cues once in FIFO order. A valid PresentationReset cue is immediate, consumes no queue slot, clears the queue, restores neutral public fields with Reset motion and Paused false, and preserves replay defense.",
+    "ordinary_while_paused": "A valid ordinary cue submitted while paused is accepted only if queue capacity remains, advances replay defense, returns AcceptedQueued, and emits nothing until a resume. It never unpauses.",
+    "queue_full": "At exactly 64 queued ordinary cues, a new ordinary cue returns RejectedQueueFull without changing high-water, last-accepted cue, queue, public state, or delegates and without evicting any accepted cue. Pause, resume, and reset controls do not consume queue capacity and remain eligible under normal validation and sequence rules.",
+    "direct_path": "A valid ordinary cue submitted while not paused advances replay defense, returns Accepted, applies public state, and emits exactly once.",
+    "motion_map": {
+      "TableOpened": "Welcome",
+      "DealStarted": "Deal",
+      "BidConfirmed": "Acknowledge",
+      "TrickStarted": "PresentTable",
+      "PublicCardPlayed": "PresentTable",
+      "TrickWon": "Gather",
+      "BookCountChanged": "Summarize",
+      "HandCompleted": "Celebrate",
+      "MatchCompleted": "Celebrate",
+      "PresentationPaused": "Pause",
+      "PresentationResumed": "Resume",
+      "PresentationReset": "Reset"
+    }
+  },
+  "required_scenarios": [
+    {
+      "test_id": "LongTable.RobotDealer.ClosedSchema",
+      "proof": "Reflection and compile-time checks establish exactly twelve cue kinds, eleven motion kinds, seven submit results, six cue fields in contract order, seven state fields in contract order, exact reflected numeric storage int64/int32/uint8/uint8/int32 as applicable, and no extension member."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.ValidCueEmitsOnce",
+      "steps": ["open", "deal"],
+      "expected_results": ["Accepted", "Accepted"],
+      "expected_emission_sequences": [1, 2],
+      "proof": "In addition to the two canonical steps, construct one valid increasing-sequence cue for each of the twelve cue kinds on fresh or reset-safe instances and assert exactly one emission plus the exact motion_map row for every kind."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.InvalidCueAtomic",
+      "proof": "Independently exercise invalid cue kind, PublicSequence below 0 and above 9007199254740991, FocusSeat below -1 and above 3, and TeamIndex below -1 and above 1. Each returns RejectedInvalid with byte-identical before/after state, replay defense, queue, and emission history. The below-minimum sequence case must use PublicSequence -1. On fresh instances also accept the inclusive valid edges: first sequence 0; sequence 9007199254740991; FocusSeat -1 and 3; PrimaryCount 0 and 255; SecondaryCount 0 and 255; TeamIndex -1 and 1. uint8 count values outside 0..255 are structurally unrepresentable and must not motivate an extension field."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.SequenceMonotonic",
+      "proof": "Accepted direct and queued cues share one private raise-only high-water; draining queued work cannot change it. Prove this only through public SubmitCue classifications and emission history: after a newer control is accepted and older queued work drains, a different cue at the newer control sequence is still RejectedSequenceConflict, a lower cue is RejectedStale, and the next higher cue is accepted. Add no high-water getter, friend seam, test-only public method, reflected property, or debug field."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.StaleDuplicateNoMutation",
+      "proof": "After one accepted cue, resubmit its exact bytes for ExactDuplicate, submit different bytes at the same sequence for RejectedSequenceConflict, and submit a lower sequence for RejectedStale; all emit nothing and preserve every state byte."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.DirectQueuedInterleaveCannotRegress",
+      "steps": ["open", "pause", "queued_trick", "queued_card", "repeat_pause", "resume"],
+      "expected_results": ["Accepted", "Accepted", "AcceptedQueued", "AcceptedQueued", "Accepted", "Accepted"],
+      "expected_emission_sequences": [1, 3, 6, 7, 4, 5],
+      "expected_private_high_water_after_each_submission": [1, 3, 4, 5, 6, 7]
+    },
+    {
+      "test_id": "LongTable.RobotDealer.PauseRequiresExplicitCue",
+      "proof": "Only PresentationPaused changes Paused from false to true."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.OrdinaryCueCannotResume",
+      "proof": "An ordinary cue while paused returns AcceptedQueued, emits nothing, and leaves Paused true."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.PausedQueueOrder",
+      "proof": "One resume emits itself and then each accepted queued ordinary cue exactly once in FIFO order with exact cue-to-state sequence correlation."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.QueueCapacityAtomic",
+      "proof": "Fill 64 ordinary queue slots, submit the 65th ordinary cue and receive RejectedQueueFull, then reuse that exact rejected sequence for a valid pause control and require Accepted. This externally proves the rejection did not advance replay defense. The pause consumes no slot. Accept one higher resume control and drain exactly the original 64 cues without the rejected ordinary cue and without eviction."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.ResetPreservesReplayDefense",
+      "proof": "Reset clears pending presentation work and restores neutral public fields but keeps the private high-water and last-accepted replay classification; no pre-reset cue becomes fresh."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.ConcealmentCounterfactual",
+      "proof": "Use two fixture-only upstream containers with distinct synthetic concealed sentinel values. Positively construct the same public cue stream without passing either sentinel into the plugin; require byte-identical complete states and emission histories and no concealed field in reflected or result types."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.DealerModeAuthorityEquivalence",
+      "proof": "Use external-only labels AI-dealer and human-host with two fresh instances and byte-identical public cue streams. Require byte-identical complete outputs and prove there is no dealer-mode input, field, state, or result in the runtime ABI."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.RightsCleanInventory",
+      "proof": "Use positive equality against the exact eight-path output inventory plus exact reflected runtime type/member inventories. OpenAI separately reviews the eight known source/prose files. Never implement this test or review as a regex, keyword, substring, blacklist, redaction, or scan-based privacy/content control. The inventory contains original source and prose only, with no bundled audio, voice, music, jazz, blues, sample, image, model, texture, likeness, archival media, URL, or third-party asset."
+    },
+    {
+      "test_id": "LongTable.RobotDealer.ModuleBoundary",
+      "proof": "Use positive equality against the exact descriptor module inventory and the exact Core, CoreUObject, Engine dependency inventory; OpenAI separately reviews the two known build files. Never use regex, keyword, substring, blacklist, or source scanning as a privacy boundary. No project, network, analytics, account, Meta SDK, audio, media, file, process, or telemetry dependency exists."
+    }
+  ],
+  "implementation_boundary": "Implement only the standalone plugin and its focused automation tests. Target-project bridges, game authority, AI decisions, human-host controls, visible production robot art, Android packaging, Quest/device tests, account/avatar integration, and release remain outside this source assignment."
+}
