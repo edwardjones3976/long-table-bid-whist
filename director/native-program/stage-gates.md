@@ -141,8 +141,9 @@ rejected one unsupported source-description claim and one internally
 contradictory source-count sentence, and awarded medium/5 overall with zero
 direct production.
 
-The completed rolling window is now 83 points and every target-plus-five hard
-ceiling passes. Fresh sequence 28 `LT-NATIVE-CLAUDE-ROBOT-004` passed its
+The completed post-sequence-27 rolling window was 83 points and every
+target-plus-five hard ceiling passed. Sequence 28
+`LT-NATIVE-CLAUDE-ROBOT-004` passed its
 provider-free exact-head preflight, then consumed its sole CLI primary at an
 unambiguous pre-model monthly-spend 429: one process/service contact, zero
 completed model requests, inference contacts, tokens, cost, source and credit.
@@ -155,35 +156,52 @@ as the primary and first choice. The app accepted the exact attachment and
 prompt once, then Fable 5 returned an unambiguous model-specific monthly-spend
 stop before source or schema result. The app explicitly offered switching models
 and the owner explicitly instructed, `Switch to Opus 5 for claude.` That new
-information authorizes one final Opus 5 High follow-up in the existing task under
-the unchanged assignment. Its projection leaves Cursor exactly at the 25% hard
-ceiling after a real terminal model result.
+information authorized one final Opus 5 High follow-up in the existing task
+under the unchanged assignment. The final app route completed one real terminal
+model execution and delivered the exact eight-file source archive plus one
+separate result. Sequence 28 earns medium/5 overall once and zero direct
+production. It rolls out sequence 3 Claude long/8 and produces the actual
+80-point window: Claude 33.75%, Cursor exactly 25%, Grok 22.5%, OpenAI 6.25%,
+Antigravity 5%, Perplexity 6.25% and GitHub Copilot CLI 1.25%. Every hard
+ceiling passes, but Cursor is two points above normal and Antigravity is three
+points below normal.
 
-The final Opus route uses the already attached six-file, public/synthetic input archive: the
+The final Opus route used the already attached six-file public/synthetic input archive: the
 unchanged assignment packet, public contract, public fixtures, result schema,
 app transport delta and work order. Sequence-25/26 source, prompts,
 transcripts, findings, hashes, diffs, sandboxes, worktrees, repository context,
 credentials and quarantined bytes remain prohibited inputs. The desktop app is
-transport only; Claude may not browse, use connectors or request repository access. It may
-return one named ZIP containing exactly the inherited eight-file
-`LongTableRobotDealer/**` inventory plus one schema-conforming result outside the
-ZIP. No billing change, re-upload, Fable replay or later Claude contact is authorized.
+transport only; Claude did not browse, use connectors or request repository
+access. The returned ZIP contains exactly the inherited eight-file
+`LongTableRobotDealer/**` inventory, and its paths, UTF-8/LF encoding,
+descriptor, closed ABI, positive structural privacy and no-bundled-media checks
+pass. The separate result validates against the generic result schema but
+retains the prior app-Recovery-1 idempotency/source event and
+`usage.model=claude-fable-5`, inconsistent with the final Opus delta and
+visible `Opus 5 High` execution. Those raw fields remain unchanged. No billing
+change, re-upload, Fable replay, source revision or later Claude contact is
+authorized.
 
-That archive plus the terminal result is a source-delivery candidate only.
-OpenAI must hash and freeze the exact bytes, reject any extra/wrapped/path-invalid
-entry, validate encoding/provenance/descriptor/contract conformance, materialize
-them unchanged at accepted base `4d26680`, run both UE5.7 targets, all fifteen
-focused RobotDealer tests and the full LongTable automation suite, and
-independently accept or reject before direct-production credit or integration is
-legal.
+OpenAI hashed and froze the exact bytes, validated the entry set, encoding,
+provenance, descriptor and contract, then mechanically materialized them
+unchanged at accepted base `4d26680` as candidate `d6389eb`, tree
+`e3af3f7`. TypeScript/Vitest passed 219/219; strict native TypeScript,
+11/11 fixture-current and the production web build also passed. The mandatory
+UE5.7 editor build failed during UHT because the candidate duplicates the
+accepted foundation's `LongTableRobotDealerPresenter.h` and global
+`ULongTableRobotDealerPresenter`. The game target and Unreal automation were
+not run after that gate failed. Independent review additionally found that
+Resume can append paused work after a later reentrant Reset and that the tests
+do not exercise native-first/dynamic-second callbacks or reentrancy from both
+delegate types.
 
-The RobotDealer acceptance gate remains closed until exact result binding,
-immutable authority, restricted/safe/no-session-persistence flags, the closed
-environment allowlist, atomic claim/process ownership, manifest/path/encoding/
-contribution, TypeScript, UE5.7 editor/game builds, all
-15 focused tests, full automation and
-independent source review are green on one exact candidate. Even that acceptance
-would prove only the standalone presentation plugin; composition, visible robot
+The RobotDealer acceptance gate remains closed with
+`OPENAI_CHANGES_REQUIRED_OPUS5_SOURCE_DELIVERED_WRITER_LEASE_CLOSED`.
+Sequence 28's exact archive, result and candidate are immutable rejected
+evidence and earn no direct-production point. A new implementation route first
+requires a revised non-colliding public inventory/class contract, then a fresh
+workload preflight and provider packet. OpenAI cannot rename or repair the
+provider's product source under QA authority. Composition, visible robot
 embodiment, authority integration, Android, Quest, hand/controller, Meta
 presence/avatar, two-device privacy, performance, accessibility, human,
 cultural, rights, store, merge and release gates remain open.

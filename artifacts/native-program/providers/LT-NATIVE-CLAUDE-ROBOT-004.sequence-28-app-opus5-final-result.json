@@ -1,0 +1,285 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28-APP-RECOVERY1",
+  "authority_snapshot_digest": "sha256:a171b144d499d289382feec34c108580ba6dca64d7106fb601c31822942dcf7a",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+    "source_event_id": "owner-explicit-claude-app-primary-20260831",
+    "slack_thread_ts": null,
+    "github_issue": null,
+    "github_pull_request": null
+  },
+  "provider": "Claude",
+  "run_reference": "Claude desktop app session, configured model claude-fable-5, effort high, LT-NATIVE-CLAUDE-ROBOT-004 app recovery 1; the serving model may differ from the configured identifier",
+  "status": "SUCCEEDED",
+  "outcome": "Authored the complete eight-file source-only UE5.7 LongTableRobotDealer plugin from the attached public clean-room archive alone and attached it as LT-NATIVE-CLAUDE-ROBOT-004-app-recovery1-delivery.zip with exactly the eight inherited paths, no wrapper directory and no ninth entry. The delivery implements the closed twelve-kind/eleven-motion/seven-result vocabulary, the six-field cue and seven-field presentation state in contract order with UE5.7 Blueprint-supported reflected storage (int64 PublicSequence, int32 FocusSeat and TeamIndex, uint8 counts) and the narrower contract bounds enforced explicitly before any mutation, one private raise-only acceptance high-water with exact-duplicate and sequence-conflict defense, a bounded 64-slot paused FIFO, immediate slot-free pause/resume/reset controls, exact cue-to-state emission correlation including the permitted backward public-sequence step, native-before-dynamic whole-pair ordering with a private application FIFO and dispatch guard for reentrant submission, all twelve motion rows, positive structural privacy with no prohibited control, and all fifteen exact automation test IDs. No build, compiler, engine or target project was available, so compilation and automation execution are reported as NOT_RUN.",
+  "artifacts": [
+    {
+      "kind": "delivery-archive",
+      "location": "LT-NATIVE-CLAUDE-ROBOT-004-app-recovery1-delivery.zip (attached to this app response)",
+      "digest": "sha256:7ee20299a02972f2fcca49b0539449499bc384f45a28e972f6ab2bfa78045abc"
+    },
+    {
+      "kind": "source-file",
+      "location": "LongTableRobotDealer/LongTableRobotDealer.uplugin",
+      "digest": "sha256:b43328780fb19237ecb5a45f0bf239dc56eff08a50601ec695b169433dd40ec2"
+    },
+    {
+      "kind": "source-file",
+      "location": "LongTableRobotDealer/README.md",
+      "digest": "sha256:3149b309bad423b95a7d1fd1e16b7727a1ed5e386192f37ba295f63f9a6537ba"
+    },
+    {
+      "kind": "source-file",
+      "location": "LongTableRobotDealer/Source/LongTableRobotDealer/LongTableRobotDealer.Build.cs",
+      "digest": "sha256:77764670ef3a74401494bd78c3954f94aca7effa4b4673220256bf0e48377a4b"
+    },
+    {
+      "kind": "source-file",
+      "location": "LongTableRobotDealer/Source/LongTableRobotDealer/Public/LongTableRobotDealerCueInterface.h",
+      "digest": "sha256:d902a3c42db8259ded319a5a411236c9fb52c6ac784dcb7598d71c221c82c121"
+    },
+    {
+      "kind": "source-file",
+      "location": "LongTableRobotDealer/Source/LongTableRobotDealer/Public/LongTableRobotDealerPresenter.h",
+      "digest": "sha256:86234f295bf565ff265edf31f86053a0c592e4d38ae384a21f459232c5f97b14"
+    },
+    {
+      "kind": "source-file",
+      "location": "LongTableRobotDealer/Source/LongTableRobotDealer/Private/LongTableRobotDealerModule.cpp",
+      "digest": "sha256:791d0a899140e6c914addb6f8a6961ca5206e9da9f82734841b640edf28ce5fd"
+    },
+    {
+      "kind": "source-file",
+      "location": "LongTableRobotDealer/Source/LongTableRobotDealer/Private/LongTableRobotDealerPresenter.cpp",
+      "digest": "sha256:f20cda287bd339104b9c95b9d8ecd386cb76a94f2c29777a6d4410889dede51c"
+    },
+    {
+      "kind": "source-file",
+      "location": "LongTableRobotDealer/Source/LongTableRobotDealer/Private/Tests/LongTableRobotDealerTests.cpp",
+      "digest": "sha256:a790087a841bf19c0eb293d18ed1b654b3e53279fe7d5de512d8488a45e6925e"
+    }
+  ],
+  "checks": [
+    {
+      "command": "read all six attached authority files in full before first write",
+      "result": "PASS: PUBLIC_CONTRACT.json, PUBLIC_FIXTURES.json, RESULT_SCHEMA.json, ASSIGNMENT_PACKET.json, APP_TRANSPORT_DELTA.json and WORK_ORDER.md were read completely before any output was authored",
+      "exit_code": 0
+    },
+    {
+      "command": "archive entry-set equality against the eight closed output paths",
+      "result": "PASS: 8 entries, exact order and spelling, no wrapper directory, no directory entries, no ninth entry, no generated file, log, report, manifest, transcript, cache, binary, intermediate or result file",
+      "exit_code": 0
+    },
+    {
+      "command": "encoding audit of all eight entries (UTF-8, no BOM, no CR byte, exactly one final LF)",
+      "result": "PASS: every entry is ASCII-range UTF-8, contains zero CR bytes, has no byte-order mark and ends with exactly one LF",
+      "exit_code": 0
+    },
+    {
+      "command": "provenance marker audit",
+      "result": "PASS: each of the seven taggable files contains exactly one matching Claude marker pair, begin marker on the first line and end marker on the final content line; the .uplugin descriptor contains no marker and no comment",
+      "exit_code": 0
+    },
+    {
+      "command": "plugin descriptor JSON parse and closed-shape check",
+      "result": "PASS: valid JSON with exactly eleven top-level properties, EnabledByDefault true, CanContainContent false, exactly one LongTableRobotDealer Runtime/Default module row, no Plugins array, no URL, no media reference and no additional property",
+      "exit_code": 0
+    },
+    {
+      "command": "independent behavioral transcription of the state machine exercised against every fixture ruling",
+      "result": "PASS: 42/42 checks, zero failures, covering initial state, sequence-0 freshness, the inclusive valid edges, all seven invalid-atomicity cases, exact-duplicate/conflict/stale classification, the six-step interleave (Accepted, Accepted, AcceptedQueued, AcceptedQueued, Accepted, Accepted with emission order 1, 3, 6, 7, 4, 5 and high-water progression 1, 3, 4, 5, 6, 7), all twelve motion rows, ordinary-while-paused queueing, FIFO drain, the 64-slot capacity rejection with control sequence reuse and no eviction, reset replay-defense preservation, the concealment counterfactual and external-label equivalence",
+      "exit_code": 0
+    },
+    {
+      "command": "prohibited-privacy-control audit of the authored source",
+      "result": "PASS: the implementation and tests use only positive closed structures, field-by-field construction, decode rejection, exact reflected inventories and counterfactual byte-equivalence; no regex, blacklist, keyword or substring scan, redaction, serialize-then-delete or concealed-object-then-delete control exists",
+      "exit_code": 0
+    },
+    {
+      "command": "UnrealBuildTool LongTableEditor Win64 Development",
+      "result": "NOT_RUN: the attached sandbox contains no Unreal target project, engine installation or Unreal toolchain",
+      "exit_code": null
+    },
+    {
+      "command": "UnrealBuildTool LongTable Win64 Development",
+      "result": "NOT_RUN: the attached sandbox contains no Unreal target project, engine installation or Unreal toolchain",
+      "exit_code": null
+    },
+    {
+      "command": "focused automation LongTable.RobotDealer",
+      "result": "NOT_RUN: no compiled editor binary exists in this environment",
+      "exit_code": null
+    },
+    {
+      "command": "full automation LongTable",
+      "result": "NOT_RUN: gated behind focused acceptance, which cannot run here",
+      "exit_code": null
+    }
+  ],
+  "acceptance": [
+    {
+      "check": "Exactly the eight closed output paths exist in the delivery, with no wrapper directory and no ninth entry",
+      "status": "PASS",
+      "evidence": "Archive namelist equals the inherited eight-path inventory in order; 8 entries, 25651 bytes"
+    },
+    {
+      "check": "Every output is UTF-8 without BOM, LF-only with exactly one final LF; seven taggable files carry exactly one frozen provenance marker pair in the required boundary positions; the descriptor carries no marker or comment",
+      "status": "PASS",
+      "evidence": "Per-entry byte audit inside the built archive"
+    },
+    {
+      "check": "The descriptor is the exact frozen eleven-property JSON object with EnabledByDefault true and exactly one LongTableRobotDealer Runtime/Default module and no Plugins array",
+      "status": "PASS",
+      "evidence": "JSON parse reports 11 top-level properties matching PUBLIC_FIXTURES.json plugin_descriptor exactly"
+    },
+    {
+      "check": "The descriptor and Build.cs expose one Runtime module with only Core, CoreUObject and Engine dependencies",
+      "status": "PASS",
+      "evidence": "Build.cs declares those three in PublicDependencyModuleNames with every other dependency list explicitly empty; LongTable.RobotDealer.ModuleBoundary asserts both inventories positively"
+    },
+    {
+      "check": "Exact closed inventories: twelve cue kinds, eleven motion kinds, seven submit results, six ordered cue fields, seven ordered state fields, capacity 64, no extension member",
+      "status": "PASS",
+      "evidence": "Public headers declare exactly those members; LongTable.RobotDealer.ClosedSchema asserts enum sizes, member values, reflected property counts, contract order via ascending storage offsets, and compile-time STRUCT_OFFSET ordering"
+    },
+    {
+      "check": "UE5.7 Blueprint-supported reflected storage int64/int32/uint8 with the narrower contract bounds enforced explicitly before any mutation",
+      "status": "PASS",
+      "evidence": "Property-class assertions on FInt64Property, FIntProperty, FByteProperty, FBoolProperty and FEnumProperty; IsCueStructurallyValid runs before high-water, last-accepted, queue, state or delegate mutation"
+    },
+    {
+      "check": "Private raise-only replay defense; rejected queue-full input advances nothing and evicts nothing",
+      "status": "PASS",
+      "evidence": "RaiseReplayDefense is private with no getter, reflected property or friend seam; LongTable.RobotDealer.QueueCapacityAtomic proves non-advancement externally by reusing the rejected sequence for an accepted pause control"
+    },
+    {
+      "check": "Bounded paused FIFO, immediate slot-free controls, one resume drains once in FIFO order, reset preserves replay defense",
+      "status": "PASS",
+      "evidence": "LongTable.RobotDealer.PausedQueueOrder, QueueCapacityAtomic, PauseRequiresExplicitCue, OrdinaryCueCannotResume and ResetPreservesReplayDefense; independent transcription reproduced every ruling"
+    },
+    {
+      "check": "Exact cue-to-state correlation, including the permitted backward public-sequence step, with no added public field",
+      "status": "PASS",
+      "evidence": "LongTable.RobotDealer.DirectQueuedInterleaveCannotRegress asserts emission order 1, 3, 6, 7, 4, 5 with per-emission cue/state sequence equality"
+    },
+    {
+      "check": "Native-before-dynamic whole-pair ordering with a private application FIFO and dispatch guard for reentrant submission",
+      "status": "PASS",
+      "evidence": "DispatchPendingApplications captures value copies, broadcasts native then dynamic, and appends reentrant work behind pending work; the application FIFO is private, unreflected and independent of paused-queue capacity"
+    },
+    {
+      "check": "Separate native and dynamic multicast delegates; AddLambda used only on the native delegate",
+      "status": "PASS",
+      "evidence": "DECLARE_MULTICAST_DELEGATE_TwoParams and DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams are distinct; the dynamic delegate is verified only structurally through FMulticastDelegateProperty reflection and is never bound in tests"
+    },
+    {
+      "check": "All fifteen exact automation test IDs exist and exercise the fixture-defined cases",
+      "status": "PASS",
+      "evidence": "Fifteen IMPLEMENT_SIMPLE_AUTOMATION_TEST declarations matching required_test_ids byte for byte"
+    },
+    {
+      "check": "Positive structural privacy only; no prohibited privacy control",
+      "status": "PASS",
+      "evidence": "Closed structures with no string, object reference, optional, variant, property bag, map or opaque byte member; RightsCleanInventory asserts every closed member is a numeric, Boolean or enumeration property"
+    },
+    {
+      "check": "AI Dealer and Human Host remain external labels adding no runtime mode, field, branch, state or result",
+      "status": "PASS",
+      "evidence": "LongTable.RobotDealer.DealerModeAuthorityEquivalence compares two labelled runs for byte-identical classifications and outputs and asserts the closed member inventories contain no mode member"
+    },
+    {
+      "check": "Original source and prose only; no bundled voice, jazz, blues, music, sample, image, likeness, model, texture, archival media, URL or third-party asset",
+      "status": "PASS",
+      "evidence": "All eight entries are hand-authored text for this assignment; the archive contains no binary, media or asset entry and no URL"
+    },
+    {
+      "check": "No repository, network, connector, browser, memory, agent or external access was used",
+      "status": "PASS",
+      "evidence": "Only the six attached archive files and local file authoring, inspection, hashing and packaging were used"
+    },
+    {
+      "check": "UE5.7 LongTableEditor and LongTable Win64 Development builds",
+      "status": "NOT_RUN",
+      "evidence": "No Unreal target project, engine or toolchain exists in this environment"
+    },
+    {
+      "check": "Focused LongTable.RobotDealer automation with zero failure or not-run",
+      "status": "NOT_RUN",
+      "evidence": "No compiled editor binary is available here"
+    },
+    {
+      "check": "Full LongTable automation after focused acceptance",
+      "status": "NOT_RUN",
+      "evidence": "Gated behind focused acceptance, which cannot run here"
+    },
+    {
+      "check": "OpenAI acceptance, integration, Quest/device evidence, human acceptance, merge, release, publication or purchase",
+      "status": "NOT_RUN",
+      "evidence": "Out of scope for a source-only provider delivery; no such claim is made"
+    }
+  ],
+  "risks": [
+    "The plugin has never been compiled. UnrealHeaderTool and compiler acceptance of the reflected declarations, delegate macros and automation macros are unverified in this environment.",
+    "Automation flag spelling for the focused tests uses individual EAutomationTestFlags context enumerators plus EngineFilter; if the target engine revision renames or regroups those enumerators the tests may need a mechanical flag adjustment.",
+    "Behavioral confidence rests on an independent transcription of the same state machine, not on execution of the shipped C++; a transcription error would not be caught by it.",
+    "The tests construct the component with NewObject and root it rather than registering it on an actor in a world; if the target automation environment requires a world context this may need adjustment.",
+    "The eight-path and dependency inventories are asserted inside the process as declared-versus-expected equalities; the authoritative filesystem-side and build-file inventory review remains OpenAI's."
+  ],
+  "blockers": [],
+  "requested_decisions": [],
+  "side_effects": [
+    {
+      "kind": "repository_write",
+      "target": "any Long Table repository, worktree or branch",
+      "status": "NOT_ATTEMPTED",
+      "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28-APP-RECOVERY1",
+      "external_id": null
+    },
+    {
+      "kind": "network_access",
+      "target": "web search, fetch, connector, MCP or provider API",
+      "status": "NOT_ATTEMPTED",
+      "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28-APP-RECOVERY1",
+      "external_id": null
+    },
+    {
+      "kind": "external_write",
+      "target": "Slack, Linear, GitHub, device filesystem outside the session workspace",
+      "status": "NOT_ATTEMPTED",
+      "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28-APP-RECOVERY1",
+      "external_id": null
+    },
+    {
+      "kind": "deployment_or_publication",
+      "target": "device, store, package or release channel",
+      "status": "NOT_ATTEMPTED",
+      "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28-APP-RECOVERY1",
+      "external_id": null
+    },
+    {
+      "kind": "purchase_or_permission_grant",
+      "target": "any external account or service",
+      "status": "NOT_ATTEMPTED",
+      "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28-APP-RECOVERY1",
+      "external_id": null
+    },
+    {
+      "kind": "artifact_delivery",
+      "target": "LT-NATIVE-CLAUDE-ROBOT-004-app-recovery1-delivery.zip attached to this app response",
+      "status": "COMPLETED",
+      "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28-APP-RECOVERY1",
+      "external_id": "sha256:7ee20299a02972f2fcca49b0539449499bc384f45a28e972f6ab2bfa78045abc"
+    }
+  ],
+  "usage": {
+    "model": "claude-fable-5",
+    "input_tokens": null,
+    "output_tokens": null,
+    "total_tokens": null,
+    "cost_usd": 0
+  },
+  "revision_recommended": false
+}

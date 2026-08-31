@@ -1,0 +1,59 @@
+{
+  "schema_version": "long-table-source-delivery-manifest/v1",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "transport": "Claude desktop app",
+  "visibly_selected_model": "Opus 5 High",
+  "archive": {
+    "name": "LT-NATIVE-CLAUDE-ROBOT-004-app-recovery1-delivery.zip",
+    "bytes": 25651,
+    "sha256": "7ee20299a02972f2fcca49b0539449499bc384f45a28e972f6ab2bfa78045abc",
+    "entry_count": 8
+  },
+  "entries": [
+    {
+      "path": "LongTableRobotDealer/LongTableRobotDealer.uplugin",
+      "sha256": "b43328780fb19237ecb5a45f0bf239dc56eff08a50601ec695b169433dd40ec2"
+    },
+    {
+      "path": "LongTableRobotDealer/README.md",
+      "sha256": "3149b309bad423b95a7d1fd1e16b7727a1ed5e386192f37ba295f63f9a6537ba"
+    },
+    {
+      "path": "LongTableRobotDealer/Source/LongTableRobotDealer/LongTableRobotDealer.Build.cs",
+      "sha256": "77764670ef3a74401494bd78c3954f94aca7effa4b4673220256bf0e48377a4b"
+    },
+    {
+      "path": "LongTableRobotDealer/Source/LongTableRobotDealer/Public/LongTableRobotDealerCueInterface.h",
+      "sha256": "d902a3c42db8259ded319a5a411236c9fb52c6ac784dcb7598d71c221c82c121"
+    },
+    {
+      "path": "LongTableRobotDealer/Source/LongTableRobotDealer/Public/LongTableRobotDealerPresenter.h",
+      "sha256": "86234f295bf565ff265edf31f86053a0c592e4d38ae384a21f459232c5f97b14"
+    },
+    {
+      "path": "LongTableRobotDealer/Source/LongTableRobotDealer/Private/LongTableRobotDealerModule.cpp",
+      "sha256": "791d0a899140e6c914addb6f8a6961ca5206e9da9f82734841b640edf28ce5fd"
+    },
+    {
+      "path": "LongTableRobotDealer/Source/LongTableRobotDealer/Private/LongTableRobotDealerPresenter.cpp",
+      "sha256": "f20cda287bd339104b9c95b9d8ecd386cb76a94f2c29777a6d4410889dede51c"
+    },
+    {
+      "path": "LongTableRobotDealer/Source/LongTableRobotDealer/Private/Tests/LongTableRobotDealerTests.cpp",
+      "sha256": "a790087a841bf19c0eb293d18ed1b654b3e53279fe7d5de512d8488a45e6925e"
+    }
+  ],
+  "archive_checks": {
+    "exact_closed_entry_set": true,
+    "safe_paths": true,
+    "strict_utf8": true,
+    "no_bom": true,
+    "lf_only": true,
+    "exactly_one_final_lf_per_entry": true,
+    "no_duplicate_or_case_colliding_paths": true,
+    "no_symlink_or_reparse_entries": true,
+    "crc_pass": true,
+    "no_bundled_media_music_voice_image_model_texture_or_likeness_assets": true,
+    "no_regex_or_blacklist_privacy_control": true
+  }
+}
