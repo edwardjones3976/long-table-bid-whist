@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "attempt": "RECOVERY1",
+  "status": "AUTHORIZED_PENDING_APP_SUBMIT",
+  "classification": "OWNER_SELECTED_CLAUDE_DESKTOP_APP_AS_PRIMARY_AFTER_CHROME_PRECONTACT_UPLOAD_CONTROL_FAILURE",
+  "owner_authorization": {
+    "source": "user message",
+    "text": "No, the app is more stable and consistent. That should be the primary and first choice.",
+    "recorded_at": "2026-08-31T18:33:00.7502402Z"
+  },
+  "supersedes_transport_only": {
+    "path": "director/native-program/packets/LT-NATIVE-CLAUDE-ROBOT-004-BROWSER-RECOVERY1-DELTA.json",
+    "chrome_provider_contact_occurred": false,
+    "chrome_file_transmitted": false,
+    "chrome_prompt_submitted": false,
+    "chrome_model_request_occurred": false,
+    "reason": "The hidden Chrome upload input did not emit a file chooser. The action timed out before file selection, prompt entry, submission or provider contact. The owner then designated the desktop app as the primary and first choice."
+  },
+  "inherits": {
+    "packet": "ASSIGNMENT_PACKET.json",
+    "public_contract": "PUBLIC_CONTRACT.json",
+    "public_fixtures": "PUBLIC_FIXTURES.json",
+    "result_schema": "RESULT_SCHEMA.json",
+    "authority_snapshot_digest": "sha256:a171b144d499d289382feec34c108580ba6dca64d7106fb601c31822942dcf7a",
+    "product_scope_changed": false,
+    "closed_output_inventory_changed": false,
+    "budget_changed": false,
+    "workload_row_changed": false
+  },
+  "overrides": {
+    "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28-APP-RECOVERY1",
+    "correlation_source_event_id": "owner-explicit-claude-app-primary-20260831",
+    "transport": "already-authenticated Claude desktop app",
+    "provider_working_tree_write": false,
+    "delivery": "one downloadable ZIP with exactly the eight inherited LongTableRobotDealer paths plus one schema-conforming terminal JSON object outside the ZIP",
+    "archive_name": "LT-NATIVE-CLAUDE-ROBOT-004-app-recovery1-delivery.zip",
+    "provider_git_access": false,
+    "provider_repository_access": false,
+    "provider_network_research": false,
+    "provider_external_side_effects": false
+  },
+  "input_boundary": {
+    "fixture_classification": "public synthetic",
+    "exact_archive_entries": [
+      "PUBLIC_CONTRACT.json",
+      "PUBLIC_FIXTURES.json",
+      "RESULT_SCHEMA.json",
+      "ASSIGNMENT_PACKET.json",
+      "APP_TRANSPORT_DELTA.json",
+      "WORK_ORDER.md"
+    ],
+    "prior_provider_source_included": false,
+    "prior_provider_transcript_included": false,
+    "private_repository_context_included": false,
+    "credentials_included": false
+  },
+  "limits": {
+    "app_recovery_attempts": 1,
+    "additional_claude_contacts_after_this_attempt": 0,
+    "incremental_api_budget_usd": 0,
+    "ambiguous_resend_prohibited": true
+  },
+  "acceptance_boundary": "App output is provider evidence only. OpenAI must download, hash, structurally inspect, materialize unchanged bytes into an isolated accepted-base QA worktree, build with UE5.7, run the focused and full suites, and independently accept or reject. App prose cannot waive any gate."
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28-APP-RECOVERY1",
+  "status": "FROZEN_PENDING_APP_SUBMIT",
+  "archive_path": "C:\\Users\\edwar\\.codex\\provider-sandboxes\\LT-NATIVE-CLAUDE-ROBOT-004-app-recovery1-input.zip",
+  "archive_bytes": 19988,
+  "archive_sha256": "sha256:835587517fbc26355981c8035edbddccf9f101adfafed0ce1a5fe1f18db50a95",
+  "entries": [
+    {
+      "path": "APP_TRANSPORT_DELTA.json",
+      "bytes": 3176,
+      "sha256": "sha256:f656ff1f793db2e30210817b1c125c70bd2601a572e04d4daed9ff6315288aad"
+    },
+    {
+      "path": "ASSIGNMENT_PACKET.json",
+      "bytes": 14333,
+      "sha256": "sha256:0153c630cc7302965e57743d5316f7a4a0981ede3d0c6dd0339764ad12f874ec"
+    },
+    {
+      "path": "PUBLIC_CONTRACT.json",
+      "bytes": 8592,
+      "sha256": "sha256:3668f7e5bcdb9fc32d06fef76fdbd7eef0f96597f89449607c92ff997dbd34c9"
+    },
+    {
+      "path": "PUBLIC_FIXTURES.json",
+      "bytes": 17128,
+      "sha256": "sha256:b437a31c6203c6e8f2fa402c836a6c4340d8e739d55d2040c9d1ba9d5b1a3e23"
+    },
+    {
+      "path": "RESULT_SCHEMA.json",
+      "bytes": 4148,
+      "sha256": "sha256:ebadc5bc45462ffa63ca5e6b28c09d1ccf86086389324a0c88f704bb14208d9c"
+    },
+    {
+      "path": "WORK_ORDER.md",
+      "bytes": 4336,
+      "sha256": "sha256:a0ac52d019439feed36734ad3207703d5b600258877c6c6da4eab481bf154936"
+    }
+  ],
+  "classification": {
+    "public_synthetic_only": true,
+    "private_repository_context": false,
+    "credentials": false,
+    "prior_provider_source": false,
+    "prior_provider_transcript": false,
+    "sequence_25_or_26_material": false
+  },
+  "superseded_chrome_path": {
+    "provider_contact": false,
+    "file_transmitted": false,
+    "prompt_submitted": false,
+    "model_request": false
+  },
+  "app_message": "Director Recovery 1. Use the attached public clean-room archive as your sole authority. Follow APP_TRANSPORT_DELTA.json and WORK_ORDER.md exactly. Create and attach the named eight-file delivery ZIP, then return the required schema-conforming JSON result. Do not browse, use connectors, request repository access, or include any extra archive entry."
+}

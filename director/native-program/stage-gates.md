@@ -147,20 +147,23 @@ provider-free exact-head preflight, then consumed its sole CLI primary at an
 unambiguous pre-model monthly-spend 429: one process/service contact, zero
 completed model requests, inference contacts, tokens, cost, source and credit.
 The CLI route is closed and cannot be replayed. The owner's later explicit
-instruction, `Retry Claude via Chrome!`, supplies materially new routing
-authority for exactly one Browser Recovery 1 under the unchanged assignment.
-Its projection leaves Cursor exactly at the 25% hard ceiling after a real
-terminal model result.
+Chrome-retry instruction supplied materially new routing authority, but the
+hidden upload input emitted no file chooser and that path ended before file
+selection, transfer, prompt entry, submission, provider contact or model
+request. The owner's subsequent instruction designates the Claude desktop app
+as the primary and first choice for exactly one Recovery 1 under the unchanged
+assignment. Its projection leaves Cursor exactly at the 25% hard ceiling after
+a real terminal model result.
 
-The browser recovery freezes a six-file, public/synthetic input archive: the
+The app recovery freezes a six-file, public/synthetic input archive: the
 unchanged assignment packet, public contract, public fixtures, result schema,
-browser transport delta and work order. Sequence-25/26 source, prompts,
+app transport delta and work order. Sequence-25/26 source, prompts,
 transcripts, findings, hashes, diffs, sandboxes, worktrees, repository context,
-credentials and quarantined bytes remain prohibited inputs. Chrome is transport
-only; Claude may not browse, use connectors or request repository access. It may
+credentials and quarantined bytes remain prohibited inputs. The desktop app is
+transport only; Claude may not browse, use connectors or request repository access. It may
 return one named ZIP containing exactly the inherited eight-file
 `LongTableRobotDealer/**` inventory plus one schema-conforming result outside the
-ZIP. No second browser submit or later Claude contact is authorized.
+ZIP. No Chrome submit, second app submit or later Claude contact is authorized.
 
 That archive plus the terminal result is a source-delivery candidate only.
 OpenAI must hash and freeze the exact bytes, reject any extra/wrapped/path-invalid
