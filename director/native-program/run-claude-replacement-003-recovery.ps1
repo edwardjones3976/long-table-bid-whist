@@ -12,8 +12,13 @@ $ClaudeExe = 'C:\Users\edwar\.local\bin\claude.exe'
 $SchemaRoot = 'C:\Users\edwar\.codex\provider-qa\director-policy-cc791'
 $SchemaPath = Join-Path $SchemaRoot 'docs\schemas\model-result-packet-v1.schema.json'
 $PacketPath = Join-Path $ControlRoot 'director\native-program\packets\LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003.json'
+$ResultBindingPath = Join-Path $ControlRoot 'director\native-program\packets\LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003-RESULT-BINDING.json'
 $ActivationPath = Join-Path $ControlRoot 'artifacts\native-program\coordination\2026-08-30-sequence-16-recovery-activation.md'
 $AuditPath = Join-Path $ControlRoot 'artifacts\native-program\qa\2026-08-30-claude-replacement-003-partial-audit.md'
+$PostflightPath = Join-Path $ControlRoot 'director\native-program\verify-materialize-claude-replacement-003.ps1'
+$RecoveryOutputPath = Join-Path $ControlRoot 'artifacts\native-program\providers\LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003-recovery-cli-output.json'
+$RecoveryErrorPath = Join-Path $ControlRoot 'artifacts\native-program\providers\LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003-recovery-cli-stderr.txt'
+$MaterializationManifestPath = Join-Path $ControlRoot 'artifacts\native-program\qa\LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003-materialization.json'
 $DependencyRoot = 'C:\Users\edwar\.codex\worktrees\long-table-claude-foundation-final'
 $ResetAt = [DateTimeOffset]::Parse('2026-08-30T19:00:00-07:00')
 
@@ -26,8 +31,10 @@ $Expected = [ordered]@{
     DirtyStatus = 'M services/table-authority/src/table.ts'
     PartialPatchSha256 = '3de9147d2e0d115b2d028ec6825391970b961c8960849e74da3cd6616f455feb'
     PacketSha256 = '85ba252916b6496045e64285a9da1d9cca4de34821bbc333f113f572694f9a80'
+    ResultBindingBlob = '6c191d7d050cb5eb1484370c5eb6b4ee66a2a4d8'
     ActivationSha256 = 'de7a94c54574fd40d13e014e7fec2e576e558c251efba309c6081afaf472ce5c'
     AuditSha256 = '6fd4f02f9c8e234cdfdef577909a4332a770325ede481c1da4cb963647170e2d'
+    PostflightBlob = '291ecb6a899e3d437a4b73492baf56b26d15926b'
     SchemaAuthorityHead = 'cc791364e2f1ff1ac4c72e01c7122296e4ff7362'
     SchemaAuthorityTree = '51f529f07b453ec8e388d5634a569efb8cd2a881'
     SchemaBlob = 'ea3dbdf577b757a492ec4fcd53617a0fd9270800'
@@ -73,7 +80,7 @@ function Assert-Exact {
     }
 }
 
-foreach ($requiredPath in @($ProviderRoot, $ClaudeExe, $SchemaPath, $PacketPath, $ActivationPath, $AuditPath, $DependencyRoot)) {
+foreach ($requiredPath in @($ProviderRoot, $ClaudeExe, $SchemaPath, $PacketPath, $ResultBindingPath, $ActivationPath, $AuditPath, $PostflightPath, $DependencyRoot)) {
     if (-not (Test-Path -LiteralPath $requiredPath)) {
         throw "Required path is missing: $requiredPath"
     }
@@ -99,8 +106,10 @@ Assert-Exact -Name 'provider diff check' -Actual (Invoke-Git -Root $ProviderRoot
 Assert-Exact -Name 'provider partial patch SHA-256' -Actual (Get-ProviderPatchSha256 -Root $ProviderRoot) -ExpectedValue $Expected.PartialPatchSha256
 
 Assert-Exact -Name 'packet SHA-256' -Actual (Get-Sha256 -Path $PacketPath) -ExpectedValue $Expected.PacketSha256
+Assert-Exact -Name 'result binding canonical blob' -Actual (Invoke-Git -Root $ControlRoot -GitArgs @('hash-object', '--path=director/native-program/packets/LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003-RESULT-BINDING.json', '--', 'director/native-program/packets/LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003-RESULT-BINDING.json')) -ExpectedValue $Expected.ResultBindingBlob
 Assert-Exact -Name 'activation SHA-256' -Actual (Get-Sha256 -Path $ActivationPath) -ExpectedValue $Expected.ActivationSha256
 Assert-Exact -Name 'partial audit SHA-256' -Actual (Get-Sha256 -Path $AuditPath) -ExpectedValue $Expected.AuditSha256
+Assert-Exact -Name 'postflight canonical blob' -Actual (Invoke-Git -Root $ControlRoot -GitArgs @('hash-object', '--path=director/native-program/verify-materialize-claude-replacement-003.ps1', '--', 'director/native-program/verify-materialize-claude-replacement-003.ps1')) -ExpectedValue $Expected.PostflightBlob
 Assert-Exact -Name 'schema authority HEAD' -Actual (Invoke-Git -Root $SchemaRoot -GitArgs @('rev-parse', 'HEAD')) -ExpectedValue $Expected.SchemaAuthorityHead
 Assert-Exact -Name 'schema authority tree' -Actual (Invoke-Git -Root $SchemaRoot -GitArgs @('rev-parse', 'HEAD^{tree}')) -ExpectedValue $Expected.SchemaAuthorityTree
 Assert-Exact -Name 'schema authority status' -Actual (Invoke-Git -Root $SchemaRoot -GitArgs @('status', '--porcelain=v1')) -ExpectedValue ''
@@ -146,10 +155,17 @@ if ($PreflightOnly) {
     exit 0
 }
 
+foreach ($outputPath in @($RecoveryOutputPath, $RecoveryErrorPath, $MaterializationManifestPath)) {
+    if (Test-Path -LiteralPath $outputPath) {
+        throw "Recovery output already exists; refusing a duplicate provider invocation: $outputPath"
+    }
+}
+
 $env:CLAUDE_CODE_DISABLE_AUTO_MEMORY = '1'
 $env:CLAUDE_CODE_DISABLE_ORG_MEMORY = '1'
 
 $packet = Get-Content -LiteralPath $PacketPath -Raw
+$resultBinding = Get-Content -LiteralPath $ResultBindingPath -Raw
 $activation = Get-Content -LiteralPath $ActivationPath -Raw
 $audit = Get-Content -LiteralPath $AuditPath -Raw
 $schemaObject = Get-Content -LiteralPath $SchemaPath -Raw | ConvertFrom-Json
@@ -170,6 +186,7 @@ Complete all 17 leased paths, not merely the partial TypeScript declaration work
 "@
 
 $prompt = $recoveryHeader + "`nEXACT_IMMUTABLE_PACKET_BEGIN`n" + $packet + "`nEXACT_IMMUTABLE_PACKET_END`n" +
+    "EXACT_RESULT_ENVELOPE_BINDING_BEGIN`n" + $resultBinding + "`nEXACT_RESULT_ENVELOPE_BINDING_END`n" +
     "EXACT_RECOVERY_ACTIVATION_BEGIN`n" + $activation + "`nEXACT_RECOVERY_ACTIVATION_END`n" +
     "EXACT_OPENAI_PARTIAL_AUDIT_BEGIN`n" + $audit + "`nEXACT_OPENAI_PARTIAL_AUDIT_END"
 
@@ -195,13 +212,42 @@ $claudeArgs = @(
     '--prompt-suggestions', 'false'
 )
 
-Push-Location $ProviderRoot
-try {
-    $prompt | & $ClaudeExe @claudeArgs
-    $providerExit = $LASTEXITCODE
-}
-finally {
-    Pop-Location
+$processInfo = [Diagnostics.ProcessStartInfo]::new()
+$processInfo.FileName = $ClaudeExe
+$processInfo.WorkingDirectory = $ProviderRoot
+$processInfo.UseShellExecute = $false
+$processInfo.RedirectStandardInput = $true
+$processInfo.RedirectStandardOutput = $true
+$processInfo.RedirectStandardError = $true
+$processInfo.CreateNoWindow = $true
+foreach ($argument in $claudeArgs) {
+    $processInfo.ArgumentList.Add($argument)
 }
 
-exit $providerExit
+$process = [Diagnostics.Process]::new()
+$process.StartInfo = $processInfo
+if (-not $process.Start()) {
+    throw 'Claude recovery process failed to start.'
+}
+$stdoutTask = $process.StandardOutput.ReadToEndAsync()
+$stderrTask = $process.StandardError.ReadToEndAsync()
+$process.StandardInput.Write($prompt)
+$process.StandardInput.Close()
+$process.WaitForExit()
+$stdout = $stdoutTask.GetAwaiter().GetResult()
+$stderr = $stderrTask.GetAwaiter().GetResult()
+$providerExit = $process.ExitCode
+
+[IO.File]::WriteAllText($RecoveryOutputPath, $stdout, [Text.UTF8Encoding]::new($false))
+[IO.File]::WriteAllText($RecoveryErrorPath, $stderr, [Text.UTF8Encoding]::new($false))
+if (-not [string]::IsNullOrWhiteSpace($stdout)) {
+    $stdout.TrimEnd() | Write-Output
+}
+if ($providerExit -ne 0) {
+    throw "Claude recovery exited $providerExit. Raw output and stderr were frozen without retry."
+}
+
+& $PostflightPath -RawResultPath $RecoveryOutputPath -ManifestPath $MaterializationManifestPath
+if ($LASTEXITCODE -ne 0) {
+    throw "Claude recovery returned exit 0, but the independent postflight rejected the handoff with exit $LASTEXITCODE."
+}

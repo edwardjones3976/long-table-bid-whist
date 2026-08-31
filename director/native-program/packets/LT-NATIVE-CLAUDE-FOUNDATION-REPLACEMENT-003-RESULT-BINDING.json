@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003",
+  "idempotency_key": "LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003-623ca52c",
+  "authority_snapshot_digest": "sha256:57df50c0157b7304817cd8f99eb738c2f968f8bc06dac193719f80b217209acb",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003",
+    "source_event_id": "owner-authorized-fix-and-complete-everything-20260830",
+    "slack_thread_ts": null,
+    "github_issue": null,
+    "github_pull_request": null
+  },
+  "provider": "Claude",
+  "run_reference_prefix": "claude-code:",
+  "required_status": "SUCCEEDED",
+  "required_artifacts": [
+    {
+      "kind": "base_commit",
+      "location": "623ca52c5679b5348630f86eb88ecd48c9db82a1"
+    },
+    {
+      "kind": "candidate_commit",
+      "location": "<exact provider HEAD after the one authorized commit>"
+    },
+    {
+      "kind": "candidate_tree",
+      "location": "<exact candidate commit tree>"
+    }
+  ],
+  "terminal_requirements": [
+    "Use only fields permitted by the frozen model-result-packet-v1 schema.",
+    "Return blockers and requested_decisions as empty arrays, revision_recommended as false, and side_effects as an empty array because the packet permits no external effect.",
+    "Report every unavailable command or acceptance gate honestly as NOT_RUN; do not fabricate a pass.",
+    "Replace both angle-bracket artifact locations with the exact lowercase 40-hex commit and tree identities created in the provider worktree."
+  ]
+}
