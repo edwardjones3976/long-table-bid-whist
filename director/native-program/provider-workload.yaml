@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]]
 schema_version: "long-table-provider-workload/v2"
@@ -11,7 +12,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_15_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists; the project target-plus-five ceilings remain the strict hard constraint and the normal +/-3 band requires an explicit useful-work exception"
+  rolling_compliance_status: "WARMING_UP_16_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists; Claude is 39.51%, below its 41% hard ceiling but 0.51 points above the normal band, so no further Claude implementation dispatch is eligible without a fresh useful-work workload decision"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -293,16 +294,38 @@ overall_effort_ledger:
     terminal_evidence: "artifacts/native-program/qa/2026-08-30-claude-replacement-003-terminal-rejection.md"
     terminal_evidence_digest: "sha256:6adcc7f6b2ed9ec0f360d4e58c6ca48b88cba091b3c68944e4747b3397d4d9da"
     exclusion_reason: "The single packet-authorized transient recovery completed one authenticated schema-valid result and exact 17-path provider commit. Independent postflight materialized an exact sole-parent candidate that excludes the rejected seed from ancestry. OpenAI QA passed strict typing, 52/52 focused tests, 219/219 full LF tests, fixture-current, production build, both UE5.7 targets and 34/34 Unreal automation, and found no structural privacy or rights boundary violation. Acceptance nevertheless fails closed because exact parent/candidate comparison proves the provider renamed away the inherited LT-NATIVE-CLAUDE-001 outer marker pair while claiming no marker was deleted or renamed. Overall effort is recorded once, direct-production credit remains zero, and only a new provenance-only owning-provider assignment may correct the exact candidate."
+  - sequence: 19
+    assignment_id: "LT-NATIVE-CLAUDE-PROVENANCE-004"
+    provider: claude
+    size: simple
+    canonical_points: 1
+    completed: true
+    terminal_status: "OPENAI_ACCEPTED_FOUNDATION_PROVENANCE_CORRECTION"
+    authenticated_run: "claude-session:6e13cdaf-79a3-4ae8-b3f2-19d2ac9441d0;candidate:4d26680fb99abacb20ecb18807b7c8833646cfa3"
+    direct_production_points: 1
+    candidate_sha: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
+    candidate_tree: "1e0db56f1e85d66c93ab64bc3dca8c237947c210"
+    terminal_result_digest: "sha256:c166ae23c22d078c4125827d13fa876813d4915e4098f640d3bfc36795bacf10"
+    accepted_outcome_digest: "sha256:55e150cc1ac75bb9cdcf4cd1255442b569f910e9857ca91661ffb9d9d9ebf83f"
+    terminal_evidence: "artifacts/native-program/qa/2026-08-30-claude-provenance-004-acceptance.md"
+    exclusion_reason: null
 
-accepted_direct_production_ledger: []
+accepted_direct_production_ledger:
+  - sequence: 19
+    assignment_id: "LT-NATIVE-CLAUDE-PROVENANCE-004"
+    provider: claude
+    canonical_points: 1
+    accepted_candidate: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
+    accepted_tree: "1e0db56f1e85d66c93ab64bc3dca8c237947c210"
+    accepted_outcome_digest: "sha256:55e150cc1ac75bb9cdcf4cd1255442b569f910e9857ca91661ffb9d9d9ebf83f"
 
 rolling_window_projection:
-  completed_assignments: 15
+  completed_assignments: 16
   window_size: 20
-  current_canonical_points: {claude: 31, cursor: 20, grok: 18, openai: 0, gemini_antigravity: 11, perplexity: 0}
-  current_partial_shares_percent: {claude: 38.75, cursor: 25.0, grok: 22.5, openai: 0, gemini_antigravity: 13.75, perplexity: 0}
+  current_canonical_points: {claude: 32, cursor: 20, grok: 18, openai: 0, gemini_antigravity: 11, perplexity: 0}
+  current_partial_shares_percent: {claude: 39.51, cursor: 24.69, grok: 22.22, openai: 0, gemini_antigravity: 13.58, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "Sequence 16 is terminal code/test green but provenance-rejected. Activate one simple/1 sequence-19 Claude provenance-only assignment on exact candidate cb7b49b because OpenAI cannot author product correction and the owner explicitly ordered another Claude contact. This useful owning-provider exception projects 39.51%, 0.51 points above the normal band but below Claude's 41% hard ceiling. There is one primary, no recovery or revision, and no broad provider round."
+  next_route: "Sequence 19 is OpenAI-accepted and foundation candidate 4d26680 is green. Do not activate the dependency-open Claude XR-test or RobotDealer packets yet: another medium/5 Claude assignment would exceed the 41% hard ceiling. Recalculate useful under-target work without filler, then issue new exact authority for the next eligible provider lane."
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -683,8 +706,8 @@ canonical_assignment_ledger:
     provider: claude
     size: simple
     canonical_points: 1
-    status: "READY_ONE_PRIMARY_PROVENANCE_ONLY"
-    accepted_direct_production_points: 0
+    status: "OPENAI_ACCEPTED_FOUNDATION_PROVENANCE_CORRECTION"
+    accepted_direct_production_points: 1
     packet_digest: "sha256:2b537f3b54462cf55fe99bbb8b1b3b6d627d803e312a54134bb643a95dfd252b"
     packet_file: "director/native-program/packets/LT-NATIVE-CLAUDE-PROVENANCE-004.json"
     activation_digest: "sha256:d127f4a91e407ffcc88c4b082a58bf7611f39e22ebbb2d298336177210c2e934"
@@ -695,8 +718,16 @@ canonical_assignment_ledger:
     starting_tree: "0c5963cad9da6256489dade2b24d90a4be7d98b2"
     owned_paths: ["Unreal/Source/LongTableTable/Private/LongTableCommitMachine.cpp"]
     attempts: {primary: 1, transient_recoveries: 0, revisions: 0}
-    accepted_outcome_digest: null
-    manual_overlay_reason: "Genuinely new one-file comment-only owning-provider correction based on post-terminal exact-head evidence and the owner's explicit order to contact Claude again. It is not sequence-16 retry/recovery/revision. Projected Claude share 32/81 = 39.51% is 0.51 points above the normal band but below the 41% hard ceiling; the exception is necessary because OpenAI cannot author product correction and routing provenance filler to another provider would violate useful-work and one-writer rules."
+    authenticated_run: "claude-session:6e13cdaf-79a3-4ae8-b3f2-19d2ac9441d0"
+    raw_result_digest: "sha256:8219a99e5bcda2c53252cb8c503be64bb2b0638f9aaa94740cad2173cdc33749"
+    terminal_result_digest: "sha256:c166ae23c22d078c4125827d13fa876813d4915e4098f640d3bfc36795bacf10"
+    candidate_sha: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
+    candidate_tree: "1e0db56f1e85d66c93ab64bc3dca8c237947c210"
+    accepted_outcome_digest: "sha256:55e150cc1ac75bb9cdcf4cd1255442b569f910e9857ca91661ffb9d9d9ebf83f"
+    accepted_evidence: "artifacts/native-program/qa/2026-08-30-claude-provenance-004-acceptance.md"
+    provider_reported_authority_digest: "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+    binding_disposition: "Provider transparently reported a zero sentinel because the custom manual packet omitted the result-field digest. OpenAI did not rewrite the result; acceptance binds pushed control head 47f445b, packet/launcher/raw hashes and exact candidate evidence. No canonical runtime replay-run is claimed."
+    manual_overlay_reason: "Genuinely new one-file comment-only owning-provider correction based on post-terminal exact-head evidence and the owner's explicit order to contact Claude again. One authenticated primary created sole-parent candidate 4d26680 with exactly four allowed comments in one path. OpenAI passed schema/identity, exact diff, normalized zero-deletion marker census, 219/219 LF tests, both UE5.7 targets and 34/34 Unreal automation. The foundation is accepted locally; sequence 19 earns simple/1 overall and direct-production points."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -710,7 +741,7 @@ credit_rules:
   - "Provider identity never grants merge, deploy, publication, spending, permissions, store or final-acceptance authority."
   - "Pre-PR76 legacy units remain visible but are excluded from canonical rolling and direct-production ledgers until assignment ID, immutable points, order, authentication and outcome binding are all proven."
   - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
-  - "Sequence 16 executed terminally and the completed useful-work window is Claude 31/80 = 38.75%, Cursor 20/80 = 25%, Grok 18/80 = 22.5%, Antigravity 11/80 = 13.75%, OpenAI 0 and Perplexity 0. Sequence 19 projects Claude 32/81 = 39.51%, a recorded useful-work exception 0.51 points above the normal band but below the 41% hard ceiling. XR and RobotDealer remain separate dependency-closed future packets and require a fresh projection after provenance acceptance."
+  - "Sequence 19 executed terminally and the completed useful-work window is Claude 32/81 = 39.51%, Cursor 20/81 = 24.69%, Grok 18/81 = 22.22%, Antigravity 11/81 = 13.58%, OpenAI 0 and Perplexity 0. Claude is below its 41% hard ceiling but 0.51 points above the normal band; another medium Claude assignment would exceed the hard ceiling. XR and RobotDealer dependency checks may be evaluated, but dispatch requires a fresh eligible workload route without filler."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
@@ -721,3 +752,4 @@ action_reduction:
 
 # [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]]

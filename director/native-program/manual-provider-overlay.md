@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
 # Owner-authorized native provider overlay
 
@@ -499,6 +500,22 @@ share is 32/81 = 39.51%, 0.51 points above the normal band but below the 41%
 hard ceiling. That useful-work exception is explicit and does not manufacture
 filler for another provider.
 
+The one sequence-19 primary completed as authenticated Claude session
+`6e13cdaf-79a3-4ae8-b3f2-19d2ac9441d0` and local candidate `4d26680`, tree
+`1e0db56`, with sole parent `cb7b49b`. OpenAI verified the result schema and
+identity, exact one-path/four-comment/LF diff, normalized zero-deletion marker
+multiset, 219/219 full LF tests, both UE5.7 targets and 34/34 Unreal automation.
+The foundation is locally accepted; no merge, release or device claim follows.
+
+The provider transparently returned a zero authority-digest sentinel because
+the manual packet omitted that result value. OpenAI did not rewrite it and
+claims no canonical runtime replay-run. Acceptance is independently bound to
+pushed control head `47f445b`, exact packet/launcher/raw hashes and the candidate
+evidence. Future preflights must freeze the result-field digest explicitly.
+The generic Director tag checker also expects timestamp-style fourth fields and
+does not parse this project's frozen assignment-ID source markers; the exact
+packet grammar and normalized multiset pass directly, with no inferred migration.
+
 ## Acceptance
 
 Manual routing never weakens acceptance. Each provider candidate still requires:
@@ -514,3 +531,4 @@ candidate. Merge, release, Meta account/license effects, physical Quest claims,
 human acceptance, cultural acceptance, and rights acceptance remain separate
 gates.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->

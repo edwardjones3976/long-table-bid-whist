@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]] -->
 # The Long Table native program — canonical overlay
@@ -59,9 +60,9 @@ physical headset, external account, human cohort, or owner gate.
 ## Provider code ownership
 
 - Claude: terminal historical TypeScript authority/protocol/core-table output,
-  terminal provenance-rejected replacement candidate `cb7b49b`, and one active
-  sequence-19 comment-only provenance lease in `LongTableCommitMachine.cpp`.
-  Later XR-test and RobotDealer leases remain dependency-closed.
+  terminal provenance-rejected replacement candidate `cb7b49b`, and accepted
+  sequence-19 correction candidate `4d26680`. No active writer lease remains;
+  XR-test and RobotDealer require a fresh workload-eligible authority decision.
 - Cursor: the self-registering `Unreal/Plugins/LongTableXR/**` project plugin
   for hands/controllers, presence fallback, accessibility and MR/VR adapters.
 - Grok: no active writer lease. Its seven-path authority-safety assignment is
@@ -121,7 +122,11 @@ It is nevertheless terminal provenance-rejected: exact comparison proves the
 provider renamed away the inherited `LT-NATIVE-CLAUDE-001` outer marker pair
 while declaring no marker deletion or rename. New simple/1 sequence 19 gives
 Claude one file, four exact comment lines, one primary attempt and no recovery
-or revision. OpenAI remains QA-only.
+or revision. That primary produced sole-parent candidate `4d26680`, tree
+`1e0db56`, and restored the marker multiset with exactly four comments. OpenAI
+then passed 219/219 full LF tests, both UE5.7 targets and 34/34 Unreal automation.
+The native replacement foundation is locally `OPENAI_ACCEPTED`; OpenAI remains
+QA-only and no merge, release or device claim follows from this gate.
 
 The dependency-independent Grok fallback is frozen by
 `contracts/long-table-house-public-v1.json`. That contract is the entire
@@ -148,3 +153,4 @@ accepted authority and robot-cue contracts.
 
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->

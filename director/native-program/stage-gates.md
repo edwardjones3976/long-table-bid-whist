@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]] -->
 # Three large native chunks and release gates
@@ -56,10 +57,16 @@ passed the corrected real-socket probe, `52/52` focused and `219/219` full LF
 tests, strict typing, fixtures, production build, both UE5.7 targets and
 `34/34` Unreal automation. It remains unaccepted because the provider renamed
 away one inherited contribution-marker pair and incorrectly declared that
-provenance gate green. Sequence 19 is the sole active writer lease: Claude may
-add only four exact comments in one file, with one primary attempt and no
-recovery or revision. Chunk A stays closed until OpenAI accepts the resulting
-exact candidate.
+provenance gate green. Sequence 19 then added only four exact comments in one
+file and produced sole-parent candidate `4d26680`, tree `1e0db56`. Normalized
+inherited marker deletion is zero; 219/219 full LF tests, both UE5.7 targets and
+34/34 Unreal automation pass. The native foundation code gate is now locally
+`OPENAI_ACCEPTED`.
+
+XR-test and RobotDealer may not dispatch automatically: Claude is 39.51% in the
+16/20 completed window, and another medium Claude assignment would exceed the
+41% hard ceiling. Physical Quest and every human, cultural, accessibility,
+rights, store and owner gate remain open.
 
 ## Chunk B — Private Game Night
 
@@ -132,3 +139,4 @@ ambiguity; unrelated mutation; failed exact-SHA binding; or cultural harm.
 
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->

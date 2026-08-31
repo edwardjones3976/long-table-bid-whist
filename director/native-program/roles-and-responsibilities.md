@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]] -->
 # Native program roles and responsibilities
@@ -11,7 +12,7 @@ with no activation path.
 | Participant | Native-program responsibility | Production credit | Prohibited authority |
 | --- | --- | --- | --- |
 | OpenAI Director | Intake, scope freeze, routing, packets, workload enforcement, cross-module QA, synthesis, evidence binding, midpoint/final reports, kickback and owner gates | No; control-plane QA is excluded | No product-code lane, self-approval, fabricated participation, external-account assumption or gate-free completion |
-| Claude / FABLE 5 ULTRA/MAX | TypeScript authority, protocol, C++ table/runtime and composition root across all three chunks; sequence 16 is terminal provenance-rejected and sequence 19 owns one comment-only provenance repair path under new authority | 48 scope-forecast units only; sequences 12 and 16 each earn medium/5 overall effort and zero direct production; sequence 19 earns simple/1 overall effort after real terminal execution and direct production only after exact-candidate OpenAI acceptance | No edit before dependency activation; no path beyond the active one-file sequence-19 lease; no simultaneous lane, local/cloud Memory, Project knowledge, prior chat, connector, unrelated repository, prior task resume, self-review, merge/release, spending, credential change or final acceptance |
+| Claude / FABLE 5 ULTRA/MAX | TypeScript authority, protocol, C++ table/runtime and composition root across all three chunks; sequence 16 is terminal provenance-rejected and sequence 19 is the accepted comment-only correction | 48 scope-forecast units only; sequences 12 and 16 each earn medium/5 overall effort and zero direct production; accepted sequence 19 earns simple/1 overall and direct-production points | No active writer lease; no new Claude implementation assignment while its workload projection exceeds the normal band or would cross the hard ceiling; no self-review, merge/release, spending, credential change or final acceptance |
 | Cursor | Self-registering LongTableXR project plugin for hands/controllers, optional-presence seam/fallback, accessibility and MR/VR state; later separately gated integration | 4 scope-forecast units only; isolated core packet is medium/5 and production credit still requires OpenAI acceptance | No edits outside the plugin subtree, cross-lane edits, self-review, merge/deploy/publish, spending or permissions |
 | Grok | Terminal rejected seven-path authority-safety attempt; sequence 15 completed one public-only native-app/world/hybrid architecture dissent and future clean-room HouseCore/session/social work remains separate | 22 scope-forecast units only; sequences 11 and 15 each retain medium/5 overall effort and zero direct production | No writer lease in sequence 15, no sequence-11 reopening, repository/private/rejected-provider context, tools, browsing, code, self-review, merge/deploy/publish, credentials, concealed data or acceptance |
 | Gemini Antigravity | Historical rejected HouseCore and RobotDealer attempts plus completed sequence 14 fixed-vocabulary generic TypeScript state-machine scaffold | Historical candidates remain zero direct production; sequence 14 earned simple/1 overall effort from one authenticated turn and zero direct-production credit | No project/task prose, repository or owner context, private data, file writes, commands, credentials, rejected artifacts, self-review, merge, external writes or acceptance |
@@ -56,11 +57,12 @@ with no activation path.
   `cb7b49b` passed all executable gates but is terminal provenance-rejected
   because the inherited `LT-NATIVE-CLAUDE-001` outer marker pair was renamed
   away while the provider claimed no deletion or renaming.
-- Claude sequence 19 owns only
+- Claude sequence 19 owned only
   `Unreal/Source/LongTableTable/Private/LongTableCommitMachine.cpp` on exact
   `cb7b49b`. It may add only four exact comment lines: restore the inherited
   pair and add a fresh balanced `LT-NATIVE-CLAUDE-PROVENANCE-004` envelope.
-  It has one primary attempt, no recovery, no revision and no other authority.
+  Its one primary produced accepted candidate `4d26680`, tree `1e0db56`, with
+  exactly four comments and no executable change. The lease is terminal.
 - OpenAI: read-only QA of candidate paths plus mechanical materialization of
   exact provider blobs into an isolated frozen candidate. OpenAI-authored
   content is limited to `director/native-program` and
@@ -146,15 +148,16 @@ contact or delivery retry.
    Claude may read only the new frozen public contract, its own accepted public
    presentation interfaces if available, and UE5.7 public headers. It may not
    read or compare any Antigravity implementation or evidence.
-9. Sequence 19, `LT-NATIVE-CLAUDE-PROVENANCE-004`, is the only active product
-   writer lease. It is a new simple/1 one-file comment-only assignment based on
-   materially new exact-head evidence and the owner's explicit order to contact
-   Claude again. It projects Claude to 39.51%, above the normal band by 0.51
-   points but below the 41% hard ceiling; the useful-work exception is explicit
-   and creates no filler. There is one primary, no recovery and no revision.
+9. Sequence 19, `LT-NATIVE-CLAUDE-PROVENANCE-004`, is terminal
+   `OPENAI_ACCEPTED_FOUNDATION_PROVENANCE_CORRECTION` at `4d26680`. It earns
+   simple/1 overall and direct-production points. The accepted local foundation
+   opens dependency evaluation, but Claude is 39.51%, 0.51 points above the
+   normal band, and another medium Claude packet would exceed the 41% hard
+   ceiling. No Claude writer lease is active.
 
 Each lease ends when its exact provider result becomes terminal. OpenAI may
 freeze, build, test, accept or reject the bytes, but cannot correct them.
 
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->

@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 09:00 UTC | BEGIN]] -->
 # PR76 workload-adoption baseline
 
@@ -287,3 +288,27 @@ direct-production credit. XR-test, RobotDealer and later integration/device
 work remain dependency-closed until a new explicit Director assignment and
 authority decision replaces the rejected foundation route.
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 22:35 UTC | END]] -->
+
+## Sequences 13–19 terminal workload and accepted foundation
+
+Sequence 13 stopped before Perplexity submission and earns zero. Sequence 14
+Antigravity completed one simple/1 generic scaffold and sequence 15 Grok
+completed one medium/5 public architecture dissent; both earn overall effort
+only. Sequence 16 Claude completed its medium/5 replacement repair and all code
+gates passed, but exact marker comparison rejected it at zero direct production.
+
+New one-file sequence 19 was justified by materially new provenance evidence,
+sole owning-provider authority and the owner's explicit order to contact Claude
+again. Its simple/1 primary produced exact candidate `4d26680`, tree `1e0db56`.
+OpenAI passed the exact diff/multiset checks, 219/219 LF tests, both UE5.7 targets
+and 34/34 Unreal automation, then accepted the local foundation. Sequence 19
+earns simple/1 overall and accepted direct-production points.
+
+The completed partial window is 16 of 20 and 81 points: Claude 32 (39.51%),
+Cursor 20 (24.69%), Grok 18 (22.22%), Gemini Antigravity 11 (13.58%), OpenAI 0
+and Perplexity 0. Claude is 0.51 percentage points above the normal +3 band but
+below its 41% hard ceiling. Another medium Claude assignment would cross that
+ceiling, so XR-test and RobotDealer do not activate automatically even though
+the foundation dependency is green. A fresh useful-work route is required;
+filler and denominator-only work remain prohibited.
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->
