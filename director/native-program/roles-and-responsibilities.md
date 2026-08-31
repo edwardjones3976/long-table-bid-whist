@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
@@ -16,7 +17,7 @@ with no activation path.
 | OpenAI Director | Intake, scope freeze, routing, packets, workload enforcement, cross-module QA, synthesis, evidence binding, midpoint/final reports, kickback and owner gates; sequence 20 is the completed exact-state First Deal gap audit | Overall QA effort only; no direct production | No product-code lane, self-approval, fabricated participation, external-account assumption or gate-free completion |
 | Claude / FABLE 5 ULTRA/MAX | TypeScript authority, protocol, C++ table/runtime and composition root across all three chunks; sequence 16 is terminal provenance-rejected and sequence 19 is the accepted comment-only correction | 48 scope-forecast units only; sequences 12 and 16 each earn medium/5 overall effort and zero direct production; accepted sequence 19 earns simple/1 overall and direct-production points | No active writer lease; no new Claude implementation assignment while its workload projection exceeds the normal band or would cross the hard ceiling; no self-review, merge/release, spending, credential change or final acceptance |
 | Cursor | Self-registering LongTableXR project plugin for hands/controllers, optional-presence seam/fallback, accessibility and MR/VR state; later separately gated integration | 4 scope-forecast units only; isolated core packet is medium/5 and production credit still requires OpenAI acceptance | No edits outside the plugin subtree, cross-lane edits, self-review, merge/deploy/publish, spending or permissions |
-| Grok | Sequence 21 owns one XR test-oracle file only; earlier terminal authority-safety/House routes stay closed; future clean-room HouseCore/session/social work remains separate | Sequence 21 is simple/1 overall and direct only if OpenAI accepts the exact one-file result | No production XR byte, other repository path, rejected-provider input, self-review, merge/deploy/publish, credentials, concealed data or acceptance |
+| Grok | Sequence 21 pre-submit transport is terminal unavailable; earlier authority-safety/House routes stay closed; future clean-room HouseCore/session/social work remains separate | Zero sequence-21 points because no model request ran | No current writer lease, production XR byte, rejected-provider input, self-review, merge/deploy/publish, credentials, concealed data or acceptance |
 | Gemini Antigravity | Historical rejected HouseCore and RobotDealer attempts plus completed sequence 14 fixed-vocabulary generic TypeScript state-machine scaffold | Historical candidates remain zero direct production; sequence 14 earned simple/1 overall effort from one authenticated turn and zero direct-production credit | No project/task prose, repository or owner context, private data, file writes, commands, credentials, rejected artifacts, self-review, merge, external writes or acceptance |
 | Perplexity | Existing broad research evidence; sequence 13's exact current Quest query stopped before submission because the configured credential was empty | Zero sequence-13 overall/direct points because no request reached Perplexity; prior legacy research is not converted into PR76 credit | No retry/duplicate query, private context, code, vote, review verdict or external write |
 | Firecrawl | Primary-source retrieval used to verify research | Tool, never a workforce provider | No vote, authorship or acceptance authority |
@@ -39,9 +40,9 @@ with no activation path.
   source, tests and any plugin-local configuration remain inside that subtree.
 - Grok: `LT-NATIVE-GROK-AUTHORITY-SAFETY-001` is terminal rejected with no
   candidate. Its patch, ZIP, replacements, transcript and quarantined source
-  are historical evidence, never later inputs. Sequence 21 temporarily owns
-  only `Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp`
-  on exact base `33aca610`; every production XR byte is immutable. Later
+  are historical evidence, never later inputs. Sequence 21's intended one-file
+  test lease ended pre-submit after three transport failures; it produced no
+  model request or edit and owns no path. Later
   packets may separately own `services/session-gateway`,
   `Unreal/Source/LongTableSocial`, `Unreal/Content/Social`, or clean-room
   `Unreal/Plugins/LongTableHouseCore`.
@@ -168,7 +169,9 @@ contact or delivery retry.
     correct only the two stale post-boundary snapshots and missing
     above-maximum ConfirmGeneration coverage, and receives no rejected provider
     byte as an input. One primary and one objectively temporary transport
-    recovery are available; no source revision is authorized.
+    recovery were prestaged, but the route ended
+    `UNAVAILABLE_PRE_SUBMIT_TRANSPORT` before any model request. It earns zero
+    points, owns no path and cannot be retried this cycle.
 
 Each lease ends when its exact provider result becomes terminal. OpenAI may
 freeze, build, test, accept or reject the bytes, but cannot correct them.
@@ -178,3 +181,4 @@ freeze, build, test, accept or reject the bytes, but cannot correct them.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]] -->

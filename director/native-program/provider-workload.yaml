@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]]
@@ -338,7 +339,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 32, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 11, perplexity: 0}
   current_partial_shares_percent: {claude: 37.21, cursor: 23.26, grok: 20.93, openai: 5.81, gemini_antigravity: 12.79, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "Sequence 21 is authorized pending one Grok primary. It is a genuinely new one-file XR test-only fallback at 19/87 = 21.84% projected, inside Grok's normal band. Cursor's exhausted route and stale Claude XR/Robot packets remain closed; no other implementation may overlap."
+  next_route: "Sequence 21 ended UNAVAILABLE_PRE_SUBMIT_TRANSPORT with zero model requests or points after CLI authentication and two bounded Chrome transport failures. Its lease is closed and the 17/20, 86-point window is unchanged. A genuinely new one-file fallback may be assigned to a workload-eligible provider; no Grok retry or overlap is permitted."
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -764,7 +765,7 @@ canonical_assignment_ledger:
     provider: grok
     size: simple
     canonical_points: 1
-    status: "AUTHORIZED_PENDING_PRIMARY"
+    status: "UNAVAILABLE_PRE_SUBMIT_TRANSPORT"
     accepted_direct_production_points: 0
     packet_digest: "sha256:79ad4890404188145237fa93fd50af2f9392da46a7d3ad7a2946ff8ba36ebe31"
     packet_file: "director/native-program/packets/LT-NATIVE-GROK-XRTEST-001.json"
@@ -776,8 +777,9 @@ canonical_assignment_ledger:
     starting_ref: "33aca6106603342efcf43fb813482cb18fd4b18c"
     starting_tree: "04f65bc3c72202977312cb38bc039460545daeec"
     owned_paths: ["Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp"]
-    attempts: {primary: 0, transient_recoveries: 0, revisions: 0}
-    manual_overlay_reason: "New simple/1 one-file test-only fallback from terminal Cursor to Grok. It corrects only two stale immediate-snapshot assertions and adds missing above-maximum ConfirmGeneration rejection/unchanged-output coverage. Production XR bytes remain immutable. Points enter the completed ledger only after actual terminal provider execution."
+    attempts: {cli_preflight_failures: 1, chrome_primary_transport_failures: 1, chrome_recovery_transport_failures: 1, model_requests: 0, revisions: 0}
+    terminal_evidence: "artifacts/native-program/providers/2026-08-31-grok-xrtest-001-pre-submit-unavailable.md"
+    manual_overlay_reason: "The installed Grok CLI was unauthenticated. Chrome could list tabs after its documented retry, but the bounded Grok page open and fresh-tab recovery both timed out before any page or prompt control was returned. No assignment text, provider request, edit, paid ambiguity or output exists. After three pre-submit transport failures the route is unavailable for this cycle, earns zero points and owns no path."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -805,3 +807,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]]

@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
@@ -543,6 +544,12 @@ primary is authorized, one recovery exists only for an objectively temporary
 pre-result transport failure, and no source revision exists. OpenAI freezes and
 tests the exact result once.
 
+The route then ended before provider submission. The local Grok CLI was
+unauthenticated, and the bounded Chrome primary plus documented recovery each
+timed out before any Grok prompt control was returned. No model request, edit,
+paid ambiguity or workload credit exists. After three transport failures the
+route is unavailable for this cycle and its one-file lease is closed.
+
 Manual routing never weakens acceptance. Each provider candidate still requires:
 
 1. exact base, head, tree, and origin evidence;
@@ -559,3 +566,4 @@ gates.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]] -->
