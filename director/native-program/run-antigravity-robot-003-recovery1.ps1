@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 15:57 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:54 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | BEGIN]]
@@ -1961,7 +1962,7 @@ $result=[ordered]@{schema_version='1.0';bytes_read=$bytes.Length;sha256=$sha;eof
         canonical_project_pre_sha256 = $canonicalProjectBefore
         canonical_project_post_sha256 = Get-LowerSha256 $CanonicalProjectSettingsPath
         recorded_at = ([datetimeoffset]::UtcNow).ToString('o')
-    } | ConvertTo-Json -Compress
+    } | ConvertTo-Json -Depth 100 -Compress
     Write-NewUtf8 -Path $summaryPath -Text ($summary + "`n")
     $summary
 }
@@ -2147,3 +2148,4 @@ $stdout.TrimEnd()
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:54 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 15:57 UTC | END]]

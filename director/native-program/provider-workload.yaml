@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 15:57 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | BEGIN]]
@@ -1076,9 +1077,9 @@ canonical_assignment_ledger:
     recovery_prompt_digest: "sha256:39eb912cf4481d8a99d673acedff0f10d146d9300bcd0edd4014a3ebcde019d0"
     recovery_prompt_byte_length: 9668
     recovery_launcher_file: "director/native-program/run-antigravity-robot-003-recovery1.ps1"
-    recovery_launcher_digest: "sha256:06331502a0c4ceacab14e10ada97e934263648d11dd43dfba6dc8bc52062a9b4"
+    recovery_launcher_digest: "sha256:97b142013ec71cf338c4dd0179da08df314da108bb603ed4be5e8911e5a7b88a"
     recovery_qa_harness_file: "director/native-program/qa/invoke-openai-antigravity-robot-003-recovery1-qa.ps1"
-    recovery_qa_harness_digest: "sha256:0c06917e709bf4a54fbec691f73209ff6f4f43e846d419107bc2ac48b91aecde"
+    recovery_qa_harness_digest: "sha256:8318d853f361479c3d65ebcf514efe22ce62b0986d1335f1a313a92d42da22b1"
     recovery_transport_selftest_root: "artifacts/native-program/qa/LT-NATIVE-ANTIGRAVITY-ROBOT-003.file-stdin-selftest"
     recovery_transport_selftest_status: "PENDING_PROVIDER_FREE_REEXECUTION_WITH_CANONICAL_UNAVAILABLE_FAILURE_RECEIPT_PROBE; earns no attempt, recovery, provider-contact or workload credit"
     recovery_failure_receipt_rule: "Every evidence hash is captured through a non-throwing HASHED/UNAVAILABLE record. The provider-free summary must embed a parsed FAILED_CLOSED receipt with null canonical digests, explicit errors and failure_receipt_serialization_complete=true."
@@ -1138,3 +1139,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 15:57 UTC | END]]

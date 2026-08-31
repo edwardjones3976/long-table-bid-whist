@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 15:57 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:54 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | BEGIN]]
@@ -462,7 +463,7 @@ $Expected = [ordered]@{
     ProjectSettingsSha256 = '5ce5b3178d47ff3516281a1298dcb7ca589d823c08f3b2545e5f187a5e706f25'
     IsolatedProjectSettingsSha256 = '33f1b2affad9480e02366568f5521e47861819ad1c6ca27c13c5bf7a16c3ec2c'
     AgyExeSha256 = '059b96c1069206158d340ee2a8912894eca5002195e62b8cd281c26c01cd794e'
-    LauncherSha256 = '06331502a0c4ceacab14e10ada97e934263648d11dd43dfba6dc8bc52062a9b4'
+    LauncherSha256 = '97b142013ec71cf338c4dd0179da08df314da108bb603ed4be5e8911e5a7b88a'
     PermissionDeltaSha256 = 'c88d1d5fcd045c3126bfbabaf601eae4e67b47214ba3d1de33aa505be7919b5c'
     PrimaryFailureManifestSha256 = '3b1b114890433125d261abfe107da2159b5772cc46f5dd926169625bf9bc561e'
     PrimaryFailureIncidentSha256 = '2c1c4723bbd02cf180d0df84ab4cc2d57404128ddae5b0a6be8df0231c0ac2a7'
@@ -2820,3 +2821,4 @@ finally {
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:54 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 15:57 UTC | END]]
