@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 07:15 UTC | BEGIN]]
@@ -1021,7 +1022,7 @@ canonical_assignment_ledger:
     provider: gemini_antigravity
     size: medium
     canonical_points: 5
-    status: "AUTHORIZED_PENDING_PRIMARY"
+    status: "AUTHORIZED_PENDING_SOLE_RECOVERY"
     accepted_direct_production_points: 0
     packet_digest: "sha256:d4903468bcc4be006933c5ce6895ac76e6d7079ca622257d4c1a497ecd1616d2"
     packet_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-ROBOT-003.json"
@@ -1044,7 +1045,7 @@ canonical_assignment_ledger:
     project_id: "64ba9d6d-900c-4894-8bc8-b0e0a4f52906"
     model: "gemini-3.1-pro-high"
     owned_paths: ["LongTableRobotDealer/**"]
-    attempts: {local_pre_provider_guardian_failures: 1, primary: 0, transient_recoveries: 0, qa_revisions: 0, provider_contacts: 0}
+    attempts: {local_pre_provider_guardian_failures: 1, primary: 1, transient_recoveries: 0, qa_revisions: 0, provider_process_launches: 1, provider_contacts: 1, completed_model_requests: 0, authenticated_terminal_results: 0}
     pre_model_failure_status: "FAILED_CLOSED_BEFORE_PROVIDER_CREATION_DATE_TOKEN_COERCION"
     pre_model_failure_evidence: "artifacts/native-program/qa/2026-08-31-antigravity-robot-003-pre-model-guardian-failure.md"
     pre_model_failure_evidence_digest: "sha256:b70f24b5862a04d47c61fa914fe1e93a7888a82ee55541f918bb6a35756e37f4"
@@ -1053,14 +1054,40 @@ canonical_assignment_ledger:
     guardian_selftest_summary_digest: "sha256:814bf6830be89fe7eef37f3b300f9ffa55008a779697dae4165e7f0948c1b79b"
     guardian_selftest_accounting: "Provider-free exact-launcher-byte Job Object self-test; provider_process_created=false, provider_identity_present=false, provider_contacts=0; no attempt, retry or workload credit."
     recovery_only_archive: "C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-robot-dealer-antigravity-003-clean-sequence26-settings-rollback-recovered-20260831T1404326982153Z-9714563b068542d0b55f528e491cd7d8"
-    pre_model_failure_accounting: "No provider process, model request, paid ambiguity, source delivery, workload point, retry credit or provider contact. The next provider launch remains the one primary."
+    pre_model_failure_accounting: "The earlier DateKind guardian stop created no provider process, model request, paid ambiguity, source delivery, workload point, retry credit or provider contact."
+    primary_prompt_transport_status: "PRIMARY_CONSUMED_PROVIDER_PROCESS_RESUMED_PROMPT_BOUNDARY_NOT_COMPLETED"
+    primary_prompt_transport_evidence: "artifacts/native-program/qa/2026-08-31-antigravity-robot-003-primary-prompt-transport-failure.md"
+    primary_prompt_transport_evidence_digest: "sha256:2c1c4723bbd02cf180d0df84ab4cc2d57404128ddae5b0a6be8df0231c0ac2a7"
+    primary_failure_manifest: "artifacts/native-program/qa/LT-NATIVE-ANTIGRAVITY-ROBOT-003.primary-pre-model-failure/manifest.json"
+    primary_failure_manifest_digest: "sha256:3b1b114890433125d261abfe107da2159b5772cc46f5dd926169625bf9bc561e"
+    primary_failure_manifest_rows_digest: "sha256:3845f488694706ea1cab8a817368eb22f93eb236dc8d620d167fb9ab27aae533"
+    primary_completion_accounting: "One exact Antigravity process was created suspended, Job-bound, identity-published and resumed. The 9,668-byte parent-pipe WriteAsync never completed, stdin never flushed/closed, and no EOF prompt boundary, stdout, stderr, CLI log, transcript, conversation ID, success receipt, source edit, completed model request or authenticated terminal result exists. Record one primary, one provider-process launch/contact, zero accepted/direct points, and no duplicate paid dispatch."
+    recovery_status: "AUTHORIZED_PENDING_PROVIDER_FREE_FILE_HANDLE_SELFTEST_AND_EXACT_HEAD_REVIEW"
+    recovery_transport_idempotency_key: "LT-NATIVE-ANTIGRAVITY-ROBOT-003-644d1b0-SEQUENCE26-RECOVERY1"
+    logical_result_idempotency_key: "LT-NATIVE-ANTIGRAVITY-ROBOT-003-644d1b0-SEQUENCE26"
+    recovery_permission_delta_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-ROBOT-003-RECOVERY1-PERMISSION-DELTA.json"
+    recovery_permission_delta_digest: "sha256:d1ea5906e87203cf6ba6da4465236c9c1d911947c06c9ef7301b7913c37e0a2e"
+    recovery_result_binding_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-ROBOT-003-RECOVERY1-RESULT-BINDING.json"
+    recovery_result_binding_digest: "sha256:b486063747330dcde5ed502acac092f65164a55c5d6bedd71fe0428fd5f61075"
+    recovery_activation_evidence: "artifacts/native-program/coordination/2026-08-31-sequence-26-recovery1-activation.md"
+    recovery_activation_digest: "sha256:3b1d4015ef56b7191c1cbcabc36f472424f0b212977090dedd74950c63fd940b"
+    recovery_prompt_file: "artifacts/native-program/providers/LT-NATIVE-ANTIGRAVITY-ROBOT-003.sequence-26-recovery1.prompt.md"
+    recovery_prompt_digest: "sha256:39eb912cf4481d8a99d673acedff0f10d146d9300bcd0edd4014a3ebcde019d0"
+    recovery_prompt_byte_length: 9668
+    recovery_launcher_file: "director/native-program/run-antigravity-robot-003-recovery1.ps1"
+    recovery_launcher_digest: "sha256:58089f1c51af9bba34cdcda44b3174d90a29632a9c63a7e668651c0b74f42bd4"
+    recovery_qa_harness_file: "director/native-program/qa/invoke-openai-antigravity-robot-003-recovery1-qa.ps1"
+    recovery_qa_harness_digest: "sha256:3019bfc27850aeef42d9ce96cce58878489d6eb1036e334b1e56b5deff1db8da"
+    recovery_transport_selftest_root: "artifacts/native-program/qa/LT-NATIVE-ANTIGRAVITY-ROBOT-003.file-stdin-selftest"
+    recovery_transport_selftest_status: "PENDING_PROVIDER_FREE_EXECUTION; earns no attempt, recovery, provider-contact or workload credit"
+    recovery_retry_rule: "Exactly one Recovery 1 may launch after the provider-free transport proof and independent exact-head ACCEPT_RECOVERY review. Any recovery failure closes Antigravity for this assignment; no second recovery or ambiguous resend."
     isolation_boundary: "One assignment-private USERPROFILE/HOME tree, closed exact-name OS/runtime environment allowlist, custom UTF-16LE environment block, suspended Job-bound launch, exact private appData/project/transcript resolution and reparse-free evidence. No regex-based privacy control."
     canonical_settings_boundary: "C:\\Users\\edwar\\.gemini\\antigravity-cli\\settings.json and the canonical project record are read-only SHA-256 invariants; the launcher writes neither, creates no rollback byte copies, performs no restoration window, and treats no global mutex or whole-machine agy PID sample as an exclusivity boundary."
     qa_worktree: "C:\\Users\\edwar\\.codex\\worktrees\\long-table-antigravity-robot-qa-003"
     qa_branch: "codex/antigravity-robot-qa-003"
     qa_base: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
     qa_base_tree: "1e0db56f1e85d66c93ab64bc3dca8c237947c210"
-    manual_overlay_reason: "Terminal sequence 25 cannot be retried or normalized. Workload projection makes Antigravity the only capable configured product-code provider inside the hard ceiling for a fresh medium fallback. Sequence 26 uses an isolated synthetic authority root and an assignment-private Antigravity profile with an exact generated private project record containing only the bounded configuration needed for the public contract, generic result schema and Director-ratified public specification. Shared canonical settings remain read-only and are never copied, mutated or restored. Historical source bytes, prompts, transcripts, findings, results, manifests, diffs and QA evidence are not readable; general advisory lessons may appear only as standalone public requirements. Provider Git is not required: exact source-only working-tree delivery may be mechanically materialized with provider author and OpenAI committer identities after private-profile, environment, Job-object, transcript and raw-result validation. Pending earns zero overall and direct-production credit."
+    manual_overlay_reason: "Terminal sequence 25 cannot be retried or normalized. Workload projection made Antigravity the only capable configured product-code provider inside the hard ceiling for a fresh medium fallback. Sequence 26 uses an isolated synthetic authority root and an assignment-private Antigravity profile with an exact generated private project record containing only the bounded configuration needed for the public contract, generic result schema and Director-ratified public specification. Shared canonical settings remain read-only and are never copied, mutated or restored. Historical provider source remains unreadable. The consumed primary failed at the local parent-pipe prompt boundary after one process launch but before a completed model request or terminal result. The sole materially different recovery uses an inherited locked read-only prompt-file handle, exact provider-free proof, a distinct dispatch claim, and the unchanged logical prompt/result contract. Provider Git is not required: exact source-only working-tree delivery may be mechanically materialized with provider author and OpenAI committer identities only after complete launch/result/manifest validation. Pending earns zero overall and direct-production credit."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -1107,3 +1134,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 07:15 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 14:34 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | END]]

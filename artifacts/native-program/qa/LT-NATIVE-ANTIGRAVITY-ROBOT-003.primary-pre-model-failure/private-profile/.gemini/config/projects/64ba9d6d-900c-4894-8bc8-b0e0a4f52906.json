@@ -1,0 +1,27 @@
+{
+  "id": "64ba9d6d-900c-4894-8bc8-b0e0a4f52906",
+  "name": "lt-robot-dealer-antigravity-003-clean",
+  "projectResources": {
+    "resources": [
+      {
+        "folderUri": "file://C:/Users/edwar/.codex/provider-sandboxes/lt-robot-dealer-antigravity-003-clean"
+      }
+    ]
+  },
+  "permissionGrants": {
+    "permissionGrants": {
+      "allow": [
+        "write_file(*)"
+      ],
+      "deny": [
+        "command(*)",
+        "write_file(C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-robot-dealer-antigravity-003-clean\\PUBLIC_CONTRACT.json)",
+        "write_file(C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-robot-dealer-antigravity-003-clean\\RESULT_SCHEMA.json)",
+        "unsandboxed(*)",
+        "read_url(*)",
+        "execute_url(*)",
+        "mcp(*)"
+      ]
+    }
+  }
+}

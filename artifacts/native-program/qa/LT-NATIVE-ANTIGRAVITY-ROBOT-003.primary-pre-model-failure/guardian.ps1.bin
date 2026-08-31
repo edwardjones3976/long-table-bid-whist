@@ -1,0 +1,62 @@
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+if (-not ('LongTable.Sequence26GuardianNativeMethods' -as [type])) {
+    Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+namespace LongTable {
+    public static class Sequence26GuardianNativeMethods {
+        public const uint JOB_OBJECT_QUERY=0x0004, JOB_OBJECT_TERMINATE=0x0008;
+        public const uint KILL_ON_CLOSE=0x00002000, BREAKAWAY=0x00000800, SILENT_BREAKAWAY=0x00001000;
+        [StructLayout(LayoutKind.Sequential)] public struct BASIC_ACCOUNTING {
+            public long a,b,c,d; public uint e,f,ActiveProcesses,g;
+        }
+        [StructLayout(LayoutKind.Sequential)] public struct BASIC_LIMITS {
+            public long a,b; public uint LimitFlags; public UIntPtr c,d; public uint e; public UIntPtr f; public uint g,h;
+        }
+        [StructLayout(LayoutKind.Sequential)] public struct IO_COUNTERS { public ulong a,b,c,d,e,f; }
+        [StructLayout(LayoutKind.Sequential)] public struct EXTENDED_LIMITS {
+            public BASIC_LIMITS BasicLimitInformation; public IO_COUNTERS b;
+            public UIntPtr c,d,e,f;
+        }
+        [DllImport("kernel32.dll",CharSet=CharSet.Unicode,SetLastError=true)] public static extern IntPtr OpenJobObjectW(uint a,bool b,string c);
+        [DllImport("kernel32.dll",SetLastError=true)] [return:MarshalAs(UnmanagedType.Bool)]
+        public static extern bool QueryInformationJobObject(IntPtr a,int b,ref BASIC_ACCOUNTING c,uint d,IntPtr e);
+        [DllImport("kernel32.dll",SetLastError=true)] [return:MarshalAs(UnmanagedType.Bool)]
+        public static extern bool QueryInformationJobObject(IntPtr a,int b,ref EXTENDED_LIMITS c,uint d,IntPtr e);
+        [DllImport("kernel32.dll",SetLastError=true)] [return:MarshalAs(UnmanagedType.Bool)]
+        public static extern bool TerminateJobObject(IntPtr a,uint b);
+        [DllImport("kernel32.dll",SetLastError=true)] [return:MarshalAs(UnmanagedType.Bool)]
+        public static extern bool CloseHandle(IntPtr a);
+    }
+}
+"@
+}
+function Hash([string]$p){(Get-FileHash -Algorithm SHA256 -LiteralPath $p).Hash.ToLowerInvariant()}
+function Eq([string]$n,[string]$a,[string]$e){if($a-cne$e){throw "$n mismatch. Expected '$e'; got '$a'."}}
+function Fields([object]$v,[string[]]$n,[string]$l){Eq "$l count" ([string]@($v.PSObject.Properties.Name).Count) ([string]$n.Count);Eq "$l fields" (@($v.PSObject.Properties.Name|Sort-Object)-join"`n") (@($n|Sort-Object)-join"`n")}
+function Count([IntPtr]$j){$v=[LongTable.Sequence26GuardianNativeMethods+BASIC_ACCOUNTING]::new();$s=[uint32][Runtime.InteropServices.Marshal]::SizeOf($v);if(-not[LongTable.Sequence26GuardianNativeMethods]::QueryInformationJobObject($j,1,[ref]$v,$s,[IntPtr]::Zero)){throw 'guardian accounting query failed'};[int]$v.ActiveProcesses}
+function ExactParent([int]$p,[long]$t){try{(Get-Process -Id $p -ErrorAction Stop).StartTime.ToUniversalTime().Ticks-eq$t}catch{$false}}
+function StopJob([IntPtr]$j){$b=Count $j;$t=$null;if($b-gt 0){if(-not[LongTable.Sequence26GuardianNativeMethods]::TerminateJobObject($j,[uint32]::MaxValue)){throw 'guardian job termination failed'};$t=[datetimeoffset]::UtcNow.ToString('o')};$d=[datetimeoffset]::UtcNow.AddSeconds(10);$a=Count $j;while($a-ne 0-and[datetimeoffset]::UtcNow-lt$d){Start-Sleep -Milliseconds 25;$a=Count $j};if($a-ne 0){throw 'guardian job not empty'};[pscustomobject]@{before=$b;after=$a;terminated_at=$t;empty_at=[datetimeoffset]::UtcNow.ToString('o');disposition=if($b-eq 0){'JOB_ALREADY_EMPTY'}else{'JOB_TERMINATED_EMPTY'}}}
+function NewFile([string]$p,[string]$t){$b=[Text.UTF8Encoding]::new($false).GetBytes($t);$s=[IO.File]::Open($p,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None);try{$s.Write($b,0,$b.Length);$s.Flush($true)}finally{$s.Dispose()}}
+$rp=$env:LT_S26_TRANSACTION_RECORD;$readyPath=$env:LT_S26_GUARDIAN_READY;$stopPath=$env:LT_S26_GUARDIAN_STOP;$donePath=$env:LT_S26_GUARDIAN_DONE;$identityPath=$env:LT_S26_PROVIDER_IDENTITY
+$recordHash=$env:LT_S26_EXPECTED_TRANSACTION_SHA256;$guardianHash=$env:LT_S26_EXPECTED_GUARDIAN_SHA256
+$cg=$env:LT_S26_EXPECTED_CANONICAL_GLOBAL_SHA256;$cp=$env:LT_S26_EXPECTED_CANONICAL_PROJECT_SHA256;$ig=$env:LT_S26_EXPECTED_ISOLATED_GLOBAL_SHA256;$ip=$env:LT_S26_EXPECTED_ISOLATED_PROJECT_SHA256;$ec=$env:LT_S26_EXPECTED_ENVIRONMENT_SHA256
+$deadline=[datetimeoffset]::Parse($env:LT_S26_GUARDIAN_DEADLINE_AT,[Globalization.CultureInfo]::InvariantCulture)
+$r=Get-Content -LiteralPath $rp -Raw|ConvertFrom-Json -DateKind String
+Fields $r @('schema_version','assignment_id','idempotency_key','director_process_id','director_start_time_utc_ticks','control_head','control_tree','transaction_root','provider_identity_path','provider_executable_path','provider_executable_sha256','canonical_global_settings_path','canonical_global_settings_sha256','canonical_project_settings_path','canonical_project_settings_sha256','canonical_settings_written','private_profile_root','isolated_global_settings_path','isolated_global_settings_sha256','isolated_project_settings_path','isolated_project_settings_sha256','environment_contract_path','environment_contract_sha256','environment_block_sha256_utf16le','environment_key_set_sha256','environment_entry_count','profile_reparse_free','guardian_script_sha256','guardian_deadline_seconds','guardian_deadline_at','job_name','job_kill_on_close','job_created_at','armed_at') 'transaction'
+Eq 'transaction hash' (Hash $rp) $recordHash;Eq 'guardian hash' (Hash $MyInvocation.MyCommand.Path) $guardianHash;Eq 'record guardian hash' ([string]$r.guardian_script_sha256) $guardianHash;Eq 'deadline' ([string]$r.guardian_deadline_at) $deadline.ToString('o');Eq 'canonical writes' ([string]$r.canonical_settings_written) 'False'
+Eq 'canonical global' (Hash ([string]$r.canonical_global_settings_path)) $cg;Eq 'canonical project' (Hash ([string]$r.canonical_project_settings_path)) $cp;Eq 'isolated global' (Hash ([string]$r.isolated_global_settings_path)) $ig;Eq 'isolated project' (Hash ([string]$r.isolated_project_settings_path)) $ip;Eq 'environment' (Hash ([string]$r.environment_contract_path)) $ec
+$j=[LongTable.Sequence26GuardianNativeMethods]::OpenJobObjectW(12,$false,[string]$r.job_name);if($j-eq[IntPtr]::Zero){throw 'guardian could not open job'}
+try{
+    $lim=[LongTable.Sequence26GuardianNativeMethods+EXTENDED_LIMITS]::new();$sz=[uint32][Runtime.InteropServices.Marshal]::SizeOf($lim);if(-not[LongTable.Sequence26GuardianNativeMethods]::QueryInformationJobObject($j,9,[ref]$lim,$sz,[IntPtr]::Zero)){throw 'guardian limits query failed'};$flags=$lim.BasicLimitInformation.LimitFlags;if(($flags-band[LongTable.Sequence26GuardianNativeMethods]::KILL_ON_CLOSE)-eq 0-or($flags-band([LongTable.Sequence26GuardianNativeMethods]::BREAKAWAY-bor[LongTable.Sequence26GuardianNativeMethods]::SILENT_BREAKAWAY))-ne 0){throw 'guardian job limits invalid'};Eq 'initial job count' ([string](Count $j)) '0'
+    $gp=Get-Process -Id $PID -ErrorAction Stop;$now=[datetimeoffset]::UtcNow
+    $ready=[ordered]@{schema_version='1.0';assignment_id='LT-NATIVE-ANTIGRAVITY-ROBOT-003';guardian_process_id=$PID;guardian_start_time_utc_ticks=$gp.StartTime.ToUniversalTime().Ticks;director_process_id=[int]$r.director_process_id;transaction_record_sha256=$recordHash;canonical_global_settings_sha256=$cg;canonical_project_settings_sha256=$cp;isolated_global_settings_sha256=$ig;isolated_project_settings_sha256=$ip;private_profile_root=[string]$r.private_profile_root;environment_contract_sha256=$ec;provider_identity_path=$identityPath;guardian_deadline_seconds=[int]$r.guardian_deadline_seconds;guardian_deadline_at=$deadline.ToString('o');job_name=[string]$r.job_name;job_kill_on_close=$true;job_active_process_count=0;job_opened_at=$now.ToString('o');ready_at=$now.ToString('o')}|ConvertTo-Json -Compress
+    NewFile $readyPath ($ready+"`n");$status=$null;$trigger=$null
+    while($null-eq$status){$now=[datetimeoffset]::UtcNow;if($now-ge$deadline){$status='GUARDIAN_DEADLINE_JOB_EMPTY';$trigger=$now;break};if(-not(ExactParent ([int]$r.director_process_id) ([long]$r.director_start_time_utc_ticks))){$status='PARENT_EXIT_JOB_EMPTY';$trigger=$now;break};if(Test-Path -LiteralPath $stopPath -PathType Leaf){$now=[datetimeoffset]::UtcNow;$status=if($now-ge$deadline){'GUARDIAN_DEADLINE_JOB_EMPTY'}else{'DIRECTOR_SIGNAL_JOB_EMPTY'};$trigger=$now;break};Start-Sleep -Milliseconds 25}
+    $jr=StopJob $j;$completed=[datetimeoffset]::UtcNow;if($status-ceq'DIRECTOR_SIGNAL_JOB_EMPTY'-and$completed-ge$deadline){$status='GUARDIAN_DEADLINE_JOB_EMPTY'}
+    Eq 'completion canonical global' (Hash ([string]$r.canonical_global_settings_path)) $cg;Eq 'completion canonical project' (Hash ([string]$r.canonical_project_settings_path)) $cp;Eq 'completion isolated global' (Hash ([string]$r.isolated_global_settings_path)) $ig;Eq 'completion isolated project' (Hash ([string]$r.isolated_project_settings_path)) $ip;Eq 'completion environment' (Hash ([string]$r.environment_contract_path)) $ec
+    $is='ABSENT';$ish=$null;$providerPid=$null;$ticks=$null;if(Test-Path -LiteralPath $identityPath -PathType Leaf){$is='PRESENT_HASH_BOUND';$ish=Hash $identityPath;$id=Get-Content -LiteralPath $identityPath -Raw|ConvertFrom-Json -DateKind String;Eq 'identity transaction' ([string]$id.transaction_record_sha256) $recordHash;Eq 'identity job' ([string]$id.job_name) ([string]$r.job_name);$providerPid=[int]$id.provider_process_id;$ticks=[long]$id.provider_start_time_utc_ticks}
+    $done=[ordered]@{schema_version='1.0';assignment_id='LT-NATIVE-ANTIGRAVITY-ROBOT-003';status=$status;transaction_record_sha256=$recordHash;guardian_process_id=$PID;guardian_start_time_utc_ticks=$gp.StartTime.ToUniversalTime().Ticks;director_process_id=[int]$r.director_process_id;guardian_deadline_at=$deadline.ToString('o');trigger_observed_at=$trigger.ToString('o');provider_identity_status=$is;provider_identity_sha256=$ish;provider_process_id=$providerPid;provider_start_time_utc_ticks=$ticks;job_name=[string]$r.job_name;job_kill_on_close=$true;job_active_processes_before_stop=[int]$jr.before;job_active_processes_after_stop=[int]$jr.after;job_empty_verified_at=[string]$jr.empty_at;provider_process_disposition=[string]$jr.disposition;process_tree_terminated_at=[string]$jr.terminated_at;canonical_global_settings_sha256=$cg;canonical_project_settings_sha256=$cp;canonical_settings_written=$false;isolated_global_settings_sha256=$ig;isolated_project_settings_sha256=$ip;private_profile_root=[string]$r.private_profile_root;environment_contract_sha256=$ec;completed_at=$completed.ToString('o');completed_before_guardian_deadline=($completed-lt$deadline)}|ConvertTo-Json -Compress
+    NewFile $donePath ($done+"`n")
+}finally{if($j-ne[IntPtr]::Zero){[void][LongTable.Sequence26GuardianNativeMethods]::CloseHandle($j)}}

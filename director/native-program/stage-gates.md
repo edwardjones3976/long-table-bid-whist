@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:17 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | BEGIN]] -->
@@ -118,9 +119,21 @@ them. The provider
 may read only the unchanged public contract and generic result schema; those
 files plus the frozen standalone clarification in the sequence-26 prompt are
 the complete implementation authority. All Claude and historical Antigravity
-code/evidence remains prohibited. One shell-free primary is authorized under
-the exact private-profile, environment-contract and canonical-no-write
-controls.
+code/evidence remains prohibited. The one shell-free primary is consumed: it
+created and resumed one exact suspended, Job-bound provider process, but the
+parent-side anonymous-pipe write never completed the exact prompt/EOF boundary.
+It produced no authenticated terminal result or source delivery and earns zero
+accepted/direct-production points.
+
+Exactly one materially different Recovery 1 is authorized under the same
+private-profile, exact environment, canonical-no-write, Job and guardian
+controls. It uses the unchanged 9,668-byte prompt through a distinct claim and
+an inherited locked read-only regular-file stdin handle. Its gate remains
+closed until the exact launcher passes a provider-free byte/hash/EOF/Job test,
+those three evidence files are the sole child commit, clean exact-head preflight
+passes, and an independent OpenAI reviewer returns `ACCEPT_RECOVERY`. A failed
+recovery closes the provider route; no second recovery or ambiguous resend is
+permitted.
 Provider Git is not required; a valid raw result plus exact source-only working
 manifest may be mechanically frozen unchanged by OpenAI into the accepted-base
 QA worktree with honest provider-author/OpenAI-committer provenance.
@@ -214,3 +227,4 @@ ambiguity; unrelated mutation; failed exact-SHA binding; or cultural harm.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:17 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | END]] -->
