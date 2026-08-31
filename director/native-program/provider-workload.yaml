@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 07:15 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:36 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:12 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:10 UTC | BEGIN]]
@@ -29,7 +30,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20; all target-plus-five hard ceilings pass and Perplexity alone is outside normal below target. Sequence 25 is pending and earns no point yet. A real terminal Claude medium/5 RobotDealer execution would roll out sequence 1 long/8, keep every hard ceiling green, and leave Cursor 0.2558 above normal plus Perplexity below normal"
+  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20_AFTER_SEQUENCE_25; 86 total points; every target-plus-five hard ceiling passes. Cursor is 0.2558 percentage points above normal and Perplexity is below normal; neither is rounded green. Terminal Claude RobotDealer earns medium/5 overall and zero direct production."
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -104,7 +105,7 @@ native_code_assignments:
     allocation: {native_foundation_first_deal: 16, private_game_night: 16, long_table_house: 16}
     owned_surfaces: ["packages/rules-core", "packages/protocol", "services/table-authority", "Unreal/Source/LongTableProtocol", "Unreal/Source/LongTableTable", "Unreal/Source/LongTable"]
     required_model: "FABLE 5 ULTRA/MAX"
-    active_assignment: "sequence 25 first execution of LT-NATIVE-CLAUDE-ROBOT-001 clean-room LongTableRobotDealer/** only; pending earns zero points"
+    active_assignment: "none; sequence 25 LT-NATIVE-CLAUDE-ROBOT-001 is terminal FAILED after its single recovery, earns medium/5 overall and zero direct production; any replacement requires a fresh fallback packet"
   cursor:
     scope_forecast_units: 4
     credit_rule: "forecast is not credit; isolated XR-core packet is medium/5 and final integration remains separately dependency-gated"
@@ -403,11 +404,11 @@ accepted_direct_production_ledger:
 rolling_window_projection:
   completed_assignments: 20
   window_size: 20
-  current_canonical_points: {claude: 33, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0, github_copilot_cli: 1}
-  current_shares_percent: {claude: 37.08, cursor: 22.47, grok: 20.22, openai: 5.62, gemini_antigravity: 13.48, perplexity: 0.0, github_copilot_cli: 1.12}
-  enforcement: "COMPLETE_ROLLING_20; HARD_CEILINGS_PASS; NORMAL_BAND_MISS_PERPLEXITY_MINUS_4_POINTS; all other providers inside normal. This is not mislabeled as full normal-band compliance."
-  direct_production_window_status: "WARMING_UP_ONE_ACCEPTED_POINT_ONLY; not a compliance pass and sequence 24 earns zero direct production"
-  next_route: "Sequence 24 remains terminal with no XR-test retry. Sequence 25 is a genuinely separate clean-room RobotDealer module and may receive one Claude primary only after its fresh packet, activation, prompt and workload projection are committed. It receives no XR or rejected Antigravity implementation."
+  current_canonical_points: {claude: 30, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0, github_copilot_cli: 1}
+  current_shares_percent: {claude: 34.8837, cursor: 23.2558, grok: 20.9302, openai: 5.8140, gemini_antigravity: 13.9535, perplexity: 0.0, github_copilot_cli: 1.1628}
+  enforcement: "COMPLETE_ROLLING_20_AFTER_SEQUENCE_25; HARD_CEILINGS_PASS; NORMAL_BAND_MISS_CURSOR_PLUS_0.2558_AND_PERPLEXITY_BELOW_TARGET. This is not mislabeled as full normal-band compliance."
+  direct_production_window_status: "WARMING_UP_ONE_ACCEPTED_POINT_ONLY; not a compliance pass; sequences 24 and 25 earn zero direct production"
+  next_route: "Sequence 25 is terminal FAILED with no provider commit and no Claude retry. The exact 13-file manifest remains quarantined evidence only. A useful RobotDealer replacement requires a fresh non-overlapping fallback packet and workload preflight; OpenAI may not silently normalize or accept the failed packet."
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -955,7 +956,7 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "TEMPORARY_SESSION_LIMIT_RECOVERY_ARMED_FOR_2026-08-31T00:00:05-07:00"
+    status: "TERMINAL_FAILED_SANDBOX_PERMISSION_DENIED_NO_PROVIDER_COMMIT"
     accepted_direct_production_points: 0
     base_packet_digest: "sha256:4cd8d536d1500f776310e0814956b988cb03abe21cc670449c8658b7cad33cba"
     packet_digest: "sha256:8d2b31bd997636438fc8ed4ba21d20671c5d1fa4bf41e4021a3928c04a6db111"
@@ -968,10 +969,16 @@ canonical_assignment_ledger:
     starting_ref: "39087f750c7af361393feb32926ea898f9dccecb"
     starting_tree: "4085ca20ee26e081e0405d4820f3503c8f595b1c"
     owned_paths: ["LongTableRobotDealer/**"]
-    attempts: {local_pre_model_configuration_failures: 1, primary: 1, transient_recoveries: 0, model_requests: 1, source_revisions: 0}
+    attempts: {local_pre_model_configuration_failures: 1, primary: 1, transient_recoveries: 1, model_requests: 2, source_revisions: 0, third_attempts: 0}
     authenticated_run: "claude-code:2.1.251;session:884ec743-eb98-45ee-8d3f-5726e79381f3;model:claude-fable-5;effort:high"
     primary_terminal_reason: "HTTP_429_SESSION_LIMIT_RESETS_12AM_AMERICA_LOS_ANGELES_BEFORE_STRUCTURED_RESULT"
     primary_raw_result_digest: "sha256:f749669ad260baa58d999ef735ee31e30e72c32716baec302492a6d6b1852f0e"
+    recovery_authenticated_run: "claude-code:2.1.251;session:45450110-0a92-41ff-835c-c9983aadb714;model:claude-fable-5;effort:high"
+    recovery_terminal_reason: "COMPLETED_WRAPPER_WITH_STRUCTURED_STATUS_FAILED_AFTER_EIGHT_BASH_PERMISSION_DENIALS; NO_PROVIDER_COMMIT"
+    recovery_raw_result_digest: "sha256:d2f1c44995c0b0b6b441dfa69893fb7428b3d8d6e33c460a4f2792b418644acb"
+    recovery_stderr_digest: "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    recovery_schema_validation: "PASS; raw result JSON exactly equals structured_output; status FAILED"
+    primary_and_recovery_cli_list_cost_telemetry_usd: 10.988716
     frozen_working_manifest_digest: "sha256:3fba90f9e9c782da2363272f8515d80eff0530a57e6e3588df5d84f14e8a1989"
     primary_evidence: "artifacts/native-program/qa/2026-08-31-claude-robot-001-primary-session-limit.md"
     primary_evidence_digest: "sha256:af898b9869c05563bd0d23553991e5eea0819c10f8f47bcc8bdba4ddd3700c6b"
@@ -981,7 +988,7 @@ canonical_assignment_ledger:
     recovery_prompt_digest: "sha256:e5f3872037427d0daa6949e6b46effa88d2739cd761aaae25c81ac52aff66810"
     recovery_runner: "director/native-program/run-claude-robot-001-recovery.ps1"
     recovery_runner_digest: "sha256:e480a2098ec9e3686c75acc4e729450fbd0354b3c563e3affecd8216aa079284"
-    recovery_launch_status: "ARMED; local background runner atomically claims the one recovery, revalidates exact authority, working manifest and first-party Max authentication immediately before contact; superseded 12:10 heartbeat deleted to prevent duplicate dispatch"
+    recovery_launch_status: "TERMINAL; atomic one-shot claim consumed; exact pre-contact revalidation passed; later QA heartbeat deleted; no third contact"
     qa_worktree: "C:\\Users\\edwar\\.codex\\worktrees\\long-table-claude-robot-qa-002"
     qa_branch: "codex/claude-robot-qa-002"
     qa_base: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
@@ -989,7 +996,11 @@ canonical_assignment_ledger:
     qa_preflight: "CLEAN_ACCEPTED_FOUNDATION_WITH_ROBOT_PLUGIN_PATH_ABSENT; no provider bytes materialized before exact commit/result"
     qa_harness: "director/native-program/qa/invoke-openai-robot-dealer-qa.ps1"
     qa_harness_digest: "sha256:e2daeb6555c2b475970e88a0b68e3e38639eeb6eb0acbea191418824c80dd4b0"
-    manual_overlay_reason: "The sequence-18 prestage never dispatched, so sequence 25 is the first execution of the same assignment under a narrow reauthorization delta, not a duplicate row. One malformed empty-MCP launcher stopped locally before provider contact. The corrected authorized primary reached Claude Fable 5, created thirteen leased-path files, used no web or subagents, then hit an explicit temporary session limit before commit or structured output. The uncommitted bytes are frozen by manifest. At the user's explicit direction the one post-reset transient recovery is armed for the provider's stated reset, with a fail-closed exact-state runner and no duplicate heartbeat. There is still no terminal workload or direct-production credit until that run finishes."
+    terminal_evidence: "artifacts/native-program/qa/2026-08-31-claude-robot-001-terminal-permission-failure.md"
+    terminal_evidence_digest: "sha256:3e964711745e567a646e6025bc98886ef0023d97ffb3d84340ccd83cdc5ee664"
+    post_terminal_manifest_digest: "sha256:3fba90f9e9c782da2363272f8515d80eff0530a57e6e3588df5d84f14e8a1989"
+    post_terminal_manifest_comparison: "EXACT_MATCH_TO_FROZEN_PRIMARY; 13 source-only files; no generated artifacts"
+    manual_overlay_reason: "The sequence-18 prestage never dispatched, so sequence 25 was the first execution of the same assignment under a narrow reauthorization delta. The authenticated primary created thirteen leased-path files and then hit an explicit temporary session limit. The single post-reset recovery returned a schema-valid completed wrapper with structured status FAILED: eight Bash permission denials prevented the mandatory provider commit, and Claude made no edit or external write. OpenAI recomputed the exact thirteen-file manifest and proved it still matches the frozen primary bytes. The packet is terminal medium/5 overall, zero direct production, and cannot be normalized, accepted or retried. The bytes remain quarantined evidence pending a fresh fallback authority decision."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -1003,7 +1014,7 @@ credit_rules:
   - "Provider identity never grants merge, deploy, publication, spending, permissions, store or final-acceptance authority."
   - "Pre-PR76 legacy units remain visible but are excluded from canonical rolling and direct-production ledgers until assignment ID, immutable points, order, authentication and outcome binding are all proven."
   - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
-  - "Sequence 25 is pending and earns zero points. If one real Claude medium/5 run becomes terminal, sequence 1 Claude long/8 rolls out and the next window is Claude 30/86 = 34.8837%, Cursor 20/86 = 23.2558%, Grok 18/86 = 20.9302%, OpenAI 5/86 = 5.8140%, Antigravity 12/86 = 13.9535%, Perplexity 0 and GitHub Copilot CLI 1/86 = 1.1628%. All hard ceilings pass; Cursor and Perplexity miss normal."
+  - "Sequence 25 is terminal and earns medium/5 overall with zero direct production. Its completed rolling window is Claude 30/86 = 34.8837%, Cursor 20/86 = 23.2558%, Grok 18/86 = 20.9302%, OpenAI 5/86 = 5.8140%, Antigravity 12/86 = 13.9535%, Perplexity 0 and GitHub Copilot CLI 1/86 = 1.1628%. All hard ceilings pass; Cursor and Perplexity miss normal."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
@@ -1032,3 +1043,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 06:10 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:12 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:36 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 07:15 UTC | END]]

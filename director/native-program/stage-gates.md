@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:20 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]] -->
@@ -92,14 +93,18 @@ automation. Sequence 23 Antigravity and sequence 24 GitHub Copilot CLI also
 ended terminal protocol/result-rejected; none of their bytes is accepted or an
 input to another provider.
 
-Sequence 25 is the first execution of the undispatched sequence-18
-`LT-NATIVE-CLAUDE-ROBOT-001`. Accepted foundation `4d26680`, terminal XR QA and
-this explicit Director reauthorization open the independent RobotDealer authoring
-gate without claiming accepted XR. Claude receives only the exact canonical
-public JSON contract and result schema in a new standalone root repository and
-writes only `LongTableRobotDealer/**`. The pending assignment earns no credit;
-one primary and one objectively temporary pre-result recovery are authorized,
-with no source revision.
+Sequence 25, the first execution of the undispatched sequence-18
+`LT-NATIVE-CLAUDE-ROBOT-001`, is terminal `FAILED`. Its authenticated primary
+created thirteen clean-room `LongTableRobotDealer/**` source files and hit a
+temporary session limit. The single authorized post-reset recovery returned a
+schema-valid failed result after sandbox permission denials prevented the
+mandatory provider commit. OpenAI proved the thirteen-file manifest still
+exactly matches the frozen primary bytes, but the failed/no-commit packet is
+quarantined evidence only and earns medium/5 overall with zero direct
+production. No third Claude contact or normalization is authorized. RobotDealer
+authoring, composition and every later Chunk A device/human gate remain closed
+until a fresh workload-eligible fallback packet produces an independently
+acceptable candidate.
 
 ## Chunk B — Private Game Night
 
@@ -178,3 +183,4 @@ ambiguity; unrelated mutation; failed exact-SHA binding; or cultural harm.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 07:20 UTC | END]] -->
