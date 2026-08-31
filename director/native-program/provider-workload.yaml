@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 05:56 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:22 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:16 UTC | BEGIN]]
@@ -950,7 +951,7 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "AUTHORIZED_PENDING_PRIMARY"
+    status: "TEMPORARY_SESSION_LIMIT_RECOVERY_PENDING"
     accepted_direct_production_points: 0
     base_packet_digest: "sha256:4cd8d536d1500f776310e0814956b988cb03abe21cc670449c8658b7cad33cba"
     packet_digest: "sha256:8d2b31bd997636438fc8ed4ba21d20671c5d1fa4bf41e4021a3928c04a6db111"
@@ -963,8 +964,14 @@ canonical_assignment_ledger:
     starting_ref: "39087f750c7af361393feb32926ea898f9dccecb"
     starting_tree: "4085ca20ee26e081e0405d4820f3503c8f595b1c"
     owned_paths: ["LongTableRobotDealer/**"]
-    attempts: {primary: 0, transient_recoveries: 0, model_requests: 0, source_revisions: 0}
-    manual_overlay_reason: "The sequence-18 prestage never dispatched, so sequence 25 is the first execution of the same assignment under a narrow reauthorization delta, not a retry or duplicate row. Claude receives only the immutable canonical public JSON contract and result schema in a new two-file standalone root repository, owns a new plugin subtree, and cannot access XR, Long Table source or rejected provider objects. Pending work earns no overall or direct-production point."
+    attempts: {local_pre_model_configuration_failures: 1, primary: 1, transient_recoveries: 0, model_requests: 1, source_revisions: 0}
+    authenticated_run: "claude-code:2.1.251;session:884ec743-eb98-45ee-8d3f-5726e79381f3;model:claude-fable-5;effort:high"
+    primary_terminal_reason: "HTTP_429_SESSION_LIMIT_RESETS_12AM_AMERICA_LOS_ANGELES_BEFORE_STRUCTURED_RESULT"
+    primary_raw_result_digest: "sha256:f749669ad260baa58d999ef735ee31e30e72c32716baec302492a6d6b1852f0e"
+    frozen_working_manifest_digest: "sha256:3fba90f9e9c782da2363272f8515d80eff0530a57e6e3588df5d84f14e8a1989"
+    primary_evidence: "artifacts/native-program/qa/2026-08-31-claude-robot-001-primary-session-limit.md"
+    primary_evidence_digest: "sha256:af898b9869c05563bd0d23553991e5eea0819c10f8f47bcc8bdba4ddd3700c6b"
+    manual_overlay_reason: "The sequence-18 prestage never dispatched, so sequence 25 is the first execution of the same assignment under a narrow reauthorization delta, not a duplicate row. One malformed empty-MCP launcher stopped locally before provider contact. The corrected authorized primary reached Claude Fable 5, created thirteen leased-path files, used no web or subagents, then hit an explicit temporary session limit before commit or structured output. The uncommitted bytes are frozen by manifest. One post-reset transient recovery remains; there is still no terminal workload or direct-production credit."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -1002,3 +1009,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 05:16 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:22 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 05:56 UTC | END]]
