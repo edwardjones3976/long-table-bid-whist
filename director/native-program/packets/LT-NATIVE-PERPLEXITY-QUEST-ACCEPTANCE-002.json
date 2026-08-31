@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002",
+  "provider": "Perplexity",
+  "project": "Public acceptance-evidence protocol for a seated Meta Quest application",
+  "status": "AUTHORIZED_PENDING_PRIMARY",
+  "workload": {
+    "sequence": 27,
+    "size": "medium",
+    "canonical_points_on_terminal_execution": 5,
+    "direct_production_points": 0,
+    "reason": "A reproducible official-source device-acceptance protocol is required before the native First Deal can be judged on Quest. This is narrower than sequence 13's compatibility matrix and does not repeat its exact query."
+  },
+  "public_research_query": "Using only current official public primary sources from Meta, Epic Games, Khronos, and Android, design a reproducible acceptance evidence protocol for a seated Meta Quest 3/3S application built with Unreal Engine 5.7.4. Focus on observable proof, not implementation advice. Cover: unchanged APK/AAB identity across tests; package signing, install, cold launch, relaunch, and log capture; controller and hand-tracking operation plus safe live modality switching; haptics and spatial-audio checks; mixed-reality passthrough/table placement/anchor recovery with a deliberate VR fallback; frame-time, thermal, memory, draw-call and battery evidence; accessibility/comfort checks suitable for adults ages 30-70; and two-headset tests that prove concealed card state is never exposed to the wrong player. For each test state the official source URL and title, supported observable signal, exact command/tool or device UI where officially documented, pass/fail evidence to retain, version/date limits, and any contradiction. Use at most 10 sources. Mark NOT ESTABLISHED whenever official sources do not define a method or threshold. Do not use private data, repositories, code, forums, blogs, social media, or third-party tutorials. Research only: no product verdict, legal conclusion, security certification, store approval, implementation decision, or external action.",
+  "public_research_query_sha256": "sha256:0b7014ef88d3a8b95fc47e5df75d732cf75d78c04cffac2e67b6f001c3284347",
+  "objective": "Return one bounded, cited acceptance-evidence protocol that converts current official Quest and Unreal documentation into falsifiable device checks for the native milestone.",
+  "difference_from_sequence_13": [
+    "Sequence 13 asked for a platform compatibility and implementation matrix; this assignment asks for observable acceptance evidence and retained proof.",
+    "Sequence 13 stopped before provider submission; this assignment uses the owner-authorized authenticated Chrome surface because the API profile remains disabled and uncredentialed.",
+    "The exact sequence-13 query and digest are not reused."
+  ],
+  "non_goals": [
+    "No repository, source code, commit identity, private project fact, credential, account detail, Slack, Linear, provider output, or concealed live gameplay state",
+    "No programming, product decision, committee vote, review verdict, legal conclusion, security certification, store approval, implementation authority, or external write",
+    "No audience-culture, music-rights, comparable-product, monetization, or broad product-direction research"
+  ],
+  "constraints": [
+    "Submit the exact public query once in the authenticated Perplexity Chrome surface",
+    "Use at most 10 official primary sources from Meta, Epic Games, Khronos, or Android",
+    "Record observable signals, documented tools or commands, evidence to retain, visible dates or version limits, contradictions, and unsupported rows",
+    "Mark unsupported methods or thresholds NOT ESTABLISHED instead of inferring them",
+    "Do not expose cookies, tokens, keys, browsing history, personal data, local paths, repository details, or private context",
+    "No recovery attempt unless the first submission fails transiently before a usable response; never repeat an ambiguous successful submission"
+  ],
+  "allowed_tools": [
+    "Authenticated Perplexity consumer research surface in the owner-authorized Chrome browser",
+    "Firecrawl for independent verification of public official pages only"
+  ],
+  "allowed_external_effects": [
+    "One exact-query public research submission",
+    "One terminal research response with visible citations"
+  ],
+  "acceptance_checks": [
+    "Perplexity conversation identity, URL, retrieval time, and terminal response are recorded",
+    "The submitted query exactly matches this packet and its SHA-256",
+    "No private or repository context is transmitted",
+    "At most 10 official primary-source citations are used; every unsupported row is explicit",
+    "Firecrawl independently verifies each retained official URL",
+    "OpenAI records provenance and scope review before workload credit is applied"
+  ],
+  "evidence_requirements": [
+    "Exact packet commit, tree, query text, and query SHA-256",
+    "Authenticated browser conversation URL and retrieval timestamp without cookies or account identifiers",
+    "Raw terminal response retained as an inbound artifact without secrets",
+    "Normalized source/test matrix with direct URLs and verification status",
+    "Usage or cost shown by the surface when available; otherwise NOT ESTABLISHED",
+    "Explicit no-verdict and no-production-authority disclaimer"
+  ],
+  "limits": {
+    "budget_usd": 0.25,
+    "timeout_seconds": 1200,
+    "max_recovery_attempts": 1,
+    "max_revisions": 0,
+    "max_sources": 10
+  },
+  "transport": {
+    "primary": "owner-authorized authenticated Chrome browser at perplexity.ai",
+    "reason": "The Director API profile was checked at activation and remains disabled with an empty PERPLEXITY_API_KEY. Browser transport is materially different and was explicitly authorized by the owner.",
+    "api_profile_used": false,
+    "browser_session_contains_only_public_query": true
+  },
+  "authorization": {
+    "owner_authorized_provider_use": true,
+    "owner_authorized_chrome_transport": true,
+    "director_may_submit_without_reconfirmation": true,
+    "provider_has_no_repository_or_acceptance_authority": true
+  },
+  "base_authority": {
+    "branch": "codex/native-first-deal",
+    "head": "2f01a9b84a423ca7d3e46aac054429283e6fcb39",
+    "tree": "dbfa327c4564f32c45c3be8ff66c21d01bd71df8",
+    "worktree_clean": true
+  },
+  "idempotency_key": "LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002-0b7014ef",
+  "created_at": "2026-08-31T16:28:45.1672717Z"
+}
