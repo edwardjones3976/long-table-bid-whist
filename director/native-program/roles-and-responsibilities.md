@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 16:09 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | BEGIN]] -->
@@ -27,7 +28,7 @@ with no activation path.
 | Claude / FABLE 5 ULTRA/MAX | Accepted foundation; sequence 25 clean-room `LT-NATIVE-CLAUDE-ROBOT-001` and sequence 22 XR-test fallback are terminal | Sequence 25 earns medium/5 overall and zero direct production; no active lease | No retry, XR or main-repository read/write, rejected provider input, self-review, merge/release, spending, credential change or final acceptance |
 | Cursor | Self-registering LongTableXR project plugin for hands/controllers, optional-presence seam/fallback, accessibility and MR/VR state; later separately gated integration | 4 scope-forecast units only; isolated core packet is medium/5 and production credit still requires OpenAI acceptance | No edits outside the plugin subtree, cross-lane edits, self-review, merge/deploy/publish, spending or permissions |
 | Grok | Sequence 21 pre-submit transport is terminal unavailable; earlier authority-safety/House routes stay closed; future clean-room HouseCore/session/social work remains separate | Zero sequence-21 points because no model request ran | No current writer lease, production XR byte, rejected-provider input, self-review, merge/deploy/publish, credentials, concealed data or acceptance |
-| Gemini Antigravity | Sequence 26 clean-room `LongTableRobotDealer/**` writer; its primary is consumed at the local prompt boundary and exactly one materially different Recovery 1 is pending provider-free proof and exact-head review | Pending earns zero; a real terminal recovery earns medium/5 overall once and direct only after exact OpenAI acceptance | No primary replay, second recovery, predecessor/historical provider input, shell/Git, path outside the synthetic lease, self-review, merge, external write or acceptance |
+| Gemini Antigravity | Sequence 26 clean-room `LongTableRobotDealer/**` route is terminal: the primary stopped without a completed prompt boundary and the sole Recovery 1 failed before provider creation | Zero overall and direct-production points; no source candidate and no active lease | No primary replay, second recovery, resend, predecessor/historical provider input, new RobotDealer packet under the closed route, self-review, merge, external write or acceptance |
 | GitHub Copilot CLI | Sequence 24 independently authored the one-file XR test-oracle correction from clean 33aca610 and is terminal raw-result rejected; it remains distinct from GitHub repository tooling | Simple/1 overall and zero direct production | No current writer lease, retry, result redelivery, GitHub action, self-review or acceptance |
 | Perplexity | Existing broad research evidence; sequence 13's exact current Quest query stopped before submission because the configured credential was empty | Zero sequence-13 overall/direct points because no request reached Perplexity; prior legacy research is not converted into PR76 credit | No retry/duplicate query, private context, code, vote, review verdict or external write |
 | Firecrawl | Primary-source retrieval used to verify research | Tool, never a workforce provider | No vote, authorship or acceptance authority |
@@ -103,35 +104,27 @@ with no activation path.
   evidence and cannot be normalized, built or accepted under the exhausted
   packet. Claude owns no active RobotDealer path. A replacement requires a new
   fallback packet; OpenAI still cannot author the product correction.
-- Gemini Antigravity sequence 26 may work only in
-  C:\Users\edwar\.codex\provider-sandboxes\lt-robot-dealer-antigravity-003-clean
-  through the exact project ID resolved only from the assignment-private
-  generated project record. Canonical settings are read and hashed only and
-  may never be written. It may read
-  exact immutable `PUBLIC_CONTRACT.json` and `RESULT_SCHEMA.json`, then write
-  only new `LongTableRobotDealer/**` source files. It receives no Claude byte,
-  manifest, prompt, result, finding or QA record and no historical Antigravity
-  implementation. Shell, Git, browser, URL, MCP, external service and dangerous
-  permission bypass remain denied. Provider Git commit is not required.
-  The primary created one suspended, Job-bound provider process and resumed it,
-  but its parent-side anonymous-pipe prompt write never completed or closed
-  stdin. That primary is consumed with one provider-process launch/contact,
-  zero completed model requests, zero authenticated terminal results and zero
-  accepted/direct-production points. Exactly one Recovery 1 may use the
-  unchanged 9,668-byte prompt through a new inherited locked read-only file
-  handle, distinct dispatch claim, transaction, Job and evidence namespace.
-  Before that recovery can contact Antigravity, the exact recovery launcher
-  must pass its provider-free EOF/hash/Job/canonical-settings self-test plus a
-  total failure-receipt probe with unavailable canonical evidence, the
-  three self-test files must be the sole child commit, and a different OpenAI
-  reviewer must return `ACCEPT_RECOVERY` on the exact clean launch HEAD/tree.
-  Any recovery failure closes this Antigravity route; no second recovery or
-  ambiguous resend is authorized.
-- OpenAI may freeze only an exact valid sequence-26 working-tree manifest into
-  `Unreal/Plugins/LongTableRobotDealer/**` on accepted base `4d26680`, using
-  Gemini Antigravity as commit author and OpenAI QA as committer. OpenAI may not
-  correct, normalize, supplement or reformat a product byte. Independent
-  executable and source-review gates decide acceptance or kickback.
+- Gemini Antigravity sequence 26 is terminal in
+  C:\Users\edwar\.codex\provider-sandboxes\lt-robot-dealer-antigravity-003-clean.
+  Its primary created one suspended, Job-bound provider process and resumed it,
+  but never completed the prompt/EOF boundary. Its provider-free Recovery 1
+  proof passed, and the sole recovery then opened and verified the unchanged
+  9,668-byte locked read-only prompt handle before failing closed while reading
+  guardian readiness. The recovery created no provider process; provider
+  identity and resume time are null, prompt disposition is `NOT_RESUMED`, and
+  the later guardian record proves an empty Job Object and unchanged canonical
+  settings. The provider sandbox remains clean with no product source.
+  Recovery 1's distinct claim is consumed. The sequence-26 writer lease and
+  Antigravity route are closed; no second recovery, resend, normalization or
+  later sequence-26 contact is authorized.
+- OpenAI has no sequence-26 provider bytes to freeze or test. It may preserve
+  exact control/evidence records and issue QA findings, but may not author,
+  correct, normalize, supplement or fabricate `LongTableRobotDealer/**` source.
+  The sequence-27 medium workload gate is `NO_ELIGIBLE_PROVIDER`: Claude,
+  Cursor, Grok and GitHub Copilot exceed hard ceilings; Antigravity is route-
+  exhausted; OpenAI is QA-only; Perplexity is research-only. A new packet is
+  prohibited until credited workload changes or the owner explicitly changes
+  the target/cap policy.
 
 The shared integration contract is frozen before dispatch. Providers may add
 tests only within their owned module. They may not alter another provider's
@@ -255,6 +248,14 @@ contact or delivery retry.
     repository. One primary and one objectively temporary pre-result recovery
     exist; there is no source revision, retry credit or duplicate workload row.
 
+16. Sequence 26, `LT-NATIVE-ANTIGRAVITY-ROBOT-003`, is terminal
+    `FAILED_CLOSED_PRE_PROVIDER_RECOVERY_ROUTE_EXHAUSTED`. The primary recorded
+    one provider-process launch/contact but no completed prompt boundary. The
+    sole Recovery 1 failed before provider creation and consumed its distinct
+    claim. It earns zero overall and direct-production points, owns no path and
+    delivered no candidate. The current medium fallback gate is
+    `NO_ELIGIBLE_PROVIDER`.
+
 Each lease ends when its exact provider result becomes terminal. OpenAI may
 freeze, build, test, accept or reject the bytes, but cannot correct them.
 
@@ -273,3 +274,4 @@ freeze, build, test, accept or reject the bytes, but cannot correct them.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 16:09 UTC | END]] -->

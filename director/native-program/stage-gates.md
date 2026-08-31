@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 16:09 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | BEGIN]] -->
@@ -111,34 +112,31 @@ RobotDealer authoring, composition and every later Chunk A device/human gate
 remain closed until a fresh workload-eligible fallback packet produces an
 independently acceptable candidate.
 
-Sequence 26 opens only the fresh Antigravity clean-room RobotDealer authoring
-gate. It is a new medium/5 assignment with an assignment-private process
-profile, an assignment-private generated project record, a new synthetic
-authority root and sole `LongTableRobotDealer/**` writer lease. Canonical
-Antigravity settings are read and hashed only; the launcher may never write
-them. The provider
-may read only the unchanged public contract and generic result schema; those
-files plus the frozen standalone clarification in the sequence-26 prompt are
-the complete implementation authority. All Claude and historical Antigravity
-code/evidence remains prohibited. The one shell-free primary is consumed: it
-created and resumed one exact suspended, Job-bound provider process, but the
-parent-side anonymous-pipe write never completed the exact prompt/EOF boundary.
-It produced no authenticated terminal result or source delivery and earns zero
-accepted/direct-production points.
+Sequence 26 is terminal and closes the fresh Antigravity clean-room RobotDealer
+authoring gate. The primary created and resumed one exact suspended, Job-bound
+provider process, but its parent-side anonymous-pipe write never completed the
+prompt/EOF boundary. The sole materially different Recovery 1 passed the exact
+provider-free file-handle, EOF, Job and total failure-receipt proof. It then ran
+once from control HEAD `25eb993`, opened and verified the unchanged 9,668-byte
+locked read-only prompt handle, and failed closed at `PROMPT_HANDLE_VERIFIED`
+while reading guardian readiness.
 
-Exactly one materially different Recovery 1 is authorized under the same
-private-profile, exact environment, canonical-no-write, Job and guardian
-controls. It uses the unchanged 9,668-byte prompt through a distinct claim and
-an inherited locked read-only regular-file stdin handle. Its gate remains
-closed until the exact launcher passes a provider-free byte/hash/EOF/Job test
-and serializes a strict failure receipt with unavailable canonical evidence,
-those three evidence files are the sole child commit, clean exact-head preflight
-passes, and an independent OpenAI reviewer returns `ACCEPT_RECOVERY`. A failed
-recovery closes the provider route; no second recovery or ambiguous resend is
-permitted.
-Provider Git is not required; a valid raw result plus exact source-only working
-manifest may be mechanically frozen unchanged by OpenAI into the accepted-base
-QA worktree with honest provider-author/OpenAI-committer provenance.
+Recovery 1 created no provider process. Provider identity and resume time are
+null, prompt disposition is `NOT_RESUMED`, output and stderr are empty, and no
+CLI log, transcript, model request, result or source exists. The guardian's
+later `PARENT_EXIT_JOB_EMPTY` record proves active processes `0 -> 0`, provider
+identity absent and canonical settings unchanged. The distinct one-shot claim
+is consumed. No second recovery, ambiguous resend, normalization or further
+Antigravity contact is permitted. Sequence 26 earns zero overall and direct-
+production points and has no candidate to freeze into the accepted-base QA
+worktree.
+
+The fresh sequence-27 medium/5 fallback gate is `NO_ELIGIBLE_PROVIDER` under
+the current rolling-20 target-plus-five policy. Claude, Cursor, Grok and GitHub
+Copilot CLI exceed their hard ceilings; Antigravity is within workload limits
+but its route and lease are exhausted; OpenAI is QA-only; Perplexity is
+research-only. RobotDealer authoring remains closed until credited workload
+changes or the owner explicitly changes the governing target/cap policy.
 
 The RobotDealer acceptance gate remains closed until exact result binding,
 immutable authority, private-profile/environment/canonical-no-write evidence,
@@ -231,3 +229,4 @@ ambiguity; unrelated mutation; failed exact-SHA binding; or cultural harm.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 07:42 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 16:10 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 15:49 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 16:09 UTC | END]] -->

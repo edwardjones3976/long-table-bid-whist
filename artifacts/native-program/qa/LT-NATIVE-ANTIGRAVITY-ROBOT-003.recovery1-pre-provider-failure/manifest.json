@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "assignment_id": "LT-NATIVE-ANTIGRAVITY-ROBOT-003",
+  "classification": "RECOVERY1_FAILED_CLOSED_PRE_PROVIDER_GUARDIAN_READY_FILE_SHARING_RACE",
+  "control_head": "25eb99361585b46a9b95242a8b22b79fe9381342",
+  "control_tree": "2b9606fce2c1c73703c131f4ba942b1df56b8260",
+  "provider_head": "644d1b082347369f5c9665312946c6f5945fa925",
+  "provider_tree": "4085ca20ee26e081e0405d4820f3503c8f595b1c",
+  "source_archive": "C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-robot-dealer-antigravity-003-clean-sequence26-recovery1-settings-rollback",
+  "preserved_file_count": 12,
+  "manifest_rows_sha256": "f68ac93d04b0cc8050d085bf28b3a4aaa1e21e64112cd5c6e2036a5aa460b67e",
+  "manifest_rows_method": "UTF-8 no-BOM path|byte-length|sha256 rows sorted ordinal by forward-slash relative path, each LF-terminated; this manifest is excluded",
+  "files": [
+    {"path": "LT-NATIVE-ANTIGRAVITY-ROBOT-003.sequence-26-recovery1-cli-output.json", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+    {"path": "LT-NATIVE-ANTIGRAVITY-ROBOT-003.sequence-26-recovery1-cli.stderr", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+    {"path": "LT-NATIVE-ANTIGRAVITY-ROBOT-003.sequence-26-recovery1-failure-receipt.json", "bytes": 8339, "sha256": "33356f608f66855f8d86a004c24df0e850cfa3a5ad2ce244970dd4de04ca6c93"},
+    {"path": "one-shot.claim.json", "bytes": 513, "sha256": "56fe88df24c2841a25dfdcbafee712b3beeacd21b7d35383b0d2f3178202d5af"},
+    {"path": "transaction/environment-contract.json", "bytes": 2113, "sha256": "4e2e9a13fae4c2be859483265957163228bf47e7bdae05b07181c8041f7b1201"},
+    {"path": "transaction/guardian-done.json", "bytes": 1726, "sha256": "13790ca87cfd409c23d42fa3a90d49b792f579a0e7954cea770fdcc5cc293707"},
+    {"path": "transaction/guardian-ready.json", "bytes": 1494, "sha256": "522205c98dc2b9c7f8ea65dce12a04563b5d279e497f1434bea9c4805e072653"},
+    {"path": "transaction/guardian.ps1.bin", "bytes": 10783, "sha256": "0a19d6b890ae97300171a7ebbb6c0169793622487949bbd90693338b6fb37bb0"},
+    {"path": "transaction/private-profile/.gemini/antigravity-cli/settings.json", "bytes": 393, "sha256": "e717116d6ee4c11919ddbe29e6b6df4c577158ddc9e74de226dcae122b013f56"},
+    {"path": "transaction/private-profile/.gemini/config/projects/64ba9d6d-900c-4894-8bc8-b0e0a4f52906.json", "bytes": 813, "sha256": "33f1b2affad9480e02366568f5521e47861819ad1c6ca27c13c5bf7a16c3ec2c"},
+    {"path": "transaction/recovery1.claim.json", "bytes": 513, "sha256": "56fe88df24c2841a25dfdcbafee712b3beeacd21b7d35383b0d2f3178202d5af"},
+    {"path": "transaction/transaction.json", "bytes": 3099, "sha256": "ae3f1dd3a135ed645e52cbb7990cdcaf4ea760a272edeae81cb29a08d7528321"}
+  ]
+}

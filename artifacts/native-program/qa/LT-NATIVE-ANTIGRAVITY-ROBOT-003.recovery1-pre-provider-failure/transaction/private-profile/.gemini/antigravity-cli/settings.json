@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "command(git rev-parse)",
+      "command(git remote get-url)",
+      "command(git branch --show-current)",
+      "command(git status)",
+      "command(git diff)",
+      "command(git show)",
+      "command(git log)"
+    ],
+    "deny": [
+      "unsandboxed(*)",
+      "read_url(*)",
+      "execute_url(*)",
+      "mcp(*)"
+    ]
+  }
+}
