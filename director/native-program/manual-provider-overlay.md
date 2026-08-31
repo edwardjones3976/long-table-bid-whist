@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
 # Owner-authorized native provider overlay
 
 ## Authority
@@ -468,6 +469,36 @@ was mutated; that isolation is deliberate rather than evidence of Long Table
 delivery. XR-test, RobotDealer and later integration/device gates remain closed
 until a new explicit Director assignment and authority decision.
 
+### Claude replacement recovery, exact QA and provenance-only kickback
+
+Sequence 16's one transient recovery completed in the exact provider worktree.
+Authenticated run `claude-code:aa652fcd-6326-4029-92ef-dfd9ba87b955`
+produced one schema-valid result, provider commit `88efd4ff`, tree `0c5963c`,
+and exactly the 17 leased modified paths. Independent postflight mechanically
+materialized those provider blobs plus retained seed blobs on sole product
+parent `a6742a0` as local candidate `cb7b49b`; rejected seed `623ca52c` is not
+in product ancestry.
+
+OpenAI QA passed the corrected real-socket probe, 52/52 focused tests, 219/219
+full LF tests, strict typing, fixture-current, production build, both UE5.7
+targets and 34/34 Unreal automation. Structural review found no prohibited
+regex-based privacy control, media/network/dependency addition or public/dealer
+grant leakage. Exact marker comparison nevertheless proves the provider renamed
+away the inherited `LT-NATIVE-CLAUDE-001` outer pair in
+`LongTableCommitMachine.cpp` while declaring that no marker was deleted,
+renamed or reassigned. The immutable packet fails closed. Sequence 16 earns
+medium/5 overall effort, zero direct production and no accepted dependency.
+
+OpenAI cannot author the correction. The owner's explicit direction to contact
+Claude again plus this newly discovered exact-head evidence authorizes new
+simple/1 assignment `LT-NATIVE-CLAUDE-PROVENANCE-004`, not a sequence-16 retry
+or revision. It owns one file and may add only the two restored inherited lines
+plus one fresh balanced correction envelope. One primary attempt is available;
+there is no recovery, revision or broad provider round. The projected Claude
+share is 32/81 = 39.51%, 0.51 points above the normal band but below the 41%
+hard ceiling. That useful-work exception is explicit and does not manufacture
+filler for another provider.
+
 ## Acceptance
 
 Manual routing never weakens acceptance. Each provider candidate still requires:
@@ -482,3 +513,4 @@ Any code correction returns to its owning provider and creates a new exact
 candidate. Merge, release, Meta account/license effects, physical Quest claims,
 human acceptance, cultural acceptance, and rights acceptance remain separate
 gates.
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->

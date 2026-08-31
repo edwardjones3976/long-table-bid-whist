@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]] -->
 # The Long Table native program — canonical overlay
 
@@ -57,10 +58,10 @@ physical headset, external account, human cohort, or owner gate.
 
 ## Provider code ownership
 
-- Claude: terminal historical TypeScript authority/protocol/core-table output
-  plus the terminal rejected foundation-safety v2 candidate; no active writer
-  lease remains. Later XR-test and RobotDealer exhausted-route leases remain
-  dependency-closed.
+- Claude: terminal historical TypeScript authority/protocol/core-table output,
+  terminal provenance-rejected replacement candidate `cb7b49b`, and one active
+  sequence-19 comment-only provenance lease in `LongTableCommitMachine.cpp`.
+  Later XR-test and RobotDealer leases remain dependency-closed.
 - Cursor: the self-registering `Unreal/Plugins/LongTableXR/**` project plugin
   for hands/controllers, presence fallback, accessibility and MR/VR adapters.
 - Grok: no active writer lease. Its seven-path authority-safety assignment is
@@ -110,6 +111,18 @@ local-only, unpushed and ineligible for a product PR. No active foundation
 writer lease remains; XR-test and RobotDealer stay closed pending a new explicit
 Director assignment and authority decision.
 
+`LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003` then completed one authenticated
+transient recovery. OpenAI mechanically materialized the exact provider repair
+tree on sole product parent `a6742a0` as local candidate `cb7b49b`, excluding
+the rejected seed from ancestry. The exact candidate passed the corrected
+real-socket probe, `52/52` focused and `219/219` full LF tests, strict typing,
+fixtures, production build, both UE5.7 targets and `34/34` Unreal automation.
+It is nevertheless terminal provenance-rejected: exact comparison proves the
+provider renamed away the inherited `LT-NATIVE-CLAUDE-001` outer marker pair
+while declaring no marker deletion or rename. New simple/1 sequence 19 gives
+Claude one file, four exact comment lines, one primary attempt and no recovery
+or revision. OpenAI remains QA-only.
+
 The dependency-independent Grok fallback is frozen by
 `contracts/long-table-house-public-v1.json`. That contract is the entire
 HouseCore product authority for `LT-NATIVE-GROK-HOUSE-001`: public event,
@@ -134,3 +147,4 @@ accepted authority and robot-cue contracts.
   (merged PR #76 semantics; local service activation is a separate gate).
 
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->

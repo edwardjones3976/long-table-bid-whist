@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-PROVENANCE-004",
+  "status": "READY_ONE_PRIMARY_PROVENANCE_ONLY",
+  "provider": "Claude",
+  "route": "claude.ai-max",
+  "model": "claude-fable-5",
+  "workload": {
+    "size": "simple",
+    "canonical_points_after_terminal_execution": 1,
+    "rolling_window_before": {
+      "completed_assignments": 15,
+      "total_points": 80,
+      "claude_points": 31,
+      "claude_share_percent": 38.75
+    },
+    "rolling_window_after_terminal_execution": {
+      "completed_assignments": 16,
+      "total_points": 81,
+      "claude_points": 32,
+      "claude_share_percent": 39.51,
+      "claude_target_percent": 36,
+      "normal_tolerance_upper_percent": 39,
+      "hard_ceiling_percent": 41,
+      "disposition": "EXCEPTION_ABOVE_NORMAL_BY_0.51_POINTS_BUT_BELOW_HARD_CEILING; sole owning-provider provenance repair with materially new exact-head evidence and explicit owner direction; no filler"
+    }
+  },
+  "starting_ref": "cb7b49b9a12584fbae6167c4072da3f2286a1cc8",
+  "starting_tree": "0c5963cad9da6256489dade2b24d90a4be7d98b2",
+  "branch": "codex/claude-provenance-004",
+  "worktree": "C:\\Users\\edwar\\.codex\\worktrees\\long-table-claude-provenance-004",
+  "objective": "Create one comment-only exact candidate that restores the pre-existing LT-NATIVE-CLAUDE-001 outer contribution-marker pair in LongTableCommitMachine.cpp, adds one fresh balanced LT-NATIVE-CLAUDE-PROVENANCE-004 outer pair, preserves every other byte and every existing marker, and returns one schema-valid terminal result for independent OpenAI QA.",
+  "why_new_authority_exists": [
+    "Sequence 16 is terminal after its one primary and one transient recovery; this is not another attempt or revision of that assignment.",
+    "Independent OpenAI exact-parent/candidate comparison discovered after terminal delivery that the provider result's 'no marker deleted, renamed or reassigned' claim was false: the LT-NATIVE-CLAUDE-001 BEGIN and END lines each changed from one to zero.",
+    "OpenAI is prohibited from product correction. The owning provider must create a new exact candidate under explicit new authority.",
+    "The user explicitly directed OpenAI to contact Claude again. This packet is the smallest useful correction and uses no ambiguous duplicate paid dispatch."
+  ],
+  "owned_paths": [
+    "Unreal/Source/LongTableTable/Private/LongTableCommitMachine.cpp"
+  ],
+  "prohibited_paths": [
+    "Every tracked path other than Unreal/Source/LongTableTable/Private/LongTableCommitMachine.cpp",
+    "director/**",
+    "artifacts/**",
+    "sources/**",
+    ".github/**"
+  ],
+  "exact_change": {
+    "allowed_added_lines": [
+      "// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-PROVENANCE-004 | BEGIN]]",
+      "// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | BEGIN]]",
+      "// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]",
+      "// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-PROVENANCE-004 | END]]"
+    ],
+    "required_order_at_file_start": [
+      "LT-NATIVE-CLAUDE-PROVENANCE-004 BEGIN",
+      "LT-NATIVE-CLAUDE-001 BEGIN",
+      "LT-NATIVE-CLAUDE-001-R1 BEGIN"
+    ],
+    "required_order_at_file_end": [
+      "LT-NATIVE-CLAUDE-001-R1 END",
+      "LT-NATIVE-CLAUDE-001 END",
+      "LT-NATIVE-CLAUDE-PROVENANCE-004 END"
+    ],
+    "forbidden": [
+      "Any executable, whitespace, encoding, line-ending or mode change",
+      "Any deletion, edit, move, rename or reassignment of an existing contribution marker",
+      "Any added line other than the four exact comment lines above"
+    ]
+  },
+  "provider_checks": [
+    "git rev-parse HEAD equals cb7b49b9a12584fbae6167c4072da3f2286a1cc8 before editing",
+    "git status --porcelain is empty before editing",
+    "git diff --check passes",
+    "git diff --unified=0 shows exactly the four allowed added comment lines in the sole owned path",
+    "The sole file contains balanced one-pair LT-NATIVE-CLAUDE-001 and LT-NATIVE-CLAUDE-PROVENANCE-004 markers while every pre-existing marker count is unchanged",
+    "Create exactly one local commit with sole parent cb7b49b9a12584fbae6167c4072da3f2286a1cc8 and leave the worktree clean"
+  ],
+  "openai_qa": [
+    "Verify exact parent, head, tree, one-path allowlist, four-line comment-only diff, mode, encoding, line endings and complete marker multiset",
+    "Run CI-equivalent LF full tests plus UE5.7 LongTableEditor, LongTable and LongTable automation against the exact new candidate",
+    "Accept or reject independently; no provider self-acceptance and no OpenAI product edit"
+  ],
+  "limits": {
+    "budget_usd": 0,
+    "primary_attempts": 1,
+    "transient_recoveries": 0,
+    "max_revisions": 0,
+    "max_hops": 0,
+    "candidate_commits": 1
+  },
+  "prohibited_actions": [
+    "Do not use memory, Project knowledge, prior conversation, browser, connectors, MCP, network, subagents or another repository.",
+    "Do not run product builds or tests; this comment-only provider lane is limited to exact Git and marker checks, and OpenAI owns the expensive gates.",
+    "Do not push, merge, open or mutate a PR/issue, post Slack/Linear, purchase, change credentials/permissions/licenses, or access a device.",
+    "Do not claim foundation, product, device, store, rights, cultural, human or milestone acceptance."
+  ],
+  "stopping_conditions": [
+    "Stop on a non-clean or mismatched starting ref, any request to change code, any unowned-path mutation, any unexpected marker difference, or any transport ambiguity.",
+    "Stop after one local commit and one terminal result. There is no recovery, revision or duplicate contact under this assignment."
+  ],
+  "idempotency_key": "LT-NATIVE-CLAUDE-PROVENANCE-004-cb7b49b9"
+}

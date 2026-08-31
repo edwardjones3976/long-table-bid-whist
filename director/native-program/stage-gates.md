@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]] -->
 # Three large native chunks and release gates
 
@@ -49,6 +50,16 @@ Android or device gate may consume it, and no fourth provider contact or
 delivery retry is permitted. A new explicit Director assignment and authority
 decision is required before replacement foundation work. A green browser,
 Windows or headless gate never substitutes for physical Quest evidence.
+
+Sequence 16 replacement work is now also terminal. Exact candidate `cb7b49b`
+passed the corrected real-socket probe, `52/52` focused and `219/219` full LF
+tests, strict typing, fixtures, production build, both UE5.7 targets and
+`34/34` Unreal automation. It remains unaccepted because the provider renamed
+away one inherited contribution-marker pair and incorrectly declared that
+provenance gate green. Sequence 19 is the sole active writer lease: Claude may
+add only four exact comments in one file, with one primary attempt and no
+recovery or revision. Chunk A stays closed until OpenAI accepts the resulting
+exact candidate.
 
 ## Chunk B — Private Game Night
 
@@ -120,3 +131,4 @@ characters; unsafe voice/moderation behavior; credential or paid-dispatch
 ambiguity; unrelated mutation; failed exact-SHA binding; or cultural harm.
 
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->
