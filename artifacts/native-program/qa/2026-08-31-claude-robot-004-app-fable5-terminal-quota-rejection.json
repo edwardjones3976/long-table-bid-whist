@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28-APP-RECOVERY1",
+  "disposition": "TERMINAL_UNAVAILABLE_PRE_MODEL_FABLE5_MONTHLY_SPEND_LIMIT_RECOVERY1_CONSUMED_ZERO_CREDIT",
+  "observed_at": "2026-08-31T18:43:03.9174623Z",
+  "control_head": "b8dcf6a5f9d85b6088b6bf71fcb4df1bb0a77b9a",
+  "control_tree": "8a767bbf378c33d0e88c7edd29c10395cff10503",
+  "transport": "Claude desktop app",
+  "surface": "Cowork",
+  "model": "Fable 5",
+  "effort": "High",
+  "input_archive": {
+    "path": "C:\\Users\\edwar\\.codex\\provider-sandboxes\\LT-NATIVE-CLAUDE-ROBOT-004-app-recovery1-input.zip",
+    "sha256": "sha256:835587517fbc26355981c8035edbddccf9f101adfafed0ce1a5fe1f18db50a95",
+    "bytes": 19988,
+    "attached_once": true
+  },
+  "submitted_message": "Director Recovery 1. Use the attached public clean-room archive as your sole authority. Follow APP_TRANSPORT_DELTA.json and WORK_ORDER.md exactly. Create and attach the named eight-file delivery ZIP, then return the required schema-conforming JSON result. Do not browse, use connectors, request repository access, or include any extra archive entry.",
+  "provider_response": {
+    "message": "You've hit your monthly spend limit. Switch to another model, or manage usage credits at claude.ai/settings/usage?from=cc_cli_limit_message, to continue.",
+    "composer_notice": "You've hit your monthly spend limit. Increase your spend limit to keep using Fable 5 or switch models to continue this chat.",
+    "source_archive_returned": false,
+    "schema_result_returned": false,
+    "model_execution_evidence": false,
+    "token_or_cost_evidence": false
+  },
+  "accounting": {
+    "app_recovery_submissions": 1,
+    "provider_service_contacts_added": 1,
+    "completed_model_requests_added": 0,
+    "inference_contacts_added": 0,
+    "overall_effort_points_awarded": 0,
+    "accepted_direct_production_points": 0
+  },
+  "owner_followup": {
+    "text": "Switch to Opus 5 for claude.",
+    "classification": "EXPLICIT_NEW_MODEL_AUTHORITY_FOR_FINAL_THIRD_ROUTE",
+    "billing_or_spend_limit_change_authorized": false
+  }
+}

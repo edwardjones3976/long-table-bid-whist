@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-004",
+  "attempt": "FINAL_THIRD_ROUTE",
+  "status": "AUTHORIZED_PENDING_OPUS5_SUBMIT",
+  "classification": "OWNER_AUTHORIZED_NEW_MODEL_AFTER_TWO_UNAMBIGUOUS_PRE_MODEL_SPEND_LIMIT_STOPS",
+  "owner_authorization": {
+    "source": "user message",
+    "text": "Switch to Opus 5 for claude.",
+    "recorded_at": "2026-08-31T18:43:03.9174623Z"
+  },
+  "retry_basis": {
+    "primary": "Claude Code CLI Fable 5 returned an unambiguous pre-model monthly-spend 429 with zero tokens, cost and source.",
+    "recovery1": "Claude desktop app Fable 5 accepted the public archive and exact prompt, then returned an unambiguous model-specific monthly-spend limit before source or schema result.",
+    "new_information": "The app explicitly offered switching models, and the owner explicitly selected Opus 5.",
+    "ambiguous_paid_dispatch": false
+  },
+  "inherits": {
+    "input_archive_sha256": "sha256:835587517fbc26355981c8035edbddccf9f101adfafed0ce1a5fe1f18db50a95",
+    "authority_snapshot_digest": "sha256:a171b144d499d289382feec34c108580ba6dca64d7106fb601c31822942dcf7a",
+    "public_contract_changed": false,
+    "public_fixtures_changed": false,
+    "result_schema_changed": false,
+    "product_scope_changed": false,
+    "closed_output_inventory_changed": false,
+    "budget_changed": false,
+    "workload_row_changed": false,
+    "reupload_required": false
+  },
+  "overrides": {
+    "model": "Opus 5",
+    "effort": "High",
+    "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-004-a5ffeb9-SEQUENCE28-APP-OPUS5-FINAL",
+    "correlation_source_event_id": "owner-explicit-opus5-switch-20260831",
+    "transport": "existing Claude desktop-app Cowork task",
+    "archive_name": "LT-NATIVE-CLAUDE-ROBOT-004-app-recovery1-delivery.zip"
+  },
+  "limits": {
+    "opus5_submissions": 1,
+    "additional_claude_contacts_after_this_attempt": 0,
+    "incremental_api_budget_usd": 0,
+    "billing_or_spend_limit_change": false,
+    "ambiguous_resend_prohibited": true
+  },
+  "acceptance_boundary": "Opus output remains provider evidence only. OpenAI must download, hash, structurally inspect, materialize unchanged bytes into an isolated accepted-base QA worktree, build with UE5.7, run the focused and full suites, and independently accept or reject."
+}

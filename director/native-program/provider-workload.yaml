@@ -38,7 +38,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20_AFTER_SEQUENCE_27; 83 total points; every target-plus-five hard ceiling passes. Cursor is 1.0964 percentage points above normal and Antigravity is 3.1807 below normal; neither is rounded green. Sequence 28 consumed one CLI primary at an unambiguous pre-model 429 with zero tokens, zero cost, zero source and zero credit. Chrome preparation failed before file transfer, prompt submission or provider contact; the owner then designated the Claude desktop app as the primary and first-choice transport for exactly one Recovery 1 under the unchanged assignment. If that recovery reaches a real terminal model result, the projected 80-point window passes every hard ceiling with Claude 33.75% and Cursor exactly 25%."
+  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20_AFTER_SEQUENCE_27; 83 total points; every target-plus-five hard ceiling passes. Cursor is 1.0964 percentage points above normal and Antigravity is 3.1807 below normal; neither is rounded green. Sequence 28 consumed CLI-primary and desktop-app Recovery 1 Fable routes at two unambiguous pre-model monthly-spend stops with zero source and zero credit. Chrome preparation had stopped before contact. The app exposed new model-switch information and the owner explicitly selected Opus 5, authorizing the final third route under the unchanged assignment. If Opus reaches a real terminal model result, the projected 80-point window passes every hard ceiling with Claude 33.75% and Cursor exactly 25%."
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -113,7 +113,7 @@ native_code_assignments:
     allocation: {native_foundation_first_deal: 16, private_game_night: 16, long_table_house: 16}
     owned_surfaces: ["packages/rules-core", "packages/protocol", "services/table-authority", "Unreal/Source/LongTableProtocol", "Unreal/Source/LongTableTable", "Unreal/Source/LongTable"]
     required_model: "FABLE 5 ULTRA/MAX"
-    active_assignment: "sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 consumed its sole CLI primary at an unambiguous pre-model monthly-spend 429; zero model tokens, cost, source and credit. Chrome preparation stopped pre-contact when its hidden upload input emitted no chooser. The owner's later explicit instruction designates the Claude desktop app as the primary and first choice for one Recovery 1 pending exact submit of the public-only six-file input archive; it owns only the unchanged closed eight-file LongTableRobotDealer/** delivery inventory"
+    active_assignment: "sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 consumed CLI-primary and desktop-app Recovery 1 Fable routes at unambiguous pre-model monthly-spend stops. Chrome preparation ended pre-contact. The app explicitly offered another model and the owner explicitly selected Opus 5; one final Opus 5 High submit in the existing app task is authorized under the same public archive and closed eight-file LongTableRobotDealer/** delivery inventory"
   cursor:
     scope_forecast_units: 4
     credit_rule: "forecast is not credit; isolated XR-core packet is medium/5 and final integration remains separately dependency-gated"
@@ -439,7 +439,7 @@ rolling_window_projection:
   current_shares_percent: {claude: 36.1446, cursor: 24.0964, grok: 21.6867, openai: 6.0241, gemini_antigravity: 4.8193, perplexity: 6.0241, github_copilot_cli: 1.2048}
   enforcement: "COMPLETE_ROLLING_20_AFTER_SEQUENCE_27; HARD_CEILINGS_PASS; NORMAL_BAND_MISS_CURSOR_PLUS_1.0964_AND_ANTIGRAVITY_MINUS_3.1807. This is not mislabeled as full normal-band compliance."
   direct_production_window_status: "WARMING_UP_ONE_ACCEPTED_POINT_ONLY; not a compliance pass; sequences 24, 25 and 27 earn zero direct production"
-  next_route: "ACTIVE_PENDING_ONE_CLAUDE_APP_RECOVERY1_AFTER_TERMINAL_CLI_PREMODEL_429_AND_OWNER_APP_SELECTION: sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 retains its unchanged medium/5 scope and closed eight-file RobotDealer delivery lease. The CLI primary is consumed and may not be replayed. Chrome stopped before provider contact and is superseded. The exact public-only app archive may be submitted once; no point enters the current window until a real terminal model execution. OpenAI remains QA-only."
+  next_route: "ACTIVE_PENDING_ONE_CLAUDE_APP_OPUS5_FINAL_AFTER_TWO_UNAMBIGUOUS_FABLE_PREMODEL_STOPS_AND_EXPLICIT_OWNER_MODEL_SELECTION: sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 retains its unchanged medium/5 scope, existing public-only app attachment and closed eight-file RobotDealer delivery lease. CLI and Fable-app routes are consumed; Chrome is superseded pre-contact. Opus 5 High may receive one final follow-up in the existing task. No point enters the current window until a real terminal model execution. OpenAI remains QA-only."
   sequence_26_actual_terminal:
     rolled_out_assignment: null
     canonical_points_earned: 0
@@ -470,7 +470,7 @@ rolling_window_projection:
     denominator_if_real_terminal: 80
     projections_percent: {claude: 33.75, cursor: 25.0, grok: 22.5, openai: 6.25, gemini_antigravity: 5.0, perplexity: 6.25, github_copilot_cli: 1.25}
     workload_hard_gate: {claude: "PASS_41_ELIGIBLE", cursor: "PASS_EXACT_25_NO_ROUNDING", grok: "PASS_25", openai: "PASS_13_QA_ONLY", gemini_antigravity: "PASS_16_ROUTE_CLOSED", perplexity: "PASS_9_RESEARCH_ONLY", github_copilot_cli: "PASS_6"}
-    verdict: "AUTHORIZED_PENDING_ONE_CLAUDE_APP_RECOVERY1_AFTER_TERMINAL_CLI_PREMODEL_429_AND_OWNER_APP_SELECTION"
+    verdict: "AUTHORIZED_PENDING_ONE_CLAUDE_APP_OPUS5_FINAL_AFTER_TWO_UNAMBIGUOUS_FABLE_PREMODEL_STOPS_AND_EXPLICIT_OWNER_MODEL_SELECTION"
     assignment_id: "LT-NATIVE-CLAUDE-ROBOT-004"
     packet_digest: "sha256:0153c630cc7302965e57743d5316f7a4a0981ede3d0c6dd0339764ad12f874ec"
     prompt_digest: "sha256:8e5a00251764a5161ba31b107334e5ae5aebea83048e0c700690ce8d118e3292"
@@ -487,7 +487,11 @@ rolling_window_projection:
     app_recovery_prompt_digest: "sha256:a0ac52d019439feed36734ad3207703d5b600258877c6c6da4eab481bf154936"
     app_recovery_input_manifest_digest: "sha256:141f0155812fb536e33bd2c84928afdde1962487de1789d39ae2ea6da471d27a"
     app_recovery_input_archive_digest: "sha256:835587517fbc26355981c8035edbddccf9f101adfafed0ce1a5fe1f18db50a95"
-    writer_lease: "CLI working-tree lease closed without source; Chrome superseded pre-contact; one Claude-app archive-delivery Recovery 1 lease pending exact submit for the same closed eight-file inventory"
+    app_fable_recovery_disposition: "TERMINAL_PRE_MODEL_MONTHLY_SPEND_LIMIT_ZERO_SOURCE_ZERO_CREDIT"
+    app_fable_incident_digest: "sha256:0af7a7d116d8185838a13f8c0cd89d4c063f6df2fa1382be710264d5fb2ed943"
+    final_opus5_delta_digest: "sha256:93dd61068c403ef099ea912d7c96ee45d0b6545362a80b339c3d7ebf6124321f"
+    final_opus5_prompt_digest: "sha256:4a9ac9018e561345d551470ad63670f899dcfb8c94a8becad6c5847b472e2ee4"
+    writer_lease: "CLI and app-Fable routes closed without source; Chrome superseded pre-contact; one final Opus 5 High follow-up pending in the existing app task for the same closed eight-file inventory"
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -1176,7 +1180,7 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "AUTHORIZED_PENDING_CLAUDE_APP_RECOVERY1_AFTER_TERMINAL_CLI_PREMODEL_429_AND_OWNER_APP_SELECTION"
+    status: "AUTHORIZED_PENDING_CLAUDE_APP_OPUS5_FINAL_AFTER_TWO_FABLE_PREMODEL_STOPS_AND_OWNER_MODEL_SELECTION"
     accepted_direct_production_points: 0
     packet_file: "director/native-program/packets/LT-NATIVE-CLAUDE-ROBOT-004.json"
     packet_digest: "sha256:0153c630cc7302965e57743d5316f7a4a0981ede3d0c6dd0339764ad12f874ec"
@@ -1198,7 +1202,7 @@ canonical_assignment_ledger:
     authority_snapshot_digest: "sha256:a171b144d499d289382feec34c108580ba6dca64d7106fb601c31822942dcf7a"
     owned_paths: ["LongTableRobotDealer/**"]
     closed_output_file_count: 8
-    attempts: {provider_free_launch_ownership_selftests: 1, primary: 1, browser_precontact_upload_control_failures: 1, app_recovery_submissions: 0, revisions: 0, provider_process_launches: 1, provider_service_contacts: 1, completed_model_requests: 0, inference_contacts: 0, terminal_pre_model_results: 1}
+    attempts: {provider_free_launch_ownership_selftests: 1, primary: 1, browser_precontact_upload_control_failures: 1, app_fable_recovery_submissions: 1, app_opus5_final_submissions: 0, revisions: 0, provider_process_launches: 1, provider_service_contacts: 2, completed_model_requests: 0, inference_contacts: 0, terminal_pre_model_results: 2}
     primary_claim_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-primary-claim.json"
     primary_claim_digest: "sha256:55b5d452bb61a0cc9bda7d0fb91a769314a47774842b916116046151301f6def"
     process_identity_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-process-identity.json"
@@ -1225,9 +1229,15 @@ canonical_assignment_ledger:
     app_recovery_input_manifest_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-app-recovery1-input-manifest.json"
     app_recovery_input_manifest_digest: "sha256:141f0155812fb536e33bd2c84928afdde1962487de1789d39ae2ea6da471d27a"
     app_recovery_input_archive_digest: "sha256:835587517fbc26355981c8035edbddccf9f101adfafed0ce1a5fe1f18db50a95"
-    writer_lease: "CLI working-tree lease closed without source; Chrome superseded pre-contact; one Claude-app archive-delivery Recovery 1 lease pending exact submit; same assignment, provider, public authority and closed eight-file inventory"
+    app_fable_terminal_incident_file: "artifacts/native-program/qa/2026-08-31-claude-robot-004-app-fable5-terminal-quota-rejection.json"
+    app_fable_terminal_incident_digest: "sha256:0af7a7d116d8185838a13f8c0cd89d4c063f6df2fa1382be710264d5fb2ed943"
+    app_opus5_final_delta_file: "director/native-program/packets/LT-NATIVE-CLAUDE-ROBOT-004-APP-OPUS5-FINAL-DELTA.json"
+    app_opus5_final_delta_digest: "sha256:93dd61068c403ef099ea912d7c96ee45d0b6545362a80b339c3d7ebf6124321f"
+    app_opus5_final_prompt_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-004.sequence-28-app-opus5-final.prompt.md"
+    app_opus5_final_prompt_digest: "sha256:4a9ac9018e561345d551470ad63670f899dcfb8c94a8becad6c5847b472e2ee4"
+    writer_lease: "CLI and app-Fable routes closed without source; Chrome superseded pre-contact; one final Opus 5 High follow-up pending in the existing app task; same assignment, provider, public authority and closed eight-file inventory"
     accepted_outcome_digest: null
-    manual_overlay_reason: "Fresh useful RobotDealer assignment made eligible by the real sequence-27 research credit. The exact launcher passed one two-case provider-free ownership self-test, then the sole CLI primary created and resumed one Job-bound Claude process. Claude's service returned an unambiguous monthly-spend 429 before model execution: duration_api_ms=0, zero input/output/cache tokens, empty modelUsage, zero cost and no source. A post-result receipt-serialization typo did not make that outcome ambiguous and is repaired without replaying the CLI. The owner initially ordered a Chrome retry; its hidden upload input emitted no file chooser, so the path was abandoned before file selection, transfer, prompt entry, submission, provider contact or model request. The owner then explicitly designated the Claude desktop app as the primary and first choice. App Recovery 1 keeps the same assignment, medium/5 scope, public contract, fixtures, result schema, budget and exact eight-file output; its six-file public/synthetic input archive is hash-frozen and may be submitted once. No repository, prior-provider source, transcript, finding, credential or private context is included. The primary and precontact Chrome preparation earn zero and do not roll the window; one real terminal model execution records medium/5 overall once, while direct-production credit still requires unchanged-byte OpenAI materialization, UE5.7 build/test and acceptance."
+    manual_overlay_reason: "Fresh useful RobotDealer assignment made eligible by the real sequence-27 research credit. The exact launcher passed one two-case provider-free ownership self-test, then the sole CLI primary created and resumed one Job-bound Claude process. Claude's service returned an unambiguous monthly-spend 429 before model execution: duration_api_ms=0, zero input/output/cache tokens, empty modelUsage, zero cost and no source. Chrome was abandoned pre-contact after its hidden upload input emitted no chooser. The owner selected the desktop app as primary; the exact public archive and prompt were submitted once to Fable 5 High, which returned the same model-specific monthly-spend limit before source or schema result. The app explicitly offered switching models, and the owner explicitly ordered Opus 5. That new information authorizes the final third route in the same app task with one model-only follow-up, unchanged assignment, medium/5 scope, public authority, budget and eight-file output. No billing-limit change, re-upload, repository, prior-provider source, private context or later Claude contact is authorized. Both pre-model Fable stops and precontact Chrome preparation earn zero and do not roll the window; one real terminal Opus model execution records medium/5 overall once, while direct-production credit still requires unchanged-byte OpenAI materialization, UE5.7 build/test and acceptance."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -1245,7 +1255,7 @@ credit_rules:
   - "Sequence 26 is terminal pre-model and earns zero, so the completed rolling window remains the 20 assignments after sequence 25. Its primary and sole recovery are consumed, Antigravity is closed for the assignment, and no product source exists."
   - "The historical pre-sequence-27 RobotDealer projection was NO_ELIGIBLE_PROVIDER and earned no assignment or credit. Actual sequence 27 is LT-NATIVE-PERPLEXITY-QUEST-ACCEPTANCE-002, a distinct useful research assignment. It completed one authenticated public-only request and earns medium/5 overall with zero direct production."
   - "After sequence 27, sequence 2 Antigravity long/8 rolls out and the completed 20-row window totals 83: Claude 36.1446%, Cursor 24.0964%, Grok 21.6867%, OpenAI 6.0241%, Antigravity 4.8193%, Perplexity 6.0241% and GitHub Copilot CLI 1.2048%. All hard ceilings pass; Cursor and Antigravity miss normal."
-  - "Sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 consumed its sole CLI primary at an unambiguous pre-model monthly-spend 429 with zero tokens, cost, source and credit. Chrome preparation later stopped before any file transfer, prompt submission, provider contact or model request. The owner's explicit app-selection instruction authorizes exactly one Claude desktop-app Recovery 1 with the same assignment, scope, provider and frozen public authority; it is not a new workload row. No CLI replay, Chrome submit or second app submit is permitted. A real terminal Claude model execution would record medium/5 once, roll out sequence 3 Claude long/8 and yield 80 points: Claude 33.75%, Cursor exactly 25%, Grok 22.5%, OpenAI 6.25%, Antigravity 5%, Perplexity 6.25% and GitHub Copilot CLI 1.25%."
+  - "Sequence 28 LT-NATIVE-CLAUDE-ROBOT-004 consumed CLI-primary and app-Recovery-1 Fable routes at two unambiguous pre-model monthly-spend stops with zero source and credit; Chrome preparation stopped pre-contact. The app supplied new model-switch information and the owner explicitly selected Opus 5, authorizing the final third route under the same assignment, scope, provider, attachment and frozen public authority. No billing change, re-upload, Fable replay or later Claude contact is permitted. A real terminal Opus model execution would record medium/5 once, roll out sequence 3 Claude long/8 and yield 80 points: Claude 33.75%, Cursor exactly 25%, Grok 22.5%, OpenAI 6.25%, Antigravity 5%, Perplexity 6.25% and GitHub Copilot CLI 1.25%."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5

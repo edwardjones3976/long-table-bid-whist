@@ -150,12 +150,16 @@ The CLI route is closed and cannot be replayed. The owner's later explicit
 Chrome-retry instruction supplied materially new routing authority, but the
 hidden upload input emitted no file chooser and that path ended before file
 selection, transfer, prompt entry, submission, provider contact or model
-request. The owner's subsequent instruction designates the Claude desktop app
-as the primary and first choice for exactly one Recovery 1 under the unchanged
-assignment. Its projection leaves Cursor exactly at the 25% hard ceiling after
-a real terminal model result.
+request. The owner's subsequent instruction designated the Claude desktop app
+as the primary and first choice. The app accepted the exact attachment and
+prompt once, then Fable 5 returned an unambiguous model-specific monthly-spend
+stop before source or schema result. The app explicitly offered switching models
+and the owner explicitly instructed, `Switch to Opus 5 for claude.` That new
+information authorizes one final Opus 5 High follow-up in the existing task under
+the unchanged assignment. Its projection leaves Cursor exactly at the 25% hard
+ceiling after a real terminal model result.
 
-The app recovery freezes a six-file, public/synthetic input archive: the
+The final Opus route uses the already attached six-file, public/synthetic input archive: the
 unchanged assignment packet, public contract, public fixtures, result schema,
 app transport delta and work order. Sequence-25/26 source, prompts,
 transcripts, findings, hashes, diffs, sandboxes, worktrees, repository context,
@@ -163,7 +167,7 @@ credentials and quarantined bytes remain prohibited inputs. The desktop app is
 transport only; Claude may not browse, use connectors or request repository access. It may
 return one named ZIP containing exactly the inherited eight-file
 `LongTableRobotDealer/**` inventory plus one schema-conforming result outside the
-ZIP. No Chrome submit, second app submit or later Claude contact is authorized.
+ZIP. No billing change, re-upload, Fable replay or later Claude contact is authorized.
 
 That archive plus the terminal result is a source-delivery candidate only.
 OpenAI must hash and freeze the exact bytes, reject any extra/wrapped/path-invalid

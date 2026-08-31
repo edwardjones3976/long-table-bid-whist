@@ -25,7 +25,7 @@ with no activation path.
 | Participant | Native-program responsibility | Production credit | Prohibited authority |
 | --- | --- | --- | --- |
 | OpenAI Director | Intake, scope freeze, routing, packets, workload enforcement, cross-module QA, synthesis, evidence binding, midpoint/final reports, kickback and owner gates; sequence 20 is the completed exact-state First Deal gap audit | Overall QA effort only; no direct production | No product-code lane, self-approval, fabricated participation, external-account assumption or gate-free completion |
-| Claude / FABLE 5 ULTRA/MAX | Accepted foundation; sequence 28 `LT-NATIVE-CLAUDE-ROBOT-004` consumed its CLI primary pre-model, abandoned Chrome pre-contact, and now owns exactly one owner-selected desktop-app Recovery 1 for the same public-only synthetic eight-file `LongTableRobotDealer/**` delivery | The pre-model primary and pre-contact Chrome preparation earn zero; one real terminal model execution earns medium/5 overall once; direct production remains zero unless OpenAI accepts the unchanged bytes | No CLI replay, Chrome submit, second app submit, sequence-25 retry, repository/accepted-base read, Sequence25/26 source/artifact/finding, provider web research/navigation/connectors, MCP, memory, subagent, cross-path output, self-review, merge/release, spending, credential change or final acceptance |
+| Claude / Fable 5 primary, Opus 5 High final | Accepted foundation; sequence 28 `LT-NATIVE-CLAUDE-ROBOT-004` consumed CLI and app Fable routes pre-model, abandoned Chrome pre-contact, and now owns one explicitly owner-selected Opus 5 High final follow-up for the same public-only synthetic eight-file `LongTableRobotDealer/**` delivery | Both pre-model Fable stops and pre-contact Chrome preparation earn zero; one real terminal Opus execution earns medium/5 overall once; direct production remains zero unless OpenAI accepts the unchanged bytes | No billing change, re-upload, Fable replay, later Claude contact, sequence-25 retry, repository/accepted-base read, Sequence25/26 source/artifact/finding, provider web research/navigation/connectors, MCP, memory, subagent, cross-path output, self-review, merge/release, spending, credential change or final acceptance |
 | Cursor | Self-registering LongTableXR project plugin for hands/controllers, optional-presence seam/fallback, accessibility and MR/VR state; later separately gated integration | 4 scope-forecast units only; isolated core packet is medium/5 and production credit still requires OpenAI acceptance | No edits outside the plugin subtree, cross-lane edits, self-review, merge/deploy/publish, spending or permissions |
 | Grok | Sequence 21 pre-submit transport is terminal unavailable; earlier authority-safety/House routes stay closed; future clean-room HouseCore/session/social work remains separate | Zero sequence-21 points because no model request ran | No current writer lease, production XR byte, rejected-provider input, self-review, merge/deploy/publish, credentials, concealed data or acceptance |
 | Gemini Antigravity | Sequence 26 clean-room `LongTableRobotDealer/**` route is terminal: the primary stopped without a completed prompt boundary and the sole Recovery 1 failed before provider creation | Zero overall and direct-production points; no source candidate and no active lease | No primary replay, second recovery, resend, predecessor/historical provider input, new RobotDealer packet under the closed route, self-review, merge, external write or acceptance |
@@ -135,8 +135,11 @@ with no activation path.
   request. The owner then designated the Claude desktop app as the primary and
   first choice for exactly one Recovery 1 under the same assignment. Its hash-
   frozen six-file input archive contains only the unchanged packet, public
-  contract, public fixtures, result schema, app delta and work order; Claude may
-  not browse or use connectors. Delivery remains exactly eight files
+  contract, public fixtures, result schema, app delta and work order. Fable 5
+  then returned an unambiguous pre-model spend-limit stop. The app exposed a
+  model switch and the owner explicitly selected Opus 5, authorizing one final
+  follow-up in the existing task with no re-upload. Claude may not browse or use
+  connectors. Delivery remains exactly eight files
   plus one schema-conforming result. The Director independently binds the
   archive, result, exact inventory, UTF-8/LF/provenance policy and closed
   descriptor before any source can enter OpenAI QA.
@@ -287,14 +290,17 @@ contact or delivery retry.
     sequence 28, `LT-NATIVE-CLAUDE-ROBOT-004`, consumed its sole CLI primary at
     an unambiguous pre-model monthly-spend 429 with zero tokens, cost, source or
     credit. Chrome preparation stopped before transfer or provider contact. The
-    owner's later explicit instruction designates the Claude desktop app as the
-    primary and first choice for one Recovery 1 under the same assignment; a
-    real terminal model execution would leave Cursor exactly at its 25% hard ceiling.
+    owner's later explicit instruction designated the Claude desktop app as the
+    primary and first choice. Its Fable request stopped pre-model. The app's
+    offered model switch plus the owner's exact `Switch to Opus 5 for claude.`
+    instruction authorize one final Opus 5 High follow-up under the same
+    assignment; a real terminal model execution would leave Cursor exactly at
+    its 25% hard ceiling.
     It is not a sequence-25 retry and receives none of the
     quarantined sequence-25/26 source, prompts, transcripts, findings, hashes,
     diffs, sandboxes, worktrees or provider bytes.
 
-19. App Recovery 1 may read only its hash-frozen six-file public/synthetic
+19. The final Opus route may use only the already attached, hash-frozen six-file public/synthetic
     input archive and may deliver exactly eight files below
     `LongTableRobotDealer/**` in the named ZIP plus one schema-conforming result.
     The Claude desktop app is only the owner-selected transport; Claude may not browse, use
@@ -304,7 +310,7 @@ contact or delivery retry.
     must match the closed eleven-property fixture. OpenAI may freeze and
     materialize the exact terminal archive bytes into an isolated accepted-base
     QA worktree, but may not correct or supplement product source. No CLI replay,
-    Chrome submit, second app submit or later Claude contact is authorized.
+    billing change, re-upload, Fable replay or later Claude contact is authorized.
 
 Each lease ends when its exact provider result becomes terminal. OpenAI may
 freeze, build, test, accept or reject the bytes, but cannot correct them.
