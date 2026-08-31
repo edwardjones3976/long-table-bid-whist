@@ -9,7 +9,8 @@ $ErrorActionPreference = 'Stop'
 $ControlRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..\..')).Path
 $ProviderRoot = 'C:\Users\edwar\.codex\worktrees\long-table-claude-replacement-003'
 $ClaudeExe = 'C:\Users\edwar\.local\bin\claude.exe'
-$SchemaPath = 'C:\Users\edwar\.codex\provider-qa\director-policy-cc791\docs\schemas\model-result-packet-v1.schema.json'
+$SchemaRoot = 'C:\Users\edwar\.codex\provider-qa\director-policy-cc791'
+$SchemaPath = Join-Path $SchemaRoot 'docs\schemas\model-result-packet-v1.schema.json'
 $PacketPath = Join-Path $ControlRoot 'director\native-program\packets\LT-NATIVE-CLAUDE-FOUNDATION-REPLACEMENT-003.json'
 $ActivationPath = Join-Path $ControlRoot 'artifacts\native-program\coordination\2026-08-30-sequence-16-recovery-activation.md'
 $AuditPath = Join-Path $ControlRoot 'artifacts\native-program\qa\2026-08-30-claude-replacement-003-partial-audit.md'
@@ -27,7 +28,9 @@ $Expected = [ordered]@{
     PacketSha256 = '85ba252916b6496045e64285a9da1d9cca4de34821bbc333f113f572694f9a80'
     ActivationSha256 = 'de7a94c54574fd40d13e014e7fec2e576e558c251efba309c6081afaf472ce5c'
     AuditSha256 = '6fd4f02f9c8e234cdfdef577909a4332a770325ede481c1da4cb963647170e2d'
-    SchemaSha256 = '0e447a2a10ebfba46ccad580e7dcd4bc2bf079bc4890b177fe49a03ea107b9bd'
+    SchemaAuthorityHead = 'cc791364e2f1ff1ac4c72e01c7122296e4ff7362'
+    SchemaAuthorityTree = '51f529f07b453ec8e388d5634a569efb8cd2a881'
+    SchemaBlob = 'ea3dbdf577b757a492ec4fcd53617a0fd9270800'
     LockSha256 = '738aa5fe475cd926ad9b15d54fd5d5527b6797080453e5f3e2ef3659080b3fd9'
 }
 
@@ -98,7 +101,10 @@ Assert-Exact -Name 'provider partial patch SHA-256' -Actual (Get-ProviderPatchSh
 Assert-Exact -Name 'packet SHA-256' -Actual (Get-Sha256 -Path $PacketPath) -ExpectedValue $Expected.PacketSha256
 Assert-Exact -Name 'activation SHA-256' -Actual (Get-Sha256 -Path $ActivationPath) -ExpectedValue $Expected.ActivationSha256
 Assert-Exact -Name 'partial audit SHA-256' -Actual (Get-Sha256 -Path $AuditPath) -ExpectedValue $Expected.AuditSha256
-Assert-Exact -Name 'result schema SHA-256' -Actual (Get-Sha256 -Path $SchemaPath) -ExpectedValue $Expected.SchemaSha256
+Assert-Exact -Name 'schema authority HEAD' -Actual (Invoke-Git -Root $SchemaRoot -GitArgs @('rev-parse', 'HEAD')) -ExpectedValue $Expected.SchemaAuthorityHead
+Assert-Exact -Name 'schema authority tree' -Actual (Invoke-Git -Root $SchemaRoot -GitArgs @('rev-parse', 'HEAD^{tree}')) -ExpectedValue $Expected.SchemaAuthorityTree
+Assert-Exact -Name 'schema authority status' -Actual (Invoke-Git -Root $SchemaRoot -GitArgs @('status', '--porcelain=v1')) -ExpectedValue ''
+Assert-Exact -Name 'result schema canonical blob' -Actual (Invoke-Git -Root $SchemaRoot -GitArgs @('hash-object', '--', 'docs/schemas/model-result-packet-v1.schema.json')) -ExpectedValue $Expected.SchemaBlob
 
 $providerLock = Join-Path $ProviderRoot 'package-lock.json'
 $dependencyLock = Join-Path $DependencyRoot 'package-lock.json'
