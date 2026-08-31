@@ -18,6 +18,8 @@
   "branch": "codex/antigravity-xrtest-004",
   "antigravity_project": "078d0f61-1252-40e5-a802-3c4da65f2756",
   "sandbox_mode": "accept-edits",
+  "permission_delta_file": "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-XRTEST-004-PERMISSION-DELTA.json",
+  "permission_delta_digest": "sha256:9909a9ab23d0e51ba7b18cb58f10e787d6cb3095e7acbf6ba977e4e2d0cae71c",
   "authority_snapshot": [
     {"path":"director/native-program/README.md","commit_sha":"5fe541b47275ee96f7ee33c5f61d03409afa4e1a","blob_sha":"42060b5f86b029bc61c5e1c138fa5624adce4f63"},
     {"path":"director/native-program/manual-provider-overlay.md","commit_sha":"5fe541b47275ee96f7ee33c5f61d03409afa4e1a","blob_sha":"3c95c4bfa776741ea20ccb6074fc78f7133dda6d"},

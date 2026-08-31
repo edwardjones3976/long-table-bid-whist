@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "assignment_id": "LT-NATIVE-ANTIGRAVITY-XRTEST-004",
+  "status": "AUTHORIZED_PRE_SUBMIT_TEMPORARY_PROJECT_BOUND_DELTA",
+  "owner_authority": "Owner previously authorized Antigravity write_to_file and run_command for disposable sandboxes and explicitly authorized completing all corrections without another confirmation.",
+  "transport": {
+    "provider": "Gemini Antigravity",
+    "surface": "authenticated agy CLI v1.1.22",
+    "project_id": "078d0f61-1252-40e5-a802-3c4da65f2756",
+    "project_root_during_run": "C:\\Users\\edwar\\.codex\\worktrees\\long-table-antigravity-xrtest-004",
+    "flags": [
+      "--project=078d0f61-1252-40e5-a802-3c4da65f2756",
+      "--sandbox",
+      "--mode=accept-edits",
+      "--output-format=json",
+      "--disable-slash-commands"
+    ]
+  },
+  "temporary_permission_change": {
+    "global_settings": "C:\\Users\\edwar\\.gemini\\antigravity-cli\\settings.json",
+    "global_settings_prechange_sha256": "sha256:5a9aef19fff41049666ff285eeecfd37ee35a9dc016b7c9be19b79dfefade2e3",
+    "remove_during_run_only": "write_file(*)",
+    "retain_global_denies": [
+      "unsandboxed(*)",
+      "read_url(*)",
+      "execute_url(*)",
+      "mcp(*)"
+    ],
+    "project_settings": "C:\\Users\\edwar\\.gemini\\config\\projects\\078d0f61-1252-40e5-a802-3c4da65f2756.json",
+    "project_settings_prechange_sha256": "sha256:a5911da2562e2b89b7069be3081111cf467fb1a8c745a679bca1cfefb33b2160",
+    "project_allow_during_run": [
+      "command(*)",
+      "write_file(*)"
+    ],
+    "mandatory_restore": "Restore both files byte-for-byte immediately after terminal result or any launch failure, then verify the two prechange SHA-256 values."
+  },
+  "safety_invariants": [
+    "Never use --dangerously-skip-permissions",
+    "Keep --sandbox and accept-edits bound to the exact disposable worktree",
+    "Do not remove unsandboxed, URL, execution-URL or MCP denies",
+    "Do not grant browser, credential, external-service, push, merge, deploy, publish, purchase or device authority",
+    "Restore configuration after this single assignment before inspecting or accepting provider output"
+  ],
+  "retry_binding": {
+    "primary_attempts": 1,
+    "transient_recoveries": 1,
+    "third_attempts": 0,
+    "ambiguous_paid_dispatch_retry": false
+  }
+}

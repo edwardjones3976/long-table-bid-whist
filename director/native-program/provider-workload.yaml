@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 04:37 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:34 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:31 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]]
@@ -837,8 +838,10 @@ canonical_assignment_ledger:
     canonical_points: 1
     status: "AUTHORIZED_PENDING_PRIMARY"
     accepted_direct_production_points: 0
-    packet_digest: "sha256:f3a3a3f614ee8133adfc9a4ff92a7b1b5984f8e8f67cc4258dc7850b0376b9c5"
+    packet_digest: "sha256:7951538c03d6ed318a8396150d0dd3f828021b54feaa6b253f5bd33dcfce32c4"
     packet_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-XRTEST-004.json"
+    permission_delta_digest: "sha256:9909a9ab23d0e51ba7b18cb58f10e787d6cb3095e7acbf6ba977e4e2d0cae71c"
+    permission_delta_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-XRTEST-004-PERMISSION-DELTA.json"
     activation_digest: "sha256:124c74f1d0010bd7a9a222f1b58085ad2a36ceb64146fbf29b4f523bcdb489f2"
     activation_evidence: "artifacts/native-program/coordination/2026-08-31-sequence-23-activation.md"
     prompt_digest: "sha256:efc5f9546ee64bf7834cf9fe752ddf04dcfbda50a094cd6b8689c3aef66d6f6e"
@@ -880,3 +883,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:31 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:34 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 04:37 UTC | END]]
