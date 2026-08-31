@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-ANTIGRAVITY-XRTEST-004",
+  "project": "The Long Table - Bid Whist",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "sequence": 23,
+  "provider": "Gemini Antigravity",
+  "model": "gemini-3.1-pro-high",
+  "workload_size": "simple",
+  "canonical_points_on_terminal_execution": 1,
+  "status": "AUTHORIZED_PENDING_PRIMARY",
+  "objective": "Remove exactly the two proven-stale Baseline assertions from LongTable.XR.SemanticParity while preserving Claude's three immediate-snapshot/boundary additions and every other byte.",
+  "fixture_classification": "specifically approved public-repository test code in a disposable worktree",
+  "starting_ref": "0d397d51deef9784400b9e6f90132309bedb71d4",
+  "starting_tree": "dbe19eaa3575327848ff3d8f64c8ae53b0e39207",
+  "worktree": "C:\\Users\\edwar\\.codex\\worktrees\\long-table-antigravity-xrtest-004",
+  "branch": "codex/antigravity-xrtest-004",
+  "antigravity_project": "078d0f61-1252-40e5-a802-3c4da65f2756",
+  "sandbox_mode": "accept-edits",
+  "authority_snapshot": [
+    {"path":"director/native-program/README.md","commit_sha":"5fe541b47275ee96f7ee33c5f61d03409afa4e1a","blob_sha":"42060b5f86b029bc61c5e1c138fa5624adce4f63"},
+    {"path":"director/native-program/manual-provider-overlay.md","commit_sha":"5fe541b47275ee96f7ee33c5f61d03409afa4e1a","blob_sha":"3c95c4bfa776741ea20ccb6074fc78f7133dda6d"},
+    {"path":"director/native-program/provider-workload.yaml","commit_sha":"5fe541b47275ee96f7ee33c5f61d03409afa4e1a","blob_sha":"dbf2a5d4e31ae1d69f9434dfe6c14a7e5a1b145f"},
+    {"path":"director/native-program/roles-and-responsibilities.md","commit_sha":"5fe541b47275ee96f7ee33c5f61d03409afa4e1a","blob_sha":"15df923932d3a3d65188b416569adcf06e64314b"},
+    {"path":"director/native-program/stage-gates.md","commit_sha":"5fe541b47275ee96f7ee33c5f61d03409afa4e1a","blob_sha":"ec2203fce58b3ce66233b7c69b68cba288dc31ce"},
+    {"path":"director/privacy-control-policy.md","commit_sha":"5fe541b47275ee96f7ee33c5f61d03409afa4e1a","blob_sha":"a31ce14bdaed03f3028480b7572cd9ccf7c0f859"},
+    {"path":"director/native-program/contracts/long-table-xr-public-v1.json","commit_sha":"5fe541b47275ee96f7ee33c5f61d03409afa4e1a","blob_sha":"e2eea682d0dee913c8d21d791211ad2bd6573792"},
+    {"path":"director/native-program/contracts/model-result-packet-v1.schema.json","commit_sha":"5fe541b47275ee96f7ee33c5f61d03409afa4e1a","blob_sha":"3f68e59136c422ce84d79f874c0343fd5ffc0a9e"},
+    {"path":"director/native-program/packets/LT-NATIVE-CLAUDE-XRTEST-002.json","commit_sha":"5fe541b47275ee96f7ee33c5f61d03409afa4e1a","blob_sha":"1cd101a6f659836063acb81ffda989cd3be33a1a"},
+    {"path":"artifacts/native-program/qa/2026-08-31-claude-xrtest-002-terminal-rejection.md","commit_sha":"5fe541b47275ee96f7ee33c5f61d03409afa4e1a","blob_sha":"2665e05afdbadcb3c4e9a0c44c86fde814d8c849"}
+  ],
+  "authority_snapshot_digest": "sha256:7b12ead3a0a149ca646dede4a3d58e1b1b6b0777ce8713a5771883f62df4efba",
+  "owned_paths": [
+    "Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp"
+  ],
+  "starting_blob": "0249b2c49cc86097e7c49f68383191f653032899",
+  "required_deletions": [
+    "\tTestTrue(TEXT(\"out unchanged after above max interaction id\"), DecodeOut == Baseline);",
+    "\tTestTrue(TEXT(\"out unchanged after above max target handle\"), DecodeOut == Baseline);"
+  ],
+  "constraints": [
+    "Verify exact clean starting ref, tree, branch, file blob, mode and LF line endings before editing",
+    "Read and edit only the sole owned test file",
+    "Delete each required_deletions line exactly once",
+    "Make no insertion and no other deletion, replacement, reformatting or line-ending change",
+    "Preserve both PreAbove immediate-snapshot assertions and the above-maximum ConfirmGeneration case byte-for-byte",
+    "Create one local commit on codex/antigravity-xrtest-004 and return one schema-valid model-result-packet-v1 object"
+  ],
+  "prohibited_actions": [
+    "No production code edit and no edit outside the sole owned test file",
+    "No read outside the sole owned test file other than local git identity/diff metadata",
+    "No web, MCP, plugin, subagent, memory, prior-provider transcript or unrelated repository inspection",
+    "No regex, blacklist, keyword, substring, redaction or pattern-based privacy or rights logic",
+    "No push, pull request, merge, deploy, publish, permission, credential, purchase, Slack, Linear, GitHub or device action",
+    "No product, milestone, device, human, rights, cultural, store or release acceptance claim"
+  ],
+  "allowed_tools": [
+    "Sandboxed read and edit of the sole owned file",
+    "Local git status, diff, add, commit and exact identity commands"
+  ],
+  "acceptance_checks": [
+    "One sole-parent provider commit descends from 0d397d51deef9784400b9e6f90132309bedb71d4",
+    "Only the sole owned test file changes with exactly two deletions and zero insertions",
+    "The deleted lines exactly equal required_deletions and no other byte changes",
+    "Mode 100644 and LF line endings remain unchanged",
+    "Provider result validates against model-result-packet-v1",
+    "OpenAI independently builds UE5.7 and requires all ten LongTable.XR tests to pass"
+  ],
+  "limits": {
+    "budget_usd": 1.0,
+    "timeout_seconds": 600,
+    "max_hops": 0,
+    "primary_attempts": 1,
+    "transient_recoveries": 1,
+    "max_revisions": 0
+  },
+  "retry_policy": "One primary. One recovery only for an objectively temporary pre-result transport failure. No third attempt, ambiguous resend, source revision or delivery retry.",
+  "idempotency_key": "LT-NATIVE-ANTIGRAVITY-XRTEST-004-0d397d5",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-ANTIGRAVITY-XRTEST-004",
+    "source_event_id": "openai-claude-xrtest-terminal-fallback-20260831",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}

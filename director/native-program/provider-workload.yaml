@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 04:34 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:31 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]]
@@ -355,7 +356,7 @@ rolling_window_projection:
   current_canonical_points: {claude: 33, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 11, perplexity: 0}
   current_partial_shares_percent: {claude: 37.93, cursor: 22.99, grok: 20.69, openai: 5.75, gemini_antigravity: 12.64, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "Sequence 22 is terminal rejected after one authenticated Claude result and no fourth contact is permitted. A fresh Antigravity simple/1 one-file fallback may remove only the two exact stale assertions from the frozen candidate; terminal execution projects Antigravity to 12/88 = 13.64%, inside normal. OpenAI may QA but may not author product bytes."
+  next_route: "Sequence 23 is authorized pending one sandboxed Antigravity primary. It may delete only the two exact stale assertions from frozen candidate 0d397d5; terminal execution projects Antigravity to 12/88 = 13.64%, inside normal. Claude, Cursor and Grok correction routes remain closed; OpenAI may QA but may not author product bytes."
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -829,6 +830,25 @@ canonical_assignment_ledger:
     terminal_result_digest: "sha256:e55478c482c2bd56c51a97272e0fa79b2f6b8ba86ad636c7ef0f7f27e61d5c20"
     terminal_evidence: "artifacts/native-program/qa/2026-08-31-claude-xrtest-002-terminal-rejection.md"
     manual_overlay_reason: "The final materially different output transport reached authenticated Claude and produced one exact local commit. New CLI information satisfied the global third-route rationale, but sequence 22 had no precommitted materially-different-transport delta, so the control defect is recorded without retroactive normalization. The candidate retained both known-stale Baseline assertions, returned prose plus a nonconforming fenced object instead of one schema-valid result and read outside the sole allowed test file. OpenAI reproduced a green UE5.7 build and failing 9/10 XR automation. Overall simple/1 records once, direct production is zero, the commit is immutable and no fourth Claude contact is permitted."
+  - sequence: 23
+    assignment_id: "LT-NATIVE-ANTIGRAVITY-XRTEST-004"
+    provider: gemini_antigravity
+    size: simple
+    canonical_points: 1
+    status: "AUTHORIZED_PENDING_PRIMARY"
+    accepted_direct_production_points: 0
+    packet_digest: "sha256:f3a3a3f614ee8133adfc9a4ff92a7b1b5984f8e8f67cc4258dc7850b0376b9c5"
+    packet_file: "director/native-program/packets/LT-NATIVE-ANTIGRAVITY-XRTEST-004.json"
+    activation_digest: "sha256:124c74f1d0010bd7a9a222f1b58085ad2a36ceb64146fbf29b4f523bcdb489f2"
+    activation_evidence: "artifacts/native-program/coordination/2026-08-31-sequence-23-activation.md"
+    prompt_digest: "sha256:efc5f9546ee64bf7834cf9fe752ddf04dcfbda50a094cd6b8689c3aef66d6f6e"
+    prompt_file: "artifacts/native-program/providers/LT-NATIVE-ANTIGRAVITY-XRTEST-004.prompt.md"
+    accepted_outcome_digest: null
+    starting_ref: "0d397d51deef9784400b9e6f90132309bedb71d4"
+    starting_tree: "dbe19eaa3575327848ff3d8f64c8ae53b0e39207"
+    owned_paths: ["Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp"]
+    attempts: {primary: 0, transient_recoveries: 0, revisions: 0}
+    manual_overlay_reason: "New disposable exact-two-deletion fallback after terminal Claude rejection. Antigravity is within its overall normal band, receives one specifically approved public-code test file, uses sandboxed accept-edits and has no authority over production XR, acceptance or external systems. Points enter only after real terminal provider execution."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -859,3 +879,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:31 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 04:34 UTC | END]]
