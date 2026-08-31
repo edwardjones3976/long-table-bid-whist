@@ -1,3 +1,5 @@
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-PROVENANCE-004 | BEGIN]]
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | BEGIN]]
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | BEGIN]]
 // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | BEGIN]]
 #include "LongTableCommitMachine.h"
@@ -159,3 +161,5 @@ void FLongTableCommitMachine::Reset()
 }
 // [[Claude | 2026-08-30 | LT-NATIVE-CLAUDE-FOUNDATION-SAFETY-002 | END]]
 // [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001-R1 | END]]
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-001 | END]]
+// [[Claude | Fable 5 | 2026-08-30 | LT-NATIVE-CLAUDE-PROVENANCE-004 | END]]
