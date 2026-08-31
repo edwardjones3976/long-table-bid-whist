@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 05:16 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:01 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:56 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:37 UTC | BEGIN]]
@@ -21,7 +22,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_19_OF_20 canonical completed assignments; GitHub Copilot CLI is newly admitted before dispatch at target 1%, normal band 0-4% and hard ceiling 6%. Sequence 24 is an independently authored simple/1 clean-base fallback; points enter only after a real terminal provider execution"
+  rolling_compliance_status: "COMPLETE_20_OF_20; all target-plus-five hard ceilings pass. Perplexity is four percentage points below its 4% target and therefore outside the normal plus-or-minus-three band; every other provider is inside normal. Sequence 24 records one terminal GitHub Copilot CLI run at simple/1 overall and zero direct production because the raw final payload was Markdown-fenced"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -125,7 +126,7 @@ native_code_assignments:
     program_capacity_units: 1
     credit_rule: "sequence 24 earns simple/1 overall only after one real terminal CLI execution and direct production only if its exact bytes, raw result and OpenAI gates pass"
     owned_surfaces: ["sequence 24 only: Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp"]
-    assignment_status: "AUTHORIZED_PENDING_PRIMARY on clean 33aca610; GitHub Copilot CLI is a workforce provider distinct from GitHub repository tooling"
+    assignment_status: "TERMINAL_RAW_RESULT_REJECTED; exact scoped working-tree blob is uncommitted evidence only and GitHub Copilot CLI remains distinct from GitHub repository tooling"
 
 non_credit_scope_forecast_mix:
   total: 127
@@ -366,6 +367,22 @@ overall_effort_ledger:
     terminal_result_digest: "sha256:62b0502a57f3e8aa3f248e3ac5f355ed7242e41964d70146d73c004c5276a0f2"
     terminal_evidence: "artifacts/native-program/qa/2026-08-31-antigravity-xrtest-004-terminal-rejection.md"
     exclusion_reason: "One authenticated Antigravity turn authored the exact two deletion bytes, but could not verify mandatory base metadata, requested bypass/evasion commands outside the packet, created no provider commit and emitted two invalid raw JSON documents. Wrapper-normalized structured output and OpenAI mechanical freeze/build/10-of-10 diagnostics cannot cure immutable protocol failure. Overall simple/1 records once; direct production is zero and the route is terminal."
+  - sequence: 24
+    assignment_id: "LT-NATIVE-GITHUB-COPILOT-XRTEST-005"
+    provider: github_copilot_cli
+    size: simple
+    canonical_points: 1
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_RAW_RESULT_FAILED"
+    authenticated_run: "github-copilot-cli:1.0.82;session:9319868b-5d1f-49a0-9ee5-d1433be0c3fc;auto-model:claude-haiku-4.5"
+    direct_production_points: 0
+    starting_ref: "33aca6106603342efcf43fb813482cb18fd4b18c"
+    starting_tree: "04f65bc3c72202977312cb38bc039460545daeec"
+    working_tree_blob: "7ddd45b3d956468a61b8a34a2f43be1370287932"
+    raw_result_digest: "sha256:a59bb49a3b7cfec0e52ff42c570331fc5230ad7931c110ab055c3b5fdf53e57a"
+    normalized_result_digest: "sha256:f666f7dc082b78cd3e845b0c6ba19409af7e39c7e795166ccfac47d21ccce485"
+    terminal_evidence: "artifacts/native-program/qa/2026-08-31-github-copilot-xrtest-005-terminal-rejection.md"
+    exclusion_reason: "One GitHub Copilot CLI recovery run independently authored the correct one-file diff under the exact view/edit-only boundary and auto-routed to Anthropic claude-haiku-4.5. Its normalized inner result validates, but the raw final assistant payload is Markdown-fenced and the transcript contains intermediate prose. OpenAI did not correct or commit the bytes and stopped before build/test. Overall simple/1 records once; direct production is zero and no revision or delivery retry is legal."
 accepted_direct_production_ledger:
   - sequence: 19
     assignment_id: "LT-NATIVE-CLAUDE-PROVENANCE-004"
@@ -376,12 +393,13 @@ accepted_direct_production_ledger:
     accepted_outcome_digest: "sha256:55e150cc1ac75bb9cdcf4cd1255442b569f910e9857ca91661ffb9d9d9ebf83f"
 
 rolling_window_projection:
-  completed_assignments: 19
+  completed_assignments: 20
   window_size: 20
-  current_canonical_points: {claude: 33, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0, github_copilot_cli: 0}
-  current_partial_shares_percent: {claude: 37.5, cursor: 22.73, grok: 20.45, openai: 5.68, gemini_antigravity: 13.64, perplexity: 0, github_copilot_cli: 0}
-  enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "Sequence 24 may receive one GitHub Copilot CLI primary only after this rebaseline, packet, activation and prompt are committed. It starts independently at clean 33aca61; rejected Claude and Antigravity bytes, transcripts and worktrees remain prohibited."
+  current_canonical_points: {claude: 33, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0, github_copilot_cli: 1}
+  current_shares_percent: {claude: 37.08, cursor: 22.47, grok: 20.22, openai: 5.62, gemini_antigravity: 13.48, perplexity: 0.0, github_copilot_cli: 1.12}
+  enforcement: "COMPLETE_ROLLING_20; HARD_CEILINGS_PASS; NORMAL_BAND_MISS_PERPLEXITY_MINUS_4_POINTS; all other providers inside normal. This is not mislabeled as full normal-band compliance."
+  direct_production_window_status: "WARMING_UP_ONE_ACCEPTED_POINT_ONLY; not a compliance pass and sequence 24 earns zero direct production"
+  next_route: "Sequence 24 is terminal rejected and no recovery, revision or result-delivery retry is legal. Its uncommitted working-tree blob is evidence only. No XR-test coding fallback is active; a later route requires genuinely new non-overlapping authority rather than another rendition of this assignment."
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -413,6 +431,9 @@ rolling_window_projection:
     projected_sequence_24_github_copilot_simple_after_terminal_points: {claude: 33, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0, github_copilot_cli: 1, total: 89}
     projected_sequence_24_shares_percent: {claude: 37.08, cursor: 22.47, grok: 20.22, openai: 5.62, gemini_antigravity: 13.48, perplexity: 0.0, github_copilot_cli: 1.12}
     projected_sequence_24_status: "AUTHORIZED_USEFUL_CLEAN_BASE_ONE_FILE_FALLBACK; GitHub Copilot 1.12% is inside normal 0_to_4 and below hard 6; all providers except under-target unavailable Perplexity are inside normal; points enter only after terminal provider execution"
+    sequence_24_terminal_points: {claude: 33, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0, github_copilot_cli: 1, total: 89}
+    sequence_24_terminal_shares_percent: {claude: 37.08, cursor: 22.47, grok: 20.22, openai: 5.62, gemini_antigravity: 13.48, perplexity: 0.0, github_copilot_cli: 1.12}
+    sequence_24_terminal_status: "OPENAI_CHANGES_REQUIRED_RAW_RESULT_FAILED; normalized inner object valid but raw payload fenced; overall simple/1 only; zero direct production; hard ceilings pass and Perplexity alone remains outside normal below target"
     authority: "projection only; useful assignment completion and fresh exact packet validation are required before each next dispatch; no filler, duplicate query or denominator-only work"
 
 canonical_assignment_ledger:
@@ -894,7 +915,7 @@ canonical_assignment_ledger:
     provider: github_copilot_cli
     size: simple
     canonical_points: 1
-    status: "AUTHORIZED_PENDING_PRIMARY"
+    status: "OPENAI_CHANGES_REQUIRED_RAW_RESULT_FAILED"
     accepted_direct_production_points: 0
     packet_digest: "sha256:e709539c967e47ae59e8920aa64c6147aa3e7f5ac45106faf0bcb6343e0747ae"
     packet_file: "director/native-program/packets/LT-NATIVE-GITHUB-COPILOT-XRTEST-005.json"
@@ -906,8 +927,16 @@ canonical_assignment_ledger:
     starting_ref: "33aca6106603342efcf43fb813482cb18fd4b18c"
     starting_tree: "04f65bc3c72202977312cb38bc039460545daeec"
     owned_paths: ["Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp"]
-    attempts: {primary: 0, transient_recoveries: 0, materially_different_routes: 0, model_requests: 0}
-    manual_overlay_reason: "Predispatch emergency provider admission after discovering installed GitHub Copilot CLI at 19/20. Target and ceilings are frozen before execution. The provider must independently author the three known test-oracle corrections from clean 33aca61 with shell, web, MCP, remote operations and rejected-provider context denied. Pending rows earn no points or path ownership until the committed packet is activated."
+    attempts: {local_pre_submit_configuration_failures: 1, transient_recoveries: 1, cli_provider_runs: 1, internal_model_api_calls: 12, source_revisions: 0}
+    authenticated_run: "github-copilot-cli:1.0.82;session:9319868b-5d1f-49a0-9ee5-d1433be0c3fc;auto-model:claude-haiku-4.5"
+    working_tree_blob: "7ddd45b3d956468a61b8a34a2f43be1370287932"
+    exact_diff_digest: "sha256:aa90aa9a47a3b54fb627f4ccc806bf1a3069263d74570a9afb7ae0d8e54ffdac"
+    raw_result_digest: "sha256:a59bb49a3b7cfec0e52ff42c570331fc5230ad7931c110ab055c3b5fdf53e57a"
+    normalized_result_digest: "sha256:f666f7dc082b78cd3e845b0c6ba19409af7e39c7e795166ccfac47d21ccce485"
+    event_trace_digest: "sha256:4a56d9774546477a0e5a8b06a371f2c59110c9894a06abeb029320707b57f761"
+    terminal_evidence: "artifacts/native-program/qa/2026-08-31-github-copilot-xrtest-005-terminal-rejection.md"
+    terminal_evidence_digest: "sha256:d49180df8e0afdccd99b831c914b00a7d18057d3e56d41e00cd19f967342e3b2"
+    manual_overlay_reason: "The primary failed locally before any model message because auto rejects an explicit reasoning-effort flag. The one allowed recovery reached GitHub Copilot CLI, auto-routed to Anthropic claude-haiku-4.5, and independently produced the correct 12-addition/2-removal sole-file diff using only six view and five edit calls. The raw final assistant payload nevertheless wrapped its otherwise schema-valid JSON object in a Markdown fence. OpenAI stopped before commit/build/test; overall simple/1 records once, direct production is zero, and the route is terminal."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -921,7 +950,7 @@ credit_rules:
   - "Provider identity never grants merge, deploy, publication, spending, permissions, store or final-acceptance authority."
   - "Pre-PR76 legacy units remain visible but are excluded from canonical rolling and direct-production ledgers until assignment ID, immutable points, order, authentication and outcome binding are all proven."
   - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
-  - "Sequence 23 completed one real Antigravity model turn and is terminal rejected. Sequence 24 is frozen predispatch as a new GitHub Copilot CLI simple/1 provider lane at target 1%, normal 0-4 and hard ceiling 6; it receives one primary and no rejected-provider implementation input."
+  - "Sequence 24 completed one real GitHub Copilot CLI run and is terminal raw-result rejected. The 20-assignment window is Claude 33/89 = 37.08%, Cursor 20/89 = 22.47%, Grok 18/89 = 20.22%, OpenAI 5/89 = 5.62%, Antigravity 12/89 = 13.48%, Perplexity 0 and GitHub Copilot CLI 1/89 = 1.12%. All hard ceilings pass; Perplexity is four points below its target and alone outside normal."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
@@ -942,3 +971,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 04:37 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:56 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:01 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 05:16 UTC | END]]

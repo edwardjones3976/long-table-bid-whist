@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 05:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:01 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]] -->
@@ -21,7 +22,7 @@ with no activation path.
 | Cursor | Self-registering LongTableXR project plugin for hands/controllers, optional-presence seam/fallback, accessibility and MR/VR state; later separately gated integration | 4 scope-forecast units only; isolated core packet is medium/5 and production credit still requires OpenAI acceptance | No edits outside the plugin subtree, cross-lane edits, self-review, merge/deploy/publish, spending or permissions |
 | Grok | Sequence 21 pre-submit transport is terminal unavailable; earlier authority-safety/House routes stay closed; future clean-room HouseCore/session/social work remains separate | Zero sequence-21 points because no model request ran | No current writer lease, production XR byte, rejected-provider input, self-review, merge/deploy/publish, credentials, concealed data or acceptance |
 | Gemini Antigravity | Historical rejected HouseCore and RobotDealer attempts, sequence 14 generic scaffold and terminal sequence 23 XR-test fallback | Sequence 14 and sequence 23 each earned simple/1 overall; all Antigravity work remains zero direct production | No current writer lease, rejected-artifact transfer, self-review, merge, external write or acceptance |
-| GitHub Copilot CLI | Sequence 24 independently authors three one-file XR test-oracle corrections from clean 33aca610; it is distinct from GitHub repository tooling | Pending simple/1 overall; direct production only after exact-result and OpenAI acceptance gates | No shell, web, MCP, remote operation, rejected-provider context, production-code edit, GitHub action, self-review or acceptance |
+| GitHub Copilot CLI | Sequence 24 independently authored the one-file XR test-oracle correction from clean 33aca610 and is terminal raw-result rejected; it remains distinct from GitHub repository tooling | Simple/1 overall and zero direct production | No current writer lease, retry, result redelivery, GitHub action, self-review or acceptance |
 | Perplexity | Existing broad research evidence; sequence 13's exact current Quest query stopped before submission because the configured credential was empty | Zero sequence-13 overall/direct points because no request reached Perplexity; prior legacy research is not converted into PR76 credit | No retry/duplicate query, private context, code, vote, review verdict or external write |
 | Firecrawl | Primary-source retrieval used to verify research | Tool, never a workforce provider | No vote, authorship or acceptance authority |
 | GitHub | Canonical branch, commit, PR, check, review and release evidence | Tool | No substitution for human/device/rights/owner gates |
@@ -78,12 +79,13 @@ with no activation path.
   commit mechanically identical provider bytes for QA provenance but may not
   author a product correction; corrections are kicked back to the owning
   provider under new authority.
-- GitHub Copilot CLI sequence 24 may read and edit only
+- GitHub Copilot CLI sequence 24 read and edited only
   Unreal/Plugins/LongTableXR/Source/LongTableXR/Private/Tests/LongTableXRTests.cpp
-  in the clean codex/copilot-xrtest-005 worktree. Shell, web, MCP, remote
-  operations and rejected Claude/Antigravity bytes or transcripts are denied.
-  OpenAI may mechanically freeze the exact provider-authored bytes, then build,
-  test, accept or reject them; it may not correct them.
+  in the clean-base codex/copilot-xrtest-005 worktree. Its auto route resolved
+  transparently to Anthropic claude-haiku-4.5. Six view and five edit calls
+  stayed on the sole file, but the raw final payload was Markdown-fenced.
+  The working-tree blob is uncommitted terminal evidence, the lease is closed,
+  and OpenAI may not normalize, correct, build or accept it.
 
 The shared integration contract is frozen before dispatch. Providers may add
 tests only within their owned module. They may not alter another provider's
@@ -190,12 +192,14 @@ contact or delivery retry.
 13. Sequence 23, LT-NATIVE-ANTIGRAVITY-XRTEST-004, is terminal
     OPENAI_CHANGES_REQUIRED_PROTOCOL_AND_RAW_RESULT_FAILED. Its diagnostic
     two-deletion candidate is rejected and never becomes a sequence-24 input.
-14. Sequence 24, LT-NATIVE-GITHUB-COPILOT-XRTEST-005, admits GitHub Copilot
-    CLI before dispatch at target 1%, normal band 0-4% and hard ceiling 6%.
-    One primary starts at clean 33aca610, owns only the one test file, receives
-    the requirements but no rejected implementation, and returns one raw
-    result object. No provider shell or commit is required; OpenAI may
-    mechanically freeze unchanged provider bytes for QA.
+14. Sequence 24, LT-NATIVE-GITHUB-COPILOT-XRTEST-005, is terminal
+    OPENAI_CHANGES_REQUIRED_RAW_RESULT_FAILED. The service-level GitHub Copilot
+    CLI provider was admitted before dispatch at target 1%, normal band 0-4%
+    and hard ceiling 6%; auto resolved to Anthropic claude-haiku-4.5. Its
+    correct scoped diff is bound only as uncommitted evidence because the raw
+    final assistant payload fenced the otherwise schema-valid object. It earns
+    simple/1 overall, zero direct production and has no retry or result-binding
+    authority.
 
 Each lease ends when its exact provider result becomes terminal. OpenAI may
 freeze, build, test, accept or reject the bytes, but cannot correct them.
@@ -208,3 +212,4 @@ freeze, build, test, accept or reject the bytes, but cannot correct them.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:01 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 05:16 UTC | END]] -->
