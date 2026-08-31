@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 06:12 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:10 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:07 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:56 UTC | BEGIN]]
@@ -977,6 +978,11 @@ canonical_assignment_ledger:
     preterminal_static_qa_digest: "sha256:04d3930a9b276a87b2c584b08a91dafb6d5ce47c8e39f1d6312d42fb3e4f15cb"
     recovery_prompt: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-001.sequence-25-recovery.prompt.md"
     recovery_prompt_digest: "sha256:e5f3872037427d0daa6949e6b46effa88d2739cd761aaae25c81ac52aff66810"
+    qa_worktree: "C:\\Users\\edwar\\.codex\\worktrees\\long-table-claude-robot-qa-002"
+    qa_branch: "codex/claude-robot-qa-002"
+    qa_base: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
+    qa_base_tree: "1e0db56f1e85d66c93ab64bc3dca8c237947c210"
+    qa_preflight: "CLEAN_ACCEPTED_FOUNDATION_WITH_ROBOT_PLUGIN_PATH_ABSENT; no provider bytes materialized before exact commit/result"
     manual_overlay_reason: "The sequence-18 prestage never dispatched, so sequence 25 is the first execution of the same assignment under a narrow reauthorization delta, not a duplicate row. One malformed empty-MCP launcher stopped locally before provider contact. The corrected authorized primary reached Claude Fable 5, created thirteen leased-path files, used no web or subagents, then hit an explicit temporary session limit before commit or structured output. The uncommitted bytes are frozen by manifest. One post-reset transient recovery remains; there is still no terminal workload or direct-production credit."
 
 credit_rules:
@@ -1018,3 +1024,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 05:56 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:07 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:10 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 06:12 UTC | END]]
