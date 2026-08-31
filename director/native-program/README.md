@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]] -->
@@ -128,6 +129,14 @@ then passed 219/219 full LF tests, both UE5.7 targets and 34/34 Unreal automatio
 The native replacement foundation is locally `OPENAI_ACCEPTED`; OpenAI remains
 QA-only and no merge, release or device claim follows from this gate.
 
+`LT-NATIVE-OPENAI-FIRST-DEAL-GAP-001` then audited the unchanged accepted
+foundation against the rebaselined native Stage 1. The exact candidate has no
+accepted XR plugin, native table/room content, embodied robot, Android package,
+two-device proof or physical Quest/human evidence. Sequence 20 is therefore
+terminal `OPENAI_CHANGES_REQUIRED_FIRST_DEAL_NOT_ACHIEVED` at medium/5 overall
+effort and zero direct production. The audit preserves `4d26680` as the accepted
+foundation dependency; it does not reject or edit that code.
+
 The dependency-independent Grok fallback is frozen by
 `contracts/long-table-house-public-v1.json`. That contract is the entire
 HouseCore product authority for `LT-NATIVE-GROK-HOUSE-001`: public event,
@@ -154,3 +163,4 @@ accepted authority and robot-cue contracts.
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]] -->

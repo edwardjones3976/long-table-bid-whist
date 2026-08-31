@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]]
@@ -12,7 +13,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "WARMING_UP_16_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists; Claude is 39.51%, below its 41% hard ceiling but 0.51 points above the normal band, so no further Claude implementation dispatch is eligible without a fresh useful-work workload decision"
+  rolling_compliance_status: "WARMING_UP_17_OF_20 canonical completed assignments; exact cc791 enforcement reports an advisory and does not activate rolling hard thresholds until a complete 20-assignment window exists; the real OpenAI First Deal gap audit brings Claude to 37.21% inside normal and Cursor to 23.26%, 0.26 points above normal but below its 25% hard ceiling; no provider implementation dispatch is eligible without a fresh useful-work packet"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -309,6 +310,17 @@ overall_effort_ledger:
     accepted_outcome_digest: "sha256:55e150cc1ac75bb9cdcf4cd1255442b569f910e9857ca91661ffb9d9d9ebf83f"
     terminal_evidence: "artifacts/native-program/qa/2026-08-30-claude-provenance-004-acceptance.md"
     exclusion_reason: null
+  - sequence: 20
+    assignment_id: "LT-NATIVE-OPENAI-FIRST-DEAL-GAP-001"
+    provider: openai
+    size: medium
+    canonical_points: 5
+    completed: true
+    terminal_status: "OPENAI_CHANGES_REQUIRED_FIRST_DEAL_NOT_ACHIEVED"
+    authenticated_run: "codex-thread:01a031ef-538c-7502-a6e8-e03d9d4ada3a"
+    direct_production_points: 0
+    terminal_evidence: "artifacts/native-program/qa/2026-08-31-first-deal-gap-audit.md"
+    exclusion_reason: "OpenAI independently derived the rebaselined native First Deal requirements and inspected exact accepted foundation candidate 4d26680. The audit proves the authority code gate while identifying missing XR, native presentation, robot embodiment, Android/package and device/human gates. This is useful overall-effort QA that changes the next legal route; OpenAI authors no product byte and earns zero direct-production credit."
 
 accepted_direct_production_ledger:
   - sequence: 19
@@ -320,12 +332,12 @@ accepted_direct_production_ledger:
     accepted_outcome_digest: "sha256:55e150cc1ac75bb9cdcf4cd1255442b569f910e9857ca91661ffb9d9d9ebf83f"
 
 rolling_window_projection:
-  completed_assignments: 16
+  completed_assignments: 17
   window_size: 20
-  current_canonical_points: {claude: 32, cursor: 20, grok: 18, openai: 0, gemini_antigravity: 11, perplexity: 0}
-  current_partial_shares_percent: {claude: 39.51, cursor: 24.69, grok: 22.22, openai: 0, gemini_antigravity: 13.58, perplexity: 0}
+  current_canonical_points: {claude: 32, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 11, perplexity: 0}
+  current_partial_shares_percent: {claude: 37.21, cursor: 23.26, grok: 20.93, openai: 5.81, gemini_antigravity: 12.79, perplexity: 0}
   enforcement: "WARMING_UP_ADVISORY; the partial shares are reported honestly but are not mislabeled as a complete rolling-20 pass or target-plus-five compliance"
-  next_route: "Sequence 19 is OpenAI-accepted and foundation candidate 4d26680 is green. Do not activate the dependency-open Claude XR-test or RobotDealer packets yet: another medium/5 Claude assignment would exceed the 41% hard ceiling. Recalculate useful under-target work without filler, then issue new exact authority for the next eligible provider lane."
+  next_route: "Sequence 20 is a real exact-state OpenAI QA assignment, not denominator work. It proves First Deal is incomplete and identifies a one-file XR test-only fallback as the next useful implementation. A new Grok simple/1 packet may be considered because 19/87 = 21.84% is inside Grok's normal 17-23% band; Cursor's exhausted route and the stale Claude XR/Robot packets remain closed."
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -336,6 +348,9 @@ rolling_window_projection:
     sequence_19_claude_simple_after_terminal_points: {claude: 32, cursor: 20, grok: 18, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 81}
     projected_sequence_19_shares_percent: {claude: 39.51, cursor: 24.69, grok: 22.22, openai: 0.0, gemini_antigravity: 13.58, perplexity: 0.0}
     projected_sequence_19_status: "USEFUL_WORK_EXCEPTION_ABOVE_NORMAL_CLAUDE_39_BY_0.51_BUT_BELOW_HARD_CEILING_41; sole owning-provider provenance repair; explicit owner direction; no filler"
+    sequence_20_openai_gap_audit_after_terminal_points: {claude: 32, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 11, perplexity: 0, total: 86}
+    projected_sequence_20_shares_percent: {claude: 37.21, cursor: 23.26, grok: 20.93, openai: 5.81, gemini_antigravity: 12.79, perplexity: 0.0}
+    projected_sequence_20_status: "USEFUL_OPENAI_QA_INSIDE_OPENAI_NORMAL_5_TO_11; zero production credit; Cursor 0.26 above normal but below hard; Perplexity remains below normal"
     authority: "projection only; useful assignment completion and fresh exact packet validation are required before each next dispatch; no filler, duplicate query or denominator-only work"
 
 canonical_assignment_ledger:
@@ -728,6 +743,18 @@ canonical_assignment_ledger:
     provider_reported_authority_digest: "sha256:0000000000000000000000000000000000000000000000000000000000000000"
     binding_disposition: "Provider transparently reported a zero sentinel because the custom manual packet omitted the result-field digest. OpenAI did not rewrite the result; acceptance binds pushed control head 47f445b, packet/launcher/raw hashes and exact candidate evidence. No canonical runtime replay-run is claimed."
     manual_overlay_reason: "Genuinely new one-file comment-only owning-provider correction based on post-terminal exact-head evidence and the owner's explicit order to contact Claude again. One authenticated primary created sole-parent candidate 4d26680 with exactly four allowed comments in one path. OpenAI passed schema/identity, exact diff, normalized zero-deletion marker census, 219/219 LF tests, both UE5.7 targets and 34/34 Unreal automation. The foundation is accepted locally; sequence 19 earns simple/1 overall and direct-production points."
+  - sequence: 20
+    assignment_id: "LT-NATIVE-OPENAI-FIRST-DEAL-GAP-001"
+    provider: openai
+    size: medium
+    canonical_points: 5
+    status: "OPENAI_CHANGES_REQUIRED_FIRST_DEAL_NOT_ACHIEVED"
+    accepted_direct_production_points: 0
+    terminal_evidence: "artifacts/native-program/qa/2026-08-31-first-deal-gap-audit.md"
+    accepted_outcome_digest: null
+    starting_ref: "4d26680fb99abacb20ecb18807b7c8833646cfa3"
+    starting_tree: "1e0db56f1e85d66c93ab64bc3dca8c237947c210"
+    manual_overlay_reason: "One bounded OpenAI exact-state milestone audit derives the native First Deal requirements, proves the accepted authority foundation and identifies missing XR, room/card presentation, robot embodiment, Android/package, two-device and human/device gates. It is useful QA/control work, not filler or product authorship, and earns medium/5 overall points with zero direct production."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -741,7 +768,7 @@ credit_rules:
   - "Provider identity never grants merge, deploy, publication, spending, permissions, store or final-acceptance authority."
   - "Pre-PR76 legacy units remain visible but are excluded from canonical rolling and direct-production ledgers until assignment ID, immutable points, order, authentication and outcome binding are all proven."
   - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
-  - "Sequence 19 executed terminally and the completed useful-work window is Claude 32/81 = 39.51%, Cursor 20/81 = 24.69%, Grok 18/81 = 22.22%, Antigravity 11/81 = 13.58%, OpenAI 0 and Perplexity 0. Claude is below its 41% hard ceiling but 0.51 points above the normal band; another medium Claude assignment would exceed the hard ceiling. XR and RobotDealer dependency checks may be evaluated, but dispatch requires a fresh eligible workload route without filler."
+  - "Sequence 20 completed one real OpenAI exact-state First Deal gap audit. The completed useful-work window is Claude 32/86 = 37.21%, Cursor 20/86 = 23.26%, Grok 18/86 = 20.93%, OpenAI 5/86 = 5.81%, Antigravity 11/86 = 12.79% and Perplexity 0. The next useful one-file Grok simple/1 XR-test fallback projects Grok to 19/87 = 21.84%, inside normal; Cursor's exhausted route and stale Claude XR/Robot packets remain closed until new exact authority and workload eligibility."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
@@ -753,3 +780,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]]

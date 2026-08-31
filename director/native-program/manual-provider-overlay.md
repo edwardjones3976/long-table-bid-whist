@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
 # Owner-authorized native provider overlay
@@ -518,6 +519,17 @@ packet grammar and normalized multiset pass directly, with no inferred migration
 
 ## Acceptance
 
+### OpenAI First Deal exact-state gap audit
+
+Sequence 20, `LT-NATIVE-OPENAI-FIRST-DEAL-GAP-001`, is one bounded OpenAI
+medium/5 QA assignment. It inspected exact accepted foundation `4d26680`, tree
+`1e0db56`, and proved that the authority code gate is green while native XR,
+table/room presentation, robot embodiment, Android/package, two-device and
+physical Quest/human evidence remain absent. It earns zero direct-production
+credit and does not change or reject the accepted foundation. The completed
+window is now 17/20 and 86 points: Claude 37.21%, Cursor 23.26%, Grok 20.93%,
+OpenAI 5.81%, Antigravity 12.79% and Perplexity 0%.
+
 Manual routing never weakens acceptance. Each provider candidate still requires:
 
 1. exact base, head, tree, and origin evidence;
@@ -532,3 +544,4 @@ human acceptance, cultural acceptance, and rights acceptance remain separate
 gates.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]] -->

@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]] -->
@@ -63,10 +64,15 @@ inherited marker deletion is zero; 219/219 full LF tests, both UE5.7 targets and
 34/34 Unreal automation pass. The native foundation code gate is now locally
 `OPENAI_ACCEPTED`.
 
-XR-test and RobotDealer may not dispatch automatically: Claude is 39.51% in the
-16/20 completed window, and another medium Claude assignment would exceed the
-41% hard ceiling. Physical Quest and every human, cultural, accessibility,
-rights, store and owner gate remain open.
+Sequence 20, `LT-NATIVE-OPENAI-FIRST-DEAL-GAP-001`, independently audited the
+unchanged accepted foundation. Its code/authority gate remains green, but First
+Deal is not achieved: accepted XR, native table/room presentation, embodied
+robot, Android package, two-device concealed-state proof and physical
+Quest/human evidence are absent. The audit earns medium/5 overall OpenAI effort
+and zero direct production, bringing the useful-work window to 17/20 and 86
+points. Stale Claude XR-test and RobotDealer packets remain closed; a new exact
+workload-eligible fallback authority is required. Physical Quest and every
+human, cultural, accessibility, rights, store and owner gate remain open.
 
 ## Chunk B — Private Game Night
 
@@ -140,3 +146,4 @@ ambiguity; unrelated mutation; failed exact-SHA binding; or cultural harm.
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]] -->

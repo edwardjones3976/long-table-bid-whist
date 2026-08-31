@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | BEGIN]] -->
@@ -11,7 +12,7 @@ with no activation path.
 
 | Participant | Native-program responsibility | Production credit | Prohibited authority |
 | --- | --- | --- | --- |
-| OpenAI Director | Intake, scope freeze, routing, packets, workload enforcement, cross-module QA, synthesis, evidence binding, midpoint/final reports, kickback and owner gates | No; control-plane QA is excluded | No product-code lane, self-approval, fabricated participation, external-account assumption or gate-free completion |
+| OpenAI Director | Intake, scope freeze, routing, packets, workload enforcement, cross-module QA, synthesis, evidence binding, midpoint/final reports, kickback and owner gates; sequence 20 is the completed exact-state First Deal gap audit | Overall QA effort only; no direct production | No product-code lane, self-approval, fabricated participation, external-account assumption or gate-free completion |
 | Claude / FABLE 5 ULTRA/MAX | TypeScript authority, protocol, C++ table/runtime and composition root across all three chunks; sequence 16 is terminal provenance-rejected and sequence 19 is the accepted comment-only correction | 48 scope-forecast units only; sequences 12 and 16 each earn medium/5 overall effort and zero direct production; accepted sequence 19 earns simple/1 overall and direct-production points | No active writer lease; no new Claude implementation assignment while its workload projection exceeds the normal band or would cross the hard ceiling; no self-review, merge/release, spending, credential change or final acceptance |
 | Cursor | Self-registering LongTableXR project plugin for hands/controllers, optional-presence seam/fallback, accessibility and MR/VR state; later separately gated integration | 4 scope-forecast units only; isolated core packet is medium/5 and production credit still requires OpenAI acceptance | No edits outside the plugin subtree, cross-lane edits, self-review, merge/deploy/publish, spending or permissions |
 | Grok | Terminal rejected seven-path authority-safety attempt; sequence 15 completed one public-only native-app/world/hybrid architecture dissent and future clean-room HouseCore/session/social work remains separate | 22 scope-forecast units only; sequences 11 and 15 each retain medium/5 overall effort and zero direct production | No writer lease in sequence 15, no sequence-11 reopening, repository/private/rejected-provider context, tools, browsing, code, self-review, merge/deploy/publish, credentials, concealed data or acceptance |
@@ -154,6 +155,11 @@ contact or delivery retry.
    opens dependency evaluation, but Claude is 39.51%, 0.51 points above the
    normal band, and another medium Claude packet would exceed the 41% hard
    ceiling. No Claude writer lease is active.
+10. Sequence 20, `LT-NATIVE-OPENAI-FIRST-DEAL-GAP-001`, is terminal
+    `OPENAI_CHANGES_REQUIRED_FIRST_DEAL_NOT_ACHIEVED`. It binds the exact
+    accepted foundation, distinguishes code-gate proof from missing milestone
+    evidence and earns medium/5 overall QA effort with zero direct production.
+    It creates no product lease and cannot accept any later implementation.
 
 Each lease ends when its exact provider result becomes terminal. OpenAI may
 freeze, build, test, accept or reject the bytes, but cannot correct them.
@@ -161,3 +167,4 @@ freeze, build, test, accept or reject the bytes, but cannot correct them.
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 18:15 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:01 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 03:16 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 04:03 UTC | END]] -->
