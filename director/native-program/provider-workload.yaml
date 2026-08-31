@@ -1,3 +1,4 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 06:10 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:07 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:56 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | BEGIN]]
@@ -974,6 +975,8 @@ canonical_assignment_ledger:
     primary_evidence_digest: "sha256:af898b9869c05563bd0d23553991e5eea0819c10f8f47bcc8bdba4ddd3700c6b"
     preterminal_static_qa: "artifacts/native-program/qa/2026-08-31-claude-robot-001-frozen-static-qa.md"
     preterminal_static_qa_digest: "sha256:04d3930a9b276a87b2c584b08a91dafb6d5ce47c8e39f1d6312d42fb3e4f15cb"
+    recovery_prompt: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-001.sequence-25-recovery.prompt.md"
+    recovery_prompt_digest: "sha256:e5f3872037427d0daa6949e6b46effa88d2739cd761aaae25c81ac52aff66810"
     manual_overlay_reason: "The sequence-18 prestage never dispatched, so sequence 25 is the first execution of the same assignment under a narrow reauthorization delta, not a duplicate row. One malformed empty-MCP launcher stopped locally before provider contact. The corrected authorized primary reached Claude Fable 5, created thirteen leased-path files, used no web or subagents, then hit an explicit temporary session limit before commit or structured output. The uncommitted bytes are frozen by manifest. One post-reset transient recovery remains; there is still no terminal workload or direct-production credit."
 
 credit_rules:
@@ -1014,3 +1017,4 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:56 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 06:07 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 06:10 UTC | END]]
