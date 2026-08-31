@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]] -->
@@ -84,11 +85,21 @@ clean and no workload point was earned. Production XR bytes remain immutable.
 The one-file correction requires a genuinely new fallback assignment before
 OpenAI can evaluate mechanical XR composition onto `4d26680`.
 
-Sequence 22, `LT-NATIVE-CLAUDE-XRTEST-002`, is that new simple/1 fallback. It
-supersedes the stale undispatched medium packet and owns only the same test file
-on exact base `33aca610`. Claude projects to `33/87 = 37.93%`, inside normal.
-One primary and one objectively temporary transport recovery are available; no
-source revision or production XR edit is authorized.
+Sequence 22, `LT-NATIVE-CLAUDE-XRTEST-002`, ended terminal OpenAI-rejected after
+an authenticated Claude result retained both stale assertions, failed the raw
+result/protocol boundary, read beyond its sole file and reproduced only 9/10 XR
+automation. Sequence 23 Antigravity and sequence 24 GitHub Copilot CLI also
+ended terminal protocol/result-rejected; none of their bytes is accepted or an
+input to another provider.
+
+Sequence 25 is the first execution of the undispatched sequence-18
+`LT-NATIVE-CLAUDE-ROBOT-001`. Accepted foundation `4d26680`, terminal XR QA and
+this explicit Director reauthorization open the independent RobotDealer authoring
+gate without claiming accepted XR. Claude receives only the exact canonical
+public JSON contract and result schema in a new standalone root repository and
+writes only `LongTableRobotDealer/**`. The pending assignment earns no credit;
+one primary and one objectively temporary pre-result recovery are authorized,
+with no source revision.
 
 ## Chunk B — Private Game Night
 
@@ -166,3 +177,4 @@ ambiguity; unrelated mutation; failed exact-SHA binding; or cultural harm.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | END]] -->

@@ -1,3 +1,5 @@
+# [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | BEGIN]]
+# [[OpenAI Director | Codex | 2026-08-31 | 05:22 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:16 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:01 UTC | BEGIN]]
 # [[OpenAI Director | Codex | 2026-08-31 | 04:56 UTC | BEGIN]]
@@ -22,7 +24,7 @@ policy_binding:
   hard_ceiling_above_target_percentage_points: 5
   runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
   workload_baseline: "director/native-program/workload-baseline.md"
-  rolling_compliance_status: "COMPLETE_20_OF_20; all target-plus-five hard ceilings pass. Perplexity is four percentage points below its 4% target and therefore outside the normal plus-or-minus-three band; every other provider is inside normal. Sequence 24 records one terminal GitHub Copilot CLI run at simple/1 overall and zero direct production because the raw final payload was Markdown-fenced"
+  rolling_compliance_status: "CURRENT_COMPLETE_20_OF_20; all target-plus-five hard ceilings pass and Perplexity alone is outside normal below target. Sequence 25 is pending and earns no point yet. A real terminal Claude medium/5 RobotDealer execution would roll out sequence 1 long/8, keep every hard ceiling green, and leave Cursor 0.2558 above normal plus Perplexity below normal"
   canonical_effort_points: {simple: 1, short: 2, medium: 5, long: 8}
 
 overall_assignment_targets_percent:
@@ -97,6 +99,7 @@ native_code_assignments:
     allocation: {native_foundation_first_deal: 16, private_game_night: 16, long_table_house: 16}
     owned_surfaces: ["packages/rules-core", "packages/protocol", "services/table-authority", "Unreal/Source/LongTableProtocol", "Unreal/Source/LongTableTable", "Unreal/Source/LongTable"]
     required_model: "FABLE 5 ULTRA/MAX"
+    active_assignment: "sequence 25 first execution of LT-NATIVE-CLAUDE-ROBOT-001 clean-room LongTableRobotDealer/** only; pending earns zero points"
   cursor:
     scope_forecast_units: 4
     credit_rule: "forecast is not credit; isolated XR-core packet is medium/5 and final integration remains separately dependency-gated"
@@ -399,7 +402,7 @@ rolling_window_projection:
   current_shares_percent: {claude: 37.08, cursor: 22.47, grok: 20.22, openai: 5.62, gemini_antigravity: 13.48, perplexity: 0.0, github_copilot_cli: 1.12}
   enforcement: "COMPLETE_ROLLING_20; HARD_CEILINGS_PASS; NORMAL_BAND_MISS_PERPLEXITY_MINUS_4_POINTS; all other providers inside normal. This is not mislabeled as full normal-band compliance."
   direct_production_window_status: "WARMING_UP_ONE_ACCEPTED_POINT_ONLY; not a compliance pass and sequence 24 earns zero direct production"
-  next_route: "Sequence 24 is terminal rejected and no recovery, revision or result-delivery retry is legal. Its uncommitted working-tree blob is evidence only. No XR-test coding fallback is active; a later route requires genuinely new non-overlapping authority rather than another rendition of this assignment."
+  next_route: "Sequence 24 remains terminal with no XR-test retry. Sequence 25 is a genuinely separate clean-room RobotDealer module and may receive one Claude primary only after its fresh packet, activation, prompt and workload projection are committed. It receives no XR or rejected Antigravity implementation."
   prestage_projection:
     sequence_13_perplexity_pre_submit_stop: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 10, perplexity: 0, total: 69}
     sequence_14_antigravity_simple_after_terminal_points: {claude: 26, cursor: 20, grok: 13, openai: 0, gemini_antigravity: 11, perplexity: 0, total: 70}
@@ -434,6 +437,9 @@ rolling_window_projection:
     sequence_24_terminal_points: {claude: 33, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0, github_copilot_cli: 1, total: 89}
     sequence_24_terminal_shares_percent: {claude: 37.08, cursor: 22.47, grok: 20.22, openai: 5.62, gemini_antigravity: 13.48, perplexity: 0.0, github_copilot_cli: 1.12}
     sequence_24_terminal_status: "OPENAI_CHANGES_REQUIRED_RAW_RESULT_FAILED; normalized inner object valid but raw payload fenced; overall simple/1 only; zero direct production; hard ceilings pass and Perplexity alone remains outside normal below target"
+    projected_sequence_25_claude_robot_medium_after_terminal_points: {claude: 30, cursor: 20, grok: 18, openai: 5, gemini_antigravity: 12, perplexity: 0, github_copilot_cli: 1, total: 86}
+    projected_sequence_25_shares_percent: {claude: 34.8837, cursor: 23.2558, grok: 20.9302, openai: 5.8140, gemini_antigravity: 13.9535, perplexity: 0.0, github_copilot_cli: 1.1628}
+    projected_sequence_25_status: "AUTHORIZED_USEFUL_CLEAN_ROOM_ROBOT_MODULE; all hard ceilings pass; Cursor is 0.2558 above normal and must not be rounded green; Perplexity remains below normal; a pre-model stop earns zero and does not roll sequence 1"
     authority: "projection only; useful assignment completion and fresh exact packet validation are required before each next dispatch; no filler, duplicate query or denominator-only work"
 
 canonical_assignment_ledger:
@@ -791,14 +797,14 @@ canonical_assignment_ledger:
     provider: claude
     size: medium
     canonical_points: 5
-    status: "DEPENDENCY_CLOSED_REQUIRES_ACCEPTED_REPLACEMENT_FOUNDATION_XR_QA_AND_DIRECTOR_REAUTHORIZATION"
+    status: "SUPERSEDED_UNDISPATCHED_BY_SEQUENCE_25"
     accepted_direct_production_points: 0
     packet_digest: "sha256:4cd8d536d1500f776310e0814956b988cb03abe21cc670449c8658b7cad33cba"
     work_packet_digest: "sha256:5b7078b5d4c760609726f3a2f3fe2d9abbe36a581f3023337e385b159b17d750"
     accepted_outcome_digest: null
     starting_ref: "2f3ce02ba6a4339655a096066730c1ea12d96b5b"
     starting_tree: "b7c0ca0ee65507d03c8cb9c603162a214a9fe6bd"
-    manual_overlay_reason: "frozen future clean-room replacement after terminal Antigravity; provider may see only the public synthetic contract and Director result schema. Rejected foundation candidate 623ca52 cannot satisfy its dependency, so this row has no current dispatch authority and requires an accepted replacement foundation, terminal XR QA and explicit Director reauthorization; pending packets do not enter completed effort totals"
+    manual_overlay_reason: "The historical future packet was never dispatched or credited. Accepted foundation 4d26680, terminal XR QA and explicit reauthorization now permit the same independent module under fresh sequence-25 identity, workload, contribution and result binding. This stale row remains zero points and owns no path."
   - sequence: 19
     assignment_id: "LT-NATIVE-CLAUDE-PROVENANCE-004"
     provider: claude
@@ -937,6 +943,28 @@ canonical_assignment_ledger:
     terminal_evidence: "artifacts/native-program/qa/2026-08-31-github-copilot-xrtest-005-terminal-rejection.md"
     terminal_evidence_digest: "sha256:d49180df8e0afdccd99b831c914b00a7d18057d3e56d41e00cd19f967342e3b2"
     manual_overlay_reason: "The primary failed locally before any model message because auto rejects an explicit reasoning-effort flag. The one allowed recovery reached GitHub Copilot CLI, auto-routed to Anthropic claude-haiku-4.5, and independently produced the correct 12-addition/2-removal sole-file diff using only six view and five edit calls. The raw final assistant payload nevertheless wrapped its otherwise schema-valid JSON object in a Markdown fence. OpenAI stopped before commit/build/test; overall simple/1 records once, direct production is zero, and the route is terminal."
+  - sequence: 25
+    historical_prestage_sequence: 18
+    assignment_id: "LT-NATIVE-CLAUDE-ROBOT-001"
+    execution_semantics: "FIRST_EXECUTION_OF_PREVIOUSLY_UNDISPATCHED_ASSIGNMENT"
+    provider: claude
+    size: medium
+    canonical_points: 5
+    status: "AUTHORIZED_PENDING_PRIMARY"
+    accepted_direct_production_points: 0
+    base_packet_digest: "sha256:4cd8d536d1500f776310e0814956b988cb03abe21cc670449c8658b7cad33cba"
+    packet_digest: "sha256:8d2b31bd997636438fc8ed4ba21d20671c5d1fa4bf41e4021a3928c04a6db111"
+    packet_file: "director/native-program/packets/LT-NATIVE-CLAUDE-ROBOT-001-REAUTHORIZATION-DELTA.json"
+    activation_digest: "sha256:d066fc34f7499e3d135d193be4342b6e9c4fb923ed32e0d7e49e9ac10e2ac8fa"
+    activation_evidence: "artifacts/native-program/coordination/2026-08-31-sequence-25-activation.md"
+    prompt_digest: "sha256:f7686f49621d2026a6b95dea1e0a7c76fe512db01c49fe61383729735e4b5cbc"
+    prompt_file: "artifacts/native-program/providers/LT-NATIVE-CLAUDE-ROBOT-001.sequence-25.prompt.md"
+    accepted_outcome_digest: null
+    starting_ref: "39087f750c7af361393feb32926ea898f9dccecb"
+    starting_tree: "4085ca20ee26e081e0405d4820f3503c8f595b1c"
+    owned_paths: ["LongTableRobotDealer/**"]
+    attempts: {primary: 0, transient_recoveries: 0, model_requests: 0, source_revisions: 0}
+    manual_overlay_reason: "The sequence-18 prestage never dispatched, so sequence 25 is the first execution of the same assignment under a narrow reauthorization delta, not a retry or duplicate row. Claude receives only the immutable canonical public JSON contract and result schema in a new two-file standalone root repository, owns a new plugin subtree, and cannot access XR, Long Table source or rejected provider objects. Pending work earns no overall or direct-production point."
 
 credit_rules:
   - "Program capacity units forecast scope only and never count as accepted workload credit."
@@ -950,7 +978,7 @@ credit_rules:
   - "Provider identity never grants merge, deploy, publication, spending, permissions, store or final-acceptance authority."
   - "Pre-PR76 legacy units remain visible but are excluded from canonical rolling and direct-production ledgers until assignment ID, immutable points, order, authentication and outcome binding are all proven."
   - "During the exact cc791 warm-up window, report partial shares and route useful eligible work toward under-target providers; do not call the advisory a compliance pass."
-  - "Sequence 24 completed one real GitHub Copilot CLI run and is terminal raw-result rejected. The 20-assignment window is Claude 33/89 = 37.08%, Cursor 20/89 = 22.47%, Grok 18/89 = 20.22%, OpenAI 5/89 = 5.62%, Antigravity 12/89 = 13.48%, Perplexity 0 and GitHub Copilot CLI 1/89 = 1.12%. All hard ceilings pass; Perplexity is four points below its target and alone outside normal."
+  - "Sequence 25 is pending and earns zero points. If one real Claude medium/5 run becomes terminal, sequence 1 Claude long/8 rolls out and the next window is Claude 30/86 = 34.8837%, Cursor 20/86 = 23.2558%, Grok 18/86 = 20.9302%, OpenAI 5/86 = 5.8140%, Antigravity 12/86 = 13.9535%, Perplexity 0 and GitHub Copilot CLI 1/86 = 1.1628%. All hard ceilings pass; Cursor and Perplexity miss normal."
 
 action_reduction:
   maximum_major_steps_per_review_to_merge_cycle: 5
@@ -972,3 +1000,5 @@ action_reduction:
 # [[OpenAI Director | Codex | 2026-08-31 | 04:56 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:01 UTC | END]]
 # [[OpenAI Director | Codex | 2026-08-31 | 05:16 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 05:22 UTC | END]]
+# [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | END]]

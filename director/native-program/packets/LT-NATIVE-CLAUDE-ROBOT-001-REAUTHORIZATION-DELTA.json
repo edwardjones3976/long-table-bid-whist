@@ -1,0 +1,165 @@
+{
+  "schema_version": "1.0",
+  "task_id": "LT-NATIVE-PROGRAM-20260830",
+  "assignment_id": "LT-NATIVE-CLAUDE-ROBOT-001",
+  "delta_id": "LT-NATIVE-CLAUDE-ROBOT-001-REAUTHORIZATION-DELTA",
+  "historical_prestage_sequence": 18,
+  "activation_order": 25,
+  "execution_semantics": "FIRST_EXECUTION_OF_PREVIOUSLY_UNDISPATCHED_ASSIGNMENT",
+  "project": "The Long Table - Bid Whist",
+  "repository": "local-synthetic/long-table-robot-dealer",
+  "provider": "Claude",
+  "model": "claude-fable-5",
+  "effort": "high",
+  "workload_size": "medium",
+  "canonical_points_on_terminal_execution": 5,
+  "status": "AUTHORIZED_PENDING_PRIMARY",
+  "base_packet": {
+    "path": "director/native-program/packets/LT-NATIVE-CLAUDE-ROBOT-001.json",
+    "sha256": "4cd8d536d1500f776310e0814956b988cb03abe21cc670449c8658b7cad33cba",
+    "preserved_scope": true,
+    "preserved_budget_and_privacy_boundaries": true
+  },
+  "dependency_resolution": {
+    "accepted_foundation_candidate": "4d26680fb99abacb20ecb18807b7c8833646cfa3",
+    "accepted_foundation_tree": "1e0db56f1e85d66c93ab64bc3dca8c237947c210",
+    "accepted_foundation_evidence_sha256": "55e150cc1ac75bb9cdcf4cd1255442b569f910e9857ca91661ffb9d9d9ebf83f",
+    "xr_closure": [
+      "sequence 17 superseded undispatched",
+      "sequence 21 unavailable before model submission",
+      "sequence 22 terminal OpenAI-rejected",
+      "sequence 23 terminal OpenAI-rejected",
+      "sequence 24 terminal OpenAI-rejected"
+    ],
+    "xr_accepted": false,
+    "sequencing_decision": "XR QA is terminal through sequence 24. Accepted XR is not an implementation dependency of this standalone presentation plugin, so clean-room authoring may begin. No XR or rejected provider byte is an input and this does not establish First Deal completion.",
+    "director_reauthorization_base_control_head": "97892ef2bbbae677df8073cc18f81a66bec0062d"
+  },
+  "sandbox": {
+    "path": "C:\\Users\\edwar\\.codex\\provider-sandboxes\\lt-robot-dealer-claude-002-clean",
+    "branch": "codex/claude-robot-cleanroom-002",
+    "starting_ref": "39087f750c7af361393feb32926ea898f9dccecb",
+    "starting_tree": "4085ca20ee26e081e0405d4820f3503c8f595b1c",
+    "starting_status": "clean",
+    "repository_shape": "new standalone root repository with one branch, no remote and no rejected provider object"
+  },
+  "authority_snapshot": [
+    {
+      "path": "PUBLIC_CONTRACT.json",
+      "commit_sha": "39087f750c7af361393feb32926ea898f9dccecb",
+      "blob_sha": "528ce90812d4c452ddc51a0cccc86dd990977abe",
+      "sha256": "56299bb63a352560f2a40fc1115db1eb276e87ada719054959b33498aef80c52"
+    },
+    {
+      "path": "RESULT_SCHEMA.json",
+      "commit_sha": "39087f750c7af361393feb32926ea898f9dccecb",
+      "blob_sha": "3f68e59136c422ce84d79f874c0343fd5ffc0a9e",
+      "sha256": "ebadc5bc45462ffa63ca5e6b28c09d1ccf86086389324a0c88f704bb14208d9c"
+    }
+  ],
+  "authority_snapshot_digest": "sha256:37608811b0034ba030df68309a18019b826354dec697bfec0beb217b6d4f851f",
+  "authority_snapshot_digest_method": "SHA-256 of the exact PUBLIC_CONTRACT.json bytes followed immediately by the exact RESULT_SCHEMA.json bytes",
+  "readable_paths": [
+    "PUBLIC_CONTRACT.json",
+    "RESULT_SCHEMA.json",
+    "LongTableRobotDealer/**"
+  ],
+  "owned_paths": [
+    "LongTableRobotDealer/**"
+  ],
+  "immutable_paths": [
+    "PUBLIC_CONTRACT.json",
+    "RESULT_SCHEMA.json"
+  ],
+  "constraints": [
+    "Read no path outside the isolated sandbox and no sandbox path except the two immutable authority files and files created below LongTableRobotDealer",
+    "Create only the descriptor, runtime module, public/private C++ source, README and focused automation tests required by PUBLIC_CONTRACT.json below LongTableRobotDealer/**",
+    "Implement exactly the closed cue, motion, submit-result and state inventories, monotonic acceptance, pause/resume FIFO, capacity 64, reset replay defense, atomic rejection, native test delegate and compile-safe Blueprint seam",
+    "Every new taggable .h, .cpp, .cs and .md file carries one fresh matching outer Claude contribution pair for this assignment; JSON and .uplugin files remain tag-free",
+    "Use positive exact construction and field inventories only; regex, blacklist, keyword, substring, redaction, serialize-then-delete and concealed-object-then-delete privacy controls are prohibited",
+    "Use original source only and bundle no voice, jazz, blues, music, samples, images, likenesses, models, textures, media or third-party asset",
+    "Create one sole-parent provider-authored local commit containing only LongTableRobotDealer/** and do not push",
+    "Report Unreal build and automation as NOT_RUN in the synthetic sandbox; OpenAI owns independent target-project build and test QA"
+  ],
+  "prohibited_actions": [
+    "No Long Table repository, accepted foundation source, XR source, other worktree, Director repository, other provider output, Antigravity implementation, transcript, diff, frozen copy, hash inventory or QA evidence",
+    "No Bid Whist rules, player intent, host command, authority, credential, identity, session, room, networking, telemetry, concealed-state or Meta SDK behavior",
+    "No web, browser, Chrome, memory, MCP, connector, subagent, download, install, remote repository, external service or external write",
+    "No push, pull request, merge, deploy, publish, Slack, Linear, GitHub mutation, purchase, credential, permission, device or release action",
+    "No source revision or normalization of an invalid terminal result"
+  ],
+  "allowed_tools": [
+    "Read, Glob and Grep only inside the isolated sandbox boundary",
+    "Write and Edit only below LongTableRobotDealer",
+    "Local Git status, diff, add, commit, show, log, rev-parse and hash commands inside the sandbox",
+    "Authenticated Claude Code subscription transport with memory, browser, MCP, session persistence and external tools disabled"
+  ],
+  "acceptance_checks": [
+    "Exact clean starting ref, tree, branch, two immutable file blobs and SHA-256 values are verified before provider execution",
+    "One sole-parent provider commit changes only LongTableRobotDealer/** and preserves the immutable authority bytes",
+    "Required descriptor, runtime module, state machine, Blueprint-safe component, README and all fifteen exact automation test IDs exist with no generated artifact",
+    "Closed cue, motion, result and reflected-state inventories and module dependencies exactly match PUBLIC_CONTRACT.json",
+    "Every new taggable file has a fresh matching outer provider contribution pair and every JSON-formatted file remains valid and tag-free",
+    "Provider output is one CLI JSON wrapper whose structured_output validates against RESULT_SCHEMA.json and binds this assignment and authority digest",
+    "OpenAI mechanically freezes the exact provider bytes into an isolated target-project QA worktree and independently builds and tests them before direct-production credit or integration"
+  ],
+  "openai_qa": {
+    "role": "independent exact-byte materialization and acceptance only; no product-code authorship",
+    "target_base": "4d26680fb99abacb20ecb18807b7c8833646cfa3",
+    "target_path": "Unreal/Plugins/LongTableRobotDealer/**",
+    "required_gates": [
+      "exact base, parent, head, tree, modes, LF encoding, allowlist and provider provenance",
+      "Director contribution-tag validation against the exact candidate",
+      "UE5.7 LongTableEditor and LongTable Win64 Development builds",
+      "all fifteen LongTable.RobotDealer.* tests with zero failure or not-run",
+      "one full LongTable automation run",
+      "unchanged 219/219 TypeScript baseline, strict typing, fixture-current check and browser production build",
+      "exact structural field, dependency, privacy, dealer-mode authority-equivalence and rights-clean inventories"
+    ],
+    "acceptance_boundary": "Acceptance proves only the standalone deterministic robot-dealer presentation plugin. Integration, visible embodiment, Android, Quest, two-device, human, cultural, store, merge and release gates remain open."
+  },
+  "workload_projection": {
+    "current_window_assignments": 20,
+    "current_window_points": 89,
+    "terminal_window_assignments": 20,
+    "terminal_window_points": 86,
+    "rolled_out_assignment": "sequence 1 Claude long/8",
+    "shares_percent": {
+      "claude": 34.8837,
+      "cursor": 23.2558,
+      "grok": 20.9302,
+      "openai": 5.8140,
+      "gemini_antigravity": 13.9535,
+      "perplexity": 0.0,
+      "github_copilot_cli": 1.1628
+    },
+    "hard_ceiling_status": "ALL_PASS",
+    "normal_band_misses": [
+      "Cursor is 0.2558 percentage points above its normal band",
+      "Perplexity is below its normal band"
+    ],
+    "credit_boundary": "No credit at activation. Medium/5 overall credit records once only after real terminal provider execution. Direct-production credit records only after exact OpenAI acceptance."
+  },
+  "retry_policy": {
+    "primary_attempts": 1,
+    "transient_recoveries": 1,
+    "recovery_condition": "objectively temporary failure before a terminal model result",
+    "third_attempts": 0,
+    "source_revisions": 0,
+    "ambiguous_resends": 0
+  },
+  "limits": {
+    "budget_usd": 0,
+    "timeout_seconds": 7200,
+    "max_hops": 0,
+    "max_revisions": 0
+  },
+  "idempotency_key": "LT-NATIVE-CLAUDE-ROBOT-001-39087f7-SEQUENCE25",
+  "correlation": {
+    "correlation_id": "LT-NATIVE-CLAUDE-ROBOT-001",
+    "source_event_id": "openai-first-deal-robot-cleanroom-reauthorization-20260831",
+    "slack_thread_ts": "1788068481.517609",
+    "github_issue": null,
+    "github_pull_request": null
+  }
+}

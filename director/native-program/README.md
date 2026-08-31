@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | BEGIN]] -->
@@ -63,9 +64,10 @@ physical headset, external account, human cohort, or owner gate.
 
 ## Provider code ownership
 
-- Claude: accepted foundation candidate `4d26680` plus active sequence-22 lease
-  for exactly one `LongTableXRTests.cpp` correction on frozen XR base
-  `33aca610`. Production XR, authority and RobotDealer paths are not leased.
+- Claude: accepted foundation candidate `4d26680`; sequence 22 XR correction is
+  terminal rejected. Sequence 25 is the first execution of the previously
+  undispatched `LT-NATIVE-CLAUDE-ROBOT-001`, with one clean-room writer lease
+  only below `LongTableRobotDealer/**` in a standalone two-file sandbox.
 - Cursor: the self-registering `Unreal/Plugins/LongTableXR/**` project plugin
   for hands/controllers, presence fallback, accessibility and MR/VR adapters.
 - Grok: sequence 21 ended `UNAVAILABLE_PRE_SUBMIT_TRANSPORT` with zero model
@@ -169,3 +171,4 @@ accepted authority and robot-cue contracts.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:15 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:18 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | END]] -->

@@ -1,3 +1,5 @@
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | BEGIN]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 05:22 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:16 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:01 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | BEGIN]] -->
@@ -18,7 +20,7 @@ with no activation path.
 | Participant | Native-program responsibility | Production credit | Prohibited authority |
 | --- | --- | --- | --- |
 | OpenAI Director | Intake, scope freeze, routing, packets, workload enforcement, cross-module QA, synthesis, evidence binding, midpoint/final reports, kickback and owner gates; sequence 20 is the completed exact-state First Deal gap audit | Overall QA effort only; no direct production | No product-code lane, self-approval, fabricated participation, external-account assumption or gate-free completion |
-| Claude / FABLE 5 ULTRA/MAX | Accepted foundation; sequence 22 test-oracle fallback is terminal rejected and later table/runtime or clean-room robot work requires a separate packet | Sequence 22 earned simple/1 overall and zero direct production | No current writer lease, production XR edit, self-review, merge/release, spending, credential change or final acceptance |
+| Claude / FABLE 5 ULTRA/MAX | Accepted foundation plus active sequence 25 first execution of the clean-room `LT-NATIVE-CLAUDE-ROBOT-001`; sequence 22 XR-test fallback remains terminal | Sequence 25 is pending medium/5 overall and direct only after exact OpenAI acceptance | No XR or main-repository read/write, rejected provider input, self-review, merge/release, spending, credential change or final acceptance |
 | Cursor | Self-registering LongTableXR project plugin for hands/controllers, optional-presence seam/fallback, accessibility and MR/VR state; later separately gated integration | 4 scope-forecast units only; isolated core packet is medium/5 and production credit still requires OpenAI acceptance | No edits outside the plugin subtree, cross-lane edits, self-review, merge/deploy/publish, spending or permissions |
 | Grok | Sequence 21 pre-submit transport is terminal unavailable; earlier authority-safety/House routes stay closed; future clean-room HouseCore/session/social work remains separate | Zero sequence-21 points because no model request ran | No current writer lease, production XR byte, rejected-provider input, self-review, merge/deploy/publish, credentials, concealed data or acceptance |
 | Gemini Antigravity | Historical rejected HouseCore and RobotDealer attempts, sequence 14 generic scaffold and terminal sequence 23 XR-test fallback | Sequence 14 and sequence 23 each earned simple/1 overall; all Antigravity work remains zero direct production | No current writer lease, rejected-artifact transfer, self-review, merge, external write or acceptance |
@@ -86,6 +88,13 @@ with no activation path.
   stayed on the sole file, but the raw final payload was Markdown-fenced.
   The working-tree blob is uncommitted terminal evidence, the lease is closed,
   and OpenAI may not normalize, correct, build or accept it.
+- Claude sequence 25 may work only inside
+  C:\Users\edwar\.codex\provider-sandboxes\lt-robot-dealer-claude-002-clean.
+  It may read the immutable PUBLIC_CONTRACT.json and RESULT_SCHEMA.json and write
+  only LongTableRobotDealer/**. The Long Table repository, XR source, rejected
+  Antigravity RobotDealer implementation and every other worktree are
+  prohibited. OpenAI may later materialize the exact provider commit into an
+  isolated target-project QA worktree but cannot author a correction.
 
 The shared integration contract is frozen before dispatch. Providers may add
 tests only within their owned module. They may not alter another provider's
@@ -161,8 +170,8 @@ contact or delivery retry.
    and explicit Director reauthorization is recorded may assignment
    `LT-NATIVE-CLAUDE-ROBOT-001` transfer the clean-room destination
    `Unreal/Plugins/LongTableRobotDealer/**` from terminal Antigravity to Claude.
-   Claude may read only the new frozen public contract, its own accepted public
-   presentation interfaces if available, and UE5.7 public headers. It may not
+   Claude may read only the two immutable files in the new standalone synthetic
+   sandbox and files it creates below its owned plugin subtree. It may not
    read or compare any Antigravity implementation or evidence.
 9. Sequence 19, `LT-NATIVE-CLAUDE-PROVENANCE-004`, is terminal
    `OPENAI_ACCEPTED_FOUNDATION_PROVENANCE_CORRECTION` at `4d26680`. It earns
@@ -200,6 +209,14 @@ contact or delivery retry.
     final assistant payload fenced the otherwise schema-valid object. It earns
     simple/1 overall, zero direct production and has no retry or result-binding
     authority.
+15. Sequence 25 is the first execution of the previously undispatched
+    `LT-NATIVE-CLAUDE-ROBOT-001` prestaged at sequence 18. A narrow immutable
+    delta preserves its identity, medium/5 scope, budget and privacy boundaries.
+    Foundation 4d26680 is accepted, XR QA is terminal and explicit Director
+    reauthorization is recorded. Claude owns only a fresh source-only
+    LongTableRobotDealer/** subtree in a new two-authority-file standalone root
+    repository. One primary and one objectively temporary pre-result recovery
+    exist; there is no source revision, retry credit or duplicate workload row.
 
 Each lease ends when its exact provider result becomes terminal. OpenAI may
 freeze, build, test, accept or reject the bytes, but cannot correct them.
@@ -213,3 +230,5 @@ freeze, build, test, accept or reject the bytes, but cannot correct them.
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 04:27 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:01 UTC | END]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-31 | 05:16 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 05:22 UTC | END]] -->
+<!-- [[OpenAI Director | Codex | 2026-08-31 | 05:31 UTC | END]] -->
