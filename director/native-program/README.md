@@ -1,3 +1,4 @@
+<!-- [[OpenAI Codex | GPT-5.6 | 2026-08-31 | 23:57 UTC | BEGIN]] -->
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 05:27 UTC | BEGIN]] -->
 # The Long Table native program — canonical overlay
 
@@ -75,4 +76,15 @@ physical headset, external account, human cohort, or owner gate.
 - Director policy source: `director-orchestrator@cc791364e2f1ff1ac4c72e01c7122296e4ff7362`
   (merged PR #76 semantics; local service activation is a separate gate).
 
+## LangGraph canary registration
+
+[`langgraph-canary.yaml`](langgraph-canary.yaml) binds the paid-off Long Table
+canary to accepted commit `4d26680fb99abacb20ecb18807b7c8833646cfa3`
+and tree `1e0db56f1e85d66c93ab64bc3dca8c237947c210`. It is a control-plane
+registration only: LangGraph intake, writer leasing, provider dispatch, Slack,
+GitHub, repository writes, merge, deployment, and publication remain disabled.
+It does not alter the TypeScript table authority, rules core, protocol, Unreal
+presentation boundary, or any product-completion gate.
+
 <!-- [[OpenAI Director | Codex | 2026-08-30 | 05:27 UTC | END]] -->
+<!-- [[OpenAI Codex | GPT-5.6 | 2026-08-31 | 23:57 UTC | END]] -->

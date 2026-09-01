@@ -12,15 +12,13 @@
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
     "noEmit": true,
-    "types": []
+    "types": ["node"]
   },
   "include": [
     "../../packages/**/*.ts",
     "../../services/**/*.ts",
-    "./**/*.ts",
-    "./types/*.d.ts"
+    "./**/*.ts"
   ],
   "exclude": ["../../node_modules"]
 }
