@@ -23,6 +23,9 @@ describe("Long Table LangGraph canary registration", () => {
     expect(canary).toContain("commit: 4d26680fb99abacb20ecb18807b7c8833646cfa3");
     expect(canary).toContain("tree: 1e0db56f1e85d66c93ab64bc3dca8c237947c210");
     expect(canary).toContain("mutable_ref_authority: false");
+    expect(canary).toContain(
+      "implementation_commit: fa2c4f6e4c333cc41594956dbfd0aff0e3fa67cf",
+    );
     expect(canary).not.toContain("fb729579");
   });
 
