@@ -1,3 +1,4 @@
+// [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 02:02 UTC | BEGIN]]
 // [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 01:11 UTC | BEGIN]]
 // [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 00:36 UTC | BEGIN]]
 // [[OpenAI Codex | GPT-5.6 | 2026-08-31 | 23:57 UTC | BEGIN]]
@@ -26,7 +27,7 @@ describe("Long Table LangGraph canary registration", () => {
     expect(canary).toContain("tree: 1e0db56f1e85d66c93ab64bc3dca8c237947c210");
     expect(canary).toContain("mutable_ref_authority: false");
     expect(canary).toContain(
-      "implementation_commit: 7596d06b0729b13a29f9d329e20a38fab6b5637a",
+      "implementation_commit: 087bb682f77128452e57119fc06aeb858d53a0aa",
     );
     expect(canary).not.toContain("fb729579");
   });
@@ -89,3 +90,4 @@ describe("Long Table LangGraph canary registration", () => {
 // [[OpenAI Codex | GPT-5.6 | 2026-08-31 | 23:57 UTC | END]]
 // [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 00:36 UTC | END]]
 // [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 01:11 UTC | END]]
+// [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 02:02 UTC | END]]
