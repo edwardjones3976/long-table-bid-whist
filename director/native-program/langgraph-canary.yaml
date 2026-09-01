@@ -1,3 +1,4 @@
+# [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 01:11 UTC | BEGIN]]
 # [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 00:36 UTC | BEGIN]]
 # [[OpenAI Codex | GPT-5.6 | 2026-08-31 | 23:57 UTC | BEGIN]]
 schema: long-table-langgraph-canary/v1
@@ -13,7 +14,7 @@ project:
 
 director_runtime:
   implementation_repository: edwardjones3976/director-orchestrator
-  implementation_commit: 1eddfd6a471a0eda990faf52a8792dbff3d4dd75
+  implementation_commit: 7596d06b0729b13a29f9d329e20a38fab6b5637a
   profile: long-table
   port: 38080
   mode: disabled
@@ -76,3 +77,4 @@ terminal_condition:
   may_claim_product_complete: false
 # [[OpenAI Codex | GPT-5.6 | 2026-08-31 | 23:57 UTC | END]]
 # [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 00:36 UTC | END]]
+# [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 01:11 UTC | END]]
