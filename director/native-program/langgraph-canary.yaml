@@ -1,3 +1,4 @@
+# [[OpenAI Codex | GPT-5.6 | 2026-09-02 | 03:40 UTC | BEGIN]]
 # [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 02:02 UTC | BEGIN]]
 # [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 01:11 UTC | BEGIN]]
 # [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 00:36 UTC | BEGIN]]
@@ -15,7 +16,7 @@ project:
 
 director_runtime:
   implementation_repository: edwardjones3976/director-orchestrator
-  implementation_commit: 087bb682f77128452e57119fc06aeb858d53a0aa
+  implementation_commit: 811700cf4e9834acfa960a8819cb4934b8780736
   profile: long-table
   port: 38080
   mode: disabled
@@ -33,8 +34,8 @@ provider_surfaces:
     - antigravity
     - perplexity
     - firecrawl
-    - github
-    - windows-copilot
+    - github-copilot
+    - microsoft-365-copilot
   dispatch_enabled: false
   parallel_dispatch_enabled: false
   paid_execution_enabled: false
@@ -80,3 +81,4 @@ terminal_condition:
 # [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 00:36 UTC | END]]
 # [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 01:11 UTC | END]]
 # [[OpenAI Codex | GPT-5.6 | 2026-09-01 | 02:02 UTC | END]]
+# [[OpenAI Codex | GPT-5.6 | 2026-09-02 | 03:40 UTC | END]]
