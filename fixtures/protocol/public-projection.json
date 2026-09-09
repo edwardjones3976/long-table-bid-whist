@@ -1,0 +1,111 @@
+{
+  "canonical": "{\"role\":\"public\",\"protocolVersion\":\"long-table-protocol/2\",\"manifestId\":\"RESTRICTED_TABLE_SLICE_0_1\",\"tableId\":\"table-fixture-1\",\"version\":8,\"handNumber\":1,\"phase\":\"play\",\"turn\":\"south\",\"turnLabel\":\"South\",\"dealer\":\"east\",\"dealerLabel\":\"East\",\"contract\":{\"level\":6,\"mode\":\"high\",\"modeLabel\":\"High\",\"trump\":\"clubs\",\"trumpLabel\":\"clubs\",\"bidder\":\"south\",\"bidderLabel\":\"South\"},\"auction\":[{\"seat\":\"south\",\"bid\":{\"level\":6,\"mode\":\"high\"}},{\"seat\":\"west\",\"bid\":null},{\"seat\":\"north\",\"bid\":null},{\"seat\":\"east\",\"bid\":null}],\"publicTrick\":[{\"seat\":\"east\",\"seatLabel\":\"East\",\"cardId\":\"spades-3\",\"label\":\"3♠\",\"glyph\":\"♠\",\"rankText\":\"3\",\"red\":false}],\"completedTricks\":[{\"number\":1,\"lead\":\"south\",\"winner\":\"north\"},{\"number\":2,\"lead\":\"north\",\"winner\":\"east\"}],\"booksNorthSouth\":1,\"booksEastWest\":1,\"scoreNorthSouth\":0,\"scoreEastWest\":0,\"seats\":[{\"seat\":\"south\",\"seatLabel\":\"South\",\"occupant\":\"human\",\"displayName\":\"Ada\",\"connected\":true,\"cardCount\":10},{\"seat\":\"west\",\"seatLabel\":\"West\",\"occupant\":\"ai\",\"displayName\":\"AI seat\",\"connected\":true,\"cardCount\":10},{\"seat\":\"north\",\"seatLabel\":\"North\",\"occupant\":\"ai\",\"displayName\":\"AI seat\",\"connected\":true,\"cardCount\":10},{\"seat\":\"east\",\"seatLabel\":\"East\",\"occupant\":\"ai\",\"displayName\":\"AI seat\",\"connected\":true,\"cardCount\":9}],\"statusLine\":\"east plays 3♠.\",\"summaryLine\":null,\"paused\":false,\"eventEnded\":false}",
+  "value": {
+    "role": "public",
+    "protocolVersion": "long-table-protocol/2",
+    "manifestId": "RESTRICTED_TABLE_SLICE_0_1",
+    "tableId": "table-fixture-1",
+    "version": 8,
+    "handNumber": 1,
+    "phase": "play",
+    "turn": "south",
+    "turnLabel": "South",
+    "dealer": "east",
+    "dealerLabel": "East",
+    "contract": {
+      "level": 6,
+      "mode": "high",
+      "modeLabel": "High",
+      "trump": "clubs",
+      "trumpLabel": "clubs",
+      "bidder": "south",
+      "bidderLabel": "South"
+    },
+    "auction": [
+      {
+        "seat": "south",
+        "bid": {
+          "level": 6,
+          "mode": "high"
+        }
+      },
+      {
+        "seat": "west",
+        "bid": null
+      },
+      {
+        "seat": "north",
+        "bid": null
+      },
+      {
+        "seat": "east",
+        "bid": null
+      }
+    ],
+    "publicTrick": [
+      {
+        "seat": "east",
+        "seatLabel": "East",
+        "cardId": "spades-3",
+        "label": "3♠",
+        "glyph": "♠",
+        "rankText": "3",
+        "red": false
+      }
+    ],
+    "completedTricks": [
+      {
+        "number": 1,
+        "lead": "south",
+        "winner": "north"
+      },
+      {
+        "number": 2,
+        "lead": "north",
+        "winner": "east"
+      }
+    ],
+    "booksNorthSouth": 1,
+    "booksEastWest": 1,
+    "scoreNorthSouth": 0,
+    "scoreEastWest": 0,
+    "seats": [
+      {
+        "seat": "south",
+        "seatLabel": "South",
+        "occupant": "human",
+        "displayName": "Ada",
+        "connected": true,
+        "cardCount": 10
+      },
+      {
+        "seat": "west",
+        "seatLabel": "West",
+        "occupant": "ai",
+        "displayName": "AI seat",
+        "connected": true,
+        "cardCount": 10
+      },
+      {
+        "seat": "north",
+        "seatLabel": "North",
+        "occupant": "ai",
+        "displayName": "AI seat",
+        "connected": true,
+        "cardCount": 10
+      },
+      {
+        "seat": "east",
+        "seatLabel": "East",
+        "occupant": "ai",
+        "displayName": "AI seat",
+        "connected": true,
+        "cardCount": 9
+      }
+    ],
+    "statusLine": "east plays 3♠.",
+    "summaryLine": null,
+    "paused": false,
+    "eventEnded": false
+  }
+}

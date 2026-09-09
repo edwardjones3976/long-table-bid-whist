@@ -7,9 +7,47 @@ An authentic VR/MR recreation of Bid Whist centered on deterministic rules,
 inhabited table presence, respected house rules, accessible interaction, and
 dignified cultural specificity.
 
-The project is currently in **framing**. The next delivery is a non-code
-gameplay prototype specification for one strict four-seat table, followed by a
-playable prototype and an evidence-backed MVP roadmap.
+The project is currently a **reshaped technical prototype**. A local production
+build can complete a deterministic hand from auction through scoring in either
+AI Dealer or Human Host presentation. It becomes a `REVIEW_READY` candidate
+only after exact-SHA review; final `COMPLETE` remains gated on human acceptance.
+
+## Run the prototype
+
+```powershell
+npm install
+npm test
+npm run build
+npm run preview
+```
+
+Open `http://127.0.0.1:4173/`. The current candidate includes the Strict Table
+54-card rules kernel, seeded replay, legal-information AI, bid/declaration/
+kitty/play/score interactions, responsive seated-room UI, AI Dealer and Human
+Host modes, captions, reduced motion, high contrast, card scaling, and explicit
+commit controls.
+
+This is a browser interaction and rules proof—not a native Quest build, real
+multiplayer room, production concealed-state security boundary, Meta Avatar SDK
+integration, or completed cultural/human acceptance study.
+
+## Avatar and cultural direction
+
+The Long Table has no built-in human cast. In the target Meta runtime, every
+occupied human seat is represented by that participant's own Meta avatar; the
+game does not substitute a stock demographic character or culturally coded
+body. The AI dealer may be embodied as an unmistakably non-human robot.
+
+Foundational Black American influence should be felt lightly through the
+gathering itself: warm hospitality, lively social energy, tactile room
+materials, and original or documented rights-clean ambience. It is never
+assigned to bodies, costumes, dialect caricatures, gestures, or stereotypes.
+
+The current local browser prototype is a gameplay and room-composition study.
+It does not integrate the Meta Avatar SDK and intentionally renders the other
+seat positions open. Both shipped room images now contain open seats only. They
+establish layout, lighting, and mood while leaving participant identity to the
+future Meta-avatar runtime.
 
 ## Director workflow
 

@@ -1,8 +1,12 @@
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
 # Roles and responsibilities — The Long Table
 
 This project-local contract applies the authoritative Director team operating
-charter from `director-orchestrator@ed02458d5c425115e49b330ed1f6cdc1d9af1ce6`.
+charter from `director-orchestrator@5c112bfdbc1bc6e5299aad6428fec9b03edb1cb3`
+plus the governance-only safe subset reviewed at
+`PR #71@4ba6032d5e79dd06f5d571f7c88dd75c114c5590`.
 Provider identity never grants authority, and no provider may approve its own
 material contribution.
 
@@ -84,18 +88,25 @@ review, security, CI, and merge evidence.
 - Cannot perform exact-candidate review, acceptance, deterministic merge,
   research-methodology truth, deployment, publication, billing, permissions,
   or external writes.
-- Cannot participate in `POSITION` or `REBUTTAL`. Its configured advisory weight
-  remains in the immutable denominator but is never cast.
+- Is equally debate-eligible only after an owner or Director invitation. It may
+  provide a bounded `POSITION`, `REBUTTAL`, focused follow-up, or abstention
+  relayed by the Director. It cannot initiate, self-route, or continue a
+  conversation autonomously, and debate grants no operational authority.
 
 ### Closed outbound contract
 
-Antigravity receives no model-authored prose. Requests may contain only fixed
-strings already present in the Director implementation, closed-enum values, and
-bounded integers. The owner objective, task prose, acceptance text, dependency
-results, messages, repository context, credentials, starting ref, draft pull
-request, and public research query are not transmitted. Authority is an empty
-grant plus a fixed denied-authority block. Rejections must not quote the
-assignment.
+Ordinary Antigravity work receives no model-authored prose. Requests may contain
+only fixed strings already present in the Director implementation, closed-enum
+values, and bounded integers. The owner objective, task prose, acceptance text,
+dependency results, messages, repository context, credentials, starting ref,
+draft pull request, and public research query are not transmitted.
+
+Invited debate is a separate lane. Before every dispatch, the owner or Director
+must approve the exact outbound payload. It may contain only public,
+non-private, abstract decision framing—never source code, repository context,
+credentials, player data, concealed game state, unpublished rights/licensing
+records, or private prose. Regex or blacklist redaction is not a privacy
+boundary. Authority remains empty plus a fixed denied-authority block.
 
 ## Perplexity.ai — Research Programmers
 
@@ -113,6 +124,24 @@ assignment.
 Each research packet preserves, when available: the query, result URL and page
 title, publication/update/retrieval dates, supporting excerpt or extracted
 content, source type, confidence, contradictions, and unavailable evidence.
+Review feedback requires a new owner-approved bounded public query; the original
+query is never silently rerun.
+
+## Completion, scheduling, and runtime responsibility
+
+- Assignment acceptance never implies whole-project completion.
+- `COMPLETE` requires the unchanged exact candidate, all required independent
+  evidence, human user testing, and owner acceptance.
+- Dependency-ready work may be selected, but external provider dispatch remains
+  sequential and ambiguous dispatches are reconciled rather than duplicated.
+- Merge eligibility is a pure decision and has no merge side effect.
+- Director host completion runners, a live LangGraph packet runtime, and
+  parallel external dispatch are permitted. Permission is separate from present
+  readiness: each remains default-off until its applicable isolation, routing,
+  timeout, recovery, budget, ownership, privacy, evidence, and owner-activation
+  gates pass. Regex-based privacy filtering is prohibited as a primary,
+  supplemental, fallback, or clearance control. No provider or role may use a
+  regex or blacklist result to decide that a payload is safe to disclose.
 
 ## Project routing and independence
 
@@ -129,3 +158,5 @@ Routing remains flexible by fit, independence, capacity, and evidence needs.
 Percentages do not create permissions, voting weights, exclusive file
 ownership, guaranteed usage, or low-value assignments.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]] -->

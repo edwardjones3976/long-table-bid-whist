@@ -1,3 +1,5 @@
+# [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]]
+# [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]]
@@ -9,10 +11,10 @@ project:
   id: "long-table-bid-whist"
   name: "The Long Table — Bid Whist"
   proposition: "Create an authentic, auditable VR/MR Bid Whist table that teaches real play and supports private social and hosted events."
-  state: "framing"
+  state: "validating"
   owner: "project owner"
   created_at: "2026-08-24T20:48:09Z"
-  updated_at: "2026-08-24T21:15:10Z"
+  updated_at: "2026-08-25T02:51:35Z"
 
 source_context:
   thread: "current VR/Meta Quest Games project conversation"
@@ -54,7 +56,7 @@ outcomes:
     - "Experienced-player review confirms authentic table flow"
     - "Beginner usability test confirms that teaching transfers to a physical table"
     - "Every shipped asset has recorded provenance and usage authority"
-  stopping_point: "Complete the bounded gameplay prototype specification before selecting and initializing the smallest useful implementation toolchain."
+  stopping_point: "Reach a Technical Candidate / REVIEW_READY handoff, then require human testing and owner acceptance before COMPLETE."
 
 surfaces:
   slack:
@@ -83,8 +85,10 @@ surfaces:
     allowed:
       - "Create and revise project files outside sources/"
       - "Commit and push project workflow artifacts to the confirmed private repository"
+      - "Owner-authorized OpenAI/Codex production for the bounded accelerated technical prototype"
+      - "One read-only zero-incremental-cost provider attempt per configured lane"
     prohibited:
-      - "Provider launches or paid runs"
+      - "Paid provider runs, account login, credential changes, or duplicate ambiguous dispatches"
       - "Slack posts or messages"
       - "Public release, deployment, purchases, credential changes, or service activation"
       - "Shared host-audio transmission or third-party content ingestion"
@@ -100,14 +104,14 @@ modules:
     state: "enabled"
     purpose: "Convert the accepted critique into a gameplay prototype specification."
   implementation:
-    state: "optional"
-    purpose: "Begins after the prototype specification establishes the engine, scope, and bounded assignment packets."
+    state: "enabled"
+    purpose: "Bounded React/TypeScript browser technical prototype with a headless deterministic rules kernel."
   quality_and_security:
-    state: "optional"
-    purpose: "Verify rules determinism, concealed-information boundaries, multiplayer authority, privacy, and asset provenance."
+    state: "enabled"
+    purpose: "Verify determinism, logical concealed-information projection, interactions, responsive layout, permissions, and asset provenance without claiming server security."
   review_to_merge:
-    state: "disabled"
-    purpose: "The repository exists, but no gameplay implementation candidate exists yet."
+    state: "gated"
+    purpose: "Candidate commit/push is authorized; different-provider exact-candidate review and human acceptance remain open gates."
   operations:
     state: "disabled"
     purpose: "No live service is authorized."
@@ -116,6 +120,7 @@ modules:
     purpose: "Keep decisions, tests, and advisor findings reusable within this project without copying private context elsewhere."
 
 team:
+  provider_roles_contract: "provider-roles-contract.yaml"
   responsibility_standard:
     research: "Investigate systematically with diverse relevant sources, provenance, and explicit fact, inference, disagreement, and unknown labels."
     evidence_verification: "Cross-check material claims against independent or authoritative sources; report contradictions, freshness limits, and missing evidence."
@@ -177,15 +182,22 @@ team:
       title: "Specialist and Backup Programmer"
       direct_production_target_percent: 7
       primary_team_substitute: false
-      debate_participant: false
+      debate_participant: "only_after_owner_or_director_invitation"
       exact_candidate_reviewer: false
       outbound_contract: "fixed strings, closed enums, and bounded integers only; no model-authored prose or repository context"
+      invited_debate:
+        equally_debate_eligible: true
+        may_initiate: false
+        exact_outbound_payload_approval_required: true
+        allowed_context: "public, non-private, abstract decision framing only"
+        continuation: "Director-relayed bounded turns only"
+        authority_effect: "none"
       role: "producer"
       workflow_skill: "antigravity-sandbox-workflow"
       responsibilities:
         - "Bounded boilerplate, scaffolding, mechanical implementation, and alternate ideation under the closed outbound contract"
       forbidden_authority:
-        - "No repository context, primary authority, debate participation, exact-candidate review, acceptance, merge, deployment, publication, or external write"
+        - "No repository context, private prose, self-initiated debate, autonomous continuation, exact-candidate review, acceptance, merge, deployment, publication, or external write"
     - id: "research-programmer"
       provider: "perplexity"
       title: "Research Programmers"
@@ -219,8 +231,8 @@ contribution_attribution:
   authentication_or_authority_effect: "none"
 
 controls:
-  total_budget: "$0 external-provider spend until separately authorized"
-  phase_budget: "$0 external-provider spend for bootstrap and prototype specification"
+  total_budget: "$0 incremental provider spend; existing authenticated subscription access only"
+  phase_budget: "$0 incremental spend for the accelerated technical-candidate cycle"
   timeout: "one bounded phase at a time"
   provider_contact_attempt_limit: 3
   minimal_fix:
@@ -228,13 +240,23 @@ controls:
     attempt_limit: 1
     changed_candidate_invalidates_evidence: true
   revision_limit: 3
+  revision_policy:
+    candidate_change_invalidates_evidence: true
+    perplexity: "A revision requires a new owner-approved bounded public query; never silently rerun the original."
   hop_limit: 2
+  runtime_activation:
+    director_host_completion_runners: {permitted: true, enabled: false}
+    live_langgraph_packet_runtime: {permitted: true, enabled: false}
+    live_provider_dispatch: {permitted: true, enabled: false}
+    parallel_external_dispatch: {permitted: true, enabled: false}
+    regex_based_privacy_controls: {permitted: false, enabled: false, role: "prohibited", activation_path: "none"}
+    merge_side_effects: false
   allowlists:
     projects: ["long-table-bid-whist"]
     repositories: ["edwardjones3976/long-table-bid-whist"]
     starting_refs: ["main"]
   approval_gates:
-    - "Prototype specification defines the minimum technical surface before the Director selects the engine/toolchain"
+    - "The browser candidate may reach REVIEW_READY but not COMPLETE before human acceptance"
     - "Owner explicitly scopes any paid-provider, public-room, upload, publication, purchase, credential, or deployment effect"
     - "Specialist rights review before shared host-supplied music is enabled"
     - "Different-provider review for each exact implementation candidate"
@@ -246,21 +268,24 @@ controls:
   serious_safety_stop: true
 
 review_chain:
-  producer: "unassigned until implementation approval"
-  material_authors: []
-  eligible_reviewer: "different provider, unassigned"
+  producer: "owner-authorized external OpenAI/Codex accelerated prototype lane"
+  material_authors: ["OpenAI Codex root", "OpenAI Codex rules_ai", "OpenAI Codex spatial_ui", "OpenAI Codex ui_tests", "OpenAI Codex avatar_policy", "OpenAI Codex app_flow_tests"]
+  eligible_reviewer: "different authenticated provider; currently unavailable"
   candidate:
-    repository: "none"
-    base_sha: "none"
-    head_sha: "none"
-    artifact_digest: "none"
+    repository: "edwardjones3976/long-table-bid-whist"
+    base_sha: "c9613093af704fdd3e4bedf87bdf375e15d03f00"
+    implementation_sha: "510a4229ccc4295685333581826e67346482e2e3"
+    head_sha: "pending governance-integration commit based on 510a4229ccc4295685333581826e67346482e2e3"
+    artifact_digest: "artifacts/technical-candidate-build.sha256"
   required_evidence:
     - "Different-provider exact-candidate review"
     - "Focused deterministic rules and interaction tests"
     - "Current security and privacy evidence when networked play exists"
     - "Trusted CI when a repository is configured"
   candidate_change_invalidates_evidence: true
-  merge_authority: "deterministic gate after all required owner, review, CI, security, and rights checks"
+  assignment_completion_authority: "A provider assignment may be accepted without completing the project."
+  project_completion_authority: "Human testing and owner acceptance of the unchanged exact candidate are mandatory."
+  merge_authority: "pure eligibility decision after all required owner, review, CI, security, and rights checks; no merge side effect"
 
 assumptions:
   confirmed:
@@ -275,7 +300,6 @@ assumptions:
     - "The first prototype uses one room, one strict preset, four seats, and optional AI fill."
     - "The human host may be a seated player or a non-playing fifth participant, with different permissions."
   unknown:
-    - "Implementation engine and toolchain"
     - "Prototype delivery schedule beyond the current zero-dollar planning phase"
     - "Whether a paid provider will ever be useful or authorized"
     - "Whether shared host audio will be deferred, venue-external, or supported through rights-verified virtual transmission"
@@ -289,10 +313,12 @@ fallbacks:
   changed_scope: "reshape_profile_before_dependent_work"
 
 next:
-  action: "Produce a non-code gameplay prototype specification for one strict table, including the dealer/host permission matrix and testable interaction loops."
+  action: "Commit the governance overlay with the existing implementation candidate, rerun affected validation, then request different-provider exact-candidate review and human critique."
   responsible_party: "Director"
-  expected_evidence: "A bounded prototype specification with acceptance scenarios and an explicit implementation decision gate."
+  expected_evidence: "Exact SHA, production artifact digest, test/browser packet, review status, known limitations, and human-test plan."
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]]
 # [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]]
