@@ -1,0 +1,78 @@
+{
+  "canonical": [
+    "{\"protocolVersion\":\"long-table-protocol/2\",\"tableId\":\"table-fixture-1\",\"version\":3,\"handNumber\":1,\"phase\":\"declaration\",\"cue\":\"contract-set\",\"seat\":\"south\",\"seatLabel\":\"South\",\"announcement\":null}",
+    "{\"protocolVersion\":\"long-table-protocol/2\",\"tableId\":\"table-fixture-1\",\"version\":4,\"handNumber\":1,\"phase\":\"declaration\",\"cue\":\"host-announcement\",\"seat\":null,\"seatLabel\":null,\"announcement\":\"welcome\"}",
+    "{\"protocolVersion\":\"long-table-protocol/2\",\"tableId\":\"table-fixture-1\",\"version\":5,\"handNumber\":1,\"phase\":\"kitty\",\"cue\":\"kitty-taken\",\"seat\":\"south\",\"seatLabel\":\"South\",\"announcement\":null}",
+    "{\"protocolVersion\":\"long-table-protocol/2\",\"tableId\":\"table-fixture-1\",\"version\":6,\"handNumber\":1,\"phase\":\"play\",\"cue\":\"play-opens\",\"seat\":\"south\",\"seatLabel\":\"South\",\"announcement\":null}",
+    "{\"protocolVersion\":\"long-table-protocol/2\",\"tableId\":\"table-fixture-1\",\"version\":7,\"handNumber\":1,\"phase\":\"play\",\"cue\":\"trick-taken\",\"seat\":\"north\",\"seatLabel\":\"North\",\"announcement\":null}",
+    "{\"protocolVersion\":\"long-table-protocol/2\",\"tableId\":\"table-fixture-1\",\"version\":8,\"handNumber\":1,\"phase\":\"play\",\"cue\":\"trick-taken\",\"seat\":\"east\",\"seatLabel\":\"East\",\"announcement\":null}"
+  ],
+  "frames": [
+    {
+      "protocolVersion": "long-table-protocol/2",
+      "tableId": "table-fixture-1",
+      "version": 3,
+      "handNumber": 1,
+      "phase": "declaration",
+      "cue": "contract-set",
+      "seat": "south",
+      "seatLabel": "South",
+      "announcement": null
+    },
+    {
+      "protocolVersion": "long-table-protocol/2",
+      "tableId": "table-fixture-1",
+      "version": 4,
+      "handNumber": 1,
+      "phase": "declaration",
+      "cue": "host-announcement",
+      "seat": null,
+      "seatLabel": null,
+      "announcement": "welcome"
+    },
+    {
+      "protocolVersion": "long-table-protocol/2",
+      "tableId": "table-fixture-1",
+      "version": 5,
+      "handNumber": 1,
+      "phase": "kitty",
+      "cue": "kitty-taken",
+      "seat": "south",
+      "seatLabel": "South",
+      "announcement": null
+    },
+    {
+      "protocolVersion": "long-table-protocol/2",
+      "tableId": "table-fixture-1",
+      "version": 6,
+      "handNumber": 1,
+      "phase": "play",
+      "cue": "play-opens",
+      "seat": "south",
+      "seatLabel": "South",
+      "announcement": null
+    },
+    {
+      "protocolVersion": "long-table-protocol/2",
+      "tableId": "table-fixture-1",
+      "version": 7,
+      "handNumber": 1,
+      "phase": "play",
+      "cue": "trick-taken",
+      "seat": "north",
+      "seatLabel": "North",
+      "announcement": null
+    },
+    {
+      "protocolVersion": "long-table-protocol/2",
+      "tableId": "table-fixture-1",
+      "version": 8,
+      "handNumber": 1,
+      "phase": "play",
+      "cue": "trick-taken",
+      "seat": "east",
+      "seatLabel": "East",
+      "announcement": null
+    }
+  ]
+}

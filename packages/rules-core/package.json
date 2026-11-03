@@ -1,0 +1,9 @@
+{
+  "name": "@long-table/rules-core",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic, seat-generic Bid Whist rules kernel for The Long Table, conformance-pinned to the browser oracle.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts"
+}

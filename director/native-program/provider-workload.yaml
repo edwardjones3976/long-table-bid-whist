@@ -1,0 +1,109 @@
+# [[OpenAI Director | Codex | 2026-08-30 | 05:27 UTC | BEGIN]]
+schema_version: "long-table-provider-workload/v2"
+
+policy_binding:
+  repository: "edwardjones3976/director-orchestrator"
+  merge_commit: "cc791364e2f1ff1ac4c72e01c7122296e4ff7362"
+  pull_request: 76
+  rolling_assignment_window: 20
+  normal_tolerance_percentage_points: 3
+  hard_ceiling_above_target_percentage_points: 5
+  runtime_status: "semantics adopted manually; local live dispatch and workload writer are not activated"
+
+overall_assignment_targets_percent:
+  claude: 36
+  cursor: 20
+  grok: 20
+  openai: 8
+  gemini_antigravity: 11
+  perplexity: 5
+
+next_20_assignment_plan:
+  claude: 7
+  cursor: 4
+  grok: 4
+  openai: 2
+  gemini_antigravity: 2
+  perplexity: 1
+  total: 20
+  resulting_percent:
+    claude: 35
+    cursor: 20
+    grok: 20
+    openai: 10
+    gemini_antigravity: 10
+    perplexity: 5
+  compliance: "all lanes within normal tolerance and below hard ceilings"
+
+direct_production_targets_percent:
+  claude: 60
+  cursor: 14
+  grok: 14
+  gemini_antigravity: 7
+  perplexity: 4
+  external_openai_codex: 1
+
+accepted_direct_production_before_native_program:
+  claude: 24
+  cursor: 16
+  grok: 0
+  gemini_antigravity: 0
+  perplexity: 4
+  external_openai_codex: 1
+  total: 45
+  provenance: "director/providers/2026-08-29-claude-stage1-exact-artifact-assignment.md"
+
+native_code_assignments:
+  claude:
+    immutable_effort_units: 48
+    allocation: {native_foundation_first_deal: 16, private_game_night: 16, long_table_house: 16}
+    owned_surfaces: ["packages/rules-core", "packages/protocol", "services/table-authority", "Unreal/Source/LongTableProtocol", "Unreal/Source/LongTableTable", "Unreal/Source/LongTable"]
+    required_model: "FABLE 5 ULTRA/MAX"
+  cursor:
+    immutable_effort_units: 4
+    allocation: {native_foundation_first_deal: 2, private_game_night: 1, long_table_house: 1}
+    owned_surfaces: ["Unreal/Source/LongTableXR", "Unreal/Content/Input", "Unreal/Content/Presence", "Unreal/Content/Environment"]
+  grok:
+    immutable_effort_units: 17
+    allocation: {native_foundation_first_deal: 5, private_game_night: 6, long_table_house: 6}
+    owned_surfaces: ["services/session-gateway", "Unreal/Source/LongTableSocial", "Unreal/Content/Social"]
+  gemini_antigravity:
+    immutable_effort_units: 8
+    allocation: {native_foundation_first_deal: 3, private_game_night: 3, long_table_house: 2}
+    owned_surfaces: ["isolated/LongTableHouseCore"]
+    integration_destination: "Unreal/Plugins/LongTableHouseCore"
+    outbound_boundary: "closed public contract, enums, bounded integers, fixed strings and synthetic fixtures only; no private repository context"
+  openai:
+    immutable_effort_units: 0
+    owned_surfaces: []
+    responsibility: "cross-module QA, exact-candidate acceptance, findings and kickback; Director work is excluded from production credit"
+  perplexity:
+    immutable_effort_units: 0
+    responsibility: "reuse accepted public research; no duplicate paid query"
+
+projected_direct_production_after_native_assignments:
+  total: 122
+  claude: {units: 72, percent: 59.02}
+  cursor: {units: 20, percent: 16.39}
+  grok: {units: 17, percent: 13.93}
+  gemini_antigravity: {units: 8, percent: 6.56}
+  perplexity: {units: 4, percent: 3.28}
+  external_openai_codex: {units: 1, percent: 0.82}
+  compliance: "all direct-production lanes within plus or minus 3 percentage points and below target plus 5"
+
+credit_rules:
+  - "Credit only authenticated, attributable code that satisfies its immutable packet, passes OpenAI QA, and is accepted into the candidate."
+  - "Tool launch, prompt submission, failed attempt, unavailable route, discarded output, duplicate validation and Director coordination earn zero production credit."
+  - "One primary attempt; one recovery only for a plausibly temporary failure; a third only with a materially different transport or new information."
+  - "Never repeat an ambiguous paid dispatch."
+  - "Each path has one provider writer; no provider reviews or edits another lane."
+  - "Provider identity never grants merge, deploy, publication, spending, permissions, store or final-acceptance authority."
+
+action_reduction:
+  maximum_major_steps_per_review_to_merge_cycle: 5
+  maximum_status_reads_per_assignment: 2
+  repeated_status_check_reduction_percent: 80
+  duplicate_validation_reduction_percent: 70
+  total_action_reduction_percent: 60
+
+# [[OpenAI Director | Codex | 2026-08-30 | 05:27 UTC | END]]

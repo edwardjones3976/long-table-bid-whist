@@ -1,148 +1,90 @@
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 22:04 UTC | BEGIN]] -->
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]] -->
-# BOOTSTRAP
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 23:13 UTC | BEGIN]] -->
+# Project state report
 
-**The Long Table — Bid Whist** is now in project framing. Canonical record:
-[`project-profile.yaml`](project-profile.yaml).
+- **Project:** The Long Table — Bid Whist
+- **Lifecycle state:** Technical Candidate binding
+- **Maximum current verdict:** `REVIEW_READY`
+- **Final verdict:** not `COMPLETE`; human testing and owner acceptance remain required
+- **Repository:** `edwardjones3976/long-table-bid-whist`
+- **Branch:** `main`
+- **Base SHA:** `c9613093af704fdd3e4bedf87bdf375e15d03f00`
+- **Implementation SHA:** `510a4229ccc4295685333581826e67346482e2e3`
+- **Review candidate SHA:** pending a governance-integration commit based on the implementation SHA
 
-- **Project ID:** `long-table-bid-whist`
-- **Report label:** Bootstrap plus bounded foundation research; Slack not applicable
-- **Categorized status:** Planned
+## Delivered candidate
 
-## Current shape
+The local React/TypeScript prototype now completes a deterministic four-seat
+Bid Whist hand from auction through declaration, kitty/discard, twelve tricks,
+scoring, summary, pause/resume, and the next-hand boundary. It supports AI
+Dealer and Human Host presentation without granting either role hidden-card,
+deal-edit, bid-edit, trick-edit, or score-edit authority.
 
-- **Purpose/outcome:** Prepare a testable gameplay prototype specification, then
-  an evaluated prototype and evidence-backed MVP roadmap.
-- **Selected modules:** Narrow discovery, design/decision, optional bounded
-  research, and learning/reuse. Implementation and quality are gated.
-- **Team routing:** OpenAI owns the continuous Director/control plane and is
-  never emitted as a specialist target. Direct-production targets are Claude
-  60%, Cursor 28%, Gemini/Antigravity 7%, Perplexity 4%, and separately
-  owner-authorized external OpenAI/Codex 1%.
-- **Director/control plane:** OpenAI owns intake interpretation, planning,
-  decomposition, neutral coordination, evidence collection, routing, recovery
-  decisions, acceptance review, milestone reporting, and bounded escalation.
-  This continuous work is excluded from direct-production percentages.
-- **Direct-production routing:** `60/28/7/4/1` for Claude, Cursor,
-  Gemini/Antigravity, Perplexity, and separately authorized external
-  OpenAI/Codex, respectively.
-- **External OpenAI production:** None. Bootstrap planning, synthesis, and
-  project-control artifacts are Director work and do not count toward the 1%
-  external production lane.
-- **Repository oversight:** The Director inspected the named repository, local
-  worktree, `main`, contribution tags, ignored boundaries, staged files, and
-  remote SHA. Repository creation and the bootstrap push were separately
-  owner-authorized writes.
-- **Starting identity:** `main` at
-  `0132c617d247a1723567941a3335c77bc6d70e52` before this roles correction.
-- **Current identity:** Correction candidate; exact published SHA is verified
-  after commit and push rather than embedded self-referentially.
-- **Coordination capacity:** Target 95% productive coordination and 5% reserve;
-  reserve is limited to checks, drift, evidence gaps, recovery, process, and
-  infrastructure variance.
-- **Workload:** Target `60/28/7/4/1`; actual direct-production share is
-  `0/0/0/0/0` because no specialist production assignment has been dispatched.
-  There is no workload deviation to calculate until direct production begins.
-- **Research execution:** Firecrawl was used as a bounded public collection
-  tool under Director control. It is not an additional workforce/provider lane.
-  Perplexity was not dispatched because its required API/connector lane was
-  unavailable, so the 4% research-programmer target remains unfilled rather
-  than being reassigned or falsely credited.
-- **Avoidable commit trend:** Baseline contains three commits after this
-  correction: one bootstrap commit and two avoidable workflow-contract fixups
-  covering workload and roles/responsibilities. Current avoidable count is 2 of
-  3; no 33% reduction claim is made from this undersized initial sample.
-- **Coordination:** Current Codex project task; no Slack dependency.
-- **Execution surface:** Private repository
-  `edwardjones3976/long-table-bid-whist`, branch `main`, current project root,
-  with $0 external-provider spend. Engine selection follows the specification.
-- **Stopping point:** Accept the gameplay prototype specification before
-  initializing its smallest useful toolchain.
+The room contains three open seats and no built-in human cast. The target Quest
+product will use each participant's own Meta avatar; Meta Avatar SDK integration
+is explicitly not present in this browser candidate. The AI Dealer uses a small,
+clearly non-human robot marker. Foundational Black American influence remains
+light and environmental through hospitality, social energy, wood, felt, brass,
+and restrained room tone rather than assigned bodies, dialect, or stereotype.
 
-## What changed
+No music, recording, sample, voice, upload, stream, or rebroadcast path ships.
+Host music stays off inside the prototype and points physical events to
+independently rights-cleared external playback. File format is not treated as
+rights clearance.
 
-- Installed a project-local Director bootstrap profile pinned to
-  `director-orchestrator@ed02458d5c425115e49b330ed1f6cdc1d9af1ce6`.
-- Created the private GitHub repository
-  `edwardjones3976/long-table-bid-whist` and selected `main` as its starting ref.
-- Recorded the accepted product frame, AI dealer/human host requirement,
-  rights-clean audio requirement, and narrow exploration boundary.
-- Added a bounded prototype-planning sequence and exact-candidate review
-  template.
-- Corrected the workload contract so OpenAI's full Director role is separate
-  from its separately authorized 1% external direct-production lane.
-- Added the eight-area responsibility standard and exact provider role contract,
-  including OpenAI function separation, Cursor's 90% capability-parity target,
-  Antigravity's closed outbound contract, Perplexity provenance requirements,
-  and producer/reviewer independence.
-- Completed a bounded 24-source foundation research packet using Firecrawl,
-  with a critique, comparable-product patterns, audience/accessibility evidence,
-  provisional technical direction, content-rights policy, prototype gates,
-  source matrix, contradictions/limitations, and rerun inputs.
+## Heavy-test evidence
 
-## Boundaries
+- `npm.cmd test`: 46 of 46 tests passed across 11 files.
+- `npm.cmd run build`: TypeScript and Vite production build passed.
+- Live Browser run: bid preview/cancel, 5 High, Spades, exactly six kitty cards,
+  twelve player turns, six-book set result, score transition, pause/resume, and
+  next-hand enablement completed with no console warning or error.
+- Responsive evidence: native 1672 × 941 desktop and 390 × 844 mobile captures;
+  1280 × 720 live flow completed after the Host-drawer action-clearance fix.
+- Production build and room hashes are recorded in
+  `artifacts/technical-candidate-build.sha256`.
 
-- Nothing under `sources/` was changed.
-- No authority, credential, channel, budget, provider state, repository access,
-  or deployment permission was inherited from Director Orchestrator.
-- The Director cannot emit OpenAI as a specialist assignment target; the 1%
-  external lane requires separate owner authorization and different-provider
-  exact-candidate review.
-- No direct-production provider, paid run, service, Slack post, upload,
-  publication, or deployment was initiated. Firecrawl public research was
-  explicitly requested by the owner; Perplexity remained unavailable and no
-  query was sent through the signed-in browser session.
-- Host-supplied file format is not treated as evidence of music rights.
+## Provider participation and workload
 
-## Evidence
+The canonical direct-production target remains Claude/Cursor/Gemini/
+Perplexity/external OpenAI `60/28/7/4/1`. Actual completed direct production for
+this owner-accelerated cycle is `0/0/0/0/100`. Claude failed before a model
+response because its OAuth token was expired; Cursor required authentication;
+Gemini/Antigravity was absent; Perplexity CLI had no approved credential. No
+failed lane receives position, vote, rebuttal, research, review, cost, or
+production credit. OpenAI Director/control-plane work remains excluded.
 
-- **Observed result:** Project-local bootstrap files exist and carry explicit
-  scope, authority, acceptance, and fallback controls.
-- **Exact workflow source:**
-  `edwardjones3976/director-orchestrator@ed02458d5c425115e49b330ed1f6cdc1d9af1ce6`.
-- **Validated:** Contribution tags balanced in every project file; no material
-  placeholders remain in the project profile; `sources/` and `AGENTS.md` are
-  ignored; all eight responsibility areas and five provider/control-plane role
-  contracts are present; obsolete role labels are absent; staged content passes
-  Git whitespace/error checks.
-- **Trusted CI:** Not applicable; this project mirror is not a Git repository.
-- **Independent review:** Not requested; no implementation candidate exists.
-- **OpenAI function:** Director. No external OpenAI Participant or specialist
-  production run occurred.
-- **Authenticated participation:** No direct-production provider participation;
-  no positions, rebuttals, or votes are claimed.
-- **Debate integrity:** Not applicable; no decision debate occurred.
-- **Roles/responsibilities evidence:** Project-local contract at
-  `director/roles-and-responsibilities.md`, aligned to the authoritative charter
-  at `director-orchestrator@ed02458d5c425115e49b330ed1f6cdc1d9af1ce6`.
-- **Research evidence:**
-  `director/research/2026-08-24-foundation-research.md`; 10 bounded Firecrawl
-  searches, 24 selected public pages, 65 observed Firecrawl credits, no private
-  repository context sent, and no Perplexity result claimed.
-- **Unverified:** Engine/toolchain, schedule beyond the current phase, future
-  provider availability, Perplexity corroboration, and virtual shared-music
-  scope.
+## Open gates and handoff
 
-## Current handoff
+1. Bind the implementation commit, artifact digest, and evidence-only head.
+2. Obtain a different authenticated provider's exact-candidate review; a same-
+   provider subagent audit is useful QA but not independent acceptance.
+3. Run experienced Bid Whist, beginner, accessibility, event-host, and
+   Foundational Black American community/advisor human sessions.
+4. Kick back any rules, concealed-information, host-authority, rights, cultural,
+   severe accessibility, or safety failure. Otherwise record owner acceptance
+   before issuing `COMPLETE`.
 
-- **State:** Foundation research complete with Perplexity gap; committee
-  direction gate is next
-- **Exact candidate:** Not applicable
-- **Next responsible party:** Director
-- **Next action:** Run one bounded committee position/rebuttal round on the
-  seven decisions in the foundation research packet, then record the Director
-  conclusion and owner decision.
-- **Next gate:** Convert accepted decisions into the bounded non-code gameplay
-  prototype specification; select the smallest local engine/toolchain only
-  after that specification is accepted.
+## Director workflow integration status
 
-Outside this project repository and its Director workflow, nothing was written,
-merged, deployed, published, enabled, or otherwise changed.
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]] -->
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 22:04 UTC | END]] -->
+Director Orchestrator PR #71 was reviewed at exact head
+`4ba6032d5e79dd06f5d571f7c88dd75c114c5590` with verdict
+`REQUEST CHANGES`. Four security findings, additional exact-head correctness
+findings, and stale acceptance evidence block adoption of its runtime. This
+project adopted its governance concepts and records its runtime capabilities as
+permitted but presently activation-gated: separate assignment/project completion, default-off honest
+readiness, sequential dependency-ready routing, bounded revisions, new approved
+Perplexity queries, side-effect-free merge eligibility, and owner/Director-
+invited Antigravity debate with an approved public-only exact payload.
+Host completion runners, live LangGraph execution, and parallel external
+dispatch remain disabled until their specific readiness and owner-activation
+gates pass. Regex-based privacy controls are prohibited and have no activation
+path; privacy must be enforced through typed allowlisted projections,
+role-specific authority, source isolation, and structural validation.
+
+No public deployment, shared-audio transmission, provider login, credential
+change, purchase, or paid provider run was performed.
+<!-- [[Codex | GPT-5.6 | 2026-08-24 | 23:13 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]] -->
+<!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]] -->
