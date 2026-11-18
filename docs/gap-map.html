@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VR Mansion Card Games — gap map</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; max-width: 60rem; margin: 2rem auto; padding: 0 1rem; color: #1c1c1c; background: #fafafa; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #c8c8c8; padding: .4rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #ececec; }
+  .have { color: #14622b; font-weight: 600; }
+  .part { color: #8a5a00; font-weight: 600; }
+  .none { color: #9b1c1c; font-weight: 600; }
+  code { background: #ececec; padding: 0 .2rem; }
+  @media (prefers-color-scheme: dark) {
+    body { color: #e8e8e8; background: #161616; }
+    th, code { background: #2a2a2a; }
+    th, td { border-color: #4a4a4a; }
+    .have { color: #6fd08c; } .part { color: #e6b450; } .none { color: #f08a8a; }
+  }
+</style>
+</head>
+<body>
+<h1>VR Mansion Card Games — gap map</h1>
+<p>Written 2026-11-18 by Claude (session 49a319ff). Compares the existing
+<em>The Long Table — Bid Whist</em> prototype in this folder against the target in
+<a href="../CLAUDE-HANDOFF.html">CLAUDE-HANDOFF.html</a> (SHA-256 92d95833…bf34).</p>
+
+<h2>Verified baseline</h2>
+<p>In this folder, on Node v26.13.1 / npm 11.20.0: <code>npm ci</code> OK,
+<code>npm test</code> 85 of 85 pass (10 files), <code>npm run build</code> exit 0.
+About 3,500 lines of source and 1,600 lines of tests. Not verified: any browser run,
+any headset, any old candidate or review claim in <code>director/</code>.</p>
+
+<h2>Summary</h2>
+<p>The prototype is a single-player, in-browser Bid Whist hand against three bots, with
+a hand-rolled Three.js seated VR table. Roughly 5–10% of the target exists. There is no
+server, no multiplayer, no Tonk, no Spades, no mansion and no voice. The reusable parts
+are the Bid Whist rule kernel, the seat-scoped player view, the intent/receipt
+interaction pattern, and the XR session lifecycle code.</p>
+
+<h2>Map by handoff weight</h2>
+<table>
+<tr><th>Area (weight)</th><th>Target</th><th>Exists now</th><th>Status</th><th>Gap</th></tr>
+
+<tr><td rowspan="6">Rules and server (30%)</td>
+<td>Bid Whist rules</td>
+<td><code>src/game/engine.ts</code>: 54 cards, 12 each, 6-card kitty, one-round auction, forced dealer bid, declare, kitty discard, follow suit, jokers as top trumps, high/low, made/set scoring.</td>
+<td class="part">Partial</td>
+<td>Bids capped at 3–6 and suit-only (level 7 and no-trump deliberately disabled by the "Alpha 0.1 manifest"); no no-trump joker rules; kitty not counted as a book; no game end at +7/−7; no house-rule options (minimum bid, low-over-high, overtricks, no-trump doubling); dealer rotation not checked.</td></tr>
+<tr><td>Spades (two presets, nil, bags)</td><td>Nothing.</td><td class="none">Missing</td><td>Whole engine.</td></tr>
+<tr><td>Tonk</td><td>Nothing.</td><td class="none">Missing</td><td>Whole engine.</td></tr>
+<tr><td>Authoritative server</td>
+<td>None. The engine runs in the browser; "south" is hard-wired as the one human and bots auto-advance inside <code>advanceAutomations</code>. Shuffle is a seeded non-cryptographic generator.</td>
+<td class="none">Missing</td>
+<td>Node + Socket.IO server, crypto shuffle, four human seats, action IDs and revisions, dedup, per-match serialisation, timers.</td></tr>
+<tr><td>Private state</td>
+<td><code>makePlayerView</code> already returns only one seat's hand plus public state; <code>tests/table/projection.test.ts</code> checks the XR projection carries no opponent cards.</td>
+<td class="part">Partial</td>
+<td>Good shape to reuse for per-recipient snapshots, but nothing is enforced across a network; host view, reconnect, errors and logs are unaddressed.</td></tr>
+<tr><td>Rooms, seats, invites, bots, reconnect</td>
+<td>Bot play logic in <code>src/game/ai.ts</code> uses only the seat's view.</td>
+<td class="none">Missing</td>
+<td>Six tables, 32 humans, invite codes, ready states, host role, session tokens, 60-second seat reservation, bot takeover, rate limits.</td></tr>
+
+<tr><td rowspan="3">World and desktop (25%)</td>
+<td>Mansion (48 × 36 m, lounges, patio, BBQ, pool, decorations)</td>
+<td><code>src/xr/room.ts</code>: one procedural table room.</td>
+<td class="none">Missing</td>
+<td>Whole venue, navigation, activities, two holiday themes, two framed artworks.</td></tr>
+<tr><td>Desktop play</td>
+<td><code>src/App.tsx</code> (1,060 lines): full HTML table UI with preview/confirm, captions, reduced motion, high contrast, card scaling; 19 UI tests.</td>
+<td class="part">Partial</td>
+<td>It is a 2D HTML page for one game, not a walkable 3D world with WASD, gamepad and teleport. Accessibility options are reusable.</td></tr>
+<tr><td>Text chat and emotes</td><td>Nothing.</td><td class="none">Missing</td><td>All.</td></tr>
+
+<tr><td rowspan="3">Quest and voice (25%)</td>
+<td>Immersive input</td>
+<td><code>src/xr/</code>: session start/teardown with typed errors, controller rays, select-to-act targets, seated height/distance calibration, tested layout.</td>
+<td class="part">Partial</td>
+<td>Seated single-table only. No teleport, smooth move, snap turn, collision, left-hand option or vignette. Written against raw <code>three@0.165</code>; the handoff asks for React Three Fiber and <code>@react-three/xr</code>, so this is a port, not a drop-in.</td></tr>
+<tr><td>Voice (WebRTC zones, TURN)</td><td>Nothing.</td><td class="none">Missing</td><td>All.</td></tr>
+<tr><td>HTTPS for Quest</td><td>Nothing; no certificate or key anywhere.</td><td class="none">Missing</td><td>Dev HTTPS entry, local certificate steps, USB loopback instructions.</td></tr>
+
+<tr><td rowspan="4">Integration and setup (20%)</td>
+<td>Project layout and scripts</td>
+<td>Single Vite app; scripts <code>dev</code>, <code>build</code>, <code>preview</code>, <code>test</code>.</td>
+<td class="part">Partial</td>
+<td>Needs <code>client/</code>, <code>server/</code>, <code>shared/</code> and the scripts <code>dev:server</code>, <code>dev:client</code>, <code>dev:xr</code>, <code>typecheck</code>, <code>test:e2e</code>, <code>start</code>.</td></tr>
+<tr><td>Dependencies</td>
+<td>React 19, Vite 7, Three 0.165, Vitest 3.</td>
+<td class="part">Partial</td>
+<td>Add Socket.IO, Express, R3F, XR, Drei, Playwright; versions in the handoff need rechecking at install. Three must move up for R3F 9.</td></tr>
+<tr><td>Tests</td>
+<td>Vitest unit and jsdom UI tests; CI workflow on Node 22.</td>
+<td class="part">Partial</td>
+<td>Socket tests, payload privacy inspection, Playwright multi-client runs. CI targets <code>main</code> and Node 22; the repo has no commits, branch is <code>master</code>, target is Node 24.</td></tr>
+<tr><td>Docs</td>
+<td>Markdown records in <code>docs/</code> and <code>director/</code>.</td>
+<td class="part">Partial</td>
+<td>HTML setup, architecture, rules and evidence guides for the new scope.</td></tr>
+</table>
+
+<h2>Things to know before building</h2>
+<ul>
+<li><strong>Missing artwork.</strong> <code>docs/asset-ledger.md</code> lists
+<code>public/assets/long-table-room.png</code>, but there is no <code>public/</code> folder here.
+The build passes without it.</li>
+<li><strong>Old governance is tested.</strong> <code>tests/governance/privacy-policy.test.ts</code>
+imports text from <code>director/</code>. Moving or rewriting those records breaks tests.</li>
+<li><strong>Attribution envelopes.</strong> Source files carry provider BEGIN/END comment envelopes
+from August. They are history; new code will not add them.</li>
+<li><strong>Old scope conflicts with new scope.</strong> The August records describe a native Quest
+flagship, Meta avatars and an "Alpha 0.1" restricted rule set. The owner's current request is the
+browser three-game app; the handoff says the old roadmap is context only.</li>
+<li><strong>Role record.</strong> <code>director/roles-and-responsibilities.md</code> names Claude
+Chief Programmer and bars self-review, merge, deploy, publish and spend. Independent review of
+what Claude builds is still required.</li>
+<li><strong>Git.</strong> No commits, no remote, everything untracked.</li>
+</ul>
+
+<h2>Suggested order</h2>
+<ol>
+<li>Lift the Bid Whist kernel into <code>server/games/</code>: remove the hard-wired "south" human and
+in-engine bot loop, enable level 7 and no-trump, add kitty book, game end and house rules.</li>
+<li>Socket.IO match server with per-seat snapshots, action IDs, revisions and bots; four-human
+socket tests with payload inspection. This is the first tested multiplayer game.</li>
+<li>Spades, then Tonk, on the same server contract.</li>
+<li>Rooms, six tables, invites, reconnect, host seat, chat and emotes.</li>
+<li>Mansion and desktop navigation in R3F; port the XR lifecycle code.</li>
+<li>Quest input, HTTPS dev entry, voice.</li>
+<li>Playwright runs, docs, clean-checkout check.</li>
+</ol>
+</body>
+</html>
