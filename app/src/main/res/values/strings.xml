@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Long Table</string>
+    <string name="app_subtitle">Bid Whist</string>
+    <string name="manifest_version">strict-table-v1.0.0</string>
+    <string name="cd_parlor_hero">Warm walnut and deep green felt Bid Whist table with four card stacks under a brass lamp</string>
+    <string name="cd_bid_school_banner">Close-up of a four-card Bid Whist trick featuring a spade ace and classic joker</string>
+    <string name="cd_back_navigation">Navigate back</string>
+</resources>

@@ -1,0 +1,6 @@
+{
+  "name": "Long Table",
+  "description": "Authentic four-seat Bid Whist card table with deterministic rules, accessible two-step card commitment, Bid School trainer, and role-separated host controls.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

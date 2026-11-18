@@ -1,53 +1,24 @@
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]] -->
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]] -->
-# The Long Table — Bid Whist
+# The Long Table — Bid Whist (Android)
 
-An authentic VR/MR recreation of Bid Whist centered on deterministic rules,
-inhabited table presence, respected house rules, accessible interaction, and
-dignified cultural specificity.
+An authentic, accessible four-seat **Bid Whist** Android application built with **Kotlin** and **Jetpack Compose (Material 3)**.
 
-The project is currently in **framing**. The next delivery is a non-code
-gameplay prototype specification for one strict four-seat table, followed by a
-playable prototype and an evidence-backed MVP roadmap.
+## Features
 
-## Director workflow
+- **Deterministic Strict Table Rules Engine (`strict-table-v1.0.0`)**:
+  - 54-card deck (52 standard cards + Big Joker and Little Joker), 12 cards per seat, and a 6-card Kitty.
+  - Full auction (`4–7` books, `Uptown` / `Downtown` direction, `No-Trump` outranking suit bids at the same level, forced minimum dealer bid of 4).
+  - Exact Downtown ranking (Ace high, 2 second strongest down to King), Joker behavior in Trump vs. No-Trump, Kitty 13th-book credit, and Boston (`+14`) / No-Trump (`2×`) scoring.
+- **Concealed-Information Isolation & Role Separation**:
+  - Authoritative rules engine projects strictly redacted `SeatView` (South) and `AiSeatObservation` (West, North, East) states.
+  - Distinct **Seated Player** and **Seated Player + Table Host** modes with between-hand pause, AI tablemate presets, table-talk tone (`Quiet`, `Social`, `Lively`), and audited unanimous voids — without exposing concealed hands.
+- **Bid School Interactive Trainer**:
+  - 4 guided lessons covering tricks/books, Uptown vs. Downtown & Joker order, bidding & Kitty discards, and guided table play.
+- **Accessibility & Comfort Calibration**:
+  - One-handed commit button alignment (`Left-Handed` / `Right-Handed`), scalable cards (`Standard`, `Large`, `Extra Large`), Two-Step Card Commit (`Select → Preview → Commit`), 4-color high-contrast suit badges, live table captions (100% playable without audio), reduced motion, and procedural sound taps.
+- **Rights & Asset Provenance Ledger**:
+  - Transparent asset registry for bundled fonts, original illustrations, procedural PCM audio, and an external venue music policy.
 
-Project coordination is defined in [`director/`](director/README.md) using the
-modular bootstrap protocol from
-[`edwardjones3976/director-orchestrator`](https://github.com/edwardjones3976/director-orchestrator),
-pinned to commit `ed02458d5c425115e49b330ed1f6cdc1d9af1ce6`.
+## Build & Test
 
-The current Codex project task is the coordination surface. No Slack dependency
-is required. External provider spending remains disabled; local project work and
-pushes to this private repository are authorized.
-
-### Workload contract
-
-OpenAI owns the full Director/control-plane function; that continuous work is
-not counted as direct production. Direct-production routing follows the
-canonical target: Claude 60%, Cursor 28%, Gemini/Antigravity 7%, Perplexity 4%,
-and a separately owner-authorized external OpenAI/Codex lane at 1%. The Director
-must never emit itself as a specialist assignment target.
-
-Coordination capacity targets 95% productive work with a 5% reserve for checks,
-drift, evidence gaps, recovery, and infrastructure variance.
-
-The complete eight-area responsibility standard, provider boundaries, debate
-separation, research provenance requirements, and review-independence rules are
-defined in [`director/roles-and-responsibilities.md`](director/roles-and-responsibilities.md).
-
-## Content policy
-
-No unlicensed third-party content may ship. Music, including jazz- and
-blues-influenced material, must have documented authority for both the musical
-composition and sound recording. Host-supplied audio is not considered safe
-merely because it uses a supported file format.
-
-## Local project boundary
-
-The ChatGPT-synced `sources/` directory and its local `AGENTS.md` are excluded
-from this repository and remain read-only reference material.
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
-<!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->
+- Compile APK: `gradle assembleDebug`
+- Run deterministic rules tests: `gradle :app:testDebugUnitTest`
