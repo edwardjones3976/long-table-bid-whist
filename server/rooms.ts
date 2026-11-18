@@ -28,7 +28,7 @@ import {
   type TableSummary,
 } from "../shared/protocol";
 import { GAMES } from "./games/index";
-import { Match, type ActionReply, type ActionRequest } from "./match";
+import { Match, type ActionReply, type ActionRequest, type Pace } from "./match";
 
 export class Refusal extends Error {
   constructor(
@@ -117,17 +117,17 @@ export class Rooms {
   private readonly tokens = new Map<string, Member>();
   private readonly shuffle?: (deck: Card[]) => Card[];
   private readonly holdMs: number;
-  private readonly botDelayMs: number;
+  private readonly pace: Pace;
   private readonly poseTimer: NodeJS.Timeout;
   private closed = false;
 
   constructor(
     private readonly emit: Emit,
-    options: { shuffle?: (deck: Card[]) => Card[]; holdMs?: number; botDelayMs?: number } = {},
+    options: { shuffle?: (deck: Card[]) => Card[]; holdMs?: number; botDelayMs?: number; trickPauseMs?: number } = {},
   ) {
     this.shuffle = options.shuffle;
     this.holdMs = options.holdMs ?? SEAT_HOLD_MS;
-    this.botDelayMs = options.botDelayMs ?? 0;
+    this.pace = { botMs: options.botDelayMs ?? 0, settleMs: options.trickPauseMs };
     this.poseTimer = setInterval(() => this.sendPoses(), 100);
     this.poseTimer.unref();
   }
@@ -352,7 +352,7 @@ export class Rooms {
         this.sendTable(table);
         if (statusOf(table) === "results") this.sendRoom(member.room);
       },
-      this.botDelayMs,
+      this.pace,
     );
     for (const s of SEATS) match.humans[s] = table.seats[s] !== null;
     table.match = match;

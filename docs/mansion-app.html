@@ -284,7 +284,7 @@ npm run test:e2e           # builds first, then runs Playwright</code></pre>
 <li>Rooms live in server memory and vanish when the server restarts.</li>
 <li>Furniture other than the tables and the listed obstacles has no collision.</li>
 <li>The music has not been listened to by a person.</li>
-<li>Bots are basic. Each bot move comes 0.9 s after the last change, so players see every bot card arrive; <code>BOT_DELAY_MS</code> (0 to 10000) sets the gap, and 0 makes bots instant.</li>
+<li>Bots are basic. Each bot move comes 1.5 s after the last change, and 3 s after a finished trick, so players can follow every bot card; <code>BOT_DELAY_MS</code> (0 to 10000) sets the gap (the trick pause is twice it), and 0 makes bots instant.</li>
 <li>No review yet by a different AI provider.</li>
 <li>The test suites were not run while writing this page; their descriptions come from reading the test files.</li>
 </ul>

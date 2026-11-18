@@ -13,6 +13,9 @@ export const bidWhist: Game<State, Options> = {
   apply,
   viewFor,
   chooseAction,
+  // A trick just finished: let everyone read all four cards before the next lead.
+  // (By count: states are deep copies, so lastTrick is a new object after every move.)
+  settles: (before, after) => after.tricksPlayed > before.tricksPlayed,
 };
 
 export const GAMES: Record<string, Game<any, any>> = {

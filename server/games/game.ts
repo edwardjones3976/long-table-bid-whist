@@ -37,4 +37,6 @@ export interface Game<S extends GameState = GameState, O = unknown> {
   viewFor(state: S, seat: Seat | null): GameView;
   /** A bot's move, chosen from its own seat's view only. */
   chooseAction(view: any): unknown;
+  /** True when the move from `before` to `after` should stay on the table longer before a bot moves (a finished trick). */
+  settles?(before: S, after: S): boolean;
 }

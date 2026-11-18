@@ -21,6 +21,8 @@ export interface GameServerOptions {
   rateLimit?: { burst: number; perSecond: number };
   /** Milliseconds between bot moves; 0 (the default) plays them all at once. server/main.ts sets it for real play. */
   botDelayMs?: number;
+  /** Milliseconds a finished trick stays before the next bot move; defaults to botDelayMs. */
+  trickPauseMs?: number;
 }
 
 export interface GameServer {
