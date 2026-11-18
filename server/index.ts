@@ -1,157 +1,201 @@
 /**
- * Socket.IO front for Bid Whist matches. Each connection gets its own snapshot:
- * a player sees their seat's view, the host sees public state only.
- * shortcut: membership is tied to the socket, so a dropped player becomes a bot at once;
- * session tokens, seat reservation and reconnect come with rooms.
+ * Socket.IO front for the room protocol in shared/protocol.ts. Binds each room
+ * member to one live socket; the room and table rules live in rooms.ts.
  */
-import { createServer, type Server as HttpServer } from "node:http";
+import { createReadStream, stat } from "node:fs";
+import { createServer, type IncomingMessage, type Server as HttpServer, type ServerResponse } from "node:http";
+import { extname, join, resolve, sep } from "node:path";
 import { Server, type Socket } from "socket.io";
 import type { Card } from "../shared/cards";
-import { RuleError, type Seat } from "./games/game";
-import { GAMES } from "./games/index";
-import { Match, type ActionRequest } from "./match";
-
-const SEATS: readonly Seat[] = [0, 1, 2, 3];
-
-interface Table {
-  game: string;
-  /** Socket that created the table; lets an unjoined table be dropped when it leaves. */
-  creator: string;
-  match: Match;
-  /** socket id -> seat, or null for the non-playing host. */
-  members: Map<string, Seat | null>;
-}
+import type { Joined } from "../shared/protocol";
+import { RuleError } from "./games/game";
+import { Refusal, Rooms } from "./rooms";
 
 type Ack = (reply: unknown) => void;
+
+export interface GameServerOptions {
+  shuffle?: (deck: Card[]) => Card[];
+  /** How long a dropped member keeps their place; defaults to SEAT_HOLD_MS. */
+  holdMs?: number;
+  /** Acknowledged events allowed per socket: a burst, refilled per second. */
+  rateLimit?: { burst: number; perSecond: number };
+}
 
 export interface GameServer {
   http: HttpServer;
   io: Server;
-  matches: Map<string, Table>;
+  rooms: Rooms;
 }
 
-/** `shuffle` is for tests; it is not reachable from any network message. */
-export function createGameServer(shuffle?: (deck: Card[]) => Card[]): GameServer {
+function allowedOrigins(): string[] {
+  const fromEnv = (process.env.ALLOWED_ORIGINS ?? "").split(",").map((origin) => origin.trim()).filter(Boolean);
+  const dev = process.env.NODE_ENV === "production" ? [] : ["http://localhost:5173", "https://localhost:5173"];
+  return [...fromEnv, ...dev];
+}
+
+/** `options` are for tests; none of them is reachable from any network message. */
+export function createGameServer(options: GameServerOptions = {}): GameServer {
+  const { burst, perSecond } = options.rateLimit ?? { burst: 60, perSecond: 20 };
+  const origins = allowedOrigins();
   const http = createServer();
-  const io = new Server(http, { maxHttpBufferSize: 16 * 1024 });
-  const matches = new Map<string, Table>();
-
-  function broadcast(matchId: string, table: Table): void {
-    const taken = new Set(table.members.values());
-    const started = table.match.state !== null;
-    for (const [socketId, seat] of table.members) {
-      io.to(socketId).emit("snapshot", {
-        matchId,
-        game: table.game,
-        revision: table.match.revision,
-        started,
-        you: seat,
-        seats: SEATS.map((s) => (taken.has(s) ? "human" : started ? "bot" : "open")),
-        host: taken.has(null),
-        view: table.match.view(seat),
-      });
-    }
-  }
-
-  /** Runs a handler, always answers the ack, and never lets one socket crash the server. */
-  function on(socket: Socket, event: string, handler: (payload: any) => unknown): void {
-    socket.on(event, (...args: unknown[]) => {
-      // The ack is whatever function came last, even with no payload or extra arguments.
-      const ack = args.filter((arg) => typeof arg === "function").at(-1);
-      const reply = (ack as Ack | undefined) ?? (() => {});
-      const payload = typeof args[0] === "object" && args[0] !== null ? args[0] : {};
+  const io = new Server(http, {
+    maxHttpBufferSize: 16 * 1024,
+    cors: { origin: origins },
+    // CORS headers do not stop a cross-site WebSocket, so the Origin is checked on every handshake.
+    // Requests with no Origin header come from non-browser clients, which CORS never covered.
+    allowRequest: (req, done) => {
+      const origin = req.headers.origin;
+      let same = false;
       try {
-        reply(handler(payload));
-      } catch (error) {
-        if (error instanceof RuleError) return reply({ ok: false, error: "illegal", message: error.message });
-        console.error(`${event} failed:`, error instanceof Error ? error.message : "unknown error");
-        reply({ ok: false, error: "internal", message: "Server error" });
+        same = origin !== undefined && new URL(origin).host === req.headers.host;
+      } catch {
+        // an unparseable Origin is refused
       }
-    });
-  }
+      done(null, origin === undefined || same || origins.includes(origin));
+    },
+  });
+
+  /** memberId -> the one socket that speaks for that member. */
+  const sockets = new Map<string, Socket>();
+  const rooms = new Rooms((memberId, event, payload) => sockets.get(memberId)?.emit(event, payload), options);
+  http.on("close", () => rooms.close());
 
   const no = (error: string, message: string) => ({ ok: false, error, message });
 
   io.on("connection", (socket) => {
-    function member(matchId: unknown): { table: Table; seat: Seat | null } | null {
-      const table = typeof matchId === "string" ? matches.get(matchId) : undefined;
-      return table?.members.has(socket.id) ? { table, seat: table.members.get(socket.id)! } : null;
+    let tokens = burst;
+    let refilled = Date.now();
+    const me = (): string | undefined => socket.data.memberId;
+
+    /** Runs a handler, always answers the ack, and never lets one socket crash the server. */
+    function on(event: string, handler: (payload: any) => object | void): void {
+      socket.on(event, (...args: unknown[]) => {
+        // The ack is whatever function came last, even with no payload or extra arguments.
+        const ack = args.filter((arg) => typeof arg === "function").at(-1);
+        const reply = (ack as Ack | undefined) ?? (() => {});
+        const payload = typeof args[0] === "object" && args[0] !== null ? args[0] : {};
+        const now = Date.now();
+        tokens = Math.min(burst, tokens + ((now - refilled) / 1000) * perSecond);
+        refilled = now;
+        if (tokens < 1) return reply(no("rate-limited", "Too many requests; slow down"));
+        tokens -= 1;
+        try {
+          reply(handler(payload) ?? { ok: true });
+        } catch (error) {
+          if (error instanceof Refusal) return reply(no(error.code, error.message));
+          if (error instanceof RuleError) return reply(no("illegal", error.message));
+          console.error(`${event} failed:`, error instanceof Error ? error.message : "unknown error");
+          reply(no("internal", "Server error"));
+        }
+      });
     }
 
-    on(socket, "create", ({ game = "bid-whist", options }: { game?: string; options?: unknown }) => {
-      if (typeof game !== "string" || !Object.hasOwn(GAMES, game)) return no("no-such-game", "That game is not offered");
-      const matchId = crypto.randomUUID();
-      const table: Table = {
-        game,
-        creator: socket.id,
-        match: new Match(GAMES[game], options, shuffle, () => broadcast(matchId, table)),
-        members: new Map(),
-      };
-      matches.set(matchId, table);
-      return { ok: true, matchId };
-    });
-
-    on(socket, "join", ({ matchId, role }: { matchId?: string; role?: string }) => {
-      const table = typeof matchId === "string" ? matches.get(matchId) : undefined;
-      if (!table) return no("no-such-match", "That match does not exist");
-      if (table.members.has(socket.id)) return no("already-joined", "You are already at this table");
-      if (table.match.state) return no("already-started", "That match has already started");
-      const taken = new Set(table.members.values());
-      let seat: Seat | null;
-      if (role === "host") {
-        if (taken.has(null)) return no("host-taken", "This table already has a host");
-        seat = null;
-      } else {
-        const free = SEATS.find((s) => !taken.has(s));
-        if (free === undefined) return no("match-full", "All four seats are taken");
-        seat = free;
+    function bind(joined: Joined): object {
+      const old = sockets.get(joined.memberId);
+      if (old && old !== socket) {
+        old.data.memberId = undefined;
+        old.disconnect(true);
       }
-      table.members.set(socket.id, seat);
-      broadcast(matchId!, table);
-      return { ok: true, seat };
-    });
+      sockets.set(joined.memberId, socket);
+      socket.data.memberId = joined.memberId;
+      rooms.connected(joined.memberId);
+      return { ok: true, ...joined };
+    }
 
-    on(socket, "start", ({ matchId }: { matchId?: string }) => {
-      const found = member(matchId);
-      if (!found) return no("not-a-member", "You are not at that table");
-      const seated = [...found.table.members.values()].filter((seat) => seat !== null);
-      if (!seated.length) return no("no-players", "Seat at least one player first");
-      for (const seat of seated) found.table.match.humans[seat] = true;
-      found.table.match.start();
-      return { ok: true };
-    });
+    function free(): void {
+      if (me() !== undefined) throw new Refusal("bad-request", "Leave your current room first");
+    }
 
-    on(socket, "action", (request: ActionRequest & { matchId?: string }) => {
-      const found = member(request.matchId);
-      if (!found) return no("not-a-member", "You are not at that table");
-      if (found.seat === null) return no("not-a-player", "The host does not play");
-      return found.table.match.act(found.seat, request);
+    on("room:create", ({ name }) => (free(), bind(rooms.create(name))));
+    on("room:join", ({ code, name }) => (free(), bind(rooms.join(code, name))));
+    on("room:resume", ({ token }) => {
+      const joined = rooms.resume(token);
+      if (me() !== joined.memberId) free();
+      return bind(joined);
+    });
+    on("room:leave", () => {
+      const memberId = me();
+      rooms.leave(memberId);
+      sockets.delete(memberId!);
+      socket.data.memberId = undefined;
+    });
+    on("table:sit", (payload) => ({ ok: true, ...rooms.sit(me(), payload) }));
+    on("table:stand", () => rooms.stand(me()));
+    on("table:ready", ({ ready }) => rooms.ready(me(), ready));
+    on("table:options", ({ options: houseRules }) => rooms.options(me(), houseRules));
+    on("table:start", () => rooms.start(me()));
+    on("table:action", (request) => rooms.action(me(), request));
+    on("table:reset", () => rooms.reset(me()));
+
+    socket.on("pose", (payload: unknown) => {
+      if (typeof payload === "object" && payload !== null) rooms.pose(me(), payload);
     });
 
     socket.on("disconnect", () => {
-      for (const [matchId, table] of matches) {
-        if (!table.members.has(socket.id)) {
-          if (table.creator === socket.id && table.members.size === 0) matches.delete(matchId);
-          continue;
-        }
-        const seat = table.members.get(socket.id)!;
-        table.members.delete(socket.id);
-        const players = [...table.members.values()].some((s) => s !== null);
-        // An unstarted lobby lives while anyone is in it; a started match ends when its last player goes.
-        if (table.members.size === 0 || (table.match.state && !players)) {
-          for (const socketId of table.members.keys()) io.to(socketId).emit("closed", { matchId });
-          matches.delete(matchId);
-          continue;
-        }
-        try {
-          if (seat !== null && table.match.state) table.match.leave(seat);
-          broadcast(matchId, table);
-        } catch (error) {
-          console.error("disconnect failed:", error instanceof Error ? error.message : "unknown error");
-        }
-      }
+      const memberId = me();
+      // A socket that was replaced by a resume no longer speaks for its member.
+      if (memberId === undefined || sockets.get(memberId) !== socket) return;
+      sockets.delete(memberId);
+      rooms.disconnected(memberId);
     });
   });
 
-  return { http, io, matches };
+  return { http, io, rooms };
+}
+
+const CONTENT_TYPES: Record<string, string> = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".map": "application/json; charset=utf-8",
+  ".webmanifest": "application/manifest+json; charset=utf-8",
+  ".txt": "text/plain; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".webp": "image/webp",
+  ".ico": "image/x-icon",
+  ".wasm": "application/wasm",
+};
+
+/**
+ * A request listener that serves the built client from `root`; anything that is
+ * not a file there gets index.html so client-side routes load. Add it after
+ * createGameServer: Socket.IO answers its own paths and this leaves them alone.
+ */
+export function serveStatic(root: string): (req: IncomingMessage, res: ServerResponse) => void {
+  const base = resolve(root);
+  return (req, res) => {
+    if (req.url?.startsWith("/socket.io/")) return;
+    const end = (status: number) => res.writeHead(status, { "Content-Type": "text/plain; charset=utf-8" }).end(`${status}`);
+    if (req.method !== "GET" && req.method !== "HEAD") return void end(405);
+    let file: string;
+    try {
+      file = resolve(base, `.${decodeURIComponent(new URL(req.url ?? "/", "http://localhost").pathname)}`);
+    } catch {
+      return void end(400);
+    }
+    if (file.includes("\0") || (file !== base && !file.startsWith(base + sep))) return void end(403);
+    stat(file, (error, stats) => {
+      const target = !error && stats.isFile() ? file : join(base, "index.html");
+      const stream = createReadStream(target);
+      stream.once("error", () => (res.headersSent ? res.destroy() : end(404)));
+      stream.once("open", () => {
+        res.writeHead(200, {
+          "Content-Type": CONTENT_TYPES[extname(target).toLowerCase()] ?? "application/octet-stream",
+          "X-Content-Type-Options": "nosniff",
+        });
+        if (req.method === "HEAD") {
+          stream.destroy();
+          res.end();
+        } else {
+          // pipe() does not close the file when the client aborts.
+          res.once("close", () => stream.destroy());
+          stream.pipe(res);
+        }
+      });
+    });
+  };
 }

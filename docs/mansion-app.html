@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>The Mansion: multiplayer card app</title>
+<style>
+  :root { --bg:#fbfaf7; --fg:#22201c; --muted:#5f5a50; --line:#d9d3c5; --card:#f1ede3; --accent:#8a3b22; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#17161a; --fg:#ece8df; --muted:#a8a294; --line:#3a3740; --card:#232128; --accent:#e8a27c; }
+  }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui,"Segoe UI",Roboto,Arial,sans-serif; }
+  main { max-width:56rem; margin:0 auto; padding:1.5rem 1rem 4rem; }
+  h1 { font-size:1.8rem; margin:.2rem 0 .6rem; }
+  h2 { font-size:1.3rem; margin:2.2rem 0 .5rem; padding-top:.6rem; border-top:1px solid var(--line); }
+  h3 { font-size:1.05rem; margin:1.3rem 0 .3rem; }
+  a { color:var(--accent); }
+  nav { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:.6rem 1rem; }
+  nav a { margin-right:.9rem; white-space:nowrap; }
+  pre, code { font-family:ui-monospace,Consolas,Menlo,monospace; font-size:.92em; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:.7rem .9rem; overflow-x:auto; }
+  code { background:var(--card); padding:.05rem .3rem; border-radius:4px; }
+  pre code { background:none; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:.6rem 0 1rem; font-size:.95rem; }
+  th, td { border:1px solid var(--line); padding:.35rem .55rem; text-align:left; vertical-align:top; }
+  th { background:var(--card); }
+  .wrap { overflow-x:auto; }
+  .note { border-left:4px solid var(--accent); background:var(--card); padding:.5rem .9rem; border-radius:0 8px 8px 0; margin:.8rem 0; }
+  small, .muted { color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+<h1>The Mansion: Tonk, Spades and Bid Whist</h1>
+<p class="muted">A page for people, written from the code as it stands on branch <code>claude/mansion-multiplayer-server</code>. Anything the code could not confirm is marked "not verified".</p>
+<nav aria-label="Sections">
+  <a href="#what">1 What it is</a><a href="#commands">2 Commands</a><a href="#architecture">3 Architecture</a><a href="#rules">4 Rules</a><a href="#controls">5 Controls</a><a href="#world">6 The world</a><a href="#design">7 Design</a><a href="#reference">8 Reference apps</a><a href="#tests">9 Tests and limits</a>
+</nav>
+
+<h2 id="what">1. What it is and what was built</h2>
+<p>A card app you play in a browser or a VR headset browser. You enter a room with a name, walk around a 3D mansion and its backyard, sit at one of six card tables (two each of Tonk, Spades and Bid Whist) and play with friends. Rooms hold up to 32 people and are joined by an 8-character code or an invite link. A server decides everything that matters: it shuffles and deals, checks every move, keeps score, and fills any empty seat with a bot once a match starts. Each person sees only their own cards. The 3D world, music and art are all made in code. The older single-player Bid Whist prototype (<code>src/</code> and the root <code>index.html</code>) is kept and was not changed.</p>
+
+<h3>Repository structure</h3>
+<pre><code>server/index.ts       Socket.IO front: origin check, rate limit, one socket per member, static file server
+server/main.ts        starts the server (PORT, default 3000); serves client/dist if it exists
+server/rooms.ts       rooms, six tables, seats, host, ready, house rules, reconnect hold, poses
+server/match.ts       one match: revision counter, action-id rules, bot loop
+server/shuffle.ts     Fisher-Yates shuffle on crypto.getRandomValues
+server/games/         tonk.ts, spades.ts, bidwhist.ts (pure rules) and a bot for each
+shared/protocol.ts    the wire contract: events, error codes, snapshot types, limits
+shared/cards.ts       the card and deck types
+client/               the browser app (React 19, three 0.165, @react-three/fiber 9, @react-three/xr 6)
+  src/net/            socket connection and store
+  src/state/          local settings, table description, XR session
+  src/world/          mansion layout, plan, themes, art, music
+  src/controls/       keyboard, mouse, gamepad, VR controllers, movement maths
+  src/tableui/        in-world table interface and the matching HTML panel
+  src/ui/             button and house-rule descriptions, card and text drawing
+  src/hud/            entry screen, top bar, settings, controls help
+tests/server, tests/client   Vitest suites for the new app
+tests/e2e             Playwright browser tests (files end in .e2e.ts)
+src/, index.html      legacy single-player prototype, untouched</code></pre>
+
+<h2 id="commands">2. Commands from a clean checkout</h2>
+<p>No secrets, accounts or paid services are used. <code>package.json</code> has no <code>engines</code> field, so no Node version is required by the project. It was verified on Node 26.13.1 and npm 11.20.0.</p>
+<pre><code>npm ci</code></pre>
+
+<h3>Local development (two terminals)</h3>
+<pre><code># terminal 1: the game server, http://localhost:3000
+npm run dev:server
+
+# terminal 2: the client, http://localhost:5173 (forwards /socket.io to port 3000)
+npm run dev:client</code></pre>
+<p>Open <code>http://localhost:5173</code>. The client port is fixed: if 5173 is busy the command stops instead of choosing another. The forwarding target in <code>client/vite.config.ts</code> is fixed at <code>http://localhost:3000</code>, so setting <code>PORT</code> for the server works for <code>npm start</code> but the dev client will not follow it.</p>
+
+<h3>One process, production style</h3>
+<pre><code>npm run build
+npm start</code></pre>
+<p>Open <code>http://localhost:3000</code>. <code>npm start</code> runs the same server file (through <code>tsx</code>) and serves the built <code>client/dist</code> folder, falling back to its <code>index.html</code> for unknown paths. The folder is looked up once at start-up, so build first. <code>PORT</code> overrides the port. Note that <code>npm run build</code> also builds the legacy prototype (it runs <code>tsc -b</code>, then the root Vite build, then the client build).</p>
+
+<h3>Headset on the same network</h3>
+<pre><code>npm run dev:server
+npm run dev:xr</code></pre>
+<p><code>dev:xr</code> serves the client over https with a self-signed certificate on port 5173, listening on all network addresses. In the headset browser open <code>https://&lt;your PC's LAN IP&gt;:5173</code> and accept the certificate warning. A headset only allows WebXR on a secure page, which is why https is used. Setting <code>XR_HTTPS=1</code> with <code>dev:client</code> does the same. Your PC's firewall may need to allow port 5173 (not verified).</p>
+
+<h3>Tests</h3>
+<pre><code>npm run typecheck          # tsc -b
+npm test                   # Vitest, all suites (also runs the legacy prototype's suites)
+npx playwright install chromium-headless-shell    # once
+npm run test:e2e           # builds first, then runs Playwright</code></pre>
+<p><code>test:e2e</code> already runs <code>npm run build</code> itself. Playwright picks a free port, starts <code>server/main.ts</code> on it, runs one worker, and uses software graphics so no GPU is needed. Whether <code>chromium-headless-shell</code> is the exact browser Playwright picks is not set in the config (not verified here; the command is as you gave it).</p>
+
+<h3>Server settings</h3>
+<table>
+<tr><th>Setting</th><th>What the code does</th></tr>
+<tr><td><code>PORT</code></td><td>Port for <code>server/main.ts</code>. Default 3000.</td></tr>
+<tr><td><code>ALLOWED_ORIGINS</code></td><td>Comma-separated list of extra browser origins allowed to connect (for example <code>https://games.example.com</code>).</td></tr>
+<tr><td><code>NODE_ENV</code></td><td>Unless it is exactly <code>production</code>, <code>http://localhost:5173</code> and <code>https://localhost:5173</code> are also allowed. <code>npm start</code> does not set it, so set it yourself for a production-style run.</td></tr>
+</table>
+<p>On every connection the server checks the <code>Origin</code> header. It lets through: no Origin at all (non-browser clients), an Origin whose host matches the request's own host (so the single-process run needs no setting), and anything in the allowed list. Everything else is refused.</p>
+
+<h2 id="architecture">3. Architecture overview</h2>
+<p><strong>The server is the authority.</strong> The flow for every game is: the server shuffles and deals, seats players, tracks whose turn it is, offers each player their legal actions, applies only legal actions, and scores. Game rules are pure functions in <code>server/games/</code>; a bad action throws a rule error and changes nothing.</p>
+<ul>
+<li><strong>Per-recipient views.</strong> After any change the server sends each person a snapshot built for them alone. A player gets their own hand and their own legal moves (only when it is their turn). Other hands, the stock order and the Bid Whist kitty and discards never leave the server. The optional host gets the public state only, with no hand.</li>
+<li><strong>Revision and action ids.</strong> Every change raises the match <code>revision</code>. An action names the revision it was based on and carries an <code>actionId</code> (1 to 64 characters). A stale revision is refused. The same id with the same action is answered as a duplicate and not applied twice; the same id with a different action is refused as reused. Actions over 2048 bytes are refused.</li>
+<li><strong>Reconnect.</strong> Joining returns a secret token, kept in the browser tab's <code>sessionStorage</code>. After a dropped connection the client sends it with <code>room:resume</code> and gets the same seat and fresh snapshots. A second connection with the same token takes over from the first. A dropped member's place is held for 60 seconds; after that they are removed and, in a running match, a bot takes the seat. If a room empties it is deleted.</li>
+<li><strong>Bots.</strong> At start, every empty seat becomes a bot, and so does any seat a person later leaves. Bots choose from their own seat's view only, so they cannot see anything a person there could not. They play instantly (no pacing yet) and are simple: they play by rank with no card counting.</li>
+<li><strong>Automated dealer, optional human host.</strong> By default the server deals. A person may instead sit as an optional fifth, non-playing host. The host does not ready up or play, and sets house rules, starts the match, deals the next hand when a hand is over (any seated player can also do this) and resets the table. With no host, that power goes to the longest-seated player. A match starts when every seated player is ready; at least one person must be seated.</li>
+<li><strong>Rate limit.</strong> Each socket may send a burst of 60 acknowledged events, refilled at 20 per second. Over that gets a "rate-limited" reply. Messages are capped at 16 KB.</li>
+<li><strong>Other limits.</strong> Names are 1 to 20 characters. Poses are sent about ten times a second and out-of-range values are dropped. Rooms are in memory only.</li>
+</ul>
+
+<h3>Socket events (shared/protocol.ts)</h3>
+<p>Every client event except <code>pose</code> is answered by an acknowledgement: either <code>{ok:true,...}</code> or <code>{ok:false, error, message}</code>.</p>
+<div class="wrap"><table>
+<tr><th>Direction</th><th>Event</th><th>Meaning</th></tr>
+<tr><td>client to server</td><td><code>room:create</code> / <code>room:join</code></td><td>Make a room, or join by code. Returns code, member id and token.</td></tr>
+<tr><td>client to server</td><td><code>room:resume</code> / <code>room:leave</code></td><td>Come back with the token; leave the room.</td></tr>
+<tr><td>client to server</td><td><code>pose</code></td><td>My position and facing (not acknowledged).</td></tr>
+<tr><td>client to server</td><td><code>table:sit</code> / <code>table:stand</code></td><td>Sit as player (any seat or a chosen one) or host; stand up. One table at a time.</td></tr>
+<tr><td>client to server</td><td><code>table:ready</code></td><td>Set my ready flag.</td></tr>
+<tr><td>client to server</td><td><code>table:options</code></td><td>Manager sets house rules before the match; clears everyone's ready flag.</td></tr>
+<tr><td>client to server</td><td><code>table:start</code> / <code>table:reset</code></td><td>Manager starts the match; manager clears the match back to the lobby. Used on a match still in play, it also takes the other seated players off the table, so a table stuck on an absent player can be freed.</td></tr>
+<tr><td>client to server</td><td><code>table:action</code></td><td>A game action, or <code>next-hand</code>, with action id and expected revision.</td></tr>
+<tr><td>server to client</td><td><code>room</code></td><td>Public room snapshot: members and the six tables with seats, status and house rules.</td></tr>
+<tr><td>server to client</td><td><code>table</code></td><td>Your private table snapshot: revision, your seat, your view.</td></tr>
+<tr><td>server to client</td><td><code>table:left</code></td><td>You are no longer at that table.</td></tr>
+<tr><td>server to client</td><td><code>poses</code></td><td>Where the other members' avatars are.</td></tr>
+</table></div>
+<p>Table status is one of <code>available</code>, <code>lobby</code>, <code>playing</code>, <code>results</code>. Error codes include <code>stale-revision</code>, <code>action-id-reused</code>, <code>illegal</code>, <code>not-manager</code>, <code>room-full</code>, <code>bad-token</code> and <code>rate-limited</code> (full list in <code>shared/protocol.ts</code>).</p>
+
+<h2 id="rules">4. Default rules and configurable house rules</h2>
+<div class="note"><strong>These are documented defaults, not universal rules.</strong> Card games like these are played many ways in different families and regions. The table below is what this app does, chosen so a table can change the common switches. The manager sets them before the match; they are shown to everyone and fixed once play starts. Seats run clockwise and partners sit opposite (seats 1 and 3, 2 and 4) in Spades and Bid Whist; Tonk is every player for themselves.</div>
+
+<h3>Tonk (4 players, standard 52-card deck, no jokers)</h3>
+<table>
+<tr><th>Option</th><th>Default</th><th>Allowed values</th></tr>
+<tr><td>Dropping before you draw (<code>knocking</code>)</td><td>allowed</td><td>allowed, not allowed</td></tr>
+<tr><td>A dealt 49 or 50 wins the hand (<code>initialFifty</code>)</td><td>yes</td><td>yes, no</td></tr>
+<tr><td>Play to (<code>target</code>)</td><td>5 points</td><td>5, 10</td></tr>
+</table>
+<p>Five cards each, one card turned up as the discard pile, the rest is the stock. A turn: draw from the stock or the discard pile (or drop first), then lay melds (sets of 3 or 4 of a rank, runs of 3 or more in one suit, ace low) or add a card to any meld on the table, then discard to end the turn. Card values: ace 1, number cards face value, jack, queen and king 10. Hand scoring in match points:</p>
+<ul>
+<li>Going out by laying down your last cards: 2. Going out by your final discard: 1.</li>
+<li>A dealt 49 or 50 (when on): 2 to a lone holder; if two players qualify the deal is void.</li>
+<li>Drop: 1 if your total is strictly lowest; if not, each lowest opponent gets 2.</li>
+<li>Stock runs out: 1 to every player tied for the lowest total.</li>
+<li>First player to reach the target wins (simultaneous finishers share the win).</li>
+</ul>
+<p><strong>Variant assumptions made.</strong> (a) A card taken from the discard pile cannot be discarded in the same turn. (b) A meld or extension that would leave you holding only that taken card is refused, unless that card fits a meld already on the table, so a legal move always exists. <strong>Open rule decision for the owner:</strong> assumption (b) is this app's own choice and has not been confirmed as how the owner's family plays. (c) The deal is five cards and a drop needs a strictly lower total than every opponent to win.</p>
+
+<h3>Spades (2 teams of 2)</h3>
+<table>
+<tr><th>Option</th><th>Default</th><th>Allowed values</th></tr>
+<tr><td>Deck (<code>preset</code>)</td><td>standard, 52 cards</td><td>standard; jokers (both jokers and the 2 of Diamonds are the top spades, above the 2 of Spades; the 2 of Clubs and 2 of Hearts are removed)</td></tr>
+<tr><td>Play to (<code>target</code>)</td><td>500</td><td>100, 250, 500</td></tr>
+<tr><td>Nil bids (<code>nil</code>)</td><td>allowed</td><td>allowed, not allowed (bids then run 1 to 13)</td></tr>
+<tr><td>Ten bags cost 100 points (<code>bagPenalty</code>)</td><td>yes</td><td>yes, no</td></tr>
+</table>
+<p>13 cards each. Each player bids once, from the left of the dealer; the dealer bids last and leads. Spades cannot be led until broken (unless the leader holds only spades). Players must follow suit if they can. Scoring per team: a made contract is 10 points per trick bid, plus 1 point and 1 bag for each extra trick; a set contract loses 10 per trick bid; a made nil is +100 and a failed nil is -100 (its tricks become bags); if both partners bid nil there is no contract. With bag penalty on, every 10 bags cost 100 points. The game ends when a team is at or past the target with the higher score; a tie at the target plays another hand.</p>
+
+<h3>Bid Whist (2 teams of 2, 54 cards with two jokers)</h3>
+<table>
+<tr><th>Option</th><th>Default</th><th>Allowed values</th></tr>
+<tr><td>Lowest bid (<code>minBid</code>)</td><td>3</td><td>3, 4</td></tr>
+<tr><td>A low bid outranks a high bid of the same number (<code>lowOverHigh</code>)</td><td>no</td><td>no, yes</td></tr>
+<tr><td>A made bid scores every book above six (<code>overtricks</code>)</td><td>yes</td><td>yes, no</td></tr>
+<tr><td>No-trump bids score double (<code>noTrumpDouble</code>)</td><td>yes</td><td>yes, no</td></tr>
+</table>
+<p>12 cards each and a 6-card kitty. The auction goes once around the table, each bid strictly higher than the last (levels up to 7; at the same level no-trump outranks a suit bid). If the other three pass, the dealer must bid. The winner names trump (high or low) or, for no-trump, high or low; takes the kitty; and discards six cards. In low play the ace is best and the king is weakest. Jokers outrank all trump in a suit contract; in no-trump a joker never wins a trick. A team makes the contract with at least 6 plus the bid level books, where the kitty counts as one book for the declarers. Only the declaring team's score moves: made scores books minus six (overtricks on) or the bid level (off); failed loses the bid level; no-trump doubles either way when that option is on. The game ends when the declaring team reaches +7, or when it falls to -7 (the other team wins).</p>
+<p class="muted">The Tonk and Bid Whist scoring above, and the Spades bag rules, are the code's own definitions. Other households play different point values and end conditions; the options only cover the switches listed.</p>
+
+<h2 id="controls">5. Controls and comfort</h2>
+<p>This table is the in-app Controls panel (<code>CONTROLS_HELP</code>).</p>
+<div class="wrap"><table>
+<tr><th>Device</th><th>To</th><th>Do this</th></tr>
+<tr><td>Keyboard</td><td>Walk</td><td>W A S D, or Up / Down arrows</td></tr>
+<tr><td>Keyboard</td><td>Walk faster</td><td>Hold Shift</td></tr>
+<tr><td>Keyboard</td><td>Turn</td><td>Left / Right arrows (smooth), Q / E (snap)</td></tr>
+<tr><td>Keyboard</td><td>Teleport</td><td>Hold T to aim at the floor, let go to jump</td></tr>
+<tr><td>Keyboard</td><td>Press what the centre ring points at</td><td>F or Enter</td></tr>
+<tr><td>Keyboard</td><td>Recentre the view (re-align to your seat)</td><td>R</td></tr>
+<tr><td>Keyboard</td><td>Use the table panel</td><td>Tab to a button, Enter or Space to press</td></tr>
+<tr><td>Mouse</td><td>Press in-world buttons and cards</td><td>Left click on them</td></tr>
+<tr><td>Mouse</td><td>Look around</td><td>Click empty scene to capture the mouse, Esc to release</td></tr>
+<tr><td>Mouse</td><td>Press what the centre ring points at</td><td>Left click while the mouse is captured</td></tr>
+<tr><td>Mouse</td><td>Teleport</td><td>Hold right button to aim at the floor, let go to jump</td></tr>
+<tr><td>Gamepad</td><td>Walk</td><td>Left stick</td></tr>
+<tr><td>Gamepad</td><td>Turn and look up / down</td><td>Right stick (snap or smooth turn per settings)</td></tr>
+<tr><td>Gamepad</td><td>Confirm: press the focused button, else what the centre ring points at</td><td>A (bottom button)</td></tr>
+<tr><td>Gamepad</td><td>Cancel: drop focus, clear picked cards, stop aiming</td><td>B (right button)</td></tr>
+<tr><td>Gamepad</td><td>Step through your cards and the table's buttons</td><td>Left / right bumper</td></tr>
+<tr><td>Gamepad</td><td>Open or close settings</td><td>Start</td></tr>
+<tr><td>VR controllers</td><td>Point at, press and pick</td><td>Aim the ray, pull the trigger</td></tr>
+<tr><td>VR controllers</td><td>Teleport (default)</td><td>Off-hand stick forward to aim, let go to jump</td></tr>
+<tr><td>VR controllers</td><td>Walk (smooth movement setting)</td><td>Off-hand stick</td></tr>
+<tr><td>VR controllers</td><td>Turn</td><td>Main-hand stick left / right (snap or smooth per settings)</td></tr>
+<tr><td>VR controllers</td><td>Recentre the seated view</td><td>Click either stick</td></tr>
+<tr><td>VR controllers</td><td>Show or hide the hints by your left hand</td><td>Y (left controller)</td></tr>
+<tr><td>VR controllers</td><td>Swap hands</td><td>Settings: main hand</td></tr>
+<tr><td>VR hands (no controllers)</td><td>Point and press (no walking; sit at a table from the panel first)</td><td>Point, pinch to press</td></tr>
+</table></div>
+
+<h3>Comfort and accessibility settings</h3>
+<p>Open <strong>Settings</strong> in the top bar. Values are saved in the browser (<code>localStorage</code>) and survive reloads.</p>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Notes</th></tr>
+<tr><td>Party theme</td><td>Fourth of July</td><td>or New Year's Eve</td></tr>
+<tr><td>Moving in VR</td><td>Teleport</td><td>or smooth walking</td></tr>
+<tr><td>Snap turn</td><td>on</td><td>The angle is 30 degrees; there is no control to change it. Turn off for smooth turning.</td></tr>
+<tr><td>Comfort vignette while moving</td><td>on</td><td>Darkens the edges of the view while moving or turning in VR; not drawn outside VR.</td></tr>
+<tr><td>Main hand</td><td>right</td><td>or left</td></tr>
+<tr><td>Reduce motion</td><td>follows the browser's reduced-motion setting at first run</td><td>Freezes the fireworks to one still burst and makes the New Year clock show hours and minutes only.</td></tr>
+<tr><td>Text and button size</td><td>100%</td><td>80% to 160%; scales the page and the in-world panels.</td></tr>
+<tr><td>Music, Music volume</td><td>on, 50%</td><td>Music starts after your first tap or key press, and is louder near the music booth.</td></tr>
+</table>
+<ul>
+<li><strong>Seated.</strong> There is no seated-mode switch. You are seated whenever you sit at a table: walking is locked, turning still works, and in VR your eyes go to seated height.</li>
+<li><strong>Not colour only.</strong> The connection badge uses a different shape and words for each state. Each table's status board uses a different outline shape per status (available, lobby, playing, results) as well as colour. The HTML table panel (used on desktop and for screen readers, hidden in VR) names every card in words, marks picked cards with a check mark, marks whose turn it is with an arrow, and explains why a disabled button is disabled.</li>
+<li><strong>Leaving.</strong> At a table, press <strong>Leave table</strong> (in a running match it reads "Leave table (a bot takes your seat)"). To leave the room, press <strong>Leave room</strong> in the top bar. Closing the tab holds your seat for 60 seconds.</li>
+<li><strong>Invite.</strong> "Copy invite link" copies a link with <code>?room=CODE</code>; if the browser blocks the clipboard the link is shown to copy by hand.</li>
+</ul>
+
+<h2 id="world">6. The world</h2>
+<p>A house 48 m by 36 m with a backyard 48 m by 24 m behind it. You start in the foyer.</p>
+<table>
+<tr><th>Area</th><th>What is there</th></tr>
+<tr><td>Foyer, Central Gallery</td><td>Entrance with a welcome sign; the gallery has benches, seating nooks and two framed artworks.</td></tr>
+<tr><td>Tonk Lounge (west, front)</td><td>Tonk Tables 1 and 2, a sofa, lamps, a bookshelf wall.</td></tr>
+<tr><td>Spades Lounge (west, back)</td><td>Spades Tables 1 and 2.</td></tr>
+<tr><td>Bid Whist Lounge (east, front)</td><td>Bid Whist Tables 1 and 2, a sideboard with lamps.</td></tr>
+<tr><td>Communal Kitchen (east, back)</td><td>Potluck counter with covered dishes, stools, kitchen counter, pantry, a round family table.</td></tr>
+<tr><td>Cookout Patio</td><td>Grill with a smoker barrel, prep table, picnic table, string lights.</td></tr>
+<tr><td>Backyard Lounge</td><td>Two sofas with low tables and pouffes.</td></tr>
+<tr><td>Music and Dance Corner</td><td>Music booth, speaker towers, a chequered dance floor.</td></tr>
+<tr><td>Pool</td><td>Steps and shallow end can be walked into; the deep end cannot. Loungers and umbrellas.</td></tr>
+<tr><td>Lawn-Toss Lawn</td><td>Two toss boards with bean bags.</td></tr>
+</table>
+<ul>
+<li><strong>Six tables</strong> are the same in every room: Tonk Table 1 and 2, Spades Table 1 and 2, Bid Whist Table 1 and 2. Each is round with four seats (partners opposite) and a corner for the standing host. Each has a status board overhead that turns to face the viewer and a marker post with the table's label. Walk within 3 m, or pick a table from the list, to see its panel.</li>
+<li><strong>Collision.</strong> Walls, the fence, the tables, the counters, grill, music booth, sofas, toss boards and the pool's deep end block walking. Other furniture is decoration and has no collision. Every room has at least two doorways.</li>
+<li><strong>Two themes</strong>, switched in Settings. <em>Fourth of July</em>: daytime sky, bunting, star lanterns, a slower fireworks show. <em>New Year's Eve</em>: night sky with stars, streamers, balloon clusters, warm lights, a faster fireworks show and a clock counting down to your local midnight. The layout is identical in both.</li>
+</ul>
+
+<h2 id="design">7. Original design decisions and cultural direction</h2>
+<p><strong>Everything is made in this project.</strong> All visuals are procedural geometry (boxes, cylinders, balls, cones) and canvas-drawn art. The two gallery artworks are generated from fixed seeds in <code>client/src/world/art.ts</code>: abstract shapes, no figures, faces, text or copied images. The music is an original WebAudio groove written in code (<code>client/src/world/Music.ts</code>), one feel per theme (about 92 beats a minute with a swing for the day, 112 for the night). Fonts are the system fonts. The client folder holds no images, audio files or fonts; its only assets are two small controller-profile files so the app does not fetch models from a CDN. No third-party art, audio, fonts or brand marks are used.</p>
+<p><strong>What the spaces are meant to evoke.</strong> The aim is the feel of a family gathering and a house party, described only by what is built:</p>
+<ul>
+<li>A cookout patio with a grill and smoker barrel, picnic table and string lights.</li>
+<li>A potluck kitchen where "everybody brought something": a counter lined with covered dishes, and a round family table.</li>
+<li>A music corner with a booth, speakers and a dance floor.</li>
+<li>Card-table lounges, one for each of Tonk, Spades and Bid Whist, with sofas, lamps and shelves, so the games sit alongside the rest of the party rather than apart from it.</li>
+<li>The "gathering" artwork shows rings of seats around a shared table; the "rhythm" artwork is a patchwork crossed by a line of beats, for the music corner.</li>
+</ul>
+<p>Spades, Bid Whist and Tonk are treated as house-party games people play together. Other people appear as a plain capsule body with a nose showing which way they face and a name plate; nothing is drawn to stand for any group of people. House rules are explicit settings because families play these games differently.</p>
+
+<h2 id="reference">8. Reference-app observations</h2>
+<div class="note">Only the three public Google Play listings were read, on 2026-11-18, through a page reader. No app was installed, run, emulated, decompiled or inspected, and no code, art, names, layout or branding was taken. The notes below are listing descriptions only.</div>
+<table>
+<tr><th>Listing</th><th>What the listing advertises</th><th>Taken at a high level</th><th>Not taken</th></tr>
+<tr><td>"Bid Whist - Expert AI" (NeuralPlay)</td><td>Many rule settings (kitty size, high/low bid ranking, minimum bid, no-trump scoring, overtrick scoring, joker rules, game-over condition), hints, undo, trick review, six AI levels, offline play.</td><td>House rules should be explicit settings, not one fixed rule set. This app exposes minimum bid, low-over-high ranking, overtricks and no-trump double.</td><td>Hints, undo, trick review, AI levels, offline play.</td></tr>
+<tr><td>"Bid Whist Plus" (Zynga; package net.peakgames.bidwhist)</td><td>Online partnership play, choice of rule type and final point, private or invite-only tables, friends and chat, coins and bets.</td><td>Private tables by invite, and a selectable target score.</td><td>Coins, betting, chat.</td></tr>
+<tr><td>"Play Tonk : Tunk Card Game" (Artoon Games; package com.multiplayertonk)</td><td>Real-time multiplayer, spreads (sets and sequences), hitting on spreads, Knock and No Knock modes, voice chat, chips, mini-games.</td><td>Knocking as a table option.</td><td>Chips, mini-games, voice chat.</td></tr>
+</table>
+<p><strong>In-VR menu.</strong> Inside a headset the 2D overlay is hidden, so a menu travels with you: press X on the left controller, or point at (or pinch) the small Menu button beside you. It shows the connection state and room code and offers movement (teleport or smooth), turning (snap or smooth), vignette, music, theme, leave table, leave room and exit VR. Leave table and New game ignore a press made within half a second of pressing a different button, so a double press cannot land on them.</p>
+<p><strong>How this app differs:</strong> a walkable 3D mansion with physical tables, WebXR support, an optional human dealer/host, no currency, no accounts and no ads.</p>
+
+<h2 id="tests">9. Tests and known limits</h2>
+<table>
+<tr><th>Suite</th><th>What it covers (from the test names)</th></tr>
+<tr><td><code>tests/server</code> (Vitest)</td><td>Rules for each game: deals, house-rule validation, bidding, tricks, melds, scoring, game end, input purity, per-seat views, bots playing whole games. Sockets: creating and joining rooms, the 32-member cap, rate limiting, poses, seating, manager-only start, action ids and stale revisions, full games with and without bots, reconnecting, bot takeover after the hold, serving the built client.</td></tr>
+<tr><td><code>tests/client</code> (Vitest)</td><td>Table buttons and house-rule cycling for each game, reticle and gamepad activation, movement and collision maths, teleport, snap turn, the entry screen and saved settings, the net store (resume, token, offline), the HTML table panel, the world plan, themes, art, music patterns and the mansion layout.</td></tr>
+<tr><td><code>tests/e2e</code> (Playwright)</td><td>Real browser pages against a real server: four seated pages and a host play each game to the results; room entry and wrong code; reconnect after a reload; a bot taking over a left seat; movement, teleport, theme switch and the Enter VR button; a browser with no WebXR; a tour of the house in both themes; and an emulated headset that sits, plays a Tonk turn and leaves using controller rays only.</td></tr>
+<tr><td>Other folders under <code>tests/</code></td><td>Suites for the legacy prototype (and deploy and governance checks). <code>npm test</code> runs them too. Not described here.</td></tr>
+</table>
+
+<h3>Known limits and not verified</h3>
+<ul>
+<li>Never run on a physical headset. The VR path was checked only by the emulated-headset browser test and by reading the code.</li>
+<li>No voice or text chat.</li>
+<li>No turn timers; a player who stops acting holds up the table until they leave or their 60-second hold ends after a disconnect.</li>
+<li>Rooms live in server memory and vanish when the server restarts.</li>
+<li>Furniture other than the tables and the listed obstacles has no collision.</li>
+<li>The music has not been listened to by a person.</li>
+<li>Bots are basic and act instantly.</li>
+<li>The Tonk meld-stranding rule (section 4) is an open decision for the owner.</li>
+<li>No review yet by a different AI provider.</li>
+<li>The test suites were not run while writing this page; their descriptions come from reading the test files.</li>
+</ul>
+</main>
+</body>
+</html>

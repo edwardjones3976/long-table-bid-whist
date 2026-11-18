@@ -7,6 +7,24 @@ An authentic VR/MR recreation of Bid Whist centered on deterministic rules,
 inhabited table presence, respected house rules, accessible interaction, and
 dignified cultural specificity.
 
+## Mansion multiplayer app
+
+A browser and VR multiplayer card app (Tonk, Spades, Bid Whist) in a walkable
+mansion, with a server that deals and checks every move. The single-player
+prototype described below is kept unchanged. Full guide:
+[docs/mansion-app.html](docs/mansion-app.html).
+
+```
+npm ci
+npm run dev:server    # terminal 1: http://localhost:3000
+npm run dev:client    # terminal 2: open http://localhost:5173
+npm run build && npm start    # one process: open http://localhost:3000
+npm run dev:xr        # headset on the LAN, with dev:server: https://<PC LAN IP>:5173
+npm run typecheck && npm test
+npx playwright install chromium-headless-shell   # once
+npm run test:e2e
+```
+
 The project is currently a **reshaped technical prototype**. A local production
 build can complete a deterministic hand from auction through scoring in either
 AI Dealer or Human Host presentation. It becomes a `REVIEW_READY` candidate

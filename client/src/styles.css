@@ -1,0 +1,205 @@
+:root {
+  color-scheme: dark;
+  --bg: #0e1626;
+  --panel: rgba(12, 16, 28, 0.92);
+  --text: #f4f1e8;
+  --muted: #c9c4b5;
+  --accent: #ffd166;
+  --line: #5b6478;
+  font-family: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+[data-theme="newyear"] {
+  --accent: #9be7ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: var(--text);
+  background: #232b3d;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  padding: 0.45em 0.8em;
+  min-height: 2.6em;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+/* Disabled is shown by a dashed outline and strike-through as well as by dimming. */
+button:disabled {
+  cursor: not-allowed;
+  color: var(--muted);
+  border-style: dashed;
+  text-decoration: line-through;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+small {
+  color: var(--muted);
+}
+
+.error {
+  border-left: 6px solid #ff6b6b;
+  padding: 0.4em 0.8em;
+  background: #3a1620;
+}
+
+.badge {
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.entry {
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.entry form {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.entry label {
+  margin-top: 0.6rem;
+  font-weight: 700;
+}
+
+.mansion {
+  position: fixed;
+  inset: 0;
+}
+
+.scene {
+  position: absolute !important;
+  inset: 0;
+}
+
+.scene-failed {
+  position: absolute;
+  inset: 40% 1rem auto;
+  text-align: center;
+}
+
+.hud,
+.panel {
+  position: absolute;
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 0.6rem 0.8rem;
+  overflow: auto;
+}
+
+.hud {
+  top: 0.5rem;
+  left: 0.5rem;
+  right: 0.5rem;
+  max-height: 45%;
+}
+
+.hud p {
+  margin: 0.4rem 0 0;
+}
+
+.hud-row,
+.buttons,
+.hand {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.settings,
+.controls-help {
+  margin-top: 0.6rem;
+}
+
+.settings {
+  display: grid;
+  gap: 0.5rem;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+}
+
+.settings input[type="checkbox"] {
+  min-height: 0;
+  width: 1.3em;
+  height: 1.3em;
+  vertical-align: middle;
+}
+
+.controls-help th,
+.controls-help td {
+  text-align: left;
+  padding: 0.2em 0.8em 0.2em 0;
+}
+
+.panel {
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  max-height: 50%;
+}
+
+.panel h2,
+.panel h3 {
+  margin: 0.2rem 0;
+}
+
+.panel ul,
+.panel ol {
+  margin: 0.3rem 0;
+  padding-left: 1.4rem;
+}
+
+/* A card that cannot be picked right now is still a card you hold: no strike-through. */
+.card:disabled {
+  text-decoration: none;
+}
+
+.card[aria-pressed="true"] {
+  border-color: var(--accent);
+  border-width: 4px;
+  font-weight: 700;
+}
+
+@media (min-width: 900px) {
+  .panel {
+    left: auto;
+    width: 30rem;
+    max-height: calc(100% - 9rem);
+  }
+}
