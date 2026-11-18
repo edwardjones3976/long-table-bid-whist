@@ -2,7 +2,12 @@ import { existsSync } from "node:fs";
 import { createGameServer, serveStatic } from "./index";
 
 const port = Number(process.env.PORT) || 3000;
-const { http } = createGameServer();
+/** Time between bot moves, so players see each bot card arrive. BOT_DELAY_MS (0 to 10000) overrides it; 0 makes bots instant. */
+const BOT_DELAY_MS = 900;
+// An unset or blank variable keeps the default; Number("") would be 0, which means instant.
+const fromEnv = process.env.BOT_DELAY_MS?.trim() ? Number(process.env.BOT_DELAY_MS) : NaN;
+const botDelayMs = Number.isFinite(fromEnv) && fromEnv >= 0 && fromEnv <= 10_000 ? fromEnv : BOT_DELAY_MS;
+const { http } = createGameServer({ botDelayMs });
 // Resolved from the folder the server is started in, which is the project root for every npm script.
 http.on(
   "request",

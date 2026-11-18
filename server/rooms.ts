@@ -117,15 +117,17 @@ export class Rooms {
   private readonly tokens = new Map<string, Member>();
   private readonly shuffle?: (deck: Card[]) => Card[];
   private readonly holdMs: number;
+  private readonly botDelayMs: number;
   private readonly poseTimer: NodeJS.Timeout;
   private closed = false;
 
   constructor(
     private readonly emit: Emit,
-    options: { shuffle?: (deck: Card[]) => Card[]; holdMs?: number } = {},
+    options: { shuffle?: (deck: Card[]) => Card[]; holdMs?: number; botDelayMs?: number } = {},
   ) {
     this.shuffle = options.shuffle;
     this.holdMs = options.holdMs ?? SEAT_HOLD_MS;
+    this.botDelayMs = options.botDelayMs ?? 0;
     this.poseTimer = setInterval(() => this.sendPoses(), 100);
     this.poseTimer.unref();
   }
@@ -135,6 +137,7 @@ export class Rooms {
     this.closed = true;
     clearInterval(this.poseTimer);
     for (const member of this.members.values()) if (member.hold) clearTimeout(member.hold);
+    for (const room of this.rooms.values()) for (const table of room.tables) table.match?.stop();
   }
 
   // ---- membership ----
@@ -238,6 +241,7 @@ export class Rooms {
     this.tokens.delete(member.token);
     room.posesChanged = true;
     if (room.members.size === 0) {
+      for (const table of room.tables) table.match?.stop();
       this.rooms.delete(room.code);
       return;
     }
@@ -304,8 +308,11 @@ export class Rooms {
       table.seats[seat] = null;
       if (table.match) {
         if (table.seats.some(Boolean)) table.match.leave(seat);
-        // A match with no people left to play it is over.
-        else table.match = null;
+        else {
+          // A match with no people left to play it is over.
+          table.match.stop();
+          table.match = null;
+        }
       }
     }
     this.sendTable(table);
@@ -336,16 +343,23 @@ export class Rooms {
     const seated = table.seats.filter((seat) => seat !== null);
     if (!seated.length) throw new Refusal("not-ready", "Seat at least one player first");
     if (!seated.every((seat) => seat.ready)) throw new Refusal("not-ready", "Every seated player must be ready");
-    const match: Match = new Match(GAMES[table.game], table.options, this.shuffle, () => {
-      if (table.match !== match) return;
-      this.sendTable(table);
-      if (statusOf(table) === "results") this.sendRoom(member.room);
-    });
+    const match: Match = new Match(
+      GAMES[table.game],
+      table.options,
+      this.shuffle,
+      () => {
+        if (table.match !== match) return;
+        this.sendTable(table);
+        if (statusOf(table) === "results") this.sendRoom(member.room);
+      },
+      this.botDelayMs,
+    );
     for (const s of SEATS) match.humans[s] = table.seats[s] !== null;
     table.match = match;
     try {
       match.start();
     } catch (error) {
+      match.stop();
       table.match = null;
       throw error;
     }
@@ -381,6 +395,7 @@ export class Rooms {
         table.seats[s] = null;
       }
     }
+    table.match.stop();
     table.match = null;
     for (const seat of table.seats) if (seat) seat.ready = false;
     this.sendTable(table);

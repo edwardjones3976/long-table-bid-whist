@@ -19,6 +19,8 @@ export interface GameServerOptions {
   holdMs?: number;
   /** Acknowledged events allowed per socket: a burst, refilled per second. */
   rateLimit?: { burst: number; perSecond: number };
+  /** Milliseconds between bot moves; 0 (the default) plays them all at once. server/main.ts sets it for real play. */
+  botDelayMs?: number;
 }
 
 export interface GameServer {

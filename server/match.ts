@@ -28,14 +28,26 @@ export class Match<S extends GameState = GameState, O = unknown> {
   private readonly options: O;
   // shortcut: grows for the life of the match (about 50 entries a hand); prune per hand if matches get long.
   private readonly accepted = new Map<string, string>();
+  /** The pending paced bot move, if any. */
+  private timer: ReturnType<typeof setTimeout> | null = null;
+  private stopped = false;
 
+  /** botDelayMs: 0 plays every bot move at once; above 0, one bot move that long after each change, so players see each card arrive. */
   constructor(
     private readonly game: Game<S, O>,
     options?: unknown,
     private readonly shuffle: (deck: Card[]) => Card[] = shuffled,
     private readonly onChange: () => void = () => {},
+    private readonly botDelayMs = 0,
   ) {
     this.options = game.checkOptions(options);
+  }
+
+  /** Cancels a pending bot move. A stopped match never moves a bot again; call it when the match is dropped. */
+  stop(): void {
+    this.stopped = true;
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = null;
   }
 
   private deal(): Card[] {
@@ -115,14 +127,45 @@ export class Match<S extends GameState = GameState, O = unknown> {
     this.onChange();
   }
 
-  // shortcut: bots answer instantly; add pacing with the decision timers.
+  /** The seat a bot must play now, or null while a person is to act or the hand is over. */
+  private botTurn(): Seat | null {
+    const state = this.state;
+    return !state || state.phase === "hand-over" || state.phase === "game-over" || this.humans[state.turn] ? null : state.turn;
+  }
+
+  private botMove(seat: Seat): void {
+    const state = this.state!;
+    this.state = this.game.apply(state, seat, this.game.chooseAction(this.game.viewFor(state, seat)));
+    this.changed();
+  }
+
   private runBots(): void {
+    if (this.botDelayMs > 0) return this.scheduleBot();
     for (let guard = 0; guard < 500; guard += 1) {
-      const state = this.state;
-      if (!state || state.phase === "hand-over" || state.phase === "game-over" || this.humans[state.turn]) return;
-      this.state = this.game.apply(state, state.turn, this.game.chooseAction(this.game.viewFor(state, state.turn)));
-      this.changed();
+      const seat = this.botTurn();
+      if (seat === null) return;
+      this.botMove(seat);
     }
     throw new Error("Bot loop did not reach a human turn or the end of the hand");
+  }
+
+  /** Paced play: at most one pending timer; it re-reads the state when it fires, so a change in between cannot make a bot act out of turn. */
+  private scheduleBot(): void {
+    if (this.stopped || this.timer || this.botTurn() === null) return;
+    this.timer = setTimeout(() => {
+      this.timer = null;
+      const seat = this.stopped ? null : this.botTurn();
+      if (seat === null) return;
+      try {
+        this.botMove(seat);
+      } catch (error) {
+        // Nothing above a timer can catch this: stop this match's bots rather than the whole server.
+        console.error("bot move failed:", error instanceof Error ? error.message : "unknown error");
+        this.stop();
+        return;
+      }
+      this.scheduleBot();
+    }, this.botDelayMs);
+    this.timer.unref?.();
   }
 }
