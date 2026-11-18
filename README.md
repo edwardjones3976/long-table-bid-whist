@@ -14,6 +14,9 @@ mansion, with a server that deals and checks every move. The single-player
 prototype described below is kept unchanged. Full guide:
 [docs/mansion-app.html](docs/mansion-app.html).
 
+AI coding agents that work on this app start with [AGENTS.md](AGENTS.md); the
+longer workspace guide is [docs/workspace.html](docs/workspace.html).
+
 ```
 npm ci
 npm run dev:server    # terminal 1: http://localhost:3000
@@ -102,8 +105,10 @@ merely because it uses a supported file format.
 
 ## Local project boundary
 
-The ChatGPT-synced `sources/` directory and its local `AGENTS.md` are excluded
-from this repository and remain read-only reference material.
+The ChatGPT-synced `sources/` directory is excluded from this repository and is
+read-only reference material. `AGENTS.md` is tracked and holds the rules for AI
+agents; if a sync replaces it, restore it with `git restore AGENTS.md` before
+committing.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->

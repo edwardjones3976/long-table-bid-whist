@@ -14,6 +14,7 @@
     "dev:client": "vite --configLoader runner --config client/vite.config.ts",
     "dev:xr": "vite --configLoader runner --config client/vite.config.ts --mode xr",
     "start": "tsx server/main.ts",
+    "lane": "node tools/lane.mjs",
     "test:e2e": "npm run build && playwright test"
   },
   "dependencies": {

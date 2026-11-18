@@ -72,7 +72,7 @@ npm run dev:server
 
 # terminal 2: the client, http://localhost:5173 (forwards /socket.io to port 3000)
 npm run dev:client</code></pre>
-<p>Open <code>http://localhost:5173</code>. The client port is fixed: if 5173 is busy the command stops instead of choosing another. The forwarding target in <code>client/vite.config.ts</code> is fixed at <code>http://localhost:3000</code>, so setting <code>PORT</code> for the server works for <code>npm start</code> but the dev client will not follow it.</p>
+<p>Open <code>http://localhost:5173</code>. The client listens on <code>CLIENT_PORT</code> (default 5173) and stops if that port is busy instead of choosing another. It forwards <code>/socket.io</code> to <code>http://localhost:&lt;PORT&gt;</code> (default 3000), so it follows the server's <code>PORT</code>. In a lane, use the lane commands in <a href="workspace.html">workspace.html</a>.</p>
 
 <h3>One process, production style</h3>
 <pre><code>npm run build

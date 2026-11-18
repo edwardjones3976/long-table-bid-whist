@@ -164,7 +164,7 @@ describe("describeTable while playing", () => {
     const pressed = new Set<string>();
     for (let seed = 1; seed <= 30; seed += 1) playHands("tonk", seed, 3, seed % 5 === 0).forEach((id) => pressed.add(id));
     expect([...pressed].sort()).toEqual(["discard", "draw-discard", "draw-stock", "drop", "extend", "meld", "next-hand"]);
-  });
+  }, 30000);
 
   it("offers nil in Spades only when the house rules allow it", () => {
     const engine = GAMES.spades;

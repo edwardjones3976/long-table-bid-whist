@@ -43,3 +43,8 @@ client/.e2e-screens/
 test-results/
 playwright-report/
 .playwright-mcp/
+
+# Each checkout's lane facts (written by tools/lane.mjs) stay local.
+.lane.json
+# The provider instructions are tracked again; the older block above ignored them.
+!AGENTS.md

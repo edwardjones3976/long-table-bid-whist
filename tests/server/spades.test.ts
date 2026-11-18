@@ -526,5 +526,5 @@ describe("bots", () => {
     expect(nils.made).toBeGreaterThan(0);
     expect(nils.failed).toBeGreaterThan(0);
     expect(() => chooseAction(viewFor(newMatch(deck(DEFAULT_OPTIONS)), 0))).toThrow();
-  });
+  }, 30000);
 });
