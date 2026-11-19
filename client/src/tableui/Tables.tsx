@@ -1,7 +1,7 @@
 /**
  * The card tables as people meet them in the 3D room (inside <Canvas> and <XR>):
  *
- *   every table        a status board overhead that turns to the viewer
+ *   every table        a status board overhead that turns to the viewer, with the match's running time beside its status
  *   the table I am near a marker on each open chair and at the dealer's stand: press one to sit
  *   the table I am at   AtTable.tsx: my cards, the drop zones, piles and tokens, handled directly
  *
@@ -24,6 +24,7 @@ import { CircleGeometry, PlaneGeometry, RingGeometry, Vector3, type BufferGeomet
 import type { TableId, TableStatus, TableSummary } from "../../../shared/protocol";
 import { cue, cueLog } from "../controls/feedback";
 import { useStore } from "../net/store";
+import { useLocal } from "../state/local";
 import { useActiveTableId } from "../state/table";
 import type { TableDescription } from "../ui/actions";
 import { disposeCardTextures } from "../ui/cards";
@@ -32,7 +33,8 @@ import { SEAT_HEIGHT, tableSpot, tableSpots, type TableSpot } from "../world/lay
 import { AtTable } from "./AtTable";
 import { carries, makeGate, noteAction, pressOf, wasLetGo } from "./carry";
 import { STAND_TOP, standSpot, TAP_SLOP } from "./direct";
-import { boardLines, STATUS_WORDS, wrap } from "./helpers";
+import { useMatchTime } from "./clock";
+import { boardLines, clockText, STATUS_WORDS, wrap } from "./helpers";
 import { useTableActions, type TableActions } from "./useTableActions";
 
 type Vec3 = [number, number, number];
@@ -218,6 +220,16 @@ export function Pressable({
   );
 }
 
+/**
+ * How long the table's match has run, beside its status and no larger than its word: far above the cards, and as
+ * readable across the room as the board itself. Counting while it is played, stopped at the final time on the
+ * results, gone with the match.
+ */
+function MatchClock({ summary }: { summary: TableSummary }) {
+  const elapsed = useMatchTime(summary);
+  return elapsed === null ? null : <Label lines={[clockText(elapsed)]} box={[0.5, 0.18]} options={{ fontPx: 80, color: "#d8dde8" }} position={[0.56, 2.43, 0]} inert />;
+}
+
 function StatusBoard({ spot, summary }: { spot: TableSpot; summary: TableSummary }) {
   return (
     <Facing x={spot.x} y={0} z={spot.z}>
@@ -226,6 +238,7 @@ function StatusBoard({ spot, summary }: { spot: TableSpot; summary: TableSummary
         <meshBasicMaterial color={STATUS_COLOURS[summary.status]} />
       </mesh>
       <Label lines={[STATUS_WORDS[summary.status]]} box={[1, 0.2]} options={{ fontPx: 80 }} position={[0.1, 2.43, 0]} />
+      <MatchClock summary={summary} />
       <Label lines={boardLines(summary)} box={[1.7, 0.42]} position={[0, 2.1, 0]} />
     </Facing>
   );
@@ -233,8 +246,12 @@ function StatusBoard({ spot, summary }: { spot: TableSpot; summary: TableSummary
 
 /** Shown to someone standing at a table they have not joined: one marker per place they may take. */
 function SeatMarkers({ spot, actions }: { spot: TableSpot; actions: TableActions & { description: TableDescription } }) {
-  const { description, error, press } = actions;
+  const { description, press } = actions;
   const grip = useSteadyGrip();
+  const notice = useStore((state) => state.lastError);
+  const xrActive = useLocal((state) => state.xrActive);
+  // A headset shows no HUD, so its notice (why I was taken off a table, say) is told here too.
+  const error = actions.error ?? (xrActive ? notice : null);
   return (
     <>
       {description.buttons

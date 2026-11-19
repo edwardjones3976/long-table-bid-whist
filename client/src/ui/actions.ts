@@ -69,6 +69,8 @@ export interface SeatDescription {
   team: 0 | 1 | null;
   /** This seat's bid, tricks or score in words; "" when there is nothing to say. */
   note: string;
+  /** Turns this seat has run out of time on in this match (the turn clock); 0 with no match, or for a visitor. */
+  strikes: number;
 }
 
 export interface TableCards {
@@ -617,6 +619,7 @@ export function describeTable(input: TableInput): TableDescription {
         isYou: seat === you,
         team: game === "tonk" ? null : ((seat % 2) as 0 | 1),
         note: play?.notes[seat] ?? "",
+        strikes: snapshot?.strikes?.[seat] ?? 0,
       };
     }),
     role,

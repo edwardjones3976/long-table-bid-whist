@@ -74,6 +74,24 @@ small {
   background: #3a1620;
 }
 
+/* My last ten seconds on the turn clock: a thick bar and bold words as well as the colour, and ▲ in place of ●. */
+.turn-clock.hurry {
+  border-left: 6px solid #ff6b6b;
+  padding-left: 0.5em;
+  background: #3a1620;
+  font-weight: 700;
+}
+
+/* Heard by a screen reader, not shown. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .badge {
   white-space: nowrap;
   font-weight: 700;

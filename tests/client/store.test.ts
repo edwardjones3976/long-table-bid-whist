@@ -251,6 +251,38 @@ describe("net store", () => {
     expect(net.getState().lastError).toContain("Reconnecting");
   });
 
+  it("tells a strike once as it is given, and why the server took me off a table", () => {
+    const fake = fakeSocket(() => joined);
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    const struck = (strikes: [number, number, number, number], revision: number): TableSnapshot => ({ ...snapshot, revision, strikes });
+    // My first snapshot of a table (as after a reload) tells nothing, though I already have a strike.
+    fake.serve("table", struck([0, 0, 1, 0], 7));
+    expect(net.getState().lastError).toBeNull();
+    // Another seat's strike is not mine.
+    fake.serve("table", struck([1, 0, 1, 0], 8));
+    expect(net.getState().lastError).toBeNull();
+    fake.serve("table", struck([1, 0, 2, 0], 9));
+    expect(net.getState().lastError).toBe("Your time ran out, so a bot played your turn. Strike 2 of 3: at 3 a bot takes your seat.");
+    net.clearError();
+    // Told once; a new match clears strikes without a word.
+    fake.serve("table", struck([1, 0, 2, 0], 10));
+    fake.serve("table", struck([0, 0, 0, 0], 1));
+    expect(net.getState().lastError).toBeNull();
+    // The arrival time is kept, so the clocks count from it.
+    expect(Math.abs(net.getState().tableAt - Date.now())).toBeLessThan(1000);
+
+    const reason = "Time ran out on 3 of your turns, so a bot took your seat.";
+    fake.serve("table:left", { tableId: "spades-1", reason });
+    expect(net.getState()).toMatchObject({ table: null, lastError: reason });
+    // Standing up says nothing new.
+    net.clearError();
+    fake.serve("table", snapshot);
+    fake.serve("table:left", { tableId: "spades-1" });
+    expect(net.getState()).toMatchObject({ table: null, lastError: null });
+  });
+
   it("sends poses at most ten times a second, and only while in a room", async () => {
     const fake = fakeSocket(() => joined);
     const net = createNet(() => fake.socket);

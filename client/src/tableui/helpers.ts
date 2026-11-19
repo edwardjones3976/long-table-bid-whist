@@ -3,7 +3,7 @@
  * words on a status board and seat plate, and where fanned cards and button
  * grids go. No rules here: everything comes from describeTable's result.
  */
-import type { TableStatus, TableSummary } from "../../../shared/protocol";
+import { MAX_STRIKES, type TableStatus, type TableSummary } from "../../../shared/protocol";
 import { cardLabel } from "../ui/cards";
 import type { SeatDescription, TableButton, TableCards, TableDescription } from "../ui/actions";
 
@@ -41,8 +41,46 @@ export function boardLines(summary: TableSummary): string[] {
   ];
 }
 
-/** One seat in words: who, their bid or score, their cards or readiness, and whether they are on turn. */
-export function seatLines(seat: SeatDescription): string[] {
+/** The last seconds of a turn, which look and sound different. */
+export const HURRY_SECONDS = 10;
+
+/** A running time as m:ss, or h:mm:ss from an hour on. */
+export function clockText(ms: number): string {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const minutes = Math.floor(total / 60);
+  const ss = String(total % 60).padStart(2, "0");
+  return minutes < 60 ? `${minutes}:${ss}` : `${Math.floor(minutes / 60)}:${String(minutes % 60).padStart(2, "0")}:${ss}`;
+}
+
+/** Whole seconds left on a turn, rounded up so it reads 0 only once time is out, and whether they are the last ten. */
+export function turnLeft(ms: number): { seconds: number; hurry: boolean } {
+  const seconds = Math.max(0, Math.ceil(ms / 1000));
+  return { seconds, hurry: seconds <= HURRY_SECONDS };
+}
+
+/**
+ * What my turn clock asks for when it shows `left` seconds (null: I am not on the clock) and showed `last` at the
+ * check before: a tick as each of the last ten seconds begins, and a buzz with the first of them.
+ */
+export function turnCue(left: number | null, last: number | null): "tick" | "buzz" | null {
+  if (left === null || left < 1 || left > HURRY_SECONDS || left === last) return null;
+  return last === null || last > HURRY_SECONDS ? "buzz" : "tick";
+}
+
+/** How long a match has run: counted on from when the room snapshot arrived while it runs; null with no match. */
+export function matchElapsed(time: TableSummary["matchTime"], roomAt: number, now: number): number | null {
+  if (!time) return null;
+  return time.elapsedMs + (time.running ? Math.max(0, now - roomAt) : 0);
+}
+
+/** "Strike 1 of 3" once a seat has run out of time in this match; "" before. */
+export const strikeText = (strikes: number): string => (strikes > 0 ? `Strike ${strikes} of ${MAX_STRIKES}` : "");
+
+/**
+ * One seat in words: who, their bid or score, their cards or readiness, whether they are on turn, the seconds
+ * `left` while they are on the turn clock, and their strikes.
+ */
+export function seatLines(seat: SeatDescription, left: number | null = null): string[] {
   const who =
     seat.occupant === "open"
       ? "Open seat"
@@ -57,7 +95,8 @@ export function seatLines(seat: SeatDescription): string[] {
           ? "Ready"
           : "Not ready"
         : "";
-  return [who, seat.note, cards, seat.isTurn ? (seat.isYou ? "Your turn" : "Their turn") : ""].filter(Boolean);
+  const turn = seat.isTurn ? (seat.isYou ? "Your turn" : "Their turn") : "";
+  return [who, seat.note, cards, turn, left === null ? "" : `${left} s left`, strikeText(seat.strikes)].filter(Boolean);
 }
 
 const owned = (name: string): string => (name === "You" ? "Your" : `${name}'s`);

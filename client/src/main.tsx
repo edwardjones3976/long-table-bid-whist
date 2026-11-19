@@ -18,6 +18,8 @@ if (import.meta.env.DEV || new URLSearchParams(location.search).has("e2e")) {
     // The real ground, as a walker on the floor meets it: the same rule the rig uses for a free spot.
     isWalkable: (x: number, z: number) => standing(ground, x, z) !== null,
     teleport: (pose: Pose) => void (desk.warp = pose),
+    // As a captured mouse moving this many pixels: negative y looks up.
+    look: (x: number, y: number) => void ((desk.lookX += x), (desk.lookY += y)),
     // Where the body is and what it is doing: x, z, ry, y (feet height), vy, grounded, running, floating, aiming, aimValid.
     rig: () => desk.rig?.(),
     three: () => desk.three?.(),

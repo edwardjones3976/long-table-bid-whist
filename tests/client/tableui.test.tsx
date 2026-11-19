@@ -355,6 +355,58 @@ describe("table panel", () => {
     expect(screen.getAllByRole("button").map((button) => button.dataset.testid)).toEqual(["leave"]);
   });
 
+  it("shows the turn clock, strikes and match time as text, and announces my last seconds once", async () => {
+    vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
+    try {
+      const world = makeWorld("spades");
+      world.sit(0, true);
+      world.start();
+      world.bots();
+      render(<TablePanelDom />);
+      await serve(world);
+      const { room, table } = net.getState();
+      const time = (elapsedMs: number, running: boolean) =>
+        act(() => fake.handlers.get("room")!({ ...room!, tables: [{ ...room!.tables[0], matchTime: { elapsedMs, running } }] }));
+      const clock = (seat: Seat, remainingMs: number, strikes: [number, number, number, number]) =>
+        act(() => fake.handlers.get("table")!({ ...table!, clock: { seat, remainingMs, totalMs: 45_000 }, strikes }));
+      const alert = () => screen.getByTestId("turn-alert").textContent;
+
+      await time(65_000, true);
+      expect(screen.getByTestId("match-time").textContent).toBe("Match time: 1:05");
+      // Another seat on the clock: its seconds in its line, its strike after it; nothing of mine.
+      await clock(1, 30_000, [0, 1, 0, 0]);
+      expect(screen.getByTestId("seat-1").textContent).toMatch(/13 cards, 30 s left, Strike 1 of 3/);
+      expect(screen.queryByTestId("turn-clock")).toBeNull();
+      await act(() => vi.advanceTimersByTime(2_000));
+      expect(screen.getByTestId("seat-1").textContent).toContain("28 s left");
+      expect(screen.getByTestId("match-time").textContent).toBe("Match time: 1:07");
+
+      // My clock: counted down from arrival, and in the last ten marked by more than colour, and said once.
+      await clock(0, 12_000, [2, 1, 0, 0]);
+      expect(screen.getByTestId("turn-clock").textContent).toBe("● Your time: 12 s left");
+      expect(screen.getByTestId("turn-clock").className).toBe("turn-clock");
+      expect(screen.getByTestId("seat-0").textContent).toContain("Strike 2 of 3");
+      expect(alert()).toBe("");
+      await act(() => vi.advanceTimersByTime(2_250));
+      expect(screen.getByTestId("turn-clock").textContent).toBe("▲ Your time: 10 s left");
+      expect(screen.getByTestId("turn-clock").className).toBe("turn-clock hurry");
+      expect(alert()).toBe("10 seconds left");
+      expect(screen.getByTestId("turn-alert").getAttribute("aria-live")).toBe("assertive");
+      await act(() => vi.advanceTimersByTime(3_000));
+      expect(screen.getByTestId("turn-clock").textContent).toBe("▲ Your time: 7 s left");
+      expect(alert()).toBe("10 seconds left");
+      // The visible count is not in a live region, so it is not read out every second.
+      expect(screen.getByTestId("turn-clock").closest("[aria-live]")).toBeNull();
+
+      // Game over: the match time stops at its final value.
+      await time(600_000, false);
+      await act(() => vi.advanceTimersByTime(5_000));
+      expect(screen.getByTestId("match-time").textContent).toBe("Match time: 10:00 (final)");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("is hidden in VR, where the in-world table takes over", async () => {
     const world = makeWorld("spades");
     world.sit(0);

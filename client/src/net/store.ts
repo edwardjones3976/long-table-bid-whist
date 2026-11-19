@@ -1,11 +1,13 @@
 /**
  * The connection to the room server and everything it has told us.
  *
- *   net.getState()                 { connection, room, table, poses, lastError, me }
+ *   net.getState()                 { connection, room, table, poses, lastError, me, roomAt, tableAt }
  *   useStore((s) => s.room)        React hook; re-renders only when the selected value changes
  *   net.createRoom(name) ...       every action resolves to the server's Reply and never rejects;
  *                                  a refusal also lands in state.lastError as a sentence for the person
  *   myTable() / myPlace() / mySeat() / amManager()   derived from a state (default: the current one)
+ *
+ * lastError is also where the server's notices land: a strike on my turn clock, and why I was taken off a table.
  *
  * A useStore selector must return a state slice or a primitive, never a fresh
  * object (that would re-render forever): select `s.room`, then derive with useMemo.
@@ -14,18 +16,19 @@
  */
 import { useSyncExternalStore } from "react";
 import { io, type Socket } from "socket.io-client";
-import type {
-  ClientEvents,
-  Joined,
-  Pose,
-  Poses,
-  Reply,
-  RoomSnapshot,
-  Seat,
-  ServerEvents,
-  TableId,
-  TableSnapshot,
-  TableSummary,
+import {
+  MAX_STRIKES,
+  type ClientEvents,
+  type Joined,
+  type Pose,
+  type Poses,
+  type Reply,
+  type RoomSnapshot,
+  type Seat,
+  type ServerEvents,
+  type TableId,
+  type TableSnapshot,
+  type TableSummary,
 } from "../../../shared/protocol";
 
 export type Connection = "connecting" | "online" | "reconnecting" | "offline";
@@ -40,6 +43,9 @@ export interface NetState {
   lastError: string | null;
   /** My member id while in a room. */
   me: string | null;
+  /** Date.now() when the last room and table snapshots arrived: the turn and match clocks count from there. */
+  roomAt: number;
+  tableAt: number;
 }
 
 export type ClientSocket = Socket<ServerEvents, ClientEvents>;
@@ -97,7 +103,7 @@ export function amManager(state: NetState = net.getState()): boolean {
 
 /** `connect` is replaced in tests; the app uses the default, a socket to the page's own origin. */
 export function createNet(connect: () => ClientSocket = () => io({ transports: ["websocket", "polling"] })) {
-  let state: NetState = { connection: "connecting", room: null, table: null, poses: {}, lastError: null, me: null };
+  let state: NetState = { connection: "connecting", room: null, table: null, poses: {}, lastError: null, me: null, roomAt: 0, tableAt: 0 };
   const listeners = new Set<() => void>();
   let socket: ClientSocket | null = null;
   let everOnline = false;
@@ -140,10 +146,17 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     opened.on("connect_error", () => set({ connection: everOnline ? "reconnecting" : "offline" }));
     opened.on("room", (room) => {
       const atTable = room.members.find((member) => member.id === room.you)?.tableId != null;
-      set({ room, me: room.you, ...(atTable ? {} : { table: null }) });
+      set({ room, roomAt: Date.now(), me: room.you, ...(atTable ? {} : { table: null }) });
     });
-    opened.on("table", (table) => set({ table }));
-    opened.on("table:left", () => set({ table: null }));
+    opened.on("table", (table) => {
+      // A strike is told once, as it is given: not on a table's first snapshot (after a reload), nor when a new match clears it.
+      const seat = table.you;
+      const before = seat !== null && state.table?.tableId === table.tableId ? (state.table.strikes?.[seat] ?? 0) : Infinity;
+      const strikes = seat === null ? 0 : (table.strikes?.[seat] ?? 0);
+      const notice = `Your time ran out, so a bot played your turn. Strike ${strikes} of ${MAX_STRIKES}: at ${MAX_STRIKES} a bot takes your seat.`;
+      set({ table, tableAt: Date.now(), ...(strikes > before ? { lastError: notice } : {}) });
+    });
+    opened.on("table:left", ({ reason }) => set({ table: null, ...(reason ? { lastError: reason } : {}) }));
     opened.on("poses", (poses) => set({ poses }));
     return opened;
   }

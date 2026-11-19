@@ -8,11 +8,12 @@
  *   cue("land")                                    sound only: no controller named
  *
  * Cues: hover, grab, place and refuse for things in the hand; land for feet
- * reaching a surface (a jump, a drop, a teleport); splash for going into the pool.
+ * reaching a surface (a jump, a drop, a teleport); splash for going into the pool;
+ * tick for each of my last ten seconds on the turn clock (its buzz goes once, as they begin).
  */
 import { local } from "../state/local";
 
-export type Cue = "hover" | "grab" | "place" | "refuse" | "land" | "splash";
+export type Cue = "hover" | "grab" | "place" | "refuse" | "land" | "splash" | "tick";
 
 /** Buzz strength (0 to 1) and length in milliseconds. */
 export const BUZZ: Record<Cue, readonly [number, number]> = {
@@ -22,6 +23,7 @@ export const BUZZ: Record<Cue, readonly [number, number]> = {
   refuse: [0.4, 90],
   land: [0.6, 40],
   splash: [0.7, 70],
+  tick: [0.9, 150],
 };
 
 /** Start pitch in Hz, length in seconds and loudness. Hovering is silent, or it would chatter. */
@@ -32,6 +34,7 @@ const TONE: Record<Cue, readonly [number, number, number] | null> = {
   refuse: [140, 0.16, 0.08],
   land: [110, 0.1, 0.1],
   splash: [90, 0.28, 0.14],
+  tick: [1200, 0.035, 0.05],
 };
 
 interface Buzzable {

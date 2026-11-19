@@ -8,6 +8,7 @@ import { Hint, Hud } from "./hud/Hud";
 import { mySeat, myTable, net, useStore } from "./net/store";
 import { local, useLocal } from "./state/local";
 import { xrStore } from "./state/xr";
+import { useTurnCues } from "./tableui/clock";
 import { TablePanelDom } from "./tableui/TablePanelDom";
 import { Tables } from "./tableui/Tables";
 import { VrMenu } from "./tableui/VrMenu";
@@ -65,6 +66,7 @@ function usePoseLink(): void {
 function Mansion() {
   useSeating();
   usePoseLink();
+  useTurnCues();
   const theme = useLocal((state) => state.theme);
   const uiScale = useLocal((state) => state.comfort.uiScale);
   const textPanel = useLocal((state) => state.comfort.textPanel);

@@ -7,16 +7,20 @@
  * 3D view could not start; otherwise the HUD menu shows TablePicker, and picking a
  * table there turns the setting on.
  *
+ * The turn clock is text here too: the seat on the clock has its seconds left in its line, my own seconds show
+ * under the status (marked ● and, in the last ten, ▲), and a screen reader hears "10 seconds left" once.
+ *
  * Test hooks: table-picker, table-<table id>, table-panel, table-title,
- * tables-back, table-status, table-error, results, table-cards, trick,
- * seat-<n>, card-<card id>, and every action button by its id.
+ * tables-back, table-status, table-error, results, match-time, turn-clock, turn-alert,
+ * table-cards, trick, seat-<n>, card-<card id>, and every action button by its id.
  */
 import { TABLES } from "../../../shared/protocol";
 import { useStore } from "../net/store";
 import { local, useLocal } from "../state/local";
 import { useActiveTableId } from "../state/table";
 import { cardLabel } from "../ui/cards";
-import { resultSummary, seatLines, STATUS_WORDS, tableWords } from "./helpers";
+import { useMatchTime, useTurnClock } from "./clock";
+import { clockText, HURRY_SECONDS, resultSummary, seatLines, STATUS_WORDS, tableWords } from "./helpers";
 import { useTableActions } from "./useTableActions";
 
 /** The six tables to pick from: docked as the text panel, or inside the HUD menu (never both, so test ids stay unique). */
@@ -53,8 +57,12 @@ export function TablePanelDom() {
   const { description, error, pick, press } = useTableActions(tableId);
   const phase = useStore((state) => state.table?.view?.phase ?? null);
   const xrActive = useLocal((state) => state.xrActive);
+  const summary = useStore((state) => state.room?.tables.find((table) => table.id === tableId));
+  const elapsed = useMatchTime(summary);
+  const clock = useTurnClock();
   if (xrActive) return null;
   if (!description) return <TablePicker />;
+  const mine = clock && clock.seat === description.seats.find((seat) => seat.isYou)?.seat ? clock : null;
   const { tableCards } = description;
   const result = resultSummary(description, phase);
   const words = tableWords(tableCards);
@@ -84,12 +92,27 @@ export function TablePanelDom() {
           <li key={i}>{line}</li>
         ))}
       </ul>
+      {elapsed !== null && (
+        <p data-testid="match-time">
+          Match time: {clockText(elapsed)}
+          {summary?.matchTime?.running ? "" : " (final)"}
+        </p>
+      )}
+      {mine && (
+        <p data-testid="turn-clock" className={mine.hurry ? "turn-clock hurry" : "turn-clock"}>
+          <span aria-hidden="true">{mine.hurry ? "▲" : "●"}</span> Your time: {mine.seconds} s left
+        </p>
+      )}
+      {/* Said once as my last seconds begin, not every second: the count above is not read out. */}
+      <p className="sr-only" aria-live="assertive" data-testid="turn-alert">
+        {mine?.hurry ? `${Math.min(HURRY_SECONDS, Math.ceil(mine.totalMs / 1000))} seconds left` : ""}
+      </p>
       <h3>Seats</h3>
       <ol className="seats">
         {description.seats.map((seat) => (
           <li key={seat.seat} data-testid={`seat-${seat.seat}`}>
             {seat.isTurn ? "▶ " : ""}
-            {seatLines(seat).join(", ")}
+            {seatLines(seat, clock?.seat === seat.seat ? clock.seconds : null).join(", ")}
             {seat.team !== null ? ` (team ${seat.team + 1})` : ""}
           </li>
         ))}

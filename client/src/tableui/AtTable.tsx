@@ -18,7 +18,8 @@
  *   pucks          "Bury six" beside the kitty, "Lay down" beside my spread
  *   leave          a small marker low beside my chair
  *   words          a board beyond the table, in the gap between the seat opposite and a neighbour;
- *                  seat plates; turn markers
+ *                  seat plates (with the seconds left of the seat on the turn clock, and strikes); turn markers;
+ *                  just left of the YOUR TURN arrow, my own seconds left and my strikes
  *
  * One implementation serves every pointer: the handlers are R3F pointer events with pointer capture, which the
  * mouse and touch reach through R3F and each controller's grip and ray, and a tracked hand's pinch, reach through
@@ -72,12 +73,13 @@ import {
   type Ray,
 } from "three";
 import type { Card } from "../../../shared/cards";
+import type { Seat } from "../../../shared/protocol";
 import { cue } from "../controls/feedback";
 import { desk } from "../controls/input";
 import { net, useStore } from "../net/store";
 import { local, useLocal } from "../state/local";
 import { describeNow } from "../state/table";
-import type { TableButton, TableDescription } from "../ui/actions";
+import type { SeatDescription, TableButton, TableDescription } from "../ui/actions";
 import { CARD_ASPECT, cardLabel, makeCardBackTexture, makeCardTexture } from "../ui/cards";
 import { TABLE_HEIGHT, type TableSpot } from "../world/layout";
 import {
@@ -135,7 +137,8 @@ import {
   type Zone,
   type ZoneId,
 } from "./direct";
-import { confirmButton, resultSummary, seatLines, tableWords, wrap } from "./helpers";
+import { useTurnClock } from "./clock";
+import { confirmButton, resultSummary, seatLines, strikeText, tableWords, wrap } from "./helpers";
 import { hoverGate, INERT, Label, sourceOf } from "./Tables";
 import type { TableActions } from "./useTableActions";
 
@@ -150,6 +153,9 @@ const RING = new RingGeometry(0.965, 1, 64);
 const RING_THICK = new RingGeometry(0.93, 1, 64);
 const PUCK = new CylinderGeometry(0.05, 0.05, 0.018, 28);
 const TURN_CONE = new ConeGeometry(0.025, 0.05, 3);
+/** Beside my seconds left: a dot, and a triangle in the last ten, so they never differ by colour alone. */
+const CALM_MARK = new CircleGeometry(1, 32);
+const HURRY_MARK = new CircleGeometry(1, 3);
 const SURROUND = new SphereGeometry(30, 8, 6);
 
 const TOP = TABLE_HEIGHT + 0.004;
@@ -671,6 +677,54 @@ function ZoneMark({ zone, lit, say, shown, wordAt, onTap }: { zone: Zone; lit: b
   );
 }
 
+/** Another seat's words at its side of the table, with its seconds left while it is on the turn clock. */
+function SeatPlate({ seat, at, uiScale }: { seat: SeatDescription; at: [number, number]; uiScale: number }) {
+  const clock = useTurnClock();
+  const lines = seatLines(seat, clock?.seat === seat.seat ? clock.seconds : null);
+  // Four lines fit the plate as it always was; the seconds and a strike add lines, and the plate grows upward rather
+  // than its words shrink, its foot where it always was, so it never sinks into the table.
+  const height = 0.035 * Math.max(4, lines.length) * uiScale;
+  return (
+    <group position={[at[0], TABLE_HEIGHT + 0.12 + (height - 0.14 * uiScale) / 2, at[1]]} rotation={[-0.3, 0, 0]}>
+      <Label lines={lines} box={[0.3 * uiScale, height]} options={{ fontPx: 48 }} />
+      {seat.isTurn && (
+        <mesh geometry={TURN_CONE} position={[0, Math.max(0.11, height / 2 + 0.035), 0]} rotation={[Math.PI, 0, 0]}>
+          <meshBasicMaterial color="#ffd24a" />
+        </mesh>
+      )}
+    </group>
+  );
+}
+
+/**
+ * My seconds left while I am on the turn clock, which in the last ten turn red and change their dot for a triangle,
+ * and above them my strikes once I have any (I have no plate of my own).
+ */
+function MyClock({ seat, strikes, uiScale }: { seat: Seat; strikes: number; uiScale: number }) {
+  const clock = useTurnClock();
+  const mine = clock?.seat === seat ? clock : null;
+  const row = (n: number): number => n * 0.05 * uiScale;
+  return (
+    <>
+      {mine && (
+        <group name="my-clock" position={[0, row(1), 0]} userData={{ hurry: mine.hurry }}>
+          <mesh geometry={mine.hurry ? HURRY_MARK : CALM_MARK} position={[-0.05 * uiScale, 0, 0.001]} scale={0.015 * uiScale}>
+            <meshBasicMaterial color={mine.hurry ? "#ff6b4a" : "#8fd0ff"} />
+          </mesh>
+          {/* A fixed canvas width keeps the plate's left edge against the mark whatever the number. */}
+          <Label
+            lines={[`${mine.seconds} s left`]}
+            box={[0.12 * uiScale, 0.04 * uiScale]}
+            options={{ fontPx: 48, background: mine.hurry ? "#7a1010" : "#10131c", width: 250, align: "left" }}
+            position={[0.01 * uiScale, 0, 0]}
+          />
+        </group>
+      )}
+      {strikes > 0 && <Label lines={[strikeText(strikes)]} box={[0.2 * uiScale, 0.034 * uiScale]} options={{ fontPx: 48, background: "#5a1010" }} position={[0, row(mine ? 2 : 1), 0]} />}
+    </>
+  );
+}
+
 export function AtTable({ spot, actions }: { spot: TableSpot; actions: TableActions & { description: TableDescription } }) {
   const { description, error, press, activateCard, busy } = actions;
   const phase = useStore((state) => state.table?.view?.phase ?? null);
@@ -783,6 +837,13 @@ export function AtTable({ spot, actions }: { spot: TableSpot; actions: TableActi
   useEffect(() => {
     if (error) say(error);
   }, [error, frame]);
+  // So is a strike, which the HUD tells too, but a headset shows no HUD.
+  const strikes = me?.strikes ?? 0;
+  const struck = useRef(strikes);
+  useEffect(() => {
+    if (strikes > struck.current) say(`Time ran out: a bot played your turn. ${strikeText(strikes)}.`);
+    struck.current = strikes;
+  }, [strikes]);
 
   /** Where a card whose move was sent comes to rest while the table answers: the place it will be shown next. */
   const landing = (zone: ZoneId): Vec3 | "here" => {
@@ -926,6 +987,7 @@ export function AtTable({ spot, actions }: { spot: TableSpot; actions: TableActi
   // shortcut: where that furniture stands is known here by reading world/plan.ts, which does not say it in data; if
   // it moves, move the board and the leave marker with it (or have plan.ts export the free corners).
   const boardAt: Vec3 = me ? [me.seat % 2 ? -1 : 1, 1.15, -(reach + 1.25)] : [1.7, 1.3, -(reach + 1.2)];
+  const clockAt: Vec3 = [-0.42, TABLE_HEIGHT + 0.035, -(frame.rim + 0.26)];
   // The dealer's stand is at seat 0's right elbow and seat 3's left, so their leave marker goes on the other side.
   const leaveSide = me?.seat === 0 ? -1 : me?.seat === 3 ? 1 : side;
   const puck = (name: string, words: string, button: TableButton | null, zone: Zone, hint: string) => {
@@ -1007,6 +1069,12 @@ export function AtTable({ spot, actions }: { spot: TableSpot; actions: TableActi
               <meshBasicMaterial color="#ffd24a" />
             </mesh>
             <Label lines={["YOUR TURN"]} box={[0.2 * uiScale, 0.035 * uiScale]} />
+          </group>
+        )}
+        {me && (
+          // Just left of the YOUR TURN arrow, on felt the token rail never reaches (bid tokens can cover YOUR TURN itself), turned to me.
+          <group position={clockAt} rotation={[TOKEN_LEAN, -Math.atan2(clockAt[0], -clockAt[2]), 0, "YXZ"]}>
+            <MyClock seat={me.seat} strikes={me.strikes} uiScale={uiScale} />
           </group>
         )}
         {notices.map((notice) => (
@@ -1114,20 +1182,7 @@ export function AtTable({ spot, actions }: { spot: TableSpot; actions: TableActi
         )}
 
         <CardBacks items={backs} />
-        {seats.map((seat) => {
-          if (seat.isYou) return null;
-          const [x, z] = toward(frame, seat.seat, 0.54);
-          return (
-            <group key={seat.seat} position={[x, TABLE_HEIGHT + 0.12, z]} rotation={[-0.3, 0, 0]}>
-              <Label lines={seatLines(seat)} box={[0.3 * uiScale, 0.14 * uiScale]} options={{ fontPx: 48 }} />
-              {seat.isTurn && (
-                <mesh geometry={TURN_CONE} position={[0, 0.11, 0]} rotation={[Math.PI, 0, 0]}>
-                  <meshBasicMaterial color="#ffd24a" />
-                </mesh>
-              )}
-            </group>
-          );
-        })}
+        {seats.map((seat) => (seat.isYou ? null : <SeatPlate key={seat.seat} seat={seat} at={toward(frame, seat.seat, 0.54)} uiScale={uiScale} />))}
         {tableCards.trick.map((play) => {
           const [x, z] = toward(frame, play.seat, 0.2);
           return (
