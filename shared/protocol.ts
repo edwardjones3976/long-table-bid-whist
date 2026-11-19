@@ -33,6 +33,10 @@ export const ROOM_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 export const MAX_NAME_LENGTH = 20;
 /** How long a disconnected member keeps their place before a bot takes their seat and they leave the room. */
 export const SEAT_HOLD_MS = 60_000;
+/** Turns a person may run out of time on in one match; the last one passes their seat to a bot. */
+export const MAX_STRIKES = 3;
+/** How long a person removed for time twice in one room may not sit or host at any table. */
+export const BENCH_MS = 10 * 60_000;
 
 /**
  * available: nobody is at the table.  lobby: people are seated, no match yet.
@@ -61,6 +65,12 @@ export interface TableSummary {
   managerId: string | null;
   /** The table's house rules, shown to everyone before they ready up and fixed once a match starts. */
   options: unknown;
+  /**
+   * How long the match has run, in ms when this snapshot was sent, and whether it is still running
+   * (false from game over: elapsedMs is then the final time). Count up locally from arrival while running.
+   * Null with no match; absent from older servers.
+   */
+  matchTime?: { elapsedMs: number; running: boolean } | null;
 }
 
 export interface Pose {
@@ -101,6 +111,14 @@ export interface TableSnapshot {
   you: Seat | null;
   /** Null until the match starts. */
   view: GameView | null;
+  /**
+   * The person on the turn clock, present while a match runs: remainingMs is measured when this
+   * snapshot was sent (count down locally from arrival), totalMs is the full time per decision.
+   * Null when nobody is on the clock: a bot's turn, between hands, game over, or the clock is off.
+   */
+  clock?: { seat: Seat; remainingMs: number; totalMs: number } | null;
+  /** Turns each seat has run out of time on in this match (MAX_STRIKES removes the player); present while a match runs. */
+  strikes?: [number, number, number, number];
 }
 
 /** Sent as "poses" about ten times a second: where other members' avatars are. */
@@ -127,6 +145,8 @@ export type ErrorCode =
   | "action-id-reused"
   | "stale-revision"
   | "illegal"
+  /** Removed for time twice in this room: no seat or host place until the bench ends; the message gives the time left. */
+  | "benched"
   | "internal";
 
 export type Reply<T = object> = ({ ok: true } & T) | { ok: false; error: ErrorCode; message: string };
@@ -168,7 +188,10 @@ export interface ClientEvents {
 export interface ServerEvents {
   room: (snapshot: RoomSnapshot) => void;
   table: (snapshot: TableSnapshot) => void;
-  /** You are no longer at a table (you stood, or the table was cleared). */
-  "table:left": (payload: { tableId: TableId }) => void;
+  /**
+   * You are no longer at a table (you stood, or the table was cleared). `reason` is a sentence to show
+   * when the server removed you, such as for running out of time on MAX_STRIKES turns; absent otherwise.
+   */
+  "table:left": (payload: { tableId: TableId; reason?: string }) => void;
   poses: (poses: Poses) => void;
 }

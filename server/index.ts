@@ -23,6 +23,10 @@ export interface GameServerOptions {
   botDelayMs?: number;
   /** Milliseconds a finished trick stays before the next bot move; defaults to botDelayMs. */
   trickPauseMs?: number;
+  /** Milliseconds a person has for each decision before a bot plays their turn and they get a strike; 0 (the default) turns the clock off. */
+  turnMs?: number;
+  /** How long a person removed for time twice in one room may not sit; defaults to BENCH_MS. */
+  benchMs?: number;
 }
 
 export interface GameServer {

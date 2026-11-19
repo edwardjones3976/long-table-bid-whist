@@ -6,8 +6,10 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import type { Card } from "../shared/cards";
 import {
+  BENCH_MS,
   MAX_NAME_LENGTH,
   MAX_ROOM_MEMBERS,
+  MAX_STRIKES,
   ROOM_CODE_ALPHABET,
   ROOM_CODE_LENGTH,
   SEAT_HOLD_MS,
@@ -50,6 +52,10 @@ interface Member {
   table: Table | null;
   pose: Pose | null;
   hold: NodeJS.Timeout | null;
+  /** Times this member was taken off a table for running out of time, and when their bench ends (Date.now() time). */
+  // shortcut: kept on the member, so leaving and rejoining the room starts both afresh; key them by a stable identity if that is abused.
+  removals: number;
+  benchedUntil: number;
 }
 
 interface Table {
@@ -59,6 +65,8 @@ interface Table {
   seats: ({ member: Member; ready: boolean; since: number } | null)[];
   host: Member | null;
   match: Match | null;
+  /** Timed-out turns per seat in the current match. */
+  strikes: [number, number, number, number];
 }
 
 interface Room {
@@ -108,7 +116,15 @@ function summary(table: Table): TableSummary {
     host: table.host && { memberId: table.host.id, name: table.host.name, connected: table.host.connected },
     managerId: managerOf(table)?.id ?? null,
     options: table.options,
+    matchTime: table.match?.startedAt == null ? null : { elapsedMs: table.match.elapsedMs()!, running: table.match.endedAt === null },
   };
+}
+
+/** "9 minutes 5 seconds", rounded up so it never reads 0 while time is left. */
+function minutesAndSeconds(ms: number): string {
+  const total = Math.ceil(ms / 1000);
+  const unit = (n: number, name: string) => `${n} ${name}${n === 1 ? "" : "s"}`;
+  return `${unit(Math.floor(total / 60), "minute")} ${unit(total % 60, "second")}`;
 }
 
 export class Rooms {
@@ -117,17 +133,26 @@ export class Rooms {
   private readonly tokens = new Map<string, Member>();
   private readonly shuffle?: (deck: Card[]) => Card[];
   private readonly holdMs: number;
+  private readonly benchMs: number;
   private readonly pace: Pace;
   private readonly poseTimer: NodeJS.Timeout;
   private closed = false;
 
   constructor(
     private readonly emit: Emit,
-    options: { shuffle?: (deck: Card[]) => Card[]; holdMs?: number; botDelayMs?: number; trickPauseMs?: number } = {},
+    options: {
+      shuffle?: (deck: Card[]) => Card[];
+      holdMs?: number;
+      botDelayMs?: number;
+      trickPauseMs?: number;
+      turnMs?: number;
+      benchMs?: number;
+    } = {},
   ) {
     this.shuffle = options.shuffle;
     this.holdMs = options.holdMs ?? SEAT_HOLD_MS;
-    this.pace = { botMs: options.botDelayMs ?? 0, settleMs: options.trickPauseMs };
+    this.benchMs = options.benchMs ?? BENCH_MS;
+    this.pace = { botMs: options.botDelayMs ?? 0, settleMs: options.trickPauseMs, turnMs: options.turnMs ?? 0 };
     this.poseTimer = setInterval(() => this.sendPoses(), 100);
     this.poseTimer.unref();
   }
@@ -158,6 +183,7 @@ export class Rooms {
         seats: [null, null, null, null],
         host: null,
         match: null,
+        strikes: [0, 0, 0, 0],
       })),
       arrivals: 0,
       posesChanged: false,
@@ -184,6 +210,8 @@ export class Rooms {
       table: null,
       pose: null,
       hold: null,
+      removals: 0,
+      benchedUntil: 0,
     };
     room.members.set(member.id, member);
     this.members.set(member.id, member);
@@ -269,6 +297,10 @@ export class Rooms {
     const table = member.room.tables.find((t) => t.id === tableId);
     if (!table) throw new Refusal("no-such-table", "There is no such table");
     if (member.table) throw new Refusal("already-seated", "Leave your table first");
+    const bench = member.benchedUntil - Date.now();
+    if (bench > 0) {
+      throw new Refusal("benched", `You ran out of time on too many turns. You can take a seat again in ${minutesAndSeconds(bench)}.`);
+    }
     let taken: Seat | null = null;
     if (role === "host") {
       if (table.host) throw new Refusal("host-taken", "This table already has a host");
@@ -297,15 +329,18 @@ export class Rooms {
     }
   }
 
-  private vacate(member: Member): void {
+  /** `reason` tells a person the server removed why it did. */
+  private vacate(member: Member, reason?: string): void {
     const table = member.table!;
     member.table = null;
-    this.emit(member.id, "table:left", { tableId: table.id });
+    this.emit(member.id, "table:left", reason === undefined ? { tableId: table.id } : { tableId: table.id, reason });
     if (table.host === member) {
       table.host = null;
     } else {
       const seat = table.seats.findIndex((s) => s?.member === member) as Seat;
       table.seats[seat] = null;
+      // Strikes belong to the person, not to the bot that takes the seat.
+      table.strikes[seat] = 0;
       if (table.match) {
         if (table.seats.some(Boolean)) table.match.leave(seat);
         else {
@@ -352,10 +387,11 @@ export class Rooms {
         this.sendTable(table);
         if (statusOf(table) === "results") this.sendRoom(member.room);
       },
-      this.pace,
+      { ...this.pace, onTimeout: (seat) => this.timedOut(table, match, seat) },
     );
     for (const s of SEATS) match.humans[s] = table.seats[s] !== null;
     table.match = match;
+    table.strikes = [0, 0, 0, 0];
     try {
       match.start();
     } catch (error) {
@@ -380,6 +416,31 @@ export class Rooms {
     }
     if (!table.match) throw new Refusal("not-started", "The match has not started");
     return table.match.act(seat as Seat, request);
+  }
+
+  /** A bot just played a person's whole turn because their time ran out. */
+  private timedOut(table: Table, match: Match, seat: Seat): void {
+    // Called from the match's timer, where nothing above could catch an error.
+    try {
+      const member = table.seats[seat]?.member;
+      // A person on the seat hold is covered by the bot but not counted against.
+      if (table.match !== match || !member?.connected) return;
+      table.strikes[seat] += 1;
+      if (table.strikes[seat] < MAX_STRIKES) return this.sendTable(table);
+      member.removals += 1;
+      let reason = `Time ran out on ${MAX_STRIKES} of your turns, so a bot took your seat.`;
+      if (member.removals >= 2) {
+        member.benchedUntil = Date.now() + this.benchMs;
+        reason += ` You can take a seat again in ${minutesAndSeconds(this.benchMs)}.`;
+      }
+      try {
+        this.vacate(member, reason);
+      } finally {
+        this.sendRoom(member.room);
+      }
+    } catch (error) {
+      console.error("turn timeout failed:", error instanceof Error ? error.message : "unknown error");
+    }
   }
 
   reset(memberId: string | undefined): void {
@@ -463,12 +524,19 @@ export class Rooms {
     if (!member.connected) return;
     const seat = table.seats.findIndex((s) => s?.member === member);
     const you = seat < 0 ? null : (seat as Seat);
+    const { match } = table;
+    const clock = match?.clock;
     const snapshot: TableSnapshot = {
       tableId: table.id,
       game: table.game,
-      revision: table.match?.revision ?? 0,
+      revision: match?.revision ?? 0,
       you,
-      view: (table.match?.view(you) ?? null) as GameView | null,
+      view: (match?.view(you) ?? null) as GameView | null,
+      // Remaining rather than a deadline, so no client clock has to agree with this one.
+      ...(match && {
+        clock: clock ? { seat: clock.seat, remainingMs: Math.max(0, clock.endsAt - Date.now()), totalMs: this.pace.turnMs! } : null,
+        strikes: [...table.strikes],
+      }),
     };
     this.emit(member.id, "table", snapshot);
   }

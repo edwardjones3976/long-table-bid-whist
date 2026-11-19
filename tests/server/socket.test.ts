@@ -25,7 +25,7 @@ interface Client {
   socket: Socket;
   rooms: RoomSnapshot[];
   tables: Snap[];
-  left: { tableId: TableId }[];
+  left: { tableId: TableId; reason?: string }[];
   poses: Record<string, unknown>[];
   /** Every reply this client got to a request that was refused. */
   refusals: unknown[];
@@ -606,13 +606,27 @@ describe("full games", () => {
     it(`${game}: one player and three bots play to results`, async () => {
       await boot({ shuffle: seededShuffle(1) });
       const t = await table(1, false, game);
+      const [player] = t.players;
+      expect(summaryOf(player, t.tableId).matchTime).toBeNull();
       await begin(t);
-      expect(summaryOf(t.players[0], t.tableId).seats.map((s) => s.occupant)).toEqual(["human", "bot", "bot", "bot"]);
+      expect(summaryOf(player, t.tableId).seats.map((s) => s.occupant)).toEqual(["human", "bot", "bot", "bot"]);
+      expect(summaryOf(player, t.tableId).matchTime).toMatchObject({ running: true });
+      // The turn clock is off by default: nobody is on it and nobody gets strikes.
+      expect(lastTable(player)).toMatchObject({ clock: null, strikes: [0, 0, 0, 0] });
       await play({ ...t, game }, t.players, t.all);
-      expect(lastTable(t.players[0]).view.phase).toBe("game-over");
-      await until(() => summaryOf(t.players[0], t.tableId).status === "results");
-      expect(await send(t.players[0], "table:reset")).toEqual({ ok: true });
-      await until(() => summaryOf(t.players[0], t.tableId).seats[1].occupant === "open");
+      expect(lastTable(player).view.phase).toBe("game-over");
+      await until(() => summaryOf(player, t.tableId).status === "results");
+      // The match time stops at the final time and stays there in later room snapshots.
+      const final = summaryOf(player, t.tableId).matchTime!;
+      expect(final.running).toBe(false);
+      expect(final.elapsedMs).toBeGreaterThan(0);
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      await enter("Watcher", t.code);
+      await until(() => lastRoom(player).members.length === 2);
+      expect(summaryOf(player, t.tableId).matchTime).toEqual(final);
+      expect(await send(player, "table:reset")).toEqual({ ok: true });
+      await until(() => summaryOf(player, t.tableId).seats[1].occupant === "open");
+      expect(summaryOf(player, t.tableId).matchTime).toBeNull();
     }, 120_000);
   }
 });
@@ -693,6 +707,112 @@ describe("reconnecting", () => {
     t.players[1].socket.close();
     await until(() => summaryOf(t.players[0], t.tableId).seats[1].occupant === "open", "the hold to expire");
     expect(lastRoom(t.players[0]).members).toHaveLength(1);
+  });
+});
+
+describe("turn clock", () => {
+  const REMOVED = "Time ran out on 3 of your turns, so a bot took your seat.";
+  const BENCHED = "You ran out of time on too many turns. You can take a seat again in";
+
+  it("strikes a present person whose time runs out, never one on the seat hold, and gives the seat to a bot at three", async () => {
+    await boot({ turnMs: 300, holdMs: 30_000 });
+    const t = await table(2, true, "spades");
+    const { code, tableId } = t;
+    const [a, b] = t.players;
+    const host = t.host!;
+    expect(lastTable(a)).not.toHaveProperty("clock");
+    for (const player of t.players) expect(await send(player, "table:ready", { ready: true })).toEqual({ ok: true });
+    // Seat 1 drops before the deal, so every one of its timeouts falls on the hold.
+    b.socket.close();
+    await until(() => summaryOf(a, tableId).seats[1].connected === false, "seat 1 to drop");
+    expect(await send(host, "table:start")).toEqual({ ok: true });
+    await settled([a, host], code, tableId);
+    const first = lastTable(host);
+    expect(first.strikes).toEqual([0, 0, 0, 0]);
+    expect(first.clock).toMatchObject({ seat: first.view.turn, totalMs: 300 });
+    expect(first.clock!.remainingMs).toBeGreaterThan(0);
+    expect(first.clock!.remainingMs).toBeLessThanOrEqual(300);
+
+    await until(() => a.left.length === 1, "three timeouts");
+    expect(a.left).toEqual([{ tableId, reason: REMOVED }]);
+    // The room snapshot follows the table snapshot that cleared the seat, on the same connection.
+    await until(() => summaryOf(host, tableId).seats[0].occupant === "bot", "the seat to pass to a bot");
+    // Each strike arrived in its own snapshot; the third took the seat, and the bot that has it carries none.
+    const strikes = host.tables.flatMap((snap) => (snap.strikes ? [snap.strikes] : []));
+    const seat0 = strikes.map((s) => s[0]);
+    expect(seat0.filter((n, i) => n !== seat0[i - 1])).toEqual([0, 1, 2, 0]);
+    // Seat 1 ran out of time too (the bot made its bid) but was away, so it has no strikes.
+    expect(strikes.every((s) => s[1] === 0)).toBe(true);
+    expect(lastTable(host).view.bids[1]).not.toBeNull();
+    expect(summaryOf(host, tableId).seats.map((s) => [s.occupant, s.connected])).toEqual([
+      ["bot", false],
+      ["human", false],
+      ["bot", false],
+      ["bot", false],
+    ]);
+    expect(lastRoom(a).members.find((m) => m.id === a.joined!.memberId)!.tableId).toBeNull();
+    // One removal is not a bench.
+    expect(await send(a, "table:sit", { tableId: "tonk-1", role: "player" })).toEqual({ ok: true, seat: 0 });
+  });
+
+  it("benches a person removed twice in a room from every seat and host place until the bench ends", async () => {
+    await boot({ turnMs: 50, benchMs: 1000 });
+    const a = await enter("Ada");
+    const removed = async (tableId: TableId, count: number) => {
+      expect(await send(a, "table:sit", { tableId, role: "player" })).toEqual({ ok: true, seat: 0 });
+      expect(await send(a, "table:ready", { ready: true })).toEqual({ ok: true });
+      expect(await send(a, "table:start")).toEqual({ ok: true });
+      await until(() => a.left.length === count, "three timeouts");
+    };
+    await removed("spades-1", 1);
+    expect(a.left[0]).toEqual({ tableId: "spades-1", reason: REMOVED });
+    // The only person at that table is gone, so its match ended with them.
+    await until(() => summaryOf(a, "spades-1").status === "available");
+    await removed("bid-whist-2", 2);
+    expect(a.left[1]).toEqual({ tableId: "bid-whist-2", reason: `${REMOVED} You can take a seat again in 0 minutes 1 second.` });
+    for (const role of ["player", "host"]) {
+      expect(await send(a, "table:sit", { tableId: "tonk-1", role })).toEqual({
+        ok: false,
+        error: "benched",
+        message: `${BENCHED} 0 minutes 1 second.`,
+      });
+    }
+    // Still in the room, free to walk about and watch.
+    expect(lastRoom(a).members).toEqual([expect.objectContaining({ id: a.joined!.memberId, connected: true, tableId: null })]);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    expect(await send(a, "table:sit", { tableId: "tonk-1", role: "host" })).toEqual({ ok: true, seat: null });
+  });
+
+  it("benches for ten minutes by default and gives the time left to the second", () => {
+    vi.useFakeTimers();
+    const left: unknown[] = [];
+    const rooms = new Rooms((_id, event, payload) => event === "table:left" && left.push(payload), { turnMs: 1000 });
+    try {
+      const { memberId } = rooms.create("Ada");
+      rooms.connected(memberId);
+      for (const tableId of ["spades-1", "spades-2"] as const) {
+        rooms.sit(memberId, { tableId, role: "player" });
+        rooms.ready(memberId, true);
+        rooms.start(memberId);
+        vi.advanceTimersByTime(2999);
+        expect(left).toHaveLength(tableId === "spades-1" ? 0 : 1);
+        vi.advanceTimersByTime(1);
+      }
+      expect(left).toEqual([
+        { tableId: "spades-1", reason: REMOVED },
+        { tableId: "spades-2", reason: `${REMOVED} You can take a seat again in 10 minutes 0 seconds.` },
+      ]);
+      const sit = () => rooms.sit(memberId, { tableId: "bid-whist-1", role: "player" });
+      expect(sit).toThrow(`${BENCHED} 10 minutes 0 seconds.`);
+      vi.advanceTimersByTime(10 * 60_000 - 61_500);
+      expect(sit).toThrow(`${BENCHED} 1 minute 2 seconds.`);
+      vi.advanceTimersByTime(61_499);
+      expect(sit).toThrow(`${BENCHED} 0 minutes 1 second.`);
+      vi.advanceTimersByTime(1);
+      expect(sit()).toEqual({ seat: 0 });
+    } finally {
+      rooms.close();
+    }
   });
 });
 

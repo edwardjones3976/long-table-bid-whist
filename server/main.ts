@@ -2,12 +2,19 @@ import { existsSync } from "node:fs";
 import { createGameServer, serveStatic } from "./index";
 
 const port = Number(process.env.PORT) || 3000;
+
+/** A number from the environment in [0, max], else `fallback`. Unset or blank keeps the fallback: Number("") would be 0. */
+function fromEnv(name: string, max: number, fallback: number): number {
+  const raw = process.env[name]?.trim();
+  const value = raw ? Number(raw) : NaN;
+  return Number.isFinite(value) && value >= 0 && value <= max ? value : fallback;
+}
+
 /** Time between bot moves, so players can follow each bot card; a finished trick stays twice as long. BOT_DELAY_MS (0 to 10000) overrides it; 0 makes bots instant. */
-const BOT_DELAY_MS = 1500;
-// An unset or blank variable keeps the default; Number("") would be 0, which means instant.
-const fromEnv = process.env.BOT_DELAY_MS?.trim() ? Number(process.env.BOT_DELAY_MS) : NaN;
-const botDelayMs = Number.isFinite(fromEnv) && fromEnv >= 0 && fromEnv <= 10_000 ? fromEnv : BOT_DELAY_MS;
-const { http } = createGameServer({ botDelayMs, trickPauseMs: botDelayMs * 2 });
+const botDelayMs = fromEnv("BOT_DELAY_MS", 10_000, 1500);
+/** Seconds a person has for each decision before a bot plays it for them and they get a strike. TURN_SECONDS (0 to 600) overrides it; 0 turns the clock off. */
+const turnMs = fromEnv("TURN_SECONDS", 600, 45) * 1000;
+const { http } = createGameServer({ botDelayMs, trickPauseMs: botDelayMs * 2, turnMs });
 // Resolved from the folder the server is started in, which is the project root for every npm script.
 http.on(
   "request",
