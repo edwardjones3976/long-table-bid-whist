@@ -12,6 +12,7 @@ import { TablePanelDom } from "./tableui/TablePanelDom";
 import { Tables } from "./tableui/Tables";
 import { VrMenu } from "./tableui/VrMenu";
 import { Avatars } from "./world/Avatars";
+import { Bots } from "./world/Bots";
 import { EYE_HEIGHT_STANDING, nearestTable, seatPose, spawn, TABLE_REACH } from "./world/layout";
 import { World } from "./world/World";
 
@@ -94,6 +95,7 @@ function Mansion() {
             </Player>
             <Tables />
             <Avatars />
+            <Bots />
           </XR>
         </Canvas>
       </SceneBoundary>
