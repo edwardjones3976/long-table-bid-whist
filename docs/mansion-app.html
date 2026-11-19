@@ -35,7 +35,7 @@
 <h1>The Mansion: Tonk, Spades and Bid Whist</h1>
 <p class="muted">A page for people, written from the code as it stands on branch <code>claude/mansion-multiplayer-server</code>. Anything the code could not confirm is marked "not verified".</p>
 <nav aria-label="Sections">
-  <a href="#what">1 What it is</a><a href="#commands">2 Commands</a><a href="#architecture">3 Architecture</a><a href="#rules">4 Rules</a><a href="#controls">5 Controls</a><a href="#world">6 The world</a><a href="#design">7 Design</a><a href="#reference">8 Reference apps</a><a href="#tests">9 Tests and limits</a>
+  <a href="#what">1 What it is</a><a href="#commands">2 Commands</a><a href="#architecture">3 Architecture</a><a href="#rules">4 Rules</a><a href="#controls">5 Controls</a><a href="#world">6 The world</a><a href="#design">7 Design</a><a href="#reference">8 Reference apps</a><a href="#tests">9 Tests and limits</a><a href="#headset">10 Headset checks</a>
 </nav>
 
 <h2 id="what">1. What it is and what was built</h2>
@@ -173,53 +173,49 @@ npm run test:e2e           # builds first, then runs Playwright</code></pre>
 <p class="muted">The Tonk and Bid Whist scoring above, and the Spades bag rules, are the code's own definitions. Other households play different point values and end conditions; the options only cover the switches listed.</p>
 
 <h2 id="controls">5. Controls and comfort</h2>
-<p>This table is the in-app Controls panel (<code>CONTROLS_HELP</code>).</p>
+<p>The full list is in the app under Menu, Controls (<code>CONTROLS_HELP</code>). In VR the move stick is the off hand (the left one while the main hand is right) and the turn stick is the main hand.</p>
 <div class="wrap"><table>
-<tr><th>Device</th><th>To</th><th>Do this</th></tr>
-<tr><td>Keyboard</td><td>Walk</td><td>W A S D, or Up / Down arrows</td></tr>
-<tr><td>Keyboard</td><td>Walk faster</td><td>Hold Shift</td></tr>
-<tr><td>Keyboard</td><td>Turn</td><td>Left / Right arrows (smooth), Q / E (snap)</td></tr>
-<tr><td>Keyboard</td><td>Teleport</td><td>Hold T to aim at the floor, let go to jump</td></tr>
-<tr><td>Keyboard</td><td>Press what the centre ring points at</td><td>F or Enter</td></tr>
-<tr><td>Keyboard</td><td>Recentre the view (re-align to your seat)</td><td>R</td></tr>
-<tr><td>Keyboard</td><td>Use the table panel</td><td>Tab to a button, Enter or Space to press</td></tr>
-<tr><td>Mouse</td><td>Press in-world buttons and cards</td><td>Left click on them</td></tr>
-<tr><td>Mouse</td><td>Look around</td><td>Click empty scene to capture the mouse, Esc to release</td></tr>
-<tr><td>Mouse</td><td>Press what the centre ring points at</td><td>Left click while the mouse is captured</td></tr>
-<tr><td>Mouse</td><td>Teleport</td><td>Hold right button to aim at the floor, let go to jump</td></tr>
-<tr><td>Gamepad</td><td>Walk</td><td>Left stick</td></tr>
-<tr><td>Gamepad</td><td>Turn and look up / down</td><td>Right stick (snap or smooth turn per settings)</td></tr>
-<tr><td>Gamepad</td><td>Confirm: press the focused button, else what the centre ring points at</td><td>A (bottom button)</td></tr>
-<tr><td>Gamepad</td><td>Cancel: drop focus, clear picked cards, stop aiming</td><td>B (right button)</td></tr>
-<tr><td>Gamepad</td><td>Step through your cards and the table's buttons</td><td>Left / right bumper</td></tr>
-<tr><td>Gamepad</td><td>Open or close settings</td><td>Start</td></tr>
-<tr><td>VR controllers</td><td>Point at, press and pick</td><td>Aim the ray, pull the trigger</td></tr>
-<tr><td>VR controllers</td><td>Teleport (default)</td><td>Off-hand stick forward to aim, let go to jump</td></tr>
-<tr><td>VR controllers</td><td>Walk (smooth movement setting)</td><td>Off-hand stick</td></tr>
-<tr><td>VR controllers</td><td>Turn</td><td>Main-hand stick left / right (snap or smooth per settings)</td></tr>
-<tr><td>VR controllers</td><td>Recentre the seated view</td><td>Click either stick</td></tr>
-<tr><td>VR controllers</td><td>Show or hide the hints by your left hand</td><td>Y (left controller)</td></tr>
-<tr><td>VR controllers</td><td>Swap hands</td><td>Settings: main hand</td></tr>
-<tr><td>VR hands (no controllers)</td><td>Point and press (no walking; sit at a table from the panel first)</td><td>Point, pinch to press</td></tr>
+<tr><th>To</th><th>Keyboard and mouse</th><th>Gamepad</th><th>VR controllers</th></tr>
+<tr><td>Walk</td><td>W A S D or the arrow keys</td><td>Left stick</td><td>Move stick (movement mode "Walk and teleport", the default)</td></tr>
+<tr><td>Run</td><td>Hold Shift</td><td colspan="2">Click the walking stick while walking; it runs until the stick is back at rest</td></tr>
+<tr><td>Jump</td><td>Space</td><td>X</td><td>A (X if your main hand is left)</td></tr>
+<tr><td>Turn</td><td>Q / E (snap), or the captured mouse</td><td>Right stick (also looks up and down)</td><td>Turn stick left / right, snap or smooth</td></tr>
+<tr><td>Teleport</td><td>Hold T or the right mouse button to aim, let go to go</td><td>Hold the left trigger, let go</td><td>Turn stick forward aims from that hand; in "Teleport only" the move stick forward does too. Let go to go</td></tr>
+<tr><td>Cards, piles and tokens</td><td>Press on one, drag it, let go over a drop zone</td><td>Bumpers step through cards and buttons, A presses</td><td>Grip (either hand) holds what the hand touches until you let go: over a drop zone it is placed, anywhere else it goes back. Trigger presses what the ray points at; held on a card, it brings the card to the hand</td></tr>
+<tr><td>Cancel</td><td>Esc</td><td>B</td><td>B: stops an aim and puts back what you carry</td></tr>
+<tr><td>Menu</td><td>The Menu button</td><td>Start</td><td>X: the VR menu (A if your main hand is left). Y: the hints by your wrist</td></tr>
+<tr><td>Seated at a table</td><td colspan="3">No walking, running, jumping or teleporting; turning works. R, or a stick click in VR, lines the view up with the seat again</td></tr>
 </table></div>
 
+<h3>How your body moves</h3>
+<ul>
+<li><strong>Walking.</strong> You are an upright body 0.3 m in radius. Speed eases up and down (walk 2.2 m/s and run 4 m/s on a desktop, 1.8 and 3.2 in VR). Anything up to 0.3 m high is stepped onto.</li>
+<li><strong>Jumping.</strong> A jump rises about 0.85 m and lasts about 0.7 s, one per press. You land on flat tops up to about 0.8 m (benches, sofas, the pool steps) and clear low things; counters, the grill, the music booth and card tables stay out of reach. The take-off speed carries, so a running jump goes farther, and the stick only steers a little in the air. A press up to 0.1 s before landing, or up to 0.1 s after walking off an edge, still jumps.</li>
+<li><strong>The pool.</strong> In the deep end you float with your eyes 0.25 m above the water, at half speed, and cannot jump out: swim to the shallow end and walk out up the steps. Going in makes a splash.</li>
+<li><strong>Teleport.</strong> It lands only on ground-level surfaces (the floor, or what you could step onto from it), within 7 m and with no wall between. Otherwise the aim turns red with its word, Too far, Blocked or Too deep, and letting go does nothing.</li>
+<li><strong>Other things.</strong> Other players are never solid. Card tables, their chairs and the dealer stands always block.</li>
+</ul>
+
 <h3>Comfort and accessibility settings</h3>
-<p>Open <strong>Settings</strong> in the top bar. Values are saved in the browser (<code>localStorage</code>) and survive reloads.</p>
+<p>Open <strong>Menu</strong>, then <strong>Settings</strong>. Values are saved in the browser (<code>localStorage</code>) and survive reloads.</p>
 <table>
 <tr><th>Setting</th><th>Default</th><th>Notes</th></tr>
 <tr><td>Party theme</td><td>Fourth of July</td><td>or New Year's Eve</td></tr>
-<tr><td>Moving in VR</td><td>Teleport</td><td>or smooth walking</td></tr>
+<tr><td>Movement mode (VR)</td><td>Walk and teleport</td><td>or Teleport only</td></tr>
 <tr><td>Snap turn</td><td>on</td><td>The angle is 30 degrees; there is no control to change it. Turn off for smooth turning.</td></tr>
-<tr><td>Comfort vignette while moving</td><td>on</td><td>Darkens the edges of the view while moving or turning in VR; not drawn outside VR.</td></tr>
-<tr><td>Main hand</td><td>right</td><td>or left</td></tr>
-<tr><td>Reduce motion</td><td>follows the browser's reduced-motion setting at first run</td><td>Freezes the fireworks to one still burst and makes the New Year clock show hours and minutes only.</td></tr>
+<tr><td>Comfort vignette while moving</td><td>on</td><td>Darkens the edges of the view while walking, smooth turning or in the air in VR; not drawn outside VR.</td></tr>
+<tr><td>Jumping</td><td>on</td><td>Off: the jump control does nothing.</td></tr>
+<tr><td>Vibration</td><td>on</td><td>The controller buzzes for hover, grab, place and refuse in the hand that did it, and for a landing or splash in the hand that jumped or aimed the teleport (walking in has no hand to buzz). Tracked hands have nothing to buzz.</td></tr>
+<tr><td>Sound effects</td><td>on</td><td>A short tone for grab, place, refuse, landing and splash.</td></tr>
+<tr><td>Main hand</td><td>right</td><td>or left; also in the VR menu. Its stick turns and aims, the other stick walks, and its lower face button jumps.</td></tr>
+<tr><td>Reduce motion</td><td>follows the browser's reduced-motion setting at first run</td><td>Freezes the fireworks to one still burst and makes the New Year clock show hours and minutes only. At the table, cards go to their places at once instead of gliding, and a card taken with the trigger is in the hand at once.</td></tr>
 <tr><td>Text and button size</td><td>100%</td><td>80% to 160%; scales the page and the in-world panels.</td></tr>
 <tr><td>Music, Music volume</td><td>on, 50%</td><td>Music starts after your first tap or key press, and is louder near the music booth.</td></tr>
 </table>
 <ul>
 <li><strong>Seated.</strong> There is no seated-mode switch. You are seated whenever you sit at a table: walking is locked, turning still works, and in VR your eyes go to seated height.</li>
-<li><strong>Not colour only.</strong> The connection badge uses a different shape and words for each state. Each table's status board uses a different outline shape per status (available, lobby, playing, results) as well as colour. The HTML table panel (used on desktop and for screen readers, hidden in VR) names every card in words, marks picked cards with a check mark, marks whose turn it is with an arrow, and explains why a disabled button is disabled.</li>
-<li><strong>Leaving.</strong> At a table, press <strong>Leave table</strong> (in a running match it reads "Leave table (a bot takes your seat)"). To leave the room, press <strong>Leave room</strong> in the top bar. Closing the tab holds your seat for 60 seconds.</li>
+<li><strong>Not colour only.</strong> The connection badge uses a different shape and words for each state. Each table's status board uses a different outline shape per status (available, lobby, playing, results) as well as colour. The HTML table panel (off by default; it shows with Menu, Settings, Text table panel, after picking a table from the Menu's list, with <code>?panel=1</code>, while a gamepad is connected, or when the 3D view fails; hidden in VR) names every card in words, marks picked cards with a check mark, marks whose turn it is with an arrow, and explains why a disabled button is disabled.</li>
+<li><strong>Leaving.</strong> At a table, press <strong>Leave table</strong> (in a running match it reads "Leave table (a bot takes your seat)"). To leave the room, press <strong>Leave room</strong> in the Menu. Closing the tab holds your seat for 60 seconds.</li>
 <li><strong>Invite.</strong> "Copy invite link" copies a link with <code>?room=CODE</code>; if the browser blocks the clipboard the link is shown to copy by hand.</li>
 </ul>
 
@@ -240,7 +236,7 @@ npm run test:e2e           # builds first, then runs Playwright</code></pre>
 </table>
 <ul>
 <li><strong>Six tables</strong> are the same in every room: Tonk Table 1 and 2, Spades Table 1 and 2, Bid Whist Table 1 and 2. Each is round with four seats (partners opposite) and a corner for the standing host. Each has a status board overhead that turns to face the viewer and a marker post with the table's label. Walk within 3 m, or pick a table from the list, to see its panel.</li>
-<li><strong>Collision.</strong> Walls, the fence, the tables, the counters, grill, music booth, sofas, toss boards and the pool's deep end block walking. Other furniture is decoration and has no collision. Every room has at least two doorways.</li>
+<li><strong>Collision.</strong> Walls, the fence and the furniture block walking; low flat tops can be jumped onto (section 5). You can walk into the pool and float in its deep end. Every room has at least two doorways.</li>
 <li><strong>Two themes</strong>, switched in Settings. <em>Fourth of July</em>: daytime sky, bunting, star lanterns, a slower fireworks show. <em>New Year's Eve</em>: night sky with stars, streamers, balloon clusters, warm lights, a faster fireworks show and a clock counting down to your local midnight. The layout is identical in both.</li>
 </ul>
 
@@ -264,7 +260,7 @@ npm run test:e2e           # builds first, then runs Playwright</code></pre>
 <tr><td>"Bid Whist Plus" (Zynga; package net.peakgames.bidwhist)</td><td>Online partnership play, choice of rule type and final point, private or invite-only tables, friends and chat, coins and bets.</td><td>Private tables by invite, and a selectable target score.</td><td>Coins, betting, chat.</td></tr>
 <tr><td>"Play Tonk : Tunk Card Game" (Artoon Games; package com.multiplayertonk)</td><td>Real-time multiplayer, spreads (sets and sequences), hitting on spreads, Knock and No Knock modes, voice chat, chips, mini-games.</td><td>Knocking as a table option.</td><td>Chips, mini-games, voice chat.</td></tr>
 </table>
-<p><strong>In-VR menu.</strong> Inside a headset the 2D overlay is hidden, so a menu travels with you: press X on the left controller, or point at (or pinch) the small Menu button beside you. It shows the connection state and room code and offers movement (teleport or smooth), turning (snap or smooth), vignette, music, theme, leave table, leave room and exit VR. Leave table and New game ignore a press made within half a second of pressing a different button, so a double press cannot land on them.</p>
+<p><strong>In-VR menu.</strong> Inside a headset the 2D overlay is hidden, so a menu travels with you: press X on the left controller (A on the right one when your main hand is left), or point at (or pinch) the small Menu button beside you. It shows the connection state and room code and offers movement (walk and teleport, or teleport only), turning (snap or smooth), main hand (which stick walks and which turns, and which hand jumps), vignette, music, theme, leave table, leave room and exit VR. Leave table and New game ignore a press made within half a second of pressing a different button, so a double press cannot land on them.</p>
 <p><strong>How this app differs:</strong> a walkable 3D mansion with physical tables, WebXR support, an optional human dealer/host, no currency, no accounts and no ads.</p>
 
 <h2 id="tests">9. Tests and known limits</h2>
@@ -272,21 +268,97 @@ npm run test:e2e           # builds first, then runs Playwright</code></pre>
 <tr><th>Suite</th><th>What it covers (from the test names)</th></tr>
 <tr><td><code>tests/server</code> (Vitest)</td><td>Rules for each game: deals, house-rule validation, bidding, tricks, melds, scoring, game end, input purity, per-seat views, bots playing whole games. Sockets: creating and joining rooms, the 32-member cap, rate limiting, poses, seating, manager-only start, action ids and stale revisions, full games with and without bots, reconnecting, bot takeover after the hold, serving the built client.</td></tr>
 <tr><td><code>tests/client</code> (Vitest)</td><td>Table buttons and house-rule cycling for each game, reticle and gamepad activation, movement and collision maths, teleport, snap turn, the entry screen and saved settings, the net store (resume, token, offline), the HTML table panel, the world plan, themes, art, music patterns and the mansion layout.</td></tr>
-<tr><td><code>tests/e2e</code> (Playwright)</td><td>Real browser pages against a real server: four seated pages and a host play each game to the results; room entry and wrong code; reconnect after a reload; a bot taking over a left seat; movement, teleport, theme switch and the Enter VR button; a browser with no WebXR; a tour of the house in both themes; and an emulated headset that sits, plays a Tonk turn and leaves using controller rays only.</td></tr>
+<tr><td><code>tests/e2e</code> (Playwright)</td><td>Real browser pages against a real server: four seated pages and a host play each game to the results; room entry and wrong code; reconnect after a reload; a bot taking over a left seat; movement, teleport, theme switch and the Enter VR button; a browser with no WebXR; a tour of the house in both themes; cards dragged with a real mouse at the 3D table with the text panel off; walking, running, jumping onto and off a bench, the pool and teleport refusals with the real keyboard; and an emulated headset with two controllers (section 10 lists what those tests cover).</td></tr>
 <tr><td>Other folders under <code>tests/</code></td><td>Suites for the legacy prototype (and deploy and governance checks). <code>npm test</code> runs them too. Not described here.</td></tr>
 </table>
 
 <h3>Known limits and not verified</h3>
 <ul>
-<li>Never run on a physical headset. The VR path was checked only by the emulated-headset browser test and by reading the code.</li>
+<li>Never run on a physical headset. The VR path was checked only by the emulated-headset browser tests and by reading the code; section 10 lists what still needs a headset.</li>
 <li>No voice or text chat.</li>
 <li>No turn timers; a player who stops acting holds up the table until they leave or their 60-second hold ends after a disconnect.</li>
 <li>Rooms live in server memory and vanish when the server restarts.</li>
-<li>Furniture other than the tables and the listed obstacles has no collision.</li>
 <li>The music has not been listened to by a person.</li>
 <li>Bots are basic. Each bot move comes 1.5 s after the last change, and 3 s after a finished trick, so players can follow every bot card; <code>BOT_DELAY_MS</code> (0 to 10000) sets the gap (the trick pause is twice it), and 0 makes bots instant.</li>
 <li>No review yet by a different AI provider.</li>
-<li>The test suites were not run while writing this page; their descriptions come from reading the test files.</li>
+<li>Last run on 2026-11-18, on software graphics: <code>npm run typecheck</code> clean, <code>npm test</code> 474 of 474 passed, <code>npm run test:e2e</code> 27 of 27 passed, and the seven emulated-headset tests passed three runs in a row. The suite descriptions above come from the test names.</li>
+</ul>
+
+<h2 id="headset">10. Checks to do in a real headset</h2>
+<p>No physical headset was used to build or test this app. The browser tests drive an emulated headset (the iwer WebXR emulator in <code>node_modules</code>: a Meta Quest 3 with two Touch Plus controllers, or tracked hands). They show what the code does with each button, stick and pose, read back from the server and from the app's own test hooks. They cannot show how any of it feels. A person with a headset should do the steps below with both controllers, in order, and note the number of any step that does not do what it says.</p>
+<p>Before you start: join a room on the headset (section 2, "Headset on the same network") and press Enter VR. Keep the default settings: Walk and teleport, snap turn, vignette, jumping, vibration and sound effects on, right hand as main hand.</p>
+
+<h3>Cards</h3>
+<ol>
+<li>Walk to Tonk Table 1. Point the right trigger at the marker of a free chair and pull it. <em>You sit, at seated eye height, facing the table.</em></li>
+<li>Point the left trigger at Ready and pull; then the right trigger at Start. <em>Each press gives a buzz in the hand that pressed, and the game starts with bots in the other seats.</em></li>
+<li>On your draw, put your left hand on the stock pile, squeeze the grip, pull the hand toward you and let go. <em>A faint buzz when the hand reaches the pile, a firmer one on the squeeze, a strong one when you let go; a card is added to your hand. All in the left hand only.</em></li>
+<li>Squeeze the left grip on a card in your hand. <em>The card stays where it lay and grows a little; it does not jump. Moved, it follows the hand with no lag and no wobble and keeps its face to you.</em></li>
+<li>Carry it over the discard pile and let go. <em>The zone under the card thickens and says what letting go will do; letting go discards it, with a strong buzz in the left hand.</em></li>
+<li>On your next turn, do steps 3 to 5 with the right hand. <em>The same, felt only in the right hand.</em></li>
+<li>From arm's length, point the right trigger at a card in your hand and hold it. <em>After about a quarter of a second the card glides to about 25 cm in front of that hand.</em> Carry it over the discard pile (on Spades, the felt in the middle) and let go. <em>It is placed.</em> Do the same with the left trigger.</li>
+<li>Both hands at once: take one card with the left grip and lift it toward you, then take another with the right grip. <em>Each hand holds its own card; moving one hand moves only its card.</em> Let go of the left card away from the table. <em>It goes back to your hand; the right hand still holds its card.</em></li>
+<li>With the right grip on a card and its ray pointing at a token, squeeze grip and trigger at the same moment. <em>One grab of the card (one buzz); the token is not pressed.</em></li>
+<li>Carry a card off the table, to your chest or to the side, and let go. <em>It glides back into your hand with a refuse buzz; nothing is played.</em></li>
+<li>Carry a card over the discard pile and press B before letting go. <em>It goes back to your hand; nothing is discarded, also when you then let go of the grip.</em></li>
+<li>A controller going to sleep: carry a card over the discard pile with the left grip, then, still squeezing, take out the left controller's battery (or put it down out of view until it sleeps). <em>The card goes back to your hand and is not discarded. The right hand can then take it and discard it. When the left controller is back, it takes cards as before.</em></li>
+<li>Hold a card with the left grip and snap-turn with the right stick. <em>The card stays in your hand through the turn.</em></li>
+<li>Still seated, push the left stick, click it, press A, and push the right stick forward. <em>Nothing moves: no walking, running, jump or teleport arc. The right stick left and right turns; clicking either stick faces the table again.</em></li>
+</ol>
+
+<h3>Moving</h3>
+<ol start="15">
+<li>Leave the table (X, then Leave table). Push the left stick forward. <em>You walk the way you are looking, starting smoothly; the edges of the view darken while you move.</em></li>
+<li>While walking, click the left stick. <em>You run. Letting the stick back to rest ends the run.</em></li>
+<li>Take a real step forward, then walk into the foyer bench. <em>You stop with your head (not the middle of your play space) against the bench.</em> Keep pushing and press A. <em>You jump onto the seat and stay at its height, with a buzz in the right hand on landing.</em> Later, take a real step into a wall. <em>The view stops at the wall and never goes through it.</em></li>
+<li>Walk off the front of the bench. <em>You drop back to the floor.</em></li>
+<li>Run across the foyer and press A. <em>You land clearly farther than from a walking jump; the stick only nudges you in the air.</em></li>
+<li>Walk from the deck into the deep end of the pool. <em>A splash; you float with your eyes just above the water and move at half speed; A does not lift you out.</em> Swim to the shallow end and walk up the steps. <em>You are back on the deck.</em></li>
+<li>Push the right stick forward over open floor. <em>A green arc from your right hand ends in a ring.</em> Let go. <em>A short blink, and you stand on the ring, with a buzz in the right hand.</em></li>
+<li>Aim at a spot behind a wall, or at a bench seat. <em>The arc turns red with a cross and the word Blocked.</em> Let go. <em>You stay, with a refuse buzz.</em></li>
+<li>Aim again and press B. <em>The arc goes; letting go of the stick does nothing.</em> Teleport, then push the stick forward again at once. <em>The new arc only appears after a short pause (a quarter of a second).</em></li>
+</ol>
+
+<h3>Comfort settings</h3>
+<p>X opens the VR menu. Press a setting with either hand's trigger; press each one again afterwards to put it back.</p>
+<ol start="24">
+<li>Vignette off. <em>Walking and smooth turning no longer darken the edges.</em></li>
+<li>Turn: smooth. <em>The right stick turns smoothly.</em> Turn: snap. <em>It turns in 30-degree steps, one per push.</em></li>
+<li>Move: teleport only. <em>The left stick no longer walks; pushed forward it aims a teleport from the left hand.</em></li>
+<li>Jumping off. <em>A does nothing.</em></li>
+<li>Vibration off. <em>No buzz on hover, grab, place, landing or refusal; the sounds still play.</em></li>
+<li>Reduce motion is in the page's Settings (Menu, Settings) before you enter VR. <em>Cards go to their places at once instead of gliding, a card taken with the trigger is in the hand at once, and the fireworks stand still.</em></li>
+</ol>
+
+<h3>Tracked hands</h3>
+<ol start="30">
+<li>Put the controllers down and hold up your hands. Point at the Menu button beside you and pinch, with the left hand and then the right. <em>The menu opens and closes; a pinch on a setting changes it.</em></li>
+<li>At a table, pinch a card in your hand with your fingertips on it and move. <em>The card follows the pinching hand; let go over a drop zone, it is placed; elsewhere, it goes back. There is no buzz.</em></li>
+</ol>
+
+<h3>What the automated tests already cover</h3>
+<p>In an emulated headset (<code>tests/e2e/xr.e2e.ts</code>, <code>xr-hands.e2e.ts</code>, <code>xr-move.e2e.ts</code>), each move checked against what the server says and what each hand holds:</p>
+<ul>
+<li>Grabbing with the left grip and with the right, and placing on the felt (Spades) and the discard pile (Tonk). The card does not jump when taken, stays within a millimetre of the hand while held, and turns with the hand in the same frame during a snap turn.</li>
+<li>A far grab with each trigger: the card comes to 25 to 35 cm from the grip and is played on release.</li>
+<li>Grip and trigger together: one grab, the token under the ray not pressed, nothing sent.</li>
+<li>Two cards held at once: each moves only with its own hand, and letting go of one leaves the other held.</li>
+<li>Letting go away from the table, and B: the card goes back and nothing is sent, also after the grip is let go.</li>
+<li>A controller switched off while carrying over the discard pile: the card goes back, nothing is discarded, the other hand then discards it, and the switched-off controller works again when it returns.</li>
+<li>Every hover, grab, place, refuse and landing cue, and every buzz sent to the emulator, goes to the hand that acted, never the other.</li>
+<li>Walking (about 1.8 m/s, no jumps in position), running (about 3.2 m/s) and stopping; the body stopping against the bench at the head's place after a real step; a jump onto the bench that stays at 0.45 m and peaks between 0.8 and 0.9 m; walking off it to the floor.</li>
+<li>Teleport aimed by the turn stick and landing on the mark; a wall refusing; the quarter-second pause before the next aim; B ending an aim; Teleport only making the move stick aim and stopping walking; jumping off; vibration off; a seat where no movement control moves the player while turning and recentring still work.</li>
+<li>Pressing with either hand: the ready, start and bid tokens by either trigger; the VR menu opened and closed by either trigger and by X, and its Move, Jumping and Vibration buttons by either trigger; with tracked hands in place of the controllers, the menu and its Turn button by either hand's pinch.</li>
+</ul>
+
+<h3>What only a headset can show</h3>
+<p>The emulator (iwer 2.8) has both grips, triggers, sticks and buttons, switching a controller off, and tracked hands with a pinch. What it does not have is a body: its vibration motors accept every buzz and feel nothing (the tests record which controller each buzz went to and how strong it was asked to be), its poses are exact, and here it draws about 15 frames a second.</p>
+<ul>
+<li><strong>Latency and jitter.</strong> The emulator draws about 15 frames a second on software graphics and its poses are perfectly still; a real headset runs at 72 to 120 frames a second with real tracking noise.</li>
+<li><strong>Comfort.</strong> Walking and running speeds, the ease in and out, the vignette, the teleport blink, snap and smooth turning, and the jump height, as felt by a person.</li>
+<li><strong>Vibration strength.</strong> The tests see which controller each buzz is sent to and how strong it is asked to be, not what the hand feels.</li>
+<li><strong>Reach.</strong> Whether every card, pile and token is in comfortable reach seated and standing, and whether the grab range (9 cm from a controller's grip, 7 cm from a fingertip) feels right.</li>
+<li><strong>Real controllers.</strong> A controller that really sleeps or loses tracking, real buttons and sticks (rest positions, drift), and tracked hands with real fingers. The tests never grab a card with a tracked hand's pinch: the emulator's hand joints were not driven onto a card.</li>
 </ul>
 </main>
 </body>

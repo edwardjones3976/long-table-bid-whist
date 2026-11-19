@@ -24,6 +24,7 @@ import type { Pose, TableId } from "../../../shared/protocol";
 export type Theme = "july4" | "newyear";
 
 export interface Comfort {
+  /** The VR movement mode: "smooth" is Walk and teleport (the off-hand stick walks), "teleport" is Teleport only. */
   locomotion: "teleport" | "smooth";
   snapTurn: boolean;
   snapDegrees: number;
@@ -36,6 +37,14 @@ export interface Comfort {
   music: boolean;
   /** 0 to 1. */
   musicVolume: number;
+  /** Show the HTML text table panel beside the 3D view (App also shows it when the 3D view fails, or with ?panel=1). */
+  textPanel: boolean;
+  /** Allow jumping (never while seated). */
+  jump: boolean;
+  /** Controller vibration on hover, grab, place and landing (controls/feedback.ts). */
+  haptics: boolean;
+  /** Short synthesized sounds for the same moments. */
+  sounds: boolean;
 }
 
 export interface LocalState {
@@ -55,7 +64,7 @@ const prefersReducedMotion = (): boolean =>
   typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export const DEFAULT_COMFORT: Comfort = {
-  locomotion: "teleport",
+  locomotion: "smooth",
   snapTurn: true,
   snapDegrees: 30,
   vignette: true,
@@ -64,6 +73,10 @@ export const DEFAULT_COMFORT: Comfort = {
   uiScale: 1,
   music: true,
   musicVolume: 0.5,
+  textPanel: false,
+  jump: true,
+  haptics: true,
+  sounds: true,
 };
 
 function load(): Pick<LocalState, "theme" | "comfort"> {
@@ -73,7 +86,10 @@ function load(): Pick<LocalState, "theme" | "comfort"> {
     if (!saved || typeof saved !== "object") return fresh;
     const comfort = { ...fresh.comfort };
     // Only keep saved values of the right type, so an old or hand-edited entry cannot break the app.
+    // A save from before walking became the default (it has no "jump" entry) holds the old teleport default, chosen or not: let it go once.
+    const old = typeof saved.comfort?.jump !== "boolean";
     for (const key of Object.keys(comfort) as (keyof Comfort)[]) {
+      if (old && key === "locomotion") continue;
       if (typeof saved.comfort?.[key] === typeof comfort[key]) (comfort as Record<string, unknown>)[key] = saved.comfort[key];
     }
     return { theme: saved.theme === "newyear" ? "newyear" : "july4", comfort };

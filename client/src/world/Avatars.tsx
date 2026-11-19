@@ -26,8 +26,10 @@ function Avatar({ id, name, seated }: { id: string; name: string; seated: boolea
     // Poses arrive ten times a second; easing toward the latest one hides the steps.
     const ease = Math.min(1, delta * 10);
     const { position } = group.current;
-    if (Math.hypot(pose.x - position.x, pose.z - position.z) > 3) position.set(pose.x, 0, pose.z);
-    else position.set(position.x + (pose.x - position.x) * ease, 0, position.z + (pose.z - position.z) * ease);
+    // The feet height: a jump, a bench top, the pool. Older clients send none, which is the floor.
+    const y = pose.y ?? 0;
+    if (Math.hypot(pose.x - position.x, pose.z - position.z) > 3) position.set(pose.x, y, pose.z);
+    else position.set(position.x + (pose.x - position.x) * ease, position.y + (y - position.y) * ease, position.z + (pose.z - position.z) * ease);
     body.current.rotation.y = pose.ry;
     // The world turn: in VR the camera sits inside the rig, which is itself turned. The plate has no turned parent.
     camera.getWorldQuaternion(plate.current.quaternion);
@@ -36,8 +38,9 @@ function Avatar({ id, name, seated }: { id: string; name: string; seated: boolea
   return (
     <group ref={group} visible={false}>
       <group ref={body} position={[0, seated ? -SEATED_DROP : 0, 0]}>
-        <mesh position={[0, 0.85, 0]}>
-          <capsuleGeometry args={[0.2, 0.9, 4, 12]} />
+        {/* Down to the feet, so a body standing on a bench or a step is seen to stand on it. */}
+        <mesh position={[0, 0.75, 0]}>
+          <capsuleGeometry args={[0.2, 1.1, 4, 12]} />
           <meshStandardMaterial color="#d9a441" />
         </mesh>
         <mesh position={[0, 1.6, 0]}>

@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanCode, Entry } from "../../client/src/hud/Entry";
 import { net } from "../../client/src/net/store";
+import { Hud } from "../../client/src/hud/Hud";
 import { local } from "../../client/src/state/local";
 
 afterEach(() => {
@@ -70,20 +71,66 @@ describe("entry screen", () => {
   });
 });
 
+describe("HUD", () => {
+  it("keeps everything but one line in a Menu dialog that takes focus and closes with Esc", () => {
+    render(<Hud tables />);
+    const button = screen.getByTestId("hud-menu");
+    const menu = screen.getByRole("dialog", { hidden: true });
+    expect(screen.getByTestId("hud-table").getAttribute("aria-live")).toBe("polite");
+    expect(menu.hidden).toBe(true);
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+
+    fireEvent.click(button);
+    expect(menu.hidden).toBe(false);
+    expect(document.activeElement).toBe(menu);
+    for (const id of ["invite", "enter-vr", "settings-toggle", "controls-toggle", "leave-room", "members", "table-picker"]) {
+      expect(menu.contains(screen.getByTestId(id))).toBe(true);
+    }
+    // The text panel is opt-in.
+    fireEvent.click(screen.getByTestId("settings-toggle"));
+    expect((screen.getByLabelText("Text table panel") as HTMLInputElement).checked).toBe(false);
+
+    fireEvent.keyDown(menu, { key: "Escape" });
+    expect(menu.hidden).toBe(true);
+    // Nothing keeps focus, so the next Space is a jump rather than a press of the Menu button.
+    expect(document.activeElement).toBe(document.body);
+  });
+
+  it("opens the text panel when a table is picked from the menu's list", () => {
+    render(<Hud tables />);
+    fireEvent.click(screen.getByTestId("hud-menu"));
+    expect(local.getState().comfort.textPanel).toBe(false);
+    fireEvent.click(screen.getByTestId("table-spades-1"));
+    expect(local.getState().comfort.textPanel).toBe(true);
+    expect(local.getState().focusTable).toBe("spades-1");
+    local.setComfort({ textPanel: false });
+    local.set({ focusTable: null });
+  });
+
+  it("opens the menu on Settings when the hidden Settings button is pressed (the gamepad's Start button), and leaves the table list to the text panel", () => {
+    render(<Hud tables={false} />);
+    fireEvent.click(screen.getByTestId("settings-toggle"));
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.getByTestId("theme")).toBeTruthy();
+    expect(screen.queryByTestId("table-picker")).toBeNull();
+  });
+});
+
 describe("local settings", () => {
   it("starts with the comfortable defaults and persists changes", () => {
     const { theme, comfort, seated, xrActive } = local.getState();
     expect(theme).toBe("july4");
-    expect(comfort).toMatchObject({ locomotion: "teleport", snapTurn: true, snapDegrees: 30, dominantHand: "right", uiScale: 1 });
+    // Walking is the normal way to move: "smooth" is the Walk and teleport mode.
+    expect(comfort).toMatchObject({ locomotion: "smooth", jump: true, snapTurn: true, snapDegrees: 30, dominantHand: "right", uiScale: 1 });
     expect(seated).toBeNull();
     expect(xrActive).toBe(false);
     // The test runner's Node has no usable localStorage (the store shrugs that off), so one is supplied here.
     const stored = new Map<string, string>();
     vi.stubGlobal("localStorage", { setItem: (key: string, value: string) => stored.set(key, value) });
     local.set({ theme: "newyear" });
-    local.setComfort({ locomotion: "smooth" });
+    local.setComfort({ locomotion: "teleport" });
     vi.unstubAllGlobals();
     const saved = JSON.parse(stored.get("mansion.settings")!);
-    expect(saved).toMatchObject({ theme: "newyear", comfort: { locomotion: "smooth", snapTurn: true } });
+    expect(saved).toMatchObject({ theme: "newyear", comfort: { locomotion: "teleport", snapTurn: true } });
   });
 });

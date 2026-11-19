@@ -9,8 +9,9 @@
  *   ARTWORKS       where the two framed pieces hang
  *
  * Parts tagged with an obstacle or table id stay inside that collider
- * (tests/client/world.test.ts checks it). Untagged furniture is dressing that
- * layout.isWalkable does not know about, so people can pass through it.
+ * (tests/client/world.test.ts checks it). Whatever a body can touch here is
+ * solid to a player, tagged or not: world/solids.ts reads the solids off this
+ * list. layout.isWalkable knows only the tagged ones.
  */
 import type { GameId } from "../../../shared/protocol";
 import type { Theme } from "../state/local";
@@ -29,6 +30,7 @@ import {
   WALL_HEIGHT,
   WALL_THICKNESS,
   walls,
+  wallThickness,
   type Obstacle,
   type Rect,
   type Room,
@@ -203,7 +205,7 @@ function wallParts(): Part[] {
     const cx = (w.ax + w.bx) / 2;
     const cz = (w.az + w.bz) / 2;
     const fence = w.height < WALL_HEIGHT;
-    const thick = fence ? 0.3 : WALL_THICKNESS;
+    const thick = wallThickness(w);
     const piece = (x: number, y0: number, len: number, h: number, color: string, extra?: Extra) =>
       out.push(alongX ? box(x, y0, cz, len, h, thick, color, extra) : box(cx, y0, x, thick, h, len, color, extra));
     if (alongX && !fence && w.az === HOUSE.z0 && length >= 4) {

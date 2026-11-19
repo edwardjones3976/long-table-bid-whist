@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { GAME_NAMES, ROOM_CODE_LENGTH, TABLES } from "../../shared/protocol";
-import { closeAll, enter, handShown, playToResults, problems } from "./helpers";
+import { closeAll, enter, handShown, openMenu, playToResults, problems } from "./helpers";
 
 test.beforeEach(() => void (problems.length = 0));
 
@@ -9,7 +9,10 @@ test("enter: one page creates a room, a second joins by its code, and each sees 
   expect(ann.code).toMatch(new RegExp(`^[A-Z2-9]{${ROOM_CODE_LENGTH}}$`));
   const bea = await enter(browser, "Bea", ann.code, true);
   expect(bea.code).toBe(ann.code);
-  for (const page of [ann.page, bea.page]) await expect(page.getByTestId("members")).toHaveText("In the room (2): Ann, Bea");
+  for (const page of [ann.page, bea.page]) {
+    await openMenu(page);
+    await expect(page.getByTestId("members")).toHaveText("In the room (2): Ann, Bea");
+  }
   // Both draw the 3D view: each is sent the other's pose for the avatar.
   await ann.page.waitForFunction(() => {
     const { poses, room } = window.__mansion.getState() as unknown as { poses: Record<string, unknown>; room: { you: string } };

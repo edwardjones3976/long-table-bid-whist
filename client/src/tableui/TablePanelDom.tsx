@@ -2,6 +2,10 @@
  * The table interface as ordinary HTML, outside the canvas: the desktop and
  * accessibility mirror of the in-world table, and what browser tests drive.
  * Hidden in VR. Shows the table I am at, else the one I walked up to or picked.
+ * App mounts it only when asked for (the "Text table panel" setting, ?panel=1),
+ * while a gamepad is connected (its bumpers step through the panel), or when the
+ * 3D view could not start; otherwise the HUD menu shows TablePicker, and picking a
+ * table there turns the setting on.
  *
  * Test hooks: table-picker, table-<table id>, table-panel, table-title,
  * tables-back, table-status, table-error, results, table-cards, trick,
@@ -15,17 +19,26 @@ import { cardLabel } from "../ui/cards";
 import { resultSummary, seatLines, STATUS_WORDS, tableWords } from "./helpers";
 import { useTableActions } from "./useTableActions";
 
-function TablePicker() {
+/** The six tables to pick from: docked as the text panel, or inside the HUD menu (never both, so test ids stay unique). */
+export function TablePicker({ heading = "Card tables", className = "panel" }: { heading?: string; className?: string }) {
   const room = useStore((state) => state.room);
   return (
-    <aside className="panel" data-testid="table-picker" aria-label="Card tables">
-      <h2>Card tables</h2>
+    <aside className={className} data-testid="table-picker" aria-label="Card tables">
+      <h2>{heading}</h2>
       <p>Walk up to a table, or pick one here.</p>
       <div className="buttons">
         {TABLES.map((table) => {
           const status = room?.tables.find((summary) => summary.id === table.id)?.status ?? "available";
           return (
-            <button key={table.id} data-testid={`table-${table.id}`} onClick={() => local.set({ focusTable: table.id })}>
+            <button
+              key={table.id}
+              data-testid={`table-${table.id}`}
+              // Picking from a list asks for the text interface: the panel opens with that table's Sit buttons.
+              onClick={() => {
+                local.setComfort({ textPanel: true });
+                local.set({ focusTable: table.id });
+              }}
+            >
               {table.label} ({STATUS_WORDS[status]})
             </button>
           );

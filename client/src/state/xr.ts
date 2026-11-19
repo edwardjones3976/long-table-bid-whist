@@ -11,10 +11,18 @@
  * a-button and b-button on the right, x-button and y-button on the left.
  */
 import { createXRStore } from "@react-three/xr";
+import { GRAB_RADIUS } from "../tableui/carry";
 import { local } from "./local";
 
+/**
+ * The library's cursor is a soft white dot where a pointer meets a thing, 0.1 m across and brighter while a button
+ * is down: it would lie over the face of a card that is held. So it is the size of a fingertip, and gone while its
+ * pointer has hold of something.
+ */
+const cursorModel = { size: 0.04, opacity: (pointer: { getPointerCapture(): unknown }): number => (pointer.getPointerCapture() ? 0 : 0.5) };
+
 // A slow, deliberate trigger pull or pinch is still a press: the library's default ignores one held over 0.3 s.
-const press = { clickThresholdMs: 2000 };
+const press = { clickThresholdMs: 2000, cursorModel };
 
 export const xrStore = createXRStore({
   // The HUD's "Enter VR" button is the only way in.
@@ -23,8 +31,17 @@ export const xrStore = createXRStore({
   emulate: false,
   baseAssetPath: `${location.origin}/xr-profiles/`,
   defaultControllerProfileId: "mansion-standard",
-  controller: { model: false, rayPointer: press, grabPointer: press },
-  hand: { model: false, rayPointer: press, grabPointer: press, touchPointer: press },
+  // Each controller: a ray (trigger) and a grab sphere about the grip (squeeze). The library keeps one of the two
+  // live at a time, the one whose hit is nearer: the grab whenever its sphere touches something that listens, else
+  // the ray (tableui/carry.ts). The sphere is a little wider than the library's 0.07 m, because a grip's origin is in
+  // the palm and the front of the controller is what a player brings up to a card; of all it touches, the nearest
+  // thing is the one taken. The ray is blind nearer than `minDistance`: just past the sphere, so the grab still wins
+  // whenever it touches, and not the library's 0.2 m, which left a band where a card answered to neither.
+  controller: { model: false, rayPointer: { ...press, minDistance: GRAB_RADIUS + 0.01 }, grabPointer: { ...press, radius: GRAB_RADIUS } },
+  // A tracked hand: the same two at the index fingertip, both pressed by a pinch (its sphere is the library's 0.07 m).
+  // The library's fingertip "touch" pointer is off: it presses only within 0.03 m, where the grab sphere has always
+  // taken over, so it could never fire, and a pinch does the pressing.
+  hand: { model: false, rayPointer: { ...press, minDistance: 0.08 }, grabPointer: press, touchPointer: false },
   // A seated card room needs none of these, and asking for them prompts for room-scan permission.
   anchors: false,
   meshDetection: false,

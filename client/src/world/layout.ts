@@ -30,6 +30,8 @@ export const DOOR_WIDTH = 2;
 export const DOOR_HEIGHT = 2.2;
 /** The backyard fence is low enough to see over. */
 export const FENCE_HEIGHT = 1.2;
+/** It is a hedge, thicker than a house wall. */
+export const FENCE_THICKNESS = 0.3;
 export const PLAYER_RADIUS = 0.3;
 export const EYE_HEIGHT_STANDING = 1.6;
 export const EYE_HEIGHT_SEATED = 1.2;
@@ -144,6 +146,9 @@ function segmentsOf(wall: WallLine): WallSegment[] {
 /** Solid wall and fence pieces, already split around the door gaps. */
 export const walls: readonly WallSegment[] = WALL_LINES.flatMap(segmentsOf);
 
+/** How thick a wall or fence piece is: as it is drawn, and as a body meets it (world/ground.ts). */
+export const wallThickness = (wall: WallSegment): number => (wall.height < WALL_HEIGHT ? FENCE_THICKNESS : WALL_THICKNESS);
+
 export const doors: readonly Door[] = WALL_LINES.flatMap((wall) =>
   wall.openings.map(([centre, width]) =>
     wall.axis === "x"
@@ -154,7 +159,11 @@ export const doors: readonly Door[] = WALL_LINES.flatMap((wall) =>
 
 export type ObstacleKind = "potluck-counter" | "kitchen-counter" | "grill" | "dj-booth" | "sofa" | "toss-board";
 
-/** Solid furniture. The world draws one thing per entry; nothing else blocks walking. */
+/**
+ * Named furniture, each with a simple collider for isWalkable. The world draws
+ * one thing per entry; a player's body meets the drawn pieces themselves, and
+ * all the other furniture too (world/ground.ts).
+ */
 export interface Obstacle {
   id: string;
   kind: ObstacleKind;
@@ -296,6 +305,8 @@ function distanceToSegment(x: number, z: number, s: WallSegment): number {
 /**
  * Whether a body of `radius` may stand at (x, z): on the property, clear of
  * walls and fences (door gaps are open), tables, furniture and the deep end.
+ * This is the plan's own rough answer; a player's body moves by world/ground.ts,
+ * which knows every drawn piece, heights and the pool.
  */
 export function isWalkable(x: number, z: number, radius = PLAYER_RADIUS): boolean {
   if (!inside(PROPERTY, x, z, -radius)) return false;

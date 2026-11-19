@@ -59,11 +59,20 @@ function Menu() {
   const rows: { name: string; lines: string[]; disabled?: boolean; onPress: () => void }[] = [
     {
       name: "vr-menu-move",
-      lines: [`Move: ${comfort.locomotion === "teleport" ? "teleport" : "smooth walking"}`],
+      lines: [`Move: ${comfort.locomotion === "teleport" ? "teleport only" : "walk and teleport"}`],
       onPress: () => local.setComfort({ locomotion: comfort.locomotion === "teleport" ? "smooth" : "teleport" }),
     },
     { name: "vr-menu-turn", lines: [`Turn: ${comfort.snapTurn ? "snap" : "smooth"}`], onPress: () => local.setComfort({ snapTurn: !comfort.snapTurn }) },
+    {
+      // Which stick walks and which turns, and which hand jumps: a one-handed or left-handed player sets it here, in VR.
+      name: "vr-menu-hand",
+      lines: [`Main hand: ${comfort.dominantHand}`],
+      onPress: () => local.setComfort({ dominantHand: comfort.dominantHand === "right" ? "left" : "right" }),
+    },
+    { name: "vr-menu-jump", lines: [`Jumping: ${comfort.jump ? "on" : "off"}`], onPress: () => local.setComfort({ jump: !comfort.jump }) },
     { name: "vr-menu-vignette", lines: [`Vignette: ${comfort.vignette ? "on" : "off"}`], onPress: () => local.setComfort({ vignette: !comfort.vignette }) },
+    { name: "vr-menu-haptics", lines: [`Vibration: ${comfort.haptics ? "on" : "off"}`], onPress: () => local.setComfort({ haptics: !comfort.haptics }) },
+    { name: "vr-menu-sounds", lines: [`Sound effects: ${comfort.sounds ? "on" : "off"}`], onPress: () => local.setComfort({ sounds: !comfort.sounds }) },
     { name: "vr-menu-music", lines: [`Music: ${comfort.music ? "on" : "off"}`], onPress: () => local.setComfort({ music: !comfort.music }) },
     {
       name: "vr-menu-theme",
@@ -97,9 +106,9 @@ function Menu() {
         {...arc(-side * 1.1, 0.6, -0.35)}
       />
       {open && (
-        <group position={[0, -0.1, -0.7]} scale={comfort.uiScale}>
-          {/* A backing, so a ray between two buttons does not press whatever is behind the menu. */}
-          <mesh position={[0, -0.02, -0.006]} scale={[0.56, 0.5, 1]} onClick={(event) => event.stopPropagation()}>
+        <group position={[0, -0.02, -0.7]} scale={comfort.uiScale}>
+          {/* A backing, so a ray between two buttons does not press whatever is behind the menu. It is sized for six rows of two. */}
+          <mesh position={[0, -0.07, -0.006]} scale={[0.56, 0.65, 1]} onClick={(event) => event.stopPropagation()}>
             <planeGeometry />
             <meshBasicMaterial color="#10131a" />
           </mesh>

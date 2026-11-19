@@ -1,10 +1,10 @@
 import { Canvas } from "@react-three/fiber";
 import { XR } from "@react-three/xr";
-import { Component, useEffect, type ReactNode } from "react";
+import { Component, useEffect, useState, type ReactNode } from "react";
 import type { TableId } from "../../shared/protocol";
 import { Player } from "./controls/Player";
 import { Entry } from "./hud/Entry";
-import { Hud } from "./hud/Hud";
+import { Hint, Hud } from "./hud/Hud";
 import { mySeat, myTable, net, useStore } from "./net/store";
 import { local, useLocal } from "./state/local";
 import { xrStore } from "./state/xr";
@@ -16,10 +16,13 @@ import { EYE_HEIGHT_STANDING, nearestTable, seatPose, spawn, TABLE_REACH } from 
 import { World } from "./world/World";
 
 /** Keeps the table panel and HUD usable on a device that cannot draw the 3D view. */
-class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+class SceneBoundary extends Component<{ children: ReactNode; onFailed: () => void }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
     return { failed: true };
+  }
+  componentDidCatch() {
+    this.props.onFailed();
   }
   render() {
     if (!this.state.failed) return this.props.children;
@@ -63,9 +66,26 @@ function Mansion() {
   usePoseLink();
   const theme = useLocal((state) => state.theme);
   const uiScale = useLocal((state) => state.comfort.uiScale);
+  const textPanel = useLocal((state) => state.comfort.textPanel);
+  const [failed, setFailed] = useState(false);
+  const [pad, setPad] = useState(false);
+  useEffect(() => {
+    // The same test as controls/input.ts pollGamepad: only a standard-mapping pad is read.
+    const check = (): void => setPad((navigator.getGamepads?.() ?? []).some((p) => p?.mapping === "standard"));
+    check();
+    addEventListener("gamepadconnected", check);
+    addEventListener("gamepaddisconnected", check);
+    return () => {
+      removeEventListener("gamepadconnected", check);
+      removeEventListener("gamepaddisconnected", check);
+    };
+  }, []);
+  // The text panel is opt-in: the table itself is the interface. Without a 3D view it is the only one, and the
+  // gamepad bumpers step through its controls, so it shows while a gamepad is connected.
+  const panel = failed || textPanel || pad || new URLSearchParams(location.search).get("panel") === "1";
   return (
     <div className="mansion" data-theme={theme} style={{ fontSize: `${uiScale * 100}%` }}>
-      <SceneBoundary>
+      <SceneBoundary onFailed={() => setFailed(true)}>
         <Canvas className="scene" camera={{ fov: 70, near: 0.05, far: 200, position: [spawn.x, EYE_HEIGHT_STANDING, spawn.z] }}>
           <XR store={xrStore}>
             <World />
@@ -77,8 +97,8 @@ function Mansion() {
           </XR>
         </Canvas>
       </SceneBoundary>
-      <Hud />
-      <TablePanelDom />
+      <Hud tables={!panel} />
+      {panel ? <TablePanelDom /> : <Hint />}
     </div>
   );
 }

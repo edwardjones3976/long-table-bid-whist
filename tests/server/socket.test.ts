@@ -360,6 +360,30 @@ describe("rooms", () => {
     await new Promise((resolve) => setTimeout(resolve, 250));
     expect(a.poses.length).toBe(sent); // nothing changed, nothing sent
   });
+
+  it("shares a pose's feet height when it is sent and in range, and drops the whole pose when it is not", async () => {
+    const a = await enter("Ada");
+    const b = await enter("Bo", a.joined!.code);
+    const seen = () => b.poses.at(-1)?.[a.joined!.memberId] as { x: number; y?: number } | undefined;
+    a.socket.emit("pose", { x: 1, z: -2, ry: 0.5, y: 0.75 });
+    await until(() => seen() !== undefined, "the pose");
+    expect(seen()).toEqual({ x: 1, z: -2, ry: 0.5, y: 0.75 });
+    // The limits themselves are allowed: below the bottom of the pool, and well above any jump.
+    for (const y of [-3, 5, 0]) {
+      a.socket.emit("pose", { x: 2, z: -2, ry: 0.5, y });
+      await until(() => seen()?.x === 2 && seen()?.y === y, `the pose at height ${y}`);
+    }
+    // No height at all is a pose on the floor, which is what an older client sends.
+    a.socket.emit("pose", { x: 3, z: -2, ry: 0.5 });
+    await until(() => seen()?.x === 3, "the pose with no height");
+    expect(seen()).toEqual({ x: 3, z: -2, ry: 0.5 });
+    // A bad height drops the whole pose, its position included.
+    const sent = b.poses.length;
+    for (const y of [5.01, -3.01, "1", null, true, [1], {}]) a.socket.emit("pose", { x: 9, z: 9, ry: 0, y });
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    expect(b.poses.length).toBe(sent);
+    expect(seen()).toEqual({ x: 3, z: -2, ry: 0.5 });
+  });
 });
 
 describe("tables", () => {

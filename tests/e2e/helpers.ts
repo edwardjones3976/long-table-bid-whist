@@ -6,9 +6,10 @@ export interface Mansion {
     room: { you: string; members: { id: string; name: string }[] } | null;
     table: { revision: number; you: number | null; view: { phase: string } | null } | null;
   };
-  local: { getState(): { playerPose: Pose | null; theme: string; seated: Pose | null }; set(partial: object): void };
+  local: { getState(): { playerPose: Pose | null; theme: string; seated: Pose | null; selection: readonly string[] }; set(partial: object): void };
   isWalkable(x: number, z: number): boolean;
   teleport(pose: Pose): void;
+  tableNames(): string[];
 }
 declare global {
   interface Window {
@@ -24,8 +25,10 @@ export const problems: string[] = [];
  * page shares one GPU process, so only pages that look at the 3D view draw it: with
  * `scene` false the page has no WebGL and runs on the app's own "3D view could not
  * start" fallback, which leaves the HUD and the table panel working.
+ * Every page asks for the text table panel (?panel=1), which is off by default: these tests drive the game through it.
+ * With `panel` false the page is as a player gets it, and the game is handled on the 3D table.
  */
-export async function open(browser: Browser, scene = true): Promise<Page> {
+export async function open(browser: Browser, scene = true, panel = true): Promise<Page> {
   const page = await (await browser.newContext()).newPage();
   if (!scene) {
     await page.addInitScript(() => {
@@ -47,13 +50,19 @@ export async function open(browser: Browser, scene = true): Promise<Page> {
   page.on("response", (response) => {
     if (response.status() >= 400) problems.push(`HTTP ${response.status()}: ${response.url()}`);
   });
-  await page.goto("/?e2e=1");
+  await page.goto(panel ? "/?e2e=1&panel=1" : "/?e2e=1");
   return page;
 }
 
+/** Opens the HUD menu if it is closed: invite, Enter VR, settings, controls, the member list and Leave room live in it. */
+export async function openMenu(page: Page): Promise<void> {
+  const button = page.getByTestId("hud-menu");
+  if ((await button.getAttribute("aria-expanded")) !== "true") await button.click();
+}
+
 /** Enters a room: creates one when `code` is missing. Returns the page and the room code. */
-export async function enter(browser: Browser, name: string, code?: string, scene = false): Promise<{ page: Page; code: string }> {
-  const page = await open(browser, scene);
+export async function enter(browser: Browser, name: string, code?: string, scene = false, panel = true): Promise<{ page: Page; code: string }> {
+  const page = await open(browser, scene, panel);
   await page.getByTestId("entry-name").fill(name);
   if (code) {
     await page.getByTestId("entry-code").fill(code);
@@ -194,4 +203,153 @@ export async function handShown(page: Page): Promise<{ shown: number; stated: nu
       stated: Number(/(\d+) cards?/.exec(line)?.[1] ?? -1),
     };
   }, PANEL);
+}
+
+// ---- the 3D view, as a player with a mouse and keyboard meets it ----
+
+export type Point = { x: number; y: number };
+type Vec = [x: number, y: number, z: number];
+
+/**
+ * Where an in-world thing is drawn on the page, in CSS pixels: the named object's point `at` (in its own space; its
+ * middle by default), or a world point. Throws when it is not in the scene or not in view.
+ */
+export async function screenOf(page: Page, what: string | Vec, at: Vec = [0, 0, 0]): Promise<Point> {
+  const found = await page.evaluate(
+    ({ what, at }) => {
+      type V = { x: number; y: number; z: number; set(x: number, y: number, z: number): V; clone(): V; project(c: unknown): V };
+      type O = { position: V; localToWorld(v: V): V; updateMatrixWorld(force?: boolean): void };
+      const three = (window as unknown as { __mansion: { three(): { scene: O & { getObjectByName(n: string): O | undefined }; camera: O; gl: { domElement: HTMLElement } } } }).__mansion.three();
+      three.scene.updateMatrixWorld(true);
+      three.camera.updateMatrixWorld(true);
+      let point: V;
+      if (typeof what === "string") {
+        const object = three.scene.getObjectByName(what);
+        if (!object) return `${what} is not in the scene`;
+        point = object.localToWorld(three.camera.position.clone().set(...at));
+      } else point = three.camera.position.clone().set(...what);
+      const ndc = point.project(three.camera);
+      if (ndc.z > 1 || Math.abs(ndc.x) > 1 || Math.abs(ndc.y) > 1) return `${String(what)} is out of view`;
+      const box = three.gl.domElement.getBoundingClientRect();
+      return { x: box.left + ((ndc.x + 1) / 2) * box.width, y: box.top + ((1 - ndc.y) / 2) * box.height };
+    },
+    { what, at },
+  );
+  if (typeof found === "string") throw new Error(found);
+  return found;
+}
+
+/** A world point of an in-world object (`at` in its own space), or null when it is not in the scene. */
+export const worldOf = (page: Page, name: string): Promise<{ x: number; y: number; z: number } | null> =>
+  page.evaluate((n) => (window as unknown as { __mansion: { tablePoint(n: string): { x: number; y: number; z: number } | null } }).__mansion.tablePoint(n), name);
+
+/** Waits until an in-world thing has stopped moving (cards ease to a new place when the hand changes). */
+export async function still(page: Page, name: string): Promise<void> {
+  let last = "";
+  await expect
+    .poll(async () => {
+      const at = await worldOf(page, name);
+      const now = at ? [at.x, at.y, at.z].map((v) => v.toFixed(4)).join() : "gone";
+      const same = now === last;
+      last = now;
+      return same;
+    }, { intervals: [150] })
+    .toBe(true);
+}
+
+/** A real mouse click on an in-world thing. */
+export async function click(page: Page, name: string, at?: Vec): Promise<void> {
+  const point = await screenOf(page, name, at);
+  await page.mouse.click(point.x, point.y);
+}
+
+/**
+ * A real mouse drag: press at `from`, move there in `steps` small moves a frame apart, let go at `to`. `held` runs
+ * with the button still down over `to` (a screenshot of a card in the air).
+ */
+export async function drag(page: Page, from: Point, to: Point, held?: () => Promise<void>, steps = 12): Promise<void> {
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  for (let i = 1; i <= steps; i += 1) {
+    await page.mouse.move(from.x + ((to.x - from.x) * i) / steps, from.y + ((to.y - from.y) * i) / steps);
+    await page.waitForTimeout(20);
+  }
+  await page.waitForTimeout(150);
+  if (held) await held();
+  await page.mouse.up();
+}
+
+/** What the server has told this page about its table: the snapshot's own fields, the hand as card ids, and what is legal now. */
+export interface Hand {
+  you: number | null;
+  revision: number;
+  phase: string | null;
+  turn: number | null;
+  hand: string[];
+  legal: Record<string, unknown> | null;
+}
+export const tableOf = (page: Page): Promise<Hand | null> =>
+  page.evaluate(() => {
+    const table = window.__mansion.getState().table as unknown as {
+      you: number | null;
+      revision: number;
+      view: { phase: string; turn?: number; hand: { id: string }[] | null; legal: Record<string, unknown> | null } | null;
+    } | null;
+    if (!table) return null;
+    const view = table.view;
+    return { you: table.you, revision: table.revision, phase: view?.phase ?? null, turn: view?.turn ?? null, hand: (view?.hand ?? []).map((card) => card.id), legal: view?.legal ?? null };
+  });
+
+/**
+ * Stands the player beside a table, facing its middle, on a spot the real ground lets a walker stand on: where
+ * walking up to it would bring them, so its chairs show their markers.
+ */
+export async function standBy(page: Page, centre: { x: number; z: number }): Promise<void> {
+  const spot = await page.evaluate((c) => {
+    for (const radius of [2.2, 2.5, 1.9, 2.8]) {
+      for (let i = 0; i < 24; i += 1) {
+        // From the south-east round: seat 0 (south) and its marker stay in front.
+        const angle = Math.PI / 4 + (i * Math.PI) / 12;
+        const x = c.x + Math.sin(angle) * radius;
+        const z = c.z + Math.cos(angle) * radius;
+        if (window.__mansion.isWalkable(x, z)) return { x, z, ry: Math.atan2(x - c.x, z - c.z) };
+      }
+    }
+    return null;
+  }, centre);
+  if (!spot) throw new Error("No free spot beside the table");
+  await page.evaluate((p) => window.__mansion.teleport(p), spot);
+  await page.waitForFunction((p) => {
+    const at = window.__mansion.local.getState().playerPose;
+    return at !== null && Math.hypot(at.x - p.x, at.z - p.z) < 0.05;
+  }, spot);
+}
+
+/** Sits in seat 0 of the table at `centre` the way a player does: stand beside it and press the chair's marker. */
+export async function sitAt(page: Page, centre: { x: number; z: number }): Promise<void> {
+  await standBy(page, centre);
+  await expect.poll(() => page.evaluate(() => window.__mansion.tableNames())).toContain("sit-0");
+  await page.waitForTimeout(400);
+  await click(page, "sit-0");
+  await expect.poll(() => tableOf(page).then((t) => t?.you)).toBe(0);
+  await page.waitForFunction(() => window.__mansion.local.getState().seated !== null);
+  // The view moves to the seat on the next frame.
+  await page.waitForTimeout(400);
+}
+
+/** Draws a few frames: what a moment on screen needs before it is looked at. */
+export const settle = (page: Page, ms = 400): Promise<void> => page.waitForTimeout(ms);
+
+/** The page at both window sizes the app is checked at, as client/.e2e-screens/<name>-<width>.png. */
+export async function shoot(page: Page, name: string): Promise<void> {
+  for (const [width, height] of [
+    [1280, 800],
+    [820, 533],
+  ]) {
+    await page.setViewportSize({ width, height });
+    await settle(page, 600);
+    await page.screenshot({ path: `client/.e2e-screens/${name}-${width}.png` });
+  }
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await settle(page);
 }

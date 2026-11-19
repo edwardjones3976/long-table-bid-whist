@@ -416,13 +416,15 @@ export class Rooms {
 
   // ---- poses ----
 
-  /** Unacknowledged, so a bad pose is dropped silently. */
-  pose(memberId: string | undefined, payload: { x?: unknown; z?: unknown; ry?: unknown }): void {
+  /** Unacknowledged, so a bad pose is dropped silently. The feet height `y` may be left out; given, it must be from -3 to 5. */
+  pose(memberId: string | undefined, payload: { x?: unknown; z?: unknown; ry?: unknown; y?: unknown }): void {
     const member = memberId === undefined ? undefined : this.members.get(memberId);
     const values = [payload.x, payload.z, payload.ry];
+    const { y } = payload;
     if (!member || !values.every((n) => typeof n === "number" && Number.isFinite(n) && Math.abs(n) <= POSE_LIMIT)) return;
+    if (y !== undefined && !(typeof y === "number" && y >= -3 && y <= 5)) return;
     const [x, z, ry] = values as number[];
-    member.pose = { x, z, ry };
+    member.pose = y === undefined ? { x, z, ry } : { x, z, ry, y };
     member.room.posesChanged = true;
   }
 

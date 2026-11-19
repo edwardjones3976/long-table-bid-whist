@@ -68,6 +68,8 @@ export interface Pose {
   z: number;
   /** Facing, radians about the vertical axis. */
   ry: number;
+  /** Feet height in metres above the house floor (a jump, a bench top, the pool); absent means on the floor. */
+  y?: number;
 }
 
 export interface MemberInfo {

@@ -21,6 +21,8 @@ export interface TableActions {
   /** As pick, but selecting an already picked single card plays or discards it. */
   activateCard: (cardId: string) => void;
   press: (button: TableButton) => Promise<void>;
+  /** True while a pressed button is still waiting for the server's answer: a second move made now would be dropped. */
+  busy: () => boolean;
 }
 
 const RELAY_GUARD_MS = 500;
@@ -76,5 +78,7 @@ export function useTableActions(tableId: TableId | null): TableActions {
     [press],
   );
 
-  return { description, error, pick, activateCard, press };
+  const busy = useCallback((): boolean => pending.current, []);
+
+  return { description, error, pick, activateCard, press, busy };
 }

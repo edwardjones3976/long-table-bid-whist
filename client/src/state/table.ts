@@ -5,6 +5,7 @@
  *   useActiveTableId()            the table I am at, else the table I am standing at or picked
  *   useTableDescription(tableId)  describeTable() for that table, recomputed when anything changes
  *   pickCard(description, id)     toggle a card of my hand in the shared selection
+ *   describeNow(tableId, picks)   describeTable() from the stores as they are this instant, with these cards picked
  *   runButton(button)             (net/run.ts) carry out a description button
  */
 import { useMemo } from "react";
@@ -41,6 +42,19 @@ export function useTableDescription(tableId: TableId | null): TableDescription |
     if (!room || !summary) return null;
     return describeTable({ summary, snapshot, meId: room.you, selection, elsewhere: mine !== null && mine !== tableId });
   }, [room, snapshot, mine, selection, tableId]);
+}
+
+/**
+ * The table as it would be described with `selection` picked, read from the stores right now.
+ * For a card dropped on the table: the button to press must be the one for that card, and the
+ * rendered description only knows the cards picked before the drop.
+ */
+export function describeNow(tableId: TableId, selection: readonly string[]): TableDescription | null {
+  const { room, table } = net.getState();
+  const summary = room?.tables.find((entry) => entry.id === tableId);
+  if (!room || !summary) return null;
+  const mine = myTable(net.getState())?.id ?? null;
+  return describeTable({ summary, snapshot: table, meId: room.you, selection, elsewhere: mine !== null && mine !== tableId });
 }
 
 export function pickCard(description: TableDescription, cardId: string): void {

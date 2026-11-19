@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import type { Pose } from "../../shared/protocol";
-import { closeAll, enter, open, problems } from "./helpers";
+import { closeAll, enter, open, openMenu, problems } from "./helpers";
 
 test.beforeEach(() => void (problems.length = 0));
 
@@ -60,6 +60,7 @@ test("movement: walking, teleport, theme switch and the Enter VR button", async 
   await page.screenshot({ path: "client/.e2e-screens/near-table.png" });
 
   // Theme.
+  await openMenu(page);
   await page.getByTestId("settings-toggle").click();
   await expect(page.locator(".mansion")).toHaveAttribute("data-theme", "july4");
   await page.getByTestId("theme").selectOption("newyear");
@@ -83,6 +84,7 @@ test("a browser with no WebXR at all still runs the room and explains the disabl
   await page.reload();
   await page.getByTestId("entry-name").fill("NoXR");
   await page.getByTestId("entry-create").click();
+  await openMenu(page);
   await expect(page.getByTestId("enter-vr")).toBeDisabled();
   await expect(page.getByTestId("enter-vr-reason")).toHaveText("This browser has no WebXR");
   // The scene still draws and the player still gets a pose.

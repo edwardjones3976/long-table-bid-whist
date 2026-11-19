@@ -51,7 +51,8 @@ type ReplyOf<K extends Acked> = Parameters<Parameters<ClientEvents[K]>[1]>[0];
 
 const TOKEN_KEY = "mansion.token";
 const ANSWER_TIMEOUT_MS = 8000;
-const POSE_INTERVAL_MS = 100;
+// A little under the 100 ms the app ticks at: a tick that comes a few milliseconds early must not be dropped, or every other pose is lost.
+const POSE_INTERVAL_MS = 80;
 
 // The token lives in sessionStorage so each tab is its own member and a reload keeps its place.
 const token = {
@@ -232,12 +233,13 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
       return reply;
     },
 
-    /** At most ten a second; extra calls are dropped. */
+    /** The app calls this ten times a second; a call sooner than POSE_INTERVAL_MS after the last is dropped. */
     sendPose(pose: Pose): void {
       const now = Date.now();
       if (!state.room || !socket?.connected || now - lastPoseAt < POSE_INTERVAL_MS) return;
       lastPoseAt = now;
-      socket.volatile.emit("pose", { x: pose.x, z: pose.z, ry: pose.ry });
+      // `y` (the feet height) is left out by JSON when the pose has none.
+      socket.volatile.emit("pose", { x: pose.x, z: pose.z, ry: pose.ry, y: pose.y });
     },
   };
 }
