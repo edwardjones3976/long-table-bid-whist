@@ -79,23 +79,6 @@ small {
   font-weight: 700;
 }
 
-.entry {
-  max-width: 28rem;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-}
-
-.entry form {
-  display: grid;
-  gap: 0.6rem;
-  margin-top: 1rem;
-}
-
-.entry label {
-  margin-top: 0.6rem;
-  font-weight: 700;
-}
-
 .mansion {
   position: fixed;
   inset: 0;

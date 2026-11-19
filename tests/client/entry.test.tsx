@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { Entry } from "../../client/src/hud/Entry";
+import { cleanCode, Entry } from "../../client/src/hud/Entry";
+import { net } from "../../client/src/net/store";
 import { local } from "../../client/src/state/local";
 
 afterEach(() => {
@@ -27,6 +28,45 @@ describe("entry screen", () => {
     fireEvent.change(screen.getByLabelText("Your name"), { target: { value: "Ann" } });
     fireEvent.click(screen.getByRole("button", { name: "Join with a code" }));
     expect(screen.getByRole("alert").textContent).toBe("Type the room code first.");
+  });
+
+  it("keeps only room-code characters, so a pasted code with a dash or lower case still works", () => {
+    expect(cleanCode("abcd-2345")).toBe("ABCD2345");
+    // 0, 1, I and O are left out of codes because they look alike.
+    expect(cleanCode(" o0I1 wxyz 9 ")).toBe("WXYZ9");
+    expect(cleanCode("ABCDEFGHJKLM")).toBe("ABCDEFGH");
+    render(<Entry />);
+    const field = screen.getByLabelText("Room code from a friend") as HTMLInputElement;
+    fireEvent.change(field, { target: { value: "zz-zz zzzz" } });
+    expect(field.value).toBe("ZZZZZZZZ");
+  });
+
+  it("makes joining the main button on an invite link, and hosting the main button otherwise", () => {
+    render(<Entry />);
+    expect(screen.queryByTestId("entry-invite")).toBeNull();
+    expect(screen.getByRole("button", { name: "Create a room" }).className).toBe("primary");
+    cleanup();
+    history.replaceState(null, "", "/?room=wxyz2345");
+    render(<Entry />);
+    expect(screen.getByTestId("entry-invite").textContent).toContain("WXYZ2345");
+    expect(screen.getByRole("button", { name: "Join with a code" }).className).toBe("primary");
+    expect(screen.getByRole("button", { name: "Create a room" }).className).toBe("");
+  });
+
+  it("remembers the name from the last visit", () => {
+    const saved = new Map([["mansion.name", "Bea"]]);
+    vi.stubGlobal("localStorage", { getItem: (key: string) => saved.get(key) ?? null, setItem: (key: string, value: string) => saved.set(key, value) });
+    render(<Entry />);
+    const field = screen.getByLabelText("Your name") as HTMLInputElement;
+    expect(field.value).toBe("Bea");
+    // Entering saves the name typed now.
+    const create = vi.spyOn(net, "createRoom").mockResolvedValue(undefined as never);
+    fireEvent.change(field, { target: { value: "Cy" } });
+    fireEvent.click(screen.getByRole("button", { name: "Create a room" }));
+    expect(create).toHaveBeenCalledWith("Cy");
+    expect(saved.get("mansion.name")).toBe("Cy");
+    create.mockRestore();
+    vi.unstubAllGlobals();
   });
 });
 
