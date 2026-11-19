@@ -61,6 +61,9 @@ interface Member {
   // shortcut: kept on the member, so leaving and rejoining the room starts both afresh; key them by a stable identity if that is abused.
   removals: number;
   benchedUntil: number;
+  /** When the member last came back after a dropped connection (Date.now() time), and the match whose one spared timeout they have used. */
+  backAt: number;
+  excused: Match | null;
 }
 
 interface Table {
@@ -87,6 +90,8 @@ interface Room {
 
 const SEATS: readonly Seat[] = [0, 1, 2, 3];
 const POSE_LIMIT = 200;
+/** Someone back from a dropped connection for less than this at their deadline counts as away. */
+const RETURN_GRACE_MS = 10_000;
 // shortcut: a global cap, so about 500 held-open sockets can block new rooms; upgrade to a per-IP room limit if that is abused.
 export const MAX_ROOMS = 500;
 const LOOK_RATE = { max: 5, ms: 10_000 };
@@ -259,6 +264,8 @@ export class Rooms {
       hold: null,
       removals: 0,
       benchedUntil: 0,
+      backAt: 0,
+      excused: null,
     };
     room.members.set(member.id, member);
     this.members.set(member.id, member);
@@ -277,7 +284,11 @@ export class Rooms {
   connected(memberId: string): void {
     const member = this.members.get(memberId);
     if (!member) return;
-    if (member.hold) clearTimeout(member.hold);
+    if (member.hold) {
+      // Only a member on the hold is coming back from a drop; a first connection or a replaced socket is not.
+      clearTimeout(member.hold);
+      member.backAt = Date.now();
+    }
     member.hold = null;
     member.connected = true;
     member.room.posesChanged = true;
@@ -470,8 +481,15 @@ export class Rooms {
     // Called from the match's timer, where nothing above could catch an error.
     try {
       const member = table.seats[seat]?.member;
-      // A person on the seat hold is covered by the bot but not counted against.
-      if (table.match !== match || !member?.connected) return;
+      // A finished match (the bot played the last card) or one no longer at this table: no strike, no removal.
+      if (table.match !== match || !member || match.endedAt !== null) return;
+      // Away at the deadline (offline, or back for under RETURN_GRACE_MS): covered by the bot without a strike, but
+      // only once a match, so a planned drop or a reload before every deadline cannot dodge every strike.
+      const away = !member.connected || Date.now() - member.backAt < RETURN_GRACE_MS;
+      if (away && member.excused !== match) {
+        member.excused = match;
+        return;
+      }
       table.strikes[seat] += 1;
       if (table.strikes[seat] < MAX_STRIKES) return this.sendTable(table);
       member.removals += 1;
@@ -619,8 +637,11 @@ export class Rooms {
       you,
       view: (match?.view(you) ?? null) as GameView | null,
       // Remaining rather than a deadline, so no client clock has to agree with this one.
+      // shortcut: hidden grace of up to 1 s so a press made in time on screen beats the server timer; covers a round trip up to that size, measure on Quest Wi-Fi if strikes still feel unfair.
       ...(match && {
-        clock: clock ? { seat: clock.seat, remainingMs: Math.max(0, clock.endsAt - Date.now()), totalMs: this.pace.turnMs! } : null,
+        clock: clock
+          ? { seat: clock.seat, remainingMs: Math.max(0, clock.endsAt - Date.now() - Math.min(1000, this.pace.turnMs! / 10)), totalMs: this.pace.turnMs! }
+          : null,
         strikes: [...table.strikes],
       }),
     };

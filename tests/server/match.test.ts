@@ -38,8 +38,11 @@ interface Count extends GameState {
   double: boolean;
 }
 
-/** A tiny game for exact timings: seats move in turn, every fourth move "finishes a trick", the game ends after `end` moves. */
-function counter(end = 8, double = false): Game<Count, unknown> {
+/**
+ * A tiny game for exact timings: seats move in turn, every fourth move "finishes a trick", the game ends after `end`
+ * moves. With `keep`, the seat that finishes a trick wins it and moves again, as a trick winner leads.
+ */
+function counter(end = 8, double = false, keep = false): Game<Count, unknown> {
   return {
     checkOptions: () => undefined,
     deck: () => [],
@@ -48,7 +51,7 @@ function counter(end = 8, double = false): Game<Count, unknown> {
     apply: (state, seat) => {
       if (seat !== state.turn || state.phase !== "play") throw new RuleError("Not your turn");
       const moves = state.moves + 1;
-      const pass = !state.double || moves % 2 === 0;
+      const pass = (!state.double || moves % 2 === 0) && !(keep && moves % 4 === 0);
       return { ...state, moves, turn: (pass ? (state.turn + 1) % 4 : state.turn) as Seat, phase: moves >= state.end ? "game-over" : "play" };
     },
     viewFor: (state, seat) => ({ phase: state.phase, turn: state.turn, hand: [], legal: seat === state.turn ? ["go"] : null }),
@@ -236,6 +239,18 @@ describe("turn clock", () => {
     expect(timeouts).toEqual([0]);
     expect((match.state as Count).turn).toBe(0);
     expect((match.state as Count).moves).toBe(8);
+  });
+
+  it("ends a timed-out turn at a won trick, so the lead after it is a decision of its own", () => {
+    const timeouts: Seat[] = [];
+    const match = new Match(counter(16, false, true), undefined, same, () => {}, { turnMs: 1000, onTimeout: (seat) => timeouts.push(seat) });
+    match.humans[3] = true;
+    match.start();
+    // Bots 0 to 2 move at once; seat 3's timed-out move finishes the trick and wins it.
+    vi.advanceTimersByTime(1000);
+    expect(timeouts).toEqual([3]);
+    expect((match.state as Count).moves).toBe(4);
+    expect(match.clock).toEqual({ seat: 3, endsAt: Date.now() + 1000 });
   });
 
   it("does not run while a bot plays, and stops for a person who leaves or a stopped match", () => {

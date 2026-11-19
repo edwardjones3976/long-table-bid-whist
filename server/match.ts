@@ -242,6 +242,8 @@ export class Match<S extends GameState = GameState, O = unknown> {
       for (let guard = 0; this.onTurn(seat); guard += 1) {
         if (guard >= 50) throw new Error("A timed-out turn did not end");
         this.botMove(seat);
+        // A won trick ends the timed-out turn: leading the next one is a new decision on its own clock (changed() armed it).
+        if (this.settling) break;
       }
     } catch (error) {
       console.error("timed-out turn failed:", error instanceof Error ? error.message : "unknown error");
