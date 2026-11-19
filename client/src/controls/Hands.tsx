@@ -10,6 +10,9 @@
  *                        through, so it never hides the card it holds.
  *   <ControllerHints/>   the few prompts that matter right now, floating over the left hand (words: hints.ts)
  *   aimSpace.left/right  each controller's pointing ray as an Object3D (looks down its -z), for the teleport arc
+ *   handSpace.left/right where each hand is: a controller's grip or a tracked hand's wrist, for the pose the room is
+ *                        sent (avatar/pose.ts). Each is a child of the XR origin; trust it only while it is visible
+ *                        (tracked) and still has a parent (a hand that went away leaves its last one behind).
  */
 import { useXRInputSourceState, XRSpace } from "@react-three/xr";
 import { useMemo, useSyncExternalStore } from "react";
@@ -20,6 +23,8 @@ import { makeTextTexture, textAspect } from "../ui/text";
 import { hintLines } from "./hints";
 
 export const aimSpace: { left: Object3D | null; right: Object3D | null } = { left: null, right: null };
+export const handSpace: { left: Object3D | null; right: Object3D | null } = { left: null, right: null };
+const holdSpace = (hand: "left" | "right") => (space: Object3D | null) => void (space && (handSpace[hand] = space));
 
 export const noRaycast = (): void => {};
 
@@ -49,7 +54,7 @@ function Controller({ hand }: { hand: "left" | "right" }) {
         }}
       />
       {gripSpace && (
-        <XRSpace space={gripSpace}>
+        <XRSpace space={gripSpace} ref={holdSpace(hand)}>
           <mesh geometry={bodyGeometry} material={holding ? holdingMaterial : handMaterial} position={[0, -0.01, 0.03]} scale={holding ? [1.3, 1.1, 0.72] : [1, 1, 1]} raycast={noRaycast} />
           {/* Closed across the front of the hand: told from the free hand by shape, not colour. */}
           {holding && <mesh geometry={barGeometry} material={holdingMaterial} position={[0, -0.005, -0.03]} raycast={noRaycast} />}
@@ -67,7 +72,7 @@ function TrackedHand({ hand }: { hand: "left" | "right" }) {
   return (
     <>
       {wrist && (
-        <XRSpace space={wrist}>
+        <XRSpace space={wrist} ref={holdSpace(hand)}>
           <mesh geometry={beadGeometry} material={handMaterial} scale={2} raycast={noRaycast} />
         </XRSpace>
       )}

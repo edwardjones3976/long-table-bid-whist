@@ -5,6 +5,7 @@
  *
  * Follows the local store: theme picks the sky, light, decor and fireworks;
  * comfort.reducedMotion freezes the fireworks and slows the countdown clock.
+ * The foyer mirror, and my own reflection in it, is world/Mirror.tsx.
  * Colliders are layout's business: this file only draws.
  */
 import { useFrame } from "@react-three/fiber";
@@ -15,6 +16,7 @@ import { canvasTexture, FONT_STACK, makeTextTexture, textAspect } from "../ui/te
 import { artwork, paintArtwork } from "./art";
 import { useMusic } from "./Music";
 import { Parts } from "./Parts";
+import { Mirror } from "./Mirror";
 import { ARTWORKS, CLOCK, decor, labels, rng, structure, type Artwork, type Label } from "./plan";
 import { BURST_LIFE, BURST_POINTS, burstDirections, burstFrame, burstPlan, countdownText, LOOKS, type Look } from "./theme";
 
@@ -198,6 +200,7 @@ export function World() {
       {ARTWORKS.map((art) => (
         <FramedArt key={art.id} art={art} />
       ))}
+      <Mirror />
       <Burst theme={theme} slot={0} still={still} />
       {!still && <Burst theme={theme} slot={1} still={false} />}
       {theme === "newyear" && <Countdown still={still} />}

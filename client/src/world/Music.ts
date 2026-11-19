@@ -172,16 +172,18 @@ export function useMusic(): void {
       master!.gain.value = comfort.musicVolume * 0.6;
       if (playerPose) {
         const { listener } = context;
+        // The ears turn with the head: in VR the pose's ry is the body, and the head's yaw is relative to it.
+        const yaw = playerPose.ry + (playerPose.head?.yaw ?? 0);
         // Older Firefox has only the method form.
         if (listener.positionX) {
           listener.positionX.value = playerPose.x;
           listener.positionY.value = 1.6;
           listener.positionZ.value = playerPose.z;
-          listener.forwardX.value = -Math.sin(playerPose.ry);
-          listener.forwardZ.value = -Math.cos(playerPose.ry);
+          listener.forwardX.value = -Math.sin(yaw);
+          listener.forwardZ.value = -Math.cos(yaw);
         } else {
           listener.setPosition(playerPose.x, 1.6, playerPose.z);
-          listener.setOrientation(-Math.sin(playerPose.ry), 0, -Math.cos(playerPose.ry), 0, 1, 0);
+          listener.setOrientation(-Math.sin(yaw), 0, -Math.cos(yaw), 0, 1, 0);
         }
       }
       if (!timer) {

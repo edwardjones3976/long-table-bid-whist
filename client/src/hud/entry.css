@@ -150,6 +150,28 @@
   width: 100%;
 }
 
+/* The optional look step under the name: one button, and a line saying it can be skipped. */
+.look-step {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.8rem;
+  margin-top: 0.7rem;
+}
+
+.look-step span {
+  flex: 1 1 14rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+/* My saved look, waving beside the room choices: small, and a swipe over it on a phone still scrolls the page. */
+.look-step .look-preview {
+  flex: 0 0 6rem;
+  min-height: 8rem;
+  touch-action: auto;
+}
+
 .ways {
   display: grid;
   grid-template-columns: 1fr 1fr;

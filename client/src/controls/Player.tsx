@@ -33,6 +33,7 @@ import {
   type Object3D,
 } from "three";
 import type { Pose } from "../../../shared/protocol";
+import { bodyYaw, poseToSend, type Tracked } from "../avatar/pose";
 import { local } from "../state/local";
 import { useActiveTableId, useTableDescription } from "../state/table";
 import { makeTextTexture, releaseTexture, textAspect } from "../ui/text";
@@ -40,7 +41,7 @@ import { ground, STEP_UP } from "../world/ground";
 import { EYE_HEIGHT_SEATED, EYE_HEIGHT_STANDING, spawn } from "../world/layout";
 import { activateAt, isInteractiveAt } from "./activate";
 import { cue } from "./feedback";
-import { aimSpace, ControllerHints, Hands, noRaycast } from "./Hands";
+import { aimSpace, ControllerHints, handSpace, Hands, noRaycast } from "./Hands";
 import { attachDesktop, desk, pollGamepad } from "./input";
 import {
   aimStep,
@@ -80,6 +81,7 @@ export const CONTROLS_HELP: { device: string; action: string; input: string }[] 
   { device: "Keyboard", action: "Teleport", input: "Hold T to aim at the floor, let go to go; Esc cancels" },
   { device: "Keyboard", action: "Press what the centre ring points at", input: "F or Enter" },
   { device: "Keyboard", action: "Recentre the view (re-align to your seat)", input: "R" },
+  { device: "Keyboard", action: "Play a gesture: wave, clap, laugh and more", input: "G opens the gestures, then 1 to 7; G or Esc closes them" },
   { device: "Keyboard", action: "Use the table panel (Menu > Settings > Text table panel; shown while a gamepad is connected)", input: "Tab to a button, Enter or Space to press" },
   { device: "Mouse", action: "Press in-world buttons", input: "Left click on them" },
   { device: "Mouse", action: "Carry a card", input: "Press on it, drag, and let go where it should go" },
@@ -108,6 +110,7 @@ export const CONTROLS_HELP: { device: string; action: string; input: string }[] 
   { device: "VR controllers", action: "Cancel: stop aiming, put back whatever either hand carries", input: "B (right controller)" },
   { device: "VR controllers", action: "Open or close the VR menu (comfort settings, main hand, music, theme, leave, exit VR)", input: "X (left controller; A when the main hand is left), or point at the Menu button beside you" },
   { device: "VR controllers", action: "Show or hide the hints by your left hand", input: "Y (left controller)" },
+  { device: "VR controllers", action: "Change your look, or play a gesture", input: "VR menu: Your look, Gestures; or the Your look plaque by the foyer mirror" },
   { device: "VR controllers", action: "Seated at a table: turn only (no walking, running, jumping or teleporting)", input: "Main-hand stick left / right" },
   { device: "VR controllers", action: "Recentre the seated view", input: "Click either stick" },
   { device: "VR controllers", action: "Swap hands", input: "VR menu or Settings: main hand" },
@@ -258,6 +261,8 @@ const makeRig = () => ({
   menuButton: false,
   cancelButton: false,
   sinceReport: 0,
+  /** In VR, the facing my body is sent with: it follows the head only once the head turns well away (avatar/pose.ts). */
+  facing: null as number | null,
   fade: 0,
   /** The last frame's time step, seconds: tests read speeds per step of the game, not per tick of the wall clock. */
   dt: 0,
@@ -273,6 +278,20 @@ function place(s: Rig, head: Pose, y = standing(ground, head.x, head.z) ?? 0): v
 }
 
 const origin = new Vector3();
+const handAt = new Vector3();
+
+/** In VR: the head's pitch and both hands in the world, from the camera and the hand spaces inside the origin. */
+function tracked(s: Rig, camera: Camera, headYaw: number): Tracked {
+  const q = camera.quaternion;
+  const hand = (space: Object3D | null) => {
+    // A hand that is not tracked now, or that went away (its space has no parent any more), is not sent.
+    if (!space?.visible || !space.parent) return null;
+    handAt.setFromMatrixPosition(space.matrix);
+    const { x, z } = headPose(s.rig, { x: handAt.x, z: handAt.z, ry: 0 });
+    return { x, y: s.y + handAt.y, z };
+  };
+  return { headYaw, pitch: Math.asin(Math.max(-1, Math.min(1, 2 * (q.w * q.x - q.y * q.z)))), hands: [hand(handSpace.left), hand(handSpace.right)] };
+}
 const direction = new Vector3();
 const bead = new Matrix4();
 
@@ -629,13 +648,20 @@ export function Player({ children }: { children?: ReactNode }) {
     // Ten times a second, and twice as often in the air so the pose the room is sent is never more than 50 ms old in a jump.
     // shortcut: the room itself still passes on ten poses a second (App's tick, the server's relay), so others see a jump as
     // about seven eased steps, peaking a few centimetres low. Raise both rates if a jump ever looks steppy.
+    // In VR the body faces the way the seat does, or follows the head once it turns well away, and the head and hands go too.
+    const y = sitting ? 0 : body.y;
+    rig.facing = !presenting ? null : sitting ? rig.seat!.ry : bodyYaw(rig.facing, head.ry);
+    // Seated, the others draw me in my chair whatever my head does, so my hands are measured from the seat too.
+    const feet = sitting ? rig.seat! : head;
+    const pose = poseToSend({ x: feet.x, y, z: feet.z }, rig.facing ?? head.ry, presenting ? tracked(rig, camera, head.ry) : undefined);
+    desk.pose = pose;
     rig.sinceReport += dt;
     if (rig.sinceReport >= (airborne ? 0.05 : 0.1)) {
       rig.sinceReport = 0;
-      const y = sitting ? 0 : body.y;
       const last = local.getState().playerPose;
-      if (!last || Math.abs(last.x - head.x) + Math.abs(last.z - head.z) + Math.abs((last.y ?? 0) - y) + Math.abs(Math.sin((last.ry - head.ry) / 2)) > 0.002) {
-        local.set({ playerPose: { x: head.x, z: head.z, ry: head.ry, y } });
+      // A tracked head and hands move all the time, so in VR every report goes.
+      if (presenting || !last || Math.abs(last.x - feet.x) + Math.abs(last.z - feet.z) + Math.abs((last.y ?? 0) - y) + Math.abs(Math.sin((last.ry - head.ry) / 2)) > 0.002) {
+        local.set({ playerPose: pose });
       }
     }
 

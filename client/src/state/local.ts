@@ -45,6 +45,12 @@ export interface Comfort {
   haptics: boolean;
   /** Short synthesized sounds for the same moments. */
   sounds: boolean;
+  /** Draw the other people as simple shapes, for comfort or a slow device (world/Avatars.tsx). */
+  simpleShapes: boolean;
+  /** Do not play the other people's gestures. */
+  hideGestures: boolean;
+  /** The others' automatic end-of-hand reactions at my table (avatar/reactions.ts). */
+  reactions: boolean;
 }
 
 export interface LocalState {
@@ -77,6 +83,9 @@ export const DEFAULT_COMFORT: Comfort = {
   jump: true,
   haptics: true,
   sounds: true,
+  simpleShapes: false,
+  hideGestures: false,
+  reactions: true,
 };
 
 function load(): Pick<LocalState, "theme" | "comfort"> {

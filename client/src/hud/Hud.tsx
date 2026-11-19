@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { GesturePicker } from "../avatar/GesturePicker";
 import { CONTROLS_HELP } from "../controls/Player";
 import { mySeat, myTable, net, useStore, type Connection } from "../net/store";
 import { local, useLocal, type Comfort, type Theme } from "../state/local";
 import { useTableDescription } from "../state/table";
 import { enterVR, vrBlocker } from "../state/xr";
 import { TablePicker } from "../tableui/TablePanelDom";
+import { LookEditor } from "./look/LookEditor";
 
 // A different shape per state, so the state never depends on colour.
 export const CONNECTION: Record<Connection, [shape: string, words: string]> = {
@@ -96,6 +98,9 @@ function Settings() {
       </label>
       <Check label="Reduce motion" value={comfort.reducedMotion} onChange={(reducedMotion) => set({ reducedMotion })} />
       <Check label="Text table panel" value={comfort.textPanel} onChange={(textPanel) => set({ textPanel })} />
+      <Check label="Show others as simple shapes" value={comfort.simpleShapes} onChange={(simpleShapes) => set({ simpleShapes })} />
+      <Check label="Hide gestures" value={comfort.hideGestures} onChange={(hideGestures) => set({ hideGestures })} />
+      <Check label="Reactions at the table" value={comfort.reactions} onChange={(reactions) => set({ reactions })} />
       <label>
         Text and button size{" "}
         <input
@@ -171,7 +176,21 @@ export function Hud({ tables }: { tables: boolean }) {
   // Undefined until the check answers; null means VR can start.
   const [vrBlocked, setVrBlocked] = useState<string | null | undefined>(undefined);
   const [vrError, setVrError] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [picking, setPicking] = useState(false);
   const dialog = useRef<HTMLDivElement>(null);
+  const lookButton = useRef<HTMLButtonElement>(null);
+
+  // G opens and closes the gesture picker, unless typing (or the look editor, which keeps its keys to itself).
+  useEffect(() => {
+    const keys = (event: KeyboardEvent): void => {
+      const field = event.target instanceof HTMLElement && /^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName);
+      if (event.code !== "KeyG" || event.repeat || field || event.ctrlKey || event.metaKey || event.altKey) return;
+      setPicking((open) => !open);
+    };
+    window.addEventListener("keydown", keys);
+    return () => window.removeEventListener("keydown", keys);
+  }, []);
 
   useEffect(() => {
     let live = true;
@@ -237,6 +256,12 @@ export function Hud({ tables }: { tables: boolean }) {
       <div id="hud-menu" className="hud-menu" role="dialog" aria-label="Menu" tabIndex={-1} hidden={!menu} ref={dialog}>
         <div className="buttons">
           <Invite code={code} />
+          <button data-testid="hud-look" ref={lookButton} onClick={() => setEditing(true)}>
+            Your look
+          </button>
+          <button data-testid="hud-gestures" aria-expanded={picking} aria-keyshortcuts="G" onClick={() => setPicking(!picking)}>
+            Gestures
+          </button>
           <span className="action">
             <button data-testid="enter-vr" disabled={vrBlocked !== null} onClick={() => void enterVR().then(setVrError)}>
               Enter VR
@@ -260,6 +285,24 @@ export function Hud({ tables }: { tables: boolean }) {
         </p>
         {tables && <TablePicker heading="Tables" className="menu-tables" />}
       </div>
+      {picking && (
+        <GesturePicker
+          onClose={() => {
+            setPicking(false);
+            // As the Menu's Escape does: nothing keeps focus, so the next Space is a jump.
+            (document.activeElement as HTMLElement | null)?.blur();
+          }}
+        />
+      )}
+      {editing && (
+        <LookEditor
+          onClose={() => {
+            setEditing(false);
+            // Back where it was opened: the Menu, still open.
+            lookButton.current?.focus();
+          }}
+        />
+      )}
     </header>
   );
 }

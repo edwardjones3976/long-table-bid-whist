@@ -35,7 +35,7 @@
 <h1>The Mansion: Tonk, Spades and Bid Whist</h1>
 <p class="muted">A page for people, written from the code as it stands on branch <code>claude/mansion-multiplayer-server</code>. Anything the code could not confirm is marked "not verified".</p>
 <nav aria-label="Sections">
-  <a href="#what">1 What it is</a><a href="#commands">2 Commands</a><a href="#architecture">3 Architecture</a><a href="#rules">4 Rules</a><a href="#controls">5 Controls</a><a href="#world">6 The world</a><a href="#design">7 Design</a><a href="#reference">8 Reference apps</a><a href="#tests">9 Tests and limits</a><a href="#headset">10 Headset checks</a>
+  <a href="#what">1 What it is</a><a href="#commands">2 Commands</a><a href="#architecture">3 Architecture</a><a href="#rules">4 Rules</a><a href="#controls">5 Controls</a><a href="#world">6 The world</a><a href="#avatars">7 Avatars</a><a href="#design">8 Design</a><a href="#reference">9 Reference apps</a><a href="#tests">10 Tests and limits</a><a href="#headset">11 Headset checks</a>
 </nav>
 
 <h2 id="what">1. What it is and what was built</h2>
@@ -49,16 +49,18 @@ server/match.ts       one match: revision counter, action-id rules, bot loop
 server/shuffle.ts     Fisher-Yates shuffle on crypto.getRandomValues
 server/games/         tonk.ts, spades.ts, bidwhist.ts (pure rules) and a bot for each
 shared/protocol.ts    the wire contract: events, error codes, snapshot types, limits
+shared/avatar.ts      the look: every option, starting looks, cleanLook, gestures, VR head and hand limits
 shared/cards.ts       the card and deck types
 client/               the browser app (React 19, three 0.165, @react-three/fiber 9, @react-three/xr 6)
   src/net/            socket connection and store
   src/state/          local settings, table description, XR session
-  src/world/          mansion layout, plan, themes, art, music
+  src/world/          mansion layout, plan, themes, art, music, the other people, the foyer mirror
+  src/avatar/         avatar bodies, faces, hair and clothes made in code; motion, gestures, the VR look panel
   src/controls/       keyboard, mouse, gamepad, VR controllers, movement maths
   src/tableui/        in-world table interface and the matching HTML panel
   src/ui/             button and house-rule descriptions, card and text drawing
-  src/hud/            entry screen, top bar, settings, controls help
-tests/server, tests/client   Vitest suites for the new app
+  src/hud/            entry screen, top bar, settings, controls help, the look editor (hud/look/)
+tests/server, tests/client, tests/avatar   Vitest suites for the new app
 tests/e2e             Playwright browser tests (files end in .e2e.ts)
 src/, index.html      legacy single-player prototype, untouched</code></pre>
 
@@ -116,18 +118,22 @@ npm run test:e2e           # builds first, then runs Playwright</code></pre>
 <p>Every client event except <code>pose</code> is answered by an acknowledgement: either <code>{ok:true,...}</code> or <code>{ok:false, error, message}</code>.</p>
 <div class="wrap"><table>
 <tr><th>Direction</th><th>Event</th><th>Meaning</th></tr>
-<tr><td>client to server</td><td><code>room:create</code> / <code>room:join</code></td><td>Make a room, or join by code. Returns code, member id and token.</td></tr>
+<tr><td>client to server</td><td><code>room:create</code> / <code>room:join</code></td><td>Make a room, or join by code, with an optional look. Returns code, member id and token.</td></tr>
 <tr><td>client to server</td><td><code>room:resume</code> / <code>room:leave</code></td><td>Come back with the token; leave the room.</td></tr>
-<tr><td>client to server</td><td><code>pose</code></td><td>My position and facing (not acknowledged).</td></tr>
+<tr><td>client to server</td><td><code>pose</code></td><td>My position and facing, and in VR my head and hands (not acknowledged).</td></tr>
+<tr><td>client to server</td><td><code>look</code></td><td>Change my look (section 7).</td></tr>
+<tr><td>client to server</td><td><code>gesture</code></td><td>Play a gesture for the others in the room.</td></tr>
 <tr><td>client to server</td><td><code>table:sit</code> / <code>table:stand</code></td><td>Sit as player (any seat or a chosen one) or host; stand up. One table at a time.</td></tr>
 <tr><td>client to server</td><td><code>table:ready</code></td><td>Set my ready flag.</td></tr>
 <tr><td>client to server</td><td><code>table:options</code></td><td>Manager sets house rules before the match; clears everyone's ready flag.</td></tr>
 <tr><td>client to server</td><td><code>table:start</code> / <code>table:reset</code></td><td>Manager starts the match; manager clears the match back to the lobby. Used on a match still in play, it also takes the other seated players off the table, so a table stuck on an absent player can be freed.</td></tr>
 <tr><td>client to server</td><td><code>table:action</code></td><td>A game action, or <code>next-hand</code>, with action id and expected revision.</td></tr>
-<tr><td>server to client</td><td><code>room</code></td><td>Public room snapshot: members and the six tables with seats, status, house rules and, while a match exists, its running time (<code>matchTime</code>).</td></tr>
+<tr><td>server to client</td><td><code>room</code></td><td>Public room snapshot: members (each with their look) and the six tables with seats, status, house rules and, while a match exists, its running time (<code>matchTime</code>).</td></tr>
 <tr><td>server to client</td><td><code>table</code></td><td>Your private table snapshot: revision, your seat, your view, and during a match the turn clock (<code>clock</code>: seat, time left, time per decision) and each seat's <code>strikes</code>.</td></tr>
 <tr><td>server to client</td><td><code>table:left</code></td><td>You are no longer at that table; <code>reason</code> says why when the server took you off (time ran out on 3 turns).</td></tr>
 <tr><td>server to client</td><td><code>poses</code></td><td>Where the other members' avatars are.</td></tr>
+<tr><td>server to client</td><td><code>gesture</code></td><td>Another member played a gesture: member id and kind.</td></tr>
+<tr><td>server to client</td><td><code>look</code></td><td>A member changed their look: member id and the cleaned look, to everyone in the room (the one who changed it too). Only that one look is sent, not a room snapshot.</td></tr>
 </table></div>
 <p>Table status is one of <code>available</code>, <code>lobby</code>, <code>playing</code>, <code>results</code>. Error codes include <code>stale-revision</code>, <code>action-id-reused</code>, <code>illegal</code>, <code>not-manager</code>, <code>room-full</code>, <code>bad-token</code>, <code>rate-limited</code> and <code>benched</code> (full list in <code>shared/protocol.ts</code>).</p>
 
@@ -216,6 +222,9 @@ npm run test:e2e           # builds first, then runs Playwright</code></pre>
 <tr><td>Sound effects</td><td>on</td><td>A short tone for grab, place, refuse, landing and splash.</td></tr>
 <tr><td>Main hand</td><td>right</td><td>or left; also in the VR menu. Its stick turns and aims, the other stick walks, and its lower face button jumps.</td></tr>
 <tr><td>Reduce motion</td><td>follows the browser's reduced-motion setting at first run</td><td>Freezes the fireworks to one still burst and makes the New Year clock show hours and minutes only. At the table, cards go to their places at once instead of gliding, and a card taken with the trigger is in the hand at once.</td></tr>
+<tr><td>Show others as simple shapes</td><td>off</td><td>Draws the other people as plain rounded shapes in their own colours: calmer to look at, and lighter for a slow device.</td></tr>
+<tr><td>Hide gestures</td><td>off</td><td>The others' gestures do not play on my screen.</td></tr>
+<tr><td>Reactions at the table</td><td>on</td><td>At the end of each hand the others at my table clap, grin, shrug or laugh. Off: they stay still.</td></tr>
 <tr><td>Text and button size</td><td>100%</td><td>80% to 160%; scales the page and the in-world panels.</td></tr>
 <tr><td>Music, Music volume</td><td>on, 50%</td><td>Music starts after your first tap or key press, and is louder near the music booth.</td></tr>
 </table>
@@ -247,7 +256,55 @@ npm run test:e2e           # builds first, then runs Playwright</code></pre>
 <li><strong>Two themes</strong>, switched in Settings. <em>Fourth of July</em>: daytime sky, bunting, star lanterns, a slower fireworks show. <em>New Year's Eve</em>: night sky with stars, streamers, balloon clusters, warm lights, a faster fireworks show and a clock counting down to your local midnight. The layout is identical in both.</li>
 </ul>
 
-<h2 id="design">7. Original design decisions and cultural direction</h2>
+<h2 id="avatars">7. Avatars</h2>
+<p>Every person in a room is drawn in a look of their own: a stylized figure about five heads tall, made entirely in code, with a name plate in their chosen colour. Bots stay steel-blue robots, and a person can never look like one. Avatars never take part in the rules: the server alone decides cards, turns and scores, and an avatar never shows anything a player could not already see.</p>
+
+<h3>What players can change</h3>
+<table>
+<tr><th>Part</th><th>Choices</th></tr>
+<tr><td>Body</td><td>Build (slender, medium, broad, round), height (5 steps, about 1.5 m to 1.8 m) and skin (14 tones from light to deep, each warm, neutral or cool: 42 in all, the deep end as rich as the light end).</td></tr>
+<tr><td>Face</td><td>Eye shape and colour, brow shape, brow and beard colour, nose, mouth and lips, ears, marks (freckles, a beauty mark, a vitiligo pattern, laugh lines), facial hair (none or 10 styles), eye liner, lip colour and cheek colour.</td></tr>
+<tr><td>Hair</td><td>24 styles, among them short coils, three sizes of afro, a twist-out, locs, box braids, cornrows, fades, 360 waves, finger waves, a silk press, a curly bob, a ponytail, a bun and bald; 10 natural and 8 bright colours. Head coverings: hijab, turban, headwrap, durag, crown hat or beanie, in any garment colour. A covering tucks the hair under it.</td></tr>
+<tr><td>Outfit</td><td>12 tops and 7 bottoms, or a dress, jumpsuit or suit; two colours each from 25 garment colours. 6 kinds of shoes with their own colour.</td></tr>
+<tr><td>Extras</td><td>Up to 3 accessories at once (5 kinds of glasses, stud, hoop or drop earrings, a necklace, a watch, bracelets, a cap, a bucket hat or a fedora; one pair of glasses, one pair of earrings and one hat at a time), hearing aids and a cochlear-implant processor, and the name plate's colour and symbol (spade, heart, diamond, club, star or none).</td></tr>
+</table>
+<p>There are six starting looks, shown side by side as equals, and Shuffle (the whole look, or one tab). A first visit gets one of the starting looks at random. The look is saved in the browser (<code>localStorage</code>, key <code>mansion.look</code>) and goes with you into every room.</p>
+
+<h3>Where the editor is</h3>
+<ul>
+<li><strong>Entry screen:</strong> the <strong>Your look</strong> button under your name. It is optional; skipping it keeps your saved look. Your saved look waves beside it.</li>
+<li><strong>In a room:</strong> Menu, <strong>Your look</strong>. A saved change reaches everyone in the room at once.</li>
+<li><strong>In VR:</strong> Your look in the VR menu, or the "Your look" plaque beside the foyer mirror. The panel shows one choice at a time with Previous and Next; near the mirror the reflection is its preview, elsewhere a small figure of the new look stands in front of you.</li>
+</ul>
+<p>The desktop and phone editor has tabs Body, Face, Hair, Outfit, Shoes and Extras, and a turning preview with Face and Full zoom and Day and Night light. Pointing at a choice (or moving to it with the arrow keys) tries it on the preview; a click, Enter or Space chooses it. Hold <strong>Before</strong> to see the saved look (Enter, or a click from a screen reader or voice control, switches it on and off). Undo and Redo keep 50 steps. Save keeps the look; Cancel or Escape throws the changes away. Every choice is a labelled button; a colour's name shows in its group's heading while it is pointed at or focused. Under the tabs a line says what each choice did, or why it could not be made (a hat over a head covering, or earrings and a necklace hidden under a hijab), and a screen reader hears it each time. At a table, the editor's heading keeps the table's status line and, on my turn, my seconds left. On a short window the editor scrolls as a whole.</p>
+
+<h3>Gestures</h3>
+<p>Seven friendly gestures: Wave, Clap, Laugh, Bow, Card slap, Boston celebration and Head shake. On a desktop press <strong>G</strong> and then 1 to 7, or use Menu, Gestures; in VR the VR menu has a wheel of them. One can be played every 2 seconds. Everyone else in the room sees it, and you see your own in the foyer mirror. At the end of each hand the others at your table also react on their own (winners clap or grin, the rest shrug or laugh); those reactions are drawn on each screen and never sent over the network.</p>
+
+<h3>The foyer mirror</h3>
+<p>A tall mirror in a dark wood frame with a gold rim hangs on the foyer's west wall, facing across the room. Within 10 m it shows the room and you in it: your saved look (or the one you are editing in VR), at your pose, playing your gestures. Your own figure is drawn only in the reflection. Further away it is plain glass.</p>
+
+<h3>What others see</h3>
+<ul>
+<li><strong>Detail.</strong> Full detail within about 8 m and a lighter figure beyond (a half-metre band keeps it from flickering). Beyond 15 m, or out of view and out of the foyer mirror's reflection, a figure holds still. With "Show others as simple shapes" everyone is drawn as plain shapes.</li>
+<li><strong>Moving.</strong> People walk, run, tuck their knees in a jump, and float in the deep end. A VR player's head turns and their hands follow their controllers or tracked hands.</li>
+<li><strong>At a table.</strong> People sit in their seat, holding a fan of card backs (as many cards as their public hand count at your table, five at other tables). At your table they glance at whoever has the turn and lean in when they play. Cards in hand are only ever backs.</li>
+<li><strong>Not solid.</strong> Avatars never block walking and are ignored by clicks and pointer rays.</li>
+</ul>
+
+<h3>The network record</h3>
+<p>A look is a flat record of option ids, one per field (<code>Look</code> in <code>shared/avatar.ts</code>, version <code>LOOK_VERSION</code> 1). Each member in the <code>room</code> snapshot carries one. <code>room:create</code> and <code>room:join</code> take an optional look, <code>look</code> changes it (everyone gets the server's <code>look</code> event with that one look), <code>gesture</code> plays one, and the server's <code>gesture</code> event tells the others. A VR <code>pose</code> may add <code>head</code> (pitch and yaw relative to the body) and <code>hands</code> (each a point relative to the feet and the body's facing). Option ids are never renamed or reused, so an old saved look still loads.</p>
+
+<h3>The server's checks</h3>
+<ul>
+<li>Every look goes through <code>cleanLook</code>, on the server and in the browser: only known fields and known option ids are kept, anything missing or unknown is filled from a fixed fallback, accessories are capped at 3 (and one of each kind), a hat that would pass through a head covering is dropped, and it never throws.</li>
+<li>A look change (the <code>look</code> event) over 4 KB of JSON, or not an object, is refused (<code>bad-request</code>); more than 5 changes in 10 seconds are refused (<code>rate-limited</code>). On <code>room:create</code> and <code>room:join</code> a look is only cleaned, and one that is not an object gets a starting look by arrival order, as does anyone who brings no look. A look refused for speed, or never answered, is sent again by the browser once, 10 seconds later.</li>
+<li>Each browser cleans every look it receives too, so a look with an option a newer server knows and this page does not is drawn with that one field filled from the fallback.</li>
+<li>An unknown gesture is refused; more than 3 in 4 seconds are refused. A gesture goes only to the other connected members of the same room, never back to the one who played it.</li>
+<li>VR head angles are clamped to 1.2 radians either way; hands to 1.2 m sideways and forward and 0 to 2.4 m up. A malformed head or hand is left out without dropping the rest of the pose.</li>
+</ul>
+
+<h2 id="design">8. Original design decisions and the feel of the house</h2>
 <p><strong>Everything is made in this project.</strong> All visuals are procedural geometry (boxes, cylinders, balls, cones) and canvas-drawn art. The two gallery artworks are generated from fixed seeds in <code>client/src/world/art.ts</code>: abstract shapes, no figures, faces, text or copied images. The music is an original WebAudio groove written in code (<code>client/src/world/Music.ts</code>), one feel per theme (about 92 beats a minute with a swing for the day, 112 for the night). Fonts are the system fonts. The client folder holds no images, audio files or fonts; its only assets are two small controller-profile files so the app does not fetch models from a CDN. No third-party art, audio, fonts or brand marks are used.</p>
 <p><strong>What the spaces are meant to evoke.</strong> The aim is the feel of a family gathering and a house party, described only by what is built:</p>
 <ul>
@@ -257,9 +314,9 @@ npm run test:e2e           # builds first, then runs Playwright</code></pre>
 <li>Card-table lounges, one for each of Tonk, Spades and Bid Whist, with sofas, lamps and shelves, so the games sit alongside the rest of the party rather than apart from it.</li>
 <li>The "gathering" artwork shows rings of seats around a shared table; the "rhythm" artwork is a patchwork crossed by a line of beats, for the music corner.</li>
 </ul>
-<p>Spades, Bid Whist and Tonk are treated as house-party games people play together. Other people appear as a plain capsule body with a nose showing which way they face and a name plate; nothing is drawn to stand for any group of people. House rules are explicit settings because families play these games differently.</p>
+<p>Spades, Bid Whist and Tonk are treated as house-party games people play together. Other people appear in the look each of them chose (section 7) with a name plate; nobody is a default person, and the six starting looks are shown side by side as equals. House rules are explicit settings because families play these games differently.</p>
 
-<h2 id="reference">8. Reference-app observations</h2>
+<h2 id="reference">9. Reference-app observations</h2>
 <div class="note">Only the three public Google Play listings were read, on 2026-11-18, through a page reader. No app was installed, run, emulated, decompiled or inspected, and no code, art, names, layout or branding was taken. The notes below are listing descriptions only.</div>
 <table>
 <tr><th>Listing</th><th>What the listing advertises</th><th>Taken at a high level</th><th>Not taken</th></tr>
@@ -267,31 +324,33 @@ npm run test:e2e           # builds first, then runs Playwright</code></pre>
 <tr><td>"Bid Whist Plus" (Zynga; package net.peakgames.bidwhist)</td><td>Online partnership play, choice of rule type and final point, private or invite-only tables, friends and chat, coins and bets.</td><td>Private tables by invite, and a selectable target score.</td><td>Coins, betting, chat.</td></tr>
 <tr><td>"Play Tonk : Tunk Card Game" (Artoon Games; package com.multiplayertonk)</td><td>Real-time multiplayer, spreads (sets and sequences), hitting on spreads, Knock and No Knock modes, voice chat, chips, mini-games.</td><td>Knocking as a table option.</td><td>Chips, mini-games, voice chat.</td></tr>
 </table>
-<p><strong>In-VR menu.</strong> Inside a headset the 2D overlay is hidden, so a menu travels with you: press X on the left controller (A on the right one when your main hand is left), or point at (or pinch) the small Menu button beside you. It shows the connection state and room code and offers movement (walk and teleport, or teleport only), turning (snap or smooth), main hand (which stick walks and which turns, and which hand jumps), vignette, music, theme, leave table, leave room and exit VR. Leave table and New game ignore a press made within half a second of pressing a different button, so a double press cannot land on them.</p>
+<p><strong>In-VR menu.</strong> Inside a headset the 2D overlay is hidden, so a menu travels with you: press X on the left controller (A on the right one when your main hand is left), or point at (or pinch) the small Menu button beside you. It shows the connection state and room code and offers your look, gestures, movement (walk and teleport, or teleport only), turning (snap or smooth), main hand (which stick walks and which turns, and which hand jumps), vignette, music, theme, leave table, leave room and exit VR. Leave table and New game ignore a press made within half a second of pressing a different button, so a double press cannot land on them.</p>
 <p><strong>How this app differs:</strong> a walkable 3D mansion with physical tables, WebXR support, an optional human dealer/host, no currency, no accounts and no ads.</p>
 
-<h2 id="tests">9. Tests and known limits</h2>
+<h2 id="tests">10. Tests and known limits</h2>
 <table>
 <tr><th>Suite</th><th>What it covers (from the test names)</th></tr>
-<tr><td><code>tests/server</code> (Vitest)</td><td>Rules for each game: deals, house-rule validation, bidding, tricks, melds, scoring, game end, input purity, per-seat views, bots playing whole games. Sockets: creating and joining rooms, the 32-member cap, rate limiting, poses, seating, manager-only start, action ids and stale revisions, full games with and without bots, reconnecting, bot takeover after the hold, serving the built client.</td></tr>
+<tr><td><code>tests/server</code> (Vitest)</td><td>Rules for each game: deals, house-rule validation, bidding, tricks, melds, scoring, game end, input purity, per-seat views, bots playing whole games. Sockets: creating and joining rooms, the 32-member cap, rate limiting, poses, seating, manager-only start, action ids and stale revisions, full games with and without bots, reconnecting, bot takeover after the hold, serving the built client. Looks, gestures and a VR player's head and hands: cleaning, limits, the look kept through a resume and a look change leaving a running table alone.</td></tr>
+<tr><td><code>tests/avatar</code> (Vitest)</td><td>The look catalog and <code>cleanLook</code>, starting looks and Shuffle; the figure builder at every option and detail, its triangle budgets (also on 2,000 random looks) and geometry kept and freed; hair, head coverings and accessories; motion, reaching for VR hands, reactions at the end of a hand; the look editor and its keyboard and screen-reader behaviour; the VR draft, the gesture picker and comfort switches; look storage in the browser.</td></tr>
 <tr><td><code>tests/client</code> (Vitest)</td><td>Table buttons and house-rule cycling for each game, reticle and gamepad activation, movement and collision maths, teleport, snap turn, the entry screen and saved settings, the net store (resume, token, offline), the HTML table panel, the world plan, themes, art, music patterns and the mansion layout.</td></tr>
-<tr><td><code>tests/e2e</code> (Playwright)</td><td>Real browser pages against a real server: four seated pages and a host play each game to the results; room entry and wrong code; reconnect after a reload; a bot taking over a left seat; movement, teleport, theme switch and the Enter VR button; a browser with no WebXR; a tour of the house in both themes; cards dragged with a real mouse at the 3D table with the text panel off; walking, running, jumping onto and off a bench, the pool and teleport refusals with the real keyboard; and an emulated headset with two controllers (section 10 lists what those tests cover).</td></tr>
+<tr><td><code>tests/e2e</code> (Playwright)</td><td>Real browser pages against a real server: four seated pages and a host play each game to the results; room entry and wrong code; reconnect after a reload; a bot taking over a left seat; movement, teleport, theme switch and the Enter VR button; a browser with no WebXR; a tour of the house in both themes; cards dragged with a real mouse at the 3D table with the text panel off; walking, running, jumping onto and off a bench, the pool and teleport refusals with the real keyboard; a look set in the editor reaching another page, changing live, waving and turning into simple shapes, my own figure only in the mirror's reflection, a table of four seated people holding card backs, and in an emulated headset the look panel saving a look another page draws and the gesture wheel's wave; and an emulated headset with two controllers (section 11 lists what those tests cover).</td></tr>
 <tr><td>Other folders under <code>tests/</code></td><td>Suites for the legacy prototype (and deploy and governance checks). <code>npm test</code> runs them too. Not described here.</td></tr>
 </table>
 
 <h3>Known limits and not verified</h3>
 <ul>
-<li>Never run on a physical headset. The VR path was checked only by the emulated-headset browser tests and by reading the code; section 10 lists what still needs a headset.</li>
+<li>Never run on a physical headset. The VR path was checked only by the emulated-headset browser tests and by reading the code; section 11 lists what still needs a headset.</li>
+<li>Avatars were looked at only in a desktop browser on software graphics (the browser tests' screenshots), never in a headset. A near figure is 39 to 43 meshes and a far one still about 36 (distance cuts its triangles about five times, not its meshes); only Show others as simple shapes (2 meshes each) cuts the draw calls. So 32 people are well over the design's 100 draw calls at any distance, and the mirror draws the scene a second time. Neither has been measured on a headset.</li>
 <li>No voice or text chat.</li>
-<li>No turn timers; a player who stops acting holds up the table until they leave or their 60-second hold ends after a disconnect.</li>
+<li>A person who stops acting holds up the table for at most the turn clock (45 seconds by default): a bot plays the turn and gives a strike, and three strikes in a match take the person off the table. A second removal for time in the same room benches them for 10 minutes. A timeout while their seat is on its 60-second disconnect hold gives no strike.</li>
 <li>Rooms live in server memory and vanish when the server restarts.</li>
 <li>The music has not been listened to by a person.</li>
 <li>Bots are basic. Each bot move comes 1.5 s after the last change, and 3 s after a finished trick, so players can follow every bot card; <code>BOT_DELAY_MS</code> (0 to 10000) sets the gap (the trick pause is twice it), and 0 makes bots instant.</li>
 <li>No review yet by a different AI provider.</li>
-<li>Last run on 2026-11-18, on software graphics: <code>npm run typecheck</code> clean, <code>npm test</code> 474 of 474 passed, <code>npm run test:e2e</code> 27 of 27 passed, and the seven emulated-headset tests passed three runs in a row. The suite descriptions above come from the test names.</li>
+<li>Last run on 2026-11-19, on software graphics, with the avatars: <code>npm run typecheck</code> clean, <code>npm test</code> 664 of 664 passed, <code>npm run test:e2e</code> 31 of 31 passed (once). The emulated-headset tests were not repeated three times on this run. The suite descriptions above come from the test names.</li>
 </ul>
 
-<h2 id="headset">10. Checks to do in a real headset</h2>
+<h2 id="headset">11. Checks to do in a real headset</h2>
 <p>No physical headset was used to build or test this app. The browser tests drive an emulated headset (the iwer WebXR emulator in <code>node_modules</code>: a Meta Quest 3 with two Touch Plus controllers, or tracked hands). They show what the code does with each button, stick and pose, read back from the server and from the app's own test hooks. They cannot show how any of it feels. A person with a headset should do the steps below with both controllers, in order, and note the number of any step that does not do what it says.</p>
 <p>Before you start: join a room on the headset (section 2, "Headset on the same network") and press Enter VR. Keep the default settings: Walk and teleport, snap turn, vignette, jumping, vibration and sound effects on, right hand as main hand.</p>
 
@@ -341,6 +400,17 @@ npm run test:e2e           # builds first, then runs Playwright</code></pre>
 <ol start="30">
 <li>Put the controllers down and hold up your hands. Point at the Menu button beside you and pinch, with the left hand and then the right. <em>The menu opens and closes; a pinch on a setting changes it.</em></li>
 <li>At a table, pinch a card in your hand with your fingertips on it and move. <em>The card follows the pinching hand; let go over a drop zone, it is placed; elsewhere, it goes back. There is no buzz.</em></li>
+</ol>
+
+<h3>Looks, gestures and the mirror</h3>
+<p>These need a second person in the room, on a desktop or another headset, to watch.</p>
+<ol start="32">
+<li>Standing, press X, then Your look. Using only the right hand, step through a field with Next and Previous, change tab, and press Save. <em>The panel is at arm's length below eye level, every button is easy to hit, and the other person sees the new look at once.</em> Do it again with only the left hand.</li>
+<li>Seated at a table, open Your look. <em>Every row of the panel, Save included, is in front of the table's edge and none is hidden in the table.</em> Press X and Your look again while editing. <em>Your changes are still there.</em></li>
+<li>Press X, Gestures, then each of the seven. <em>The other person sees each one play, and the buttons wait about 2 seconds between gestures.</em></li>
+<li>Walk to the foyer mirror and press the "Your look" plaque beside it. <em>The panel opens; the reflection shows the look being edited as you change it.</em></li>
+<li>Stand in front of the mirror, turn your head and move your hands. <em>Your reflection's head turns and its hands follow yours, without lag you notice. Nothing of your own body is in your direct view.</em> Note whether the frame rate drops in front of the mirror.</li>
+<li>Ask the other person, standing near you, to turn their head and move their hands. <em>Their figure's head and hands follow, smoothly; seated, their hands are where their real hands are over the table.</em></li>
 </ol>
 
 <h3>What the automated tests already cover</h3>

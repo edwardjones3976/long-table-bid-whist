@@ -1,4 +1,6 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
+import { LOOK_VERSION, STARTING_LOOKS } from "../../shared/avatar";
+import { myLook } from "../../client/src/state/look";
 import type { Reply, RoomSnapshot, TableSnapshot, TableSummary } from "../../shared/protocol";
 import { amManager, createNet, mySeat, myTable, type ClientSocket } from "../../client/src/net/store";
 
@@ -56,7 +58,7 @@ const table: TableSummary = {
 const room = (tableId: RoomSnapshot["members"][number]["tableId"]): RoomSnapshot => ({
   code: "ABCDEFGH",
   you: "me",
-  members: [{ id: "me", name: "Ann", connected: true, tableId }],
+  members: [{ id: "me", name: "Ann", connected: true, tableId, look: STARTING_LOOKS[0] }],
   tables: [table],
 });
 const snapshot: TableSnapshot = { tableId: "spades-1", game: "spades", revision: 7, you: 2, view: null };
@@ -73,7 +75,7 @@ describe("net store", () => {
     expect(net.getState().connection).toBe("online");
 
     expect(await net.createRoom("Ann")).toEqual(joined);
-    expect(fake.sent[0]).toEqual({ event: "room:create", payload: { name: "Ann" } });
+    expect(fake.sent[0]).toEqual({ event: "room:create", payload: { name: "Ann", look: expect.any(Object) } });
     expect(sessionStorage.getItem("mansion.token")).toBe("secret-token");
     expect(JSON.stringify(net.getState())).not.toContain("secret-token");
 
@@ -294,5 +296,134 @@ describe("net store", () => {
     net.sendPose({ x: 1, z: 2, ry: 0 });
     net.sendPose({ x: 3, z: 4, ry: 0 });
     expect(fake.sent).toEqual([{ event: "pose", payload: { x: 1, z: 2, ry: 0 } }]);
+  });
+
+  it("sends a VR player's head and hands with the pose when there are some", () => {
+    const fake = fakeSocket(() => joined);
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    fake.serve("room", room(null));
+    const pose = { x: 1, z: 2, ry: 0, head: { pitch: 0.1, yaw: -0.2 }, hands: [null, { x: 0.2, y: 1.1, z: -0.3 }] as const };
+    net.sendPose({ ...pose, hands: [...pose.hands] });
+    expect(fake.sent).toEqual([{ event: "pose", payload: pose }]);
+  });
+
+  it("carries my saved look into a room, and saves and shows each change", async () => {
+    // The test runner's Node has no usable localStorage, so one is supplied here.
+    const stored = new Map<string, string>();
+    vi.stubGlobal("localStorage", { getItem: (key: string) => stored.get(key) ?? null, setItem: (key: string, value: string) => stored.set(key, value) });
+    onTestFinished(() => void vi.unstubAllGlobals());
+    myLook.set(STARTING_LOOKS[2]);
+    const fake = fakeSocket((event) => (event === "look" ? { ok: true } : joined));
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    // Outside a room a change is only saved: the next create or join carries it.
+    expect(await net.setLook(STARTING_LOOKS[3])).toEqual({ ok: true });
+    expect(fake.sent).toEqual([]);
+    expect(JSON.parse(stored.get("mansion.look")!)).toEqual({ v: LOOK_VERSION, look: STARTING_LOOKS[3] });
+    await net.joinRoom("ABCDEFGH", "Ann");
+    expect(fake.sent[0]).toEqual({ event: "room:join", payload: { code: "ABCDEFGH", name: "Ann", look: STARTING_LOOKS[3] } });
+
+    fake.serve("room", room(null));
+    expect(await net.setLook(STARTING_LOOKS[4])).toEqual({ ok: true });
+    expect(fake.sent.at(-1)).toEqual({ event: "look", payload: { look: STARTING_LOOKS[4] } });
+    expect(myLook.get()).toEqual(STARTING_LOOKS[4]);
+  });
+
+  it("sends a look changed while reconnecting once the room is resumed", async () => {
+    const fake = fakeSocket((event) => (event === "look" ? { ok: true } : joined));
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.createRoom("Ann");
+    fake.serve("room", room(null));
+    fake.serve("disconnect", "transport close");
+    (fake.socket as unknown as { connected: boolean }).connected = false;
+    expect(await net.setLook(STARTING_LOOKS[5])).toEqual({ ok: true });
+    expect(fake.sent.map((entry) => entry.event)).toEqual(["room:create"]);
+    fake.connect();
+    await settle();
+    expect(fake.sent.map((entry) => entry.event)).toEqual(["room:create", "room:resume", "look"]);
+    expect(fake.sent.at(-1)?.payload).toEqual({ look: STARTING_LOOKS[5] });
+  });
+
+  it("sends the latest look again once the server's window has passed, after a refusal or no answer", async () => {
+    for (const refusal of [{ ok: false, error: "rate-limited", message: "Too many look changes; wait a moment" } as const, "timeout" as const]) {
+      vi.useFakeTimers();
+      try {
+        let reply: Reply<Record<string, unknown>> | "timeout" = refusal;
+        const fake = fakeSocket((event) => (event === "look" ? reply : joined));
+        const net = createNet(() => fake.socket);
+        net.open();
+        fake.connect();
+        await net.createRoom("Ann");
+        fake.serve("room", room(null));
+        expect(await net.setLook(STARTING_LOOKS[1])).toMatchObject({ ok: false });
+        myLook.set(STARTING_LOOKS[2]);
+        reply = { ok: true };
+        await vi.advanceTimersByTimeAsync(9_999);
+        expect(fake.sent.filter((entry) => entry.event === "look")).toHaveLength(1);
+        await vi.advanceTimersByTimeAsync(1);
+        expect(fake.sent.filter((entry) => entry.event === "look").map((entry) => entry.payload)).toEqual([{ look: STARTING_LOOKS[1] }, { look: STARTING_LOOKS[2] }]);
+        // Once only.
+        await vi.advanceTimersByTimeAsync(20_000);
+        expect(fake.sent.filter((entry) => entry.event === "look")).toHaveLength(2);
+      } finally {
+        vi.useRealTimers();
+      }
+    }
+  });
+
+  it("takes another member's look change into the room", () => {
+    const fake = fakeSocket(() => joined);
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    const two = room(null);
+    two.members.push({ id: "bo", name: "Bo", connected: true, tableId: null, look: STARTING_LOOKS[1] });
+    fake.serve("room", two);
+    fake.serve("look", { memberId: "bo", look: STARTING_LOOKS[4] });
+    expect(net.getState().room!.members.map((member) => member.look)).toEqual([STARTING_LOOKS[0], STARTING_LOOKS[4]]);
+  });
+
+  it("plays gestures, keeps others' gestures for three seconds, and says only a refusal", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    try {
+      let reply: Reply<Record<string, unknown>> = { ok: true };
+      const fake = fakeSocket((event) => (event === "gesture" ? reply : joined));
+      const net = createNet(() => fake.socket);
+      net.open();
+      fake.connect();
+      fake.serve("table:left", { tableId: "spades-1", reason: "A notice still on screen." });
+      expect(await net.gesture("wave")).toEqual({ ok: true });
+      expect(fake.sent.at(-1)).toEqual({ event: "gesture", payload: { kind: "wave" } });
+      expect(net.getState().lastError).toBe("A notice still on screen.");
+      reply = { ok: false, error: "rate-limited", message: "Too many gestures; wait a moment" };
+      await net.gesture("clap");
+      expect(net.getState().lastError).toBe("Too many gestures; wait a moment");
+
+      fake.serve("gesture", { memberId: "bo", kind: "clap" });
+      vi.setSystemTime(Date.now() + 2000);
+      fake.serve("gesture", { memberId: "cy", kind: "bow" });
+      vi.setSystemTime(Date.now() + 1500);
+      fake.serve("gesture", { memberId: "bo", kind: "boston" });
+      expect(net.getState().gestures.map(({ memberId, kind }) => [memberId, kind])).toEqual([
+        ["cy", "bow"],
+        ["bo", "boston"],
+      ]);
+      expect(net.getState().gestures.at(-1)!.at).toBe(Date.now());
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("refuses a gesture at once while disconnected instead of buffering it", async () => {
+    const fake = fakeSocket(() => joined);
+    const net = createNet(() => fake.socket);
+    net.open();
+    expect(await net.gesture("wave")).toMatchObject({ ok: false, message: "Reconnecting. Try again in a moment." });
+    expect(fake.sent).toEqual([]);
   });
 });

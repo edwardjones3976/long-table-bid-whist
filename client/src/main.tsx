@@ -2,6 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import type { Pose } from "../../shared/protocol";
 import App from "./App";
+import { drawn } from "./world/Avatars";
+import { mirrorShown } from "./world/Mirror";
 import { desk } from "./controls/input";
 import { standing } from "./controls/motion";
 import { net } from "./net/store";
@@ -23,6 +25,10 @@ if (import.meta.env.DEV || new URLSearchParams(location.search).has("e2e")) {
     // Where the body is and what it is doing: x, z, ry, y (feet height), vy, grounded, running, floating, aiming, aimValid.
     rig: () => desk.rig?.(),
     three: () => desk.three?.(),
+    // The other people's figures as drawn this frame: { memberId, lookKey, detail, triangles, gesture } each.
+    avatars: () => [...drawn.values()].map((avatar) => ({ ...avatar })),
+    // Whether the foyer mirror's reflection was drawn last frame.
+    mirror: () => mirrorShown.rendered,
   };
 }
 

@@ -1,21 +1,24 @@
 /**
  * The connection to the room server and everything it has told us.
  *
- *   net.getState()                 { connection, room, table, poses, lastError, me, roomAt, tableAt }
+ *   net.getState()                 { connection, room, table, poses, gestures, lastError, me, roomAt, tableAt }
  *   useStore((s) => s.room)        React hook; re-renders only when the selected value changes
  *   net.createRoom(name) ...       every action resolves to the server's Reply and never rejects;
  *                                  a refusal also lands in state.lastError as a sentence for the person
  *   myTable() / myPlace() / mySeat() / amManager()   derived from a state (default: the current one)
+ *   net.setLook(look)              saves my look in this browser (state/look.ts) and shows it to the room
+ *   net.gesture(kind)              plays a gesture for everyone else in the room
  *
  * lastError is also where the server's notices land: a strike on my turn clock, and why I was taken off a table.
  *
  * A useStore selector must return a state slice or a primitive, never a fresh
  * object (that would re-render forever): select `s.room`, then derive with useMemo.
  * `poses` changes about ten times a second: read it with net.getState() inside
- * a frame loop rather than through useStore.
+ * a frame loop rather than through useStore. `gestures` holds the last few seconds of other members' gestures.
  */
 import { useSyncExternalStore } from "react";
 import { io, type Socket } from "socket.io-client";
+import type { GestureId, Look } from "../../../shared/avatar";
 import {
   MAX_STRIKES,
   type ClientEvents,
@@ -30,8 +33,16 @@ import {
   type TableSnapshot,
   type TableSummary,
 } from "../../../shared/protocol";
+import { myLook } from "../state/look";
 
 export type Connection = "connecting" | "online" | "reconnecting" | "offline";
+
+/** A gesture another member played; `at` is Date.now() when it arrived. */
+export interface Gesture {
+  memberId: string;
+  kind: GestureId;
+  at: number;
+}
 
 export interface NetState {
   connection: Connection;
@@ -40,6 +51,8 @@ export interface NetState {
   table: TableSnapshot | null;
   /** Other members' avatars, by member id. */
   poses: Poses;
+  /** Gestures that arrived in the last GESTURE_KEEP_MS, oldest first. */
+  gestures: Gesture[];
   lastError: string | null;
   /** My member id while in a room. */
   me: string | null;
@@ -59,6 +72,9 @@ const TOKEN_KEY = "mansion.token";
 const ANSWER_TIMEOUT_MS = 8000;
 // A little under the 100 ms the app ticks at: a tick that comes a few milliseconds early must not be dropped, or every other pose is lost.
 const POSE_INTERVAL_MS = 80;
+const GESTURE_KEEP_MS = 3000;
+/** The server's look rate window: a refused or unanswered look is sent again once it has passed. */
+const LOOK_RETRY_MS = 10_000;
 
 // The token lives in sessionStorage so each tab is its own member and a reload keeps its place.
 const token = {
@@ -103,12 +119,24 @@ export function amManager(state: NetState = net.getState()): boolean {
 
 /** `connect` is replaced in tests; the app uses the default, a socket to the page's own origin. */
 export function createNet(connect: () => ClientSocket = () => io({ transports: ["websocket", "polling"] })) {
-  let state: NetState = { connection: "connecting", room: null, table: null, poses: {}, lastError: null, me: null, roomAt: 0, tableAt: 0 };
+  let state: NetState = {
+    connection: "connecting",
+    room: null,
+    table: null,
+    poses: {},
+    gestures: [],
+    lastError: null,
+    me: null,
+    roomAt: 0,
+    tableAt: 0,
+  };
   const listeners = new Set<() => void>();
   let socket: ClientSocket | null = null;
   let everOnline = false;
   let actionCount = 0;
   let lastPoseAt = 0;
+  // The room may have an older look than mine: changed while the connection was down, refused for speed, or unanswered.
+  let lookUnsent = false;
   // Also kept here: where storage is blocked the token must still survive a reconnect.
   let held = token.read();
 
@@ -120,7 +148,7 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
   function leaveLocally(message: string | null): void {
     held = null;
     token.write(null);
-    set({ room: null, table: null, poses: {}, me: null, lastError: message });
+    set({ room: null, table: null, poses: {}, gestures: [], me: null, lastError: message });
   }
 
   /** Opens the socket on first use. Safe to call again. */
@@ -158,14 +186,22 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     });
     opened.on("table:left", ({ reason }) => set({ table: null, ...(reason ? { lastError: reason } : {}) }));
     opened.on("poses", (poses) => set({ poses }));
+    opened.on("look", ({ memberId, look }) => {
+      const room = state.room;
+      if (room) set({ room: { ...room, members: room.members.map((member) => (member.id === memberId ? { ...member, look } : member)) } });
+    });
+    opened.on("gesture", ({ memberId, kind }) => {
+      const at = Date.now();
+      set({ gestures: [...state.gestures.filter((gesture) => at - gesture.at < GESTURE_KEEP_MS), { memberId, kind, at }] });
+    });
     return opened;
   }
 
   async function ask<K extends Acked>(event: K, payload: PayloadOf<K>): Promise<ReplyOf<K>> {
     // The typed emitWithAck cannot be called with a generic event name, so the call is made untyped here only.
     const opened = open();
-    // A table request buffered while offline would be replayed before the resume and be refused as "not in a room".
-    if (!opened.connected && event.startsWith("table:")) {
+    // A table request or gesture buffered while offline would be replayed before the resume and be refused as "not in a room".
+    if (!opened.connected && (event.startsWith("table:") || event === "gesture")) {
       return { ok: false, error: "internal", message: "Reconnecting. Try again in a moment." };
     }
     const sender = opened.timeout(ANSWER_TIMEOUT_MS) as unknown as {
@@ -187,14 +223,24 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
 
   async function resume(saved: string): Promise<void> {
     const reply = await ask("room:resume", { token: saved });
-    if (reply.ok) set({ me: reply.memberId });
-    else if (reply.error === "bad-token" || reply.error === "no-such-room") {
+    if (reply.ok) {
+      set({ me: reply.memberId });
+      resendLook();
+    } else if (reply.error === "bad-token" || reply.error === "no-such-room") {
       leaveLocally("Your place in the room was not kept. Join again to come back in.");
     } else set({ lastError: reply.message });
   }
 
+  /** Sends my latest look once, if the room may not have it. */
+  function resendLook(): void {
+    if (!lookUnsent || !state.room || !socket?.connected) return;
+    lookUnsent = false;
+    void ask("look", { look: myLook.get() });
+  }
+
   function entered(reply: Reply<Joined>): Reply<Joined> {
     if (reply.ok) {
+      lookUnsent = false;
       held = reply.token;
       token.write(reply.token);
       set({ me: reply.memberId });
@@ -211,8 +257,8 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     open,
     clearError: (): void => set({ lastError: null }),
 
-    createRoom: async (name: string) => entered(await request("room:create", { name })),
-    joinRoom: async (code: string, name: string) => entered(await request("room:join", { code, name })),
+    createRoom: async (name: string) => entered(await request("room:create", { name, look: myLook.get() })),
+    joinRoom: async (code: string, name: string) => entered(await request("room:join", { code, name, look: myLook.get() })),
     async leaveRoom(): Promise<Reply> {
       // Forgotten before asking: a reconnect while the answer is awaited must not resume the room.
       held = null;
@@ -229,6 +275,29 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     setOptions: (options: unknown) => request("table:options", { options }),
     start: () => request("table:start", {}),
     resetTable: () => request("table:reset", {}),
+
+    /**
+     * Saves my look here, then shows it to the room; outside a room the next create or join carries it. A change
+     * the server refused for speed, or never answered, is sent again (the latest look) after LOOK_RETRY_MS.
+     */
+    async setLook(look: Look): Promise<Reply> {
+      myLook.set(look);
+      if (!state.room) return { ok: true };
+      if (!socket?.connected) {
+        lookUnsent = true;
+        return { ok: true };
+      }
+      const reply = await request("look", { look: myLook.get() });
+      lookUnsent = !reply.ok && (reply.error === "rate-limited" || reply.error === "internal");
+      if (lookUnsent) setTimeout(resendLook, LOOK_RETRY_MS);
+      return reply;
+    },
+    async gesture(kind: GestureId): Promise<Reply> {
+      const reply = await ask("gesture", { kind });
+      // Only a refusal is worth saying: a wave must not wipe a notice still on screen.
+      if (!reply.ok) set({ lastError: reply.message });
+      return reply;
+    },
 
     /** Sends a game action against the table revision on screen. */
     async act(action: GameAction): Promise<Reply<{ revision: number; duplicate?: true }>> {
@@ -251,8 +320,8 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
       const now = Date.now();
       if (!state.room || !socket?.connected || now - lastPoseAt < POSE_INTERVAL_MS) return;
       lastPoseAt = now;
-      // `y` (the feet height) is left out by JSON when the pose has none.
-      socket.volatile.emit("pose", { x: pose.x, z: pose.z, ry: pose.ry, y: pose.y });
+      // `y` (the feet height) and a VR player's `head` and `hands` are left out by JSON when the pose has none.
+      socket.volatile.emit("pose", { x: pose.x, z: pose.z, ry: pose.ry, y: pose.y, head: pose.head, hands: pose.hands });
     },
   };
 }

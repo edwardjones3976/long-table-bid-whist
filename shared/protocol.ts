@@ -7,6 +7,7 @@ import type { View as BidWhistView } from "../server/games/bidwhist";
 import type { Seat } from "../server/games/game";
 import type { View as SpadesView } from "../server/games/spades";
 import type { View as TonkView } from "../server/games/tonk";
+import type { GestureId, Hand, Look } from "./avatar";
 
 export type { Seat } from "../server/games/game";
 
@@ -80,6 +81,10 @@ export interface Pose {
   ry: number;
   /** Feet height in metres above the house floor (a jump, a bench top, the pool); absent means on the floor. */
   y?: number;
+  /** A VR player's head: pitch and yaw (yaw relative to ry) in radians, each within +-HEAD_TURN (shared/avatar.ts). Desktop and phone send none. */
+  head?: { pitch: number; yaw: number };
+  /** A VR player's hands, left then right, null while untracked: see Hand and its limits in shared/avatar.ts. */
+  hands?: [Hand | null, Hand | null];
 }
 
 export interface MemberInfo {
@@ -87,6 +92,8 @@ export interface MemberInfo {
   name: string;
   connected: boolean;
   tableId: TableId | null;
+  /** How this member looks to everyone else, already through cleanLook. */
+  look: Look;
 }
 
 /** Sent as "room" to every member whenever anything public changes. */
@@ -155,12 +162,17 @@ export type Reply<T = object> = ({ ok: true } & T) | { ok: false; error: ErrorCo
 export type Joined = { code: string; memberId: string; token: string };
 
 export interface ClientEvents {
-  "room:create": (payload: { name: string }, ack: (reply: Reply<Joined>) => void) => void;
-  "room:join": (payload: { code: string; name: string }, ack: (reply: Reply<Joined>) => void) => void;
+  /** `look` is cleaned; without one the server picks a starting look by arrival order. */
+  "room:create": (payload: { name: string; look?: Look }, ack: (reply: Reply<Joined>) => void) => void;
+  "room:join": (payload: { code: string; name: string; look?: Look }, ack: (reply: Reply<Joined>) => void) => void;
   "room:resume": (payload: { token: string }, ack: (reply: Reply<Joined>) => void) => void;
   "room:leave": (payload: object, ack: (reply: Reply) => void) => void;
   /** Not acknowledged. */
   pose: (payload: Pose) => void;
+  /** Change my look: cleaned, then everyone (me too) gets the "look" event. At most 5 in 10 seconds and 4 KB of JSON. */
+  look: (payload: { look: unknown }, ack: (reply: Reply) => void) => void;
+  /** Play a gesture for everyone else in the room. At most 3 in 4 seconds; unknown kinds are refused. */
+  gesture: (payload: { kind: string }, ack: (reply: Reply) => void) => void;
   /** Sit as a player (in `seat`, or the first open seat) or as the host. Only one table at a time. */
   "table:sit": (
     payload: { tableId: TableId; role: "player" | "host"; seat?: Seat },
@@ -194,4 +206,8 @@ export interface ServerEvents {
    */
   "table:left": (payload: { tableId: TableId; reason?: string }) => void;
   poses: (poses: Poses) => void;
+  /** Another member of the room played a gesture; never sent back to the one who played it. */
+  gesture: (payload: { memberId: string; kind: GestureId }) => void;
+  /** A member changed their look (already cleaned): only that one look, since a room snapshot carries everyone's. */
+  look: (payload: { memberId: string; look: Look }) => void;
 }

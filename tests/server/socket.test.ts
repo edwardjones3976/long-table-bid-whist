@@ -9,6 +9,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { GAMES } from "../../server/games/index";
 import { createGameServer, serveStatic, type GameServer, type GameServerOptions } from "../../server/index";
 import { MAX_ROOMS, Rooms } from "../../server/rooms";
+import { STARTING_LOOKS } from "../../shared/avatar";
 import {
   GAME_IDS,
   MAX_ROOM_MEMBERS,
@@ -231,8 +232,8 @@ describe("rooms", () => {
     expect(lastRoom(a)).toMatchObject({ code, you: memberId });
     expect(lastRoom(b).you).toBe(b.joined!.memberId);
     expect(lastRoom(a).members).toEqual([
-      { id: memberId, name: "Ada", connected: true, tableId: null },
-      { id: b.joined!.memberId, name: "Bo", connected: true, tableId: null },
+      { id: memberId, name: "Ada", connected: true, tableId: null, look: STARTING_LOOKS[0] },
+      { id: b.joined!.memberId, name: "Bo", connected: true, tableId: null, look: STARTING_LOOKS[1] },
     ]);
     expect(lastRoom(a).tables.map((t) => [t.id, t.game, t.status])).toEqual([
       ["tonk-1", "tonk", "available"],

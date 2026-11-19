@@ -291,6 +291,13 @@ export const signs: readonly Sign[] = [
   sign("lawn", "Lawn-Toss Lawn", 23.8, -35, WEST, 1.7),
 ];
 
+/**
+ * The tall dressing mirror on the foyer's west wall, between the arch to the gallery and the lounge door, facing
+ * east across the foyer: a side wall, so it never faces the front door. (x, y, z) is the centre of the glass,
+ * 0.07 m off the wall; ry turns a plane's +z face to the room, as for a Sign.
+ */
+export const MIRROR = { x: -7.83, y: 1.1, z: 11.6, w: 0.9, h: 1.8, ry: EAST } as const;
+
 const inside = (r: Rect, x: number, z: number, margin = 0): boolean =>
   x >= r.x0 - margin && x <= r.x1 + margin && z >= r.z0 - margin && z <= r.z1 + margin;
 

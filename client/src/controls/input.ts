@@ -60,6 +60,8 @@ export const desk = {
   cancelCount: 0,
   /** Browser tests only: put the head here on the next frame. */
   warp: null as Pose | null,
+  /** My pose this frame, as the room is sent it a few times a second (avatar/pose.ts); set by the rig. The mirror draws me from it. */
+  pose: null as Pose | null,
   /** Browser tests only: the live scene, camera and renderer; set by the rig. */
   three: null as (() => RootState) | null,
   /** Browser tests only: where the body is and what it is doing; set by the rig. */

@@ -114,8 +114,8 @@ export function createGameServer(options: GameServerOptions = {}): GameServer {
       if (me() !== undefined) throw new Refusal("bad-request", "Leave your current room first");
     }
 
-    on("room:create", ({ name }) => (free(), bind(rooms.create(name))));
-    on("room:join", ({ code, name }) => (free(), bind(rooms.join(code, name))));
+    on("room:create", ({ name, look }) => (free(), bind(rooms.create(name, look))));
+    on("room:join", ({ code, name, look }) => (free(), bind(rooms.join(code, name, look))));
     on("room:resume", ({ token }) => {
       const joined = rooms.resume(token);
       if (me() !== joined.memberId) free();
@@ -134,6 +134,8 @@ export function createGameServer(options: GameServerOptions = {}): GameServer {
     on("table:start", () => rooms.start(me()));
     on("table:action", (request) => rooms.action(me(), request));
     on("table:reset", () => rooms.reset(me()));
+    on("look", (payload) => rooms.look(me(), payload));
+    on("gesture", ({ kind }) => rooms.gesture(me(), kind));
 
     socket.on("pose", (payload: unknown) => {
       if (typeof payload === "object" && payload !== null) rooms.pose(me(), payload);
