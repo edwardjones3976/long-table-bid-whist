@@ -23,7 +23,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CircleGeometry, PlaneGeometry, RingGeometry, Vector3, type BufferGeometry, type Group, type Object3D } from "three";
 import type { TableId, TableStatus, TableSummary } from "../../../shared/protocol";
 import { cue, cueLog } from "../controls/feedback";
-import { useStore } from "../net/store";
+import { net, useStore } from "../net/store";
 import { useLocal } from "../state/local";
 import { useActiveTableId } from "../state/table";
 import type { TableDescription } from "../ui/actions";
@@ -220,14 +220,30 @@ export function Pressable({
   );
 }
 
+const CLOCK_SPOT = new Vector3();
+
 /**
- * How long the table's match has run, beside its status and no larger than its word: far above the cards, and as
- * readable across the room as the board itself. Counting while it is played, stopped at the final time on the
- * results, gone with the match.
+ * How long the table's match has run, right of its status: far above the cards, no larger than the status word up
+ * close, and growing with distance so a visitor across the room can read it. It grows from its left edge, which
+ * sits right of the widest board text, so it never covers the title or the seat lines. Counting while it is played,
+ * stopped at the final time on the results, gone with the match.
  */
 function MatchClock({ summary }: { summary: TableSummary }) {
   const elapsed = useMatchTime(summary);
-  return elapsed === null ? null : <Label lines={[clockText(elapsed)]} box={[0.5, 0.18]} options={{ fontPx: 80, color: "#d8dde8" }} position={[0.56, 2.43, 0]} inert />;
+  const ref = useRef<Group>(null);
+  useFrame(({ camera }) => {
+    if (!ref.current) return;
+    // The world matrix, because in VR the camera sits inside the moving rig (as in Facing).
+    const world = camera.matrixWorld.elements;
+    const spot = ref.current.getWorldPosition(CLOCK_SPOT);
+    // shortcut: at most 3 times its size, enough for the current room lengths; raise the cap if rooms grow.
+    ref.current.scale.setScalar(Math.min(3, Math.max(1, Math.hypot(world[12] - spot.x, world[14] - spot.z) / 3.5)));
+  });
+  return elapsed === null ? null : (
+    <group ref={ref} position={[0.9, 2.43, 0]}>
+      <Label lines={[clockText(elapsed)]} box={[0.5, 0.18]} options={{ fontPx: 80, color: "#d8dde8" }} position={[0.25, 0, 0]} inert />
+    </group>
+  );
 }
 
 function StatusBoard({ spot, summary }: { spot: TableSpot; summary: TableSummary }) {
@@ -252,6 +268,12 @@ function SeatMarkers({ spot, actions }: { spot: TableSpot; actions: TableActions
   const xrActive = useLocal((state) => state.xrActive);
   // A headset shows no HUD, so its notice (why I was taken off a table, say) is told here too.
   const error = actions.error ?? (xrActive ? notice : null);
+  // There is no Dismiss in a headset, so the notice goes after 8 s rather than follow me to every table with a stale bench time.
+  useEffect(() => {
+    if (!xrActive || !notice) return;
+    const timer = setTimeout(() => net.clearError(), 8000);
+    return () => clearTimeout(timer);
+  }, [xrActive, notice]);
   return (
     <>
       {description.buttons

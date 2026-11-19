@@ -63,10 +63,15 @@ function usePoseLink(): void {
   }, []);
 }
 
+/** Its own component, so the table snapshots it follows re-render only it, never the whole 3D scene. */
+function TurnCues(): null {
+  useTurnCues();
+  return null;
+}
+
 function Mansion() {
   useSeating();
   usePoseLink();
-  useTurnCues();
   const theme = useLocal((state) => state.theme);
   const uiScale = useLocal((state) => state.comfort.uiScale);
   const textPanel = useLocal((state) => state.comfort.textPanel);
@@ -102,6 +107,7 @@ function Mansion() {
         </Canvas>
       </SceneBoundary>
       <Hud tables={!panel} />
+      <TurnCues />
       {panel ? <TablePanelDom /> : <Hint />}
     </div>
   );

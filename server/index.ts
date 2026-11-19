@@ -49,6 +49,9 @@ export function createGameServer(options: GameServerOptions = {}): GameServer {
   const io = new Server(http, {
     maxHttpBufferSize: 16 * 1024,
     cors: { origin: origins },
+    // A silent drop (Wi-Fi lost, headset asleep) is noticed within 15 s, well inside one turn, so it is not struck as present.
+    pingInterval: 10_000,
+    pingTimeout: 5_000,
     // CORS headers do not stop a cross-site WebSocket, so the Origin is checked on every handshake.
     // Requests with no Origin header come from non-browser clients, which CORS never covered.
     allowRequest: (req, done) => {
