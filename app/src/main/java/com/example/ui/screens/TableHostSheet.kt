@@ -173,7 +173,7 @@ fun TableHostAndAuditSheet(
                 }
             } else {
                 Text(
-                    "Deterministic Audit Stream · Seed #${view.seed}",
+                    "Deterministic Audit Stream · Hand #${view.handNumber}",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
