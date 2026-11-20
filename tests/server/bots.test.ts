@@ -103,6 +103,14 @@ describe("walkers", () => {
     const other = arrive("Di");
     expect(seen.get(other)!.walkers!.map((walker) => walker.look)).not.toEqual(walkers.map((walker) => walker.look));
   });
+
+  it("are as many as the server is set to, and never more than there are loops", () => {
+    for (const [asked, made] of [[0, 0], [1, 1], [WALKERS + 2, WALKERS]]) {
+      rooms.close();
+      rooms = new Rooms((memberId, event, payload) => void (event === "room" && seen.set(memberId, payload as RoomSnapshot)), { walkers: asked });
+      expect(seen.get(arrive("Ada"))!.walkers, `asked ${asked}`).toHaveLength(made);
+    }
+  });
 });
 
 describe("nothing about cards", () => {

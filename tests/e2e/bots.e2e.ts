@@ -5,16 +5,18 @@
  * walkers stroll their loops for anyone to see. "Show others as simple shapes" covers them all.
  *
  * The bot's reach over its own turn is checked in tests/client/bots.test.ts: these tests run the server's bots with no
- * pause (playwright.config.ts), so a bot's turn here lasts no frame at all.
+ * pause (playwright.config.ts), so a bot's turn here lasts no frame at all. The shared test server has no walkers, so
+ * this file runs its own with all three.
  *
  * Screenshots for a person to judge, in client/.e2e-screens/bots/: table (a person and three bots at Spades Table 1,
  * seen from beside it) and walker-1 to walker-3 (each walker a few metres ahead, walking on).
  */
 import { expect, test, type Page } from "@playwright/test";
-import type { Pose, RoomSnapshot } from "../../shared/protocol";
+import { WALKERS, type Pose, type RoomSnapshot } from "../../shared/protocol";
 import { tableSpot } from "../../client/src/world/layout";
-import { closeAll, enter, problems, settle, standBy } from "./helpers";
+import { closeAll, enter, ownServer, problems, settle, standBy } from "./helpers";
 
+await ownServer({ WALKERS: String(WALKERS) });
 test.beforeEach(() => void (problems.length = 0));
 
 interface Drawn {

@@ -1,5 +1,34 @@
-import { expect, type Browser, type Page } from "@playwright/test";
+import { spawn, type ChildProcess } from "node:child_process";
+import { createServer } from "node:net";
+import { expect, test, type Browser, type Page } from "@playwright/test";
 import type { GameId, Pose, TableId } from "../../shared/protocol";
+
+/**
+ * For a file that needs the server set otherwise than the shared one (playwright.config.ts): starts its own game server
+ * on a free port with `env` over the shared settings, points every page the file opens at it (open() makes its own
+ * context, which takes the baseURL), and stops it after the file. It serves client/dist: run "npm run build" first.
+ */
+export async function ownServer(env: Record<string, string>): Promise<void> {
+  const port = await new Promise<number>((resolve) => {
+    const probe = createServer().listen(0, () => {
+      const { port: free } = probe.address() as { port: number };
+      probe.close(() => resolve(free));
+    });
+  });
+  const base = `http://localhost:${port}`;
+  test.use({ baseURL: base });
+  let server: ChildProcess | null = null;
+  test.beforeAll(async () => {
+    server = spawn(process.execPath, ["--import", "tsx", "server/main.ts"], {
+      env: { ...process.env, PORT: String(port), BOT_DELAY_MS: "0", TURN_SECONDS: "0", WALKERS: "0", ...env },
+      stdio: "ignore",
+    });
+    await expect
+      .poll(() => fetch(base).then((response) => response.ok, () => false), { timeout: 60_000 })
+      .toBe(true);
+  });
+  test.afterAll(() => void server?.kill());
+}
 
 export interface Mansion {
   getState(): {

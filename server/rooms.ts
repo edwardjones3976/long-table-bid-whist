@@ -183,6 +183,8 @@ export class Rooms {
   private readonly shuffle?: (deck: Card[]) => Card[];
   private readonly holdMs: number;
   private readonly benchMs: number;
+  /** Walker bots in each new room. */
+  private readonly walkers: number;
   private readonly pace: Pace;
   private readonly poseTimer: NodeJS.Timeout;
   private closed = false;
@@ -196,11 +198,13 @@ export class Rooms {
       trickPauseMs?: number;
       turnMs?: number;
       benchMs?: number;
+      walkers?: number;
     } = {},
   ) {
     this.shuffle = options.shuffle;
     this.holdMs = options.holdMs ?? SEAT_HOLD_MS;
     this.benchMs = options.benchMs ?? BENCH_MS;
+    this.walkers = Math.min(options.walkers ?? WALKERS, WALKERS);
     this.pace = { botMs: options.botDelayMs ?? 0, settleMs: options.trickPauseMs, turnMs: options.turnMs ?? 0 };
     this.poseTimer = setInterval(() => this.sendPoses(), 100);
     this.poseTimer.unref();
@@ -239,7 +243,7 @@ export class Rooms {
       arrivals: 0,
       admitted: 0,
       posesChanged: false,
-      walkers: Array.from({ length: WALKERS }, (_, loop) => ({
+      walkers: Array.from({ length: this.walkers }, (_, loop) => ({
         id: `walker-${loop + 1}`,
         name: `Walker ${loop + 1}`,
         look: shuffleLook(Math.random),

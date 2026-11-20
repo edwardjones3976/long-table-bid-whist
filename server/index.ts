@@ -27,6 +27,8 @@ export interface GameServerOptions {
   turnMs?: number;
   /** How long a person removed for time twice in one room may not sit; defaults to BENCH_MS. */
   benchMs?: number;
+  /** Walker bots per room, up to WALKERS (the default). The browser tests set 0, so none walks through their pictures. */
+  walkers?: number;
 }
 
 export interface GameServer {
