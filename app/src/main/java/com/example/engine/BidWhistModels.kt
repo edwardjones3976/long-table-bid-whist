@@ -205,18 +205,50 @@ data class AuditEvent(
     val concealedStateIsolated: Boolean = true
 )
 
+/**
+ * A pending audited unanimous void. The void only applies once every human seat has
+ * consented; AI seats consent implicitly at request time. Public table information.
+ */
+@Serializable
+data class VoidRequest(
+    val reason: String,
+    val requestedBy: Seat,
+    val consents: Set<Seat>
+) {
+    val outstandingSeats: Set<Seat>
+        get() = Seat.entries.filter { it !in consents }.toSet()
+
+    val isUnanimous: Boolean
+        get() = Seat.entries.filter { it.isHuman }.all { it in consents }
+
+    fun formatAuditDetail(): String {
+        val consentText = consents
+            .sortedBy { it.ordinal }
+            .joinToString(", ") { seat ->
+                if (seat.isHuman) seat.displayName else "${seat.displayName} (AI, implicit)"
+            }
+            .ifEmpty { "none" }
+        return "Reason: $reason. Requested by ${requestedBy.displayName}. Consents: $consentText."
+    }
+}
+
+/**
+ * Settled result of a hand. A voided hand has no scoring: [contract] is whatever was
+ * agreed before the void (possibly none) and [pointsAwardedTo] is null with [pointsDelta] 0.
+ */
 @Serializable
 data class HandOutcome(
     val handNumber: Int,
-    val contract: Contract,
+    val contract: Contract?,
     val booksWonUs: Int,
     val booksWonThem: Int,
     val contractMade: Boolean,
     val isBoston: Boolean,
-    val pointsAwardedTo: Partnership,
+    val pointsAwardedTo: Partnership?,
     val pointsDelta: Int,
     val wasVoided: Boolean = false,
-    val voidReason: String? = null
+    val voidReason: String? = null,
+    val voidRequest: VoidRequest? = null
 )
 
 /**
@@ -249,6 +281,8 @@ data class SeatView(
     val latestCaption: String,
     val auditLog: List<AuditEvent>,
     val isBetweenHandPaused: Boolean,
+    val pendingVoidRequest: VoidRequest?,
+    val canRequestVoid: Boolean,
     val guidedHint: String?
 )
 

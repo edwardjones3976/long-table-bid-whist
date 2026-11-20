@@ -473,16 +473,27 @@ private fun CenterPlayZone(
                         Text(headline, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
                         if (!outcome.wasVoided) {
                             Text(
-                                text = "${outcome.contract.formatBanner()} · Us ${outcome.booksWonUs} – Them ${outcome.booksWonThem} books",
+                                text = "${outcome.contract?.formatBanner() ?: "No contract"} · Us ${outcome.booksWonUs} – Them ${outcome.booksWonThem} books",
                                 style = MaterialTheme.typography.bodyMedium
                             )
+                            val awardedTo = outcome.pointsAwardedTo
                             Text(
-                                text = "${outcome.pointsAwardedTo.displayName} +${outcome.pointsDelta} pts",
+                                text = if (awardedTo != null) "${awardedTo.displayName} +${outcome.pointsDelta} pts" else "No points awarded",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.tertiary
                             )
                         } else {
-                            Text(outcome.voidReason ?: "Voided by Host", style = MaterialTheme.typography.bodyMedium)
+                            Text(outcome.voidReason ?: "Voided by unanimous consent", style = MaterialTheme.typography.bodyMedium)
+                            val request = outcome.voidRequest
+                            Text(
+                                text = if (request != null) {
+                                    "Requested by ${request.requestedBy.displayName} · No points awarded"
+                                } else {
+                                    "No points awarded"
+                                },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
 
