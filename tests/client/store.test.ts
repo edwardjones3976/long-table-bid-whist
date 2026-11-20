@@ -2,7 +2,8 @@ import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { LOOK_VERSION, STARTING_LOOKS } from "../../shared/avatar";
 import { myLook } from "../../client/src/state/look";
 import type { Reply, RoomSnapshot, TableSnapshot, TableSummary } from "../../shared/protocol";
-import { amManager, createNet, mySeat, myTable, type ClientSocket } from "../../client/src/net/store";
+import { amManager, createNet, mySeat, myTable, withoutMeAt, type ClientSocket } from "../../client/src/net/store";
+import { describeTable } from "../../client/src/ui/actions";
 
 type Answer = (event: string, payload: any) => Reply<Record<string, unknown>> | "timeout";
 
@@ -335,6 +336,209 @@ describe("net store", () => {
     release({ ok: true });
     await leaving;
     expect(net.getState().room?.code).toBe("NEWROOM1");
+  });
+
+  it("stands up from a table on the spot, before the server answers, and ignores that table's leftovers", async () => {
+    let releaseStand: (reply: Reply) => void = () => {};
+    const standGate = new Promise<Reply>((resolve) => (releaseStand = resolve));
+    const fake = fakeSocket((event) => (event === "table:stand" ? (standGate as unknown as Reply) : joined));
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", room("spades-1"));
+    fake.serve("table", snapshot);
+    expect(myTable(net.getState())?.id).toBe("spades-1");
+    expect(net.getState().table).toEqual(snapshot);
+
+    const standing = net.stand();
+    // Checked before awaiting: my hand is gone and the room no longer seats me, so the seat pose and panels change now.
+    expect(net.getState().table).toBeNull();
+    expect(myTable(net.getState())).toBeNull();
+    expect(net.getState().room?.members.find((m) => m.id === "me")?.tableId).toBeNull();
+    // The rest of the room is still there.
+    expect(net.getState().room?.code).toBe("ABCDEFGH");
+    expect(fake.sent.at(-1)).toEqual({ event: "table:stand", payload: {} });
+
+    // Queued before the server heard the stand: a bot's move at the old table, and a room snapshot still seating me.
+    fake.serve("table", { ...snapshot, revision: 8 });
+    expect(net.getState().table).toBeNull();
+    fake.serve("room", room("spades-1"));
+    expect(myTable(net.getState())).toBeNull();
+
+    // The server confirms: table:left, then a room snapshot with me unseated.
+    fake.serve("table:left", { tableId: "spades-1" });
+    fake.serve("room", room(null));
+    releaseStand({ ok: true });
+    expect(await standing).toEqual({ ok: true });
+    expect(net.getState()).toMatchObject({ table: null, lastError: null });
+    expect(myTable(net.getState())).toBeNull();
+
+    // Once confirmed, that table's snapshots are no longer dropped (e.g. after sitting there again).
+    fake.serve("room", room("spades-1"));
+    fake.serve("table", { ...snapshot, revision: 9 });
+    expect(myTable(net.getState())?.id).toBe("spades-1");
+    expect(net.getState().table?.revision).toBe(9);
+  });
+
+  it("follows the next table sat at, even the same one, while the stand is still unanswered", async () => {
+    let releaseStand: (reply: Reply) => void = () => {};
+    const standGate = new Promise<Reply>((resolve) => (releaseStand = resolve));
+    const fake = fakeSocket((event) => (event === "table:stand" ? (standGate as unknown as Reply) : event === "table:sit" ? ({ ok: true, seat: 2 } as Reply) : joined));
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", room("spades-1"));
+    fake.serve("table", snapshot);
+
+    const standing = net.stand();
+    expect(myTable(net.getState())).toBeNull();
+    // Sat straight back down at the same table: the server handles stand then sit in order, so its next snapshots
+    // for this table are the new seat, not leftovers, and must be followed even before the stand's answer arrives.
+    expect(await net.sit("spades-1", "player", 2)).toEqual({ ok: true, seat: 2 });
+    fake.serve("room", room("spades-1"));
+    fake.serve("table", { ...snapshot, revision: 12 });
+    expect(myTable(net.getState())?.id).toBe("spades-1");
+    expect(net.getState().table?.revision).toBe(12);
+    releaseStand({ ok: true });
+    await standing;
+    // The late stand answer changes nothing about the new seat.
+    expect(myTable(net.getState())?.id).toBe("spades-1");
+    expect(net.getState().table?.revision).toBe(12);
+  });
+
+  it("standing while not at a table sends the request and changes nothing locally", async () => {
+    const fake = fakeSocket((event) => (event === "table:stand" ? ({ ok: false, error: "not-at-table", message: "Sit at a table first" } as Reply) : joined));
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", room(null));
+    const before = net.getState().room;
+    expect(await net.stand()).toMatchObject({ ok: false, error: "not-at-table" });
+    expect(net.getState().room).toBe(before);
+    expect(net.getState().lastError).toBe("Sit at a table first");
+    // Snapshots are followed as usual afterwards.
+    fake.serve("room", room("spades-1"));
+    fake.serve("table", snapshot);
+    expect(myTable(net.getState())?.id).toBe("spades-1");
+    expect(net.getState().table).toEqual(snapshot);
+  });
+
+  it("shows the table as the server will once I have stood, so the panel treats me as a visitor at once", async () => {
+    const bob = { occupant: "human", memberId: "bob", name: "Bob", ready: true, connected: true } as const;
+    const open = { occupant: "open", memberId: null, name: null, ready: false, connected: false } as const;
+    const playing: TableSummary = { ...table, status: "playing", seats: [bob, open, table.seats[2], open], managerId: "me", matchTime: { elapsedMs: 5000, running: true } };
+    const members = [
+      { id: "me", name: "Ann", connected: true, tableId: "spades-1" as const, look: STARTING_LOOKS[0] },
+      { id: "bob", name: "Bob", connected: true, tableId: "spades-1" as const, look: STARTING_LOOKS[1] },
+    ];
+    const standGate = new Promise<Reply>(() => {});
+    const fake = fakeSocket((event) => (event === "table:stand" ? (standGate as unknown as Reply) : joined));
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", { ...room("spades-1"), members, tables: [playing] });
+    fake.serve("table", { ...snapshot, revision: 8 });
+    const describe = () => describeTable({ summary: net.getState().room!.tables[0], snapshot: net.getState().table, meId: "me", selection: [] });
+    expect(describe().role).toBe("player");
+
+    void net.stand();
+    // In a match my seat goes to a bot, as the server does it, and Bob now manages the table.
+    const shown = net.getState().room!.tables[0];
+    expect(shown.seats[2]).toEqual({ occupant: "bot", memberId: null, name: null, ready: false, connected: false });
+    expect(shown.seats[0]).toEqual(bob);
+    expect(shown).toMatchObject({ status: "playing", managerId: "bob", matchTime: { elapsedMs: 5000, running: true } });
+    const gap = describe();
+    expect(gap.role).toBe("visitor");
+    expect(gap.buttons.map((button) => button.id)).not.toContain("leave");
+
+    // Without me the match has nobody left to play it: the table is free again.
+    const alone = withoutMeAt({ ...room("spades-1"), tables: [{ ...playing, seats: [open, open, table.seats[2], open] }] }, "me", "spades-1");
+    expect(alone.tables[0]).toMatchObject({ status: "available", managerId: null, matchTime: null });
+    expect(alone.tables[0].seats.every((seat) => seat.occupant === "open")).toBe(true);
+    // A lobby seat opens; a lobby with nobody left is available.
+    expect(withoutMeAt(room("spades-1"), "me", "spades-1").tables[0]).toMatchObject({ status: "available", managerId: null, seats: [open, open, open, open] });
+    // The host's chair is simply left, and the players keep their seats and the table.
+    const hosted: TableSummary = { ...table, seats: [bob, open, open, open], host: { memberId: "me", name: "Ann", connected: true }, managerId: "me" };
+    expect(withoutMeAt({ ...room("spades-1"), tables: [hosted] }, "me", "spades-1").tables[0]).toMatchObject({ status: "lobby", host: null, managerId: "bob", seats: [bob, open, open, open] });
+    // Other tables are untouched.
+    const other: TableSummary = { ...table, id: "spades-2" };
+    expect(withoutMeAt({ ...room("spades-1"), tables: [table, other] }, "me", "spades-1").tables[1]).toBe(other);
+  });
+
+  it("puts me back at the table when the server does not answer the stand, as it last described it", async () => {
+    let failStand: (error: Error) => void = () => {};
+    const standGate = new Promise<Reply>((_, reject) => (failStand = reject));
+    const fake = fakeSocket((event) => (event === "table:stand" ? (standGate as unknown as Reply) : joined));
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", room("spades-1"));
+    fake.serve("table", snapshot);
+
+    const standing = net.stand();
+    expect(myTable(net.getState())).toBeNull();
+    // Meanwhile the server, which never heard the stand, keeps talking about the table and the room.
+    fake.serve("table", { ...snapshot, revision: 8 });
+    const bob = { id: "bob", name: "Bob", connected: true, tableId: null, look: STARTING_LOOKS[1] };
+    const later = { ...room("spades-1"), members: [...room("spades-1").members, bob] };
+    fake.serve("room", later);
+    expect(myTable(net.getState())).toBeNull();
+    expect(net.getState().room?.members.map((member) => member.id)).toEqual(["me", "bob"]);
+
+    failStand(new Error("operation has timed out"));
+    expect(await standing).toMatchObject({ ok: false, error: "internal" });
+    // Still seated as far as the server knows: the room is as it last sent it, and the hand is the latest one.
+    expect(net.getState().room).toBe(later);
+    expect(myTable(net.getState())?.id).toBe("spades-1");
+    expect(net.getState().table?.revision).toBe(8);
+    expect(net.getState().lastError).toBe("The server did not answer. Check your connection.");
+    // Snapshots are followed as usual afterwards.
+    fake.serve("table", { ...snapshot, revision: 9 });
+    expect(net.getState().table?.revision).toBe(9);
+  });
+
+  it("pressing Leave table while reconnecting sends nothing and moves nothing", async () => {
+    const fake = fakeSocket(() => joined);
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", room("spades-1"));
+    fake.serve("table", snapshot);
+    (fake.socket as unknown as { connected: boolean }).connected = false;
+    fake.serve("disconnect", "transport close");
+    const before = net.getState();
+    const sentBefore = fake.sent.length;
+
+    expect(await net.stand()).toMatchObject({ ok: false, error: "internal", message: "Reconnecting. Try again in a moment." });
+    expect(fake.sent.length).toBe(sentBefore);
+    expect(net.getState().room).toBe(before.room);
+    expect(net.getState().table).toBe(before.table);
+    expect(myTable(net.getState())?.id).toBe("spades-1");
+  });
+
+  it("a late refusal of the stand does not bring back a room already left", async () => {
+    let failStand: (error: Error) => void = () => {};
+    const standGate = new Promise<Reply>((_, reject) => (failStand = reject));
+    const fake = fakeSocket((event) => (event === "table:stand" ? (standGate as unknown as Reply) : event === "room:leave" ? { ok: true } : joined));
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", room("spades-1"));
+    fake.serve("table", snapshot);
+
+    const standing = net.stand();
+    await net.leaveRoom();
+    expect(net.getState().room).toBeNull();
+    failStand(new Error("operation has timed out"));
+    await standing;
+    expect(net.getState()).toMatchObject({ room: null, table: null, me: null });
   });
 
   it("leaves for good when Leave is pressed while reconnecting", async () => {
