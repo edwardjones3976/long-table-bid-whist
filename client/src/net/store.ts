@@ -139,6 +139,9 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
   let lookUnsent = false;
   // Also kept here: where storage is blocked the token must still survive a reconnect.
   let held = token.read();
+  // Counts "room:leave" requests still awaiting their answer. While one is pending, snapshots the server had already
+  // queued for the room just left are stale and are dropped, so they cannot bring the room back on screen.
+  let leaving = 0;
 
   function set(partial: Partial<NetState>): void {
     state = { ...state, ...partial };
@@ -173,10 +176,12 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     });
     opened.on("connect_error", () => set({ connection: everOnline ? "reconnecting" : "offline" }));
     opened.on("room", (room) => {
+      if (leaving) return;
       const atTable = room.members.find((member) => member.id === room.you)?.tableId != null;
       set({ room, roomAt: Date.now(), me: room.you, ...(atTable ? {} : { table: null }) });
     });
     opened.on("table", (table) => {
+      if (leaving) return;
       // A strike is told once, as it is given: not on a table's first snapshot (after a reload), nor when a new match clears it.
       const seat = table.you;
       const before = seat !== null && state.table?.tableId === table.tableId ? (state.table.strikes?.[seat] ?? 0) : Infinity;
@@ -184,13 +189,20 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
       const notice = `Your time ran out, so a bot played your turn. Strike ${strikes} of ${MAX_STRIKES}: at ${MAX_STRIKES} a bot takes your seat.`;
       set({ table, tableAt: Date.now(), ...(strikes > before ? { lastError: notice } : {}) });
     });
-    opened.on("table:left", ({ reason }) => set({ table: null, ...(reason ? { lastError: reason } : {}) }));
-    opened.on("poses", (poses) => set({ poses }));
+    opened.on("table:left", ({ reason }) => {
+      if (leaving) return;
+      set({ table: null, ...(reason ? { lastError: reason } : {}) });
+    });
+    opened.on("poses", (poses) => {
+      if (leaving) return;
+      set({ poses });
+    });
     opened.on("look", ({ memberId, look }) => {
       const room = state.room;
       if (room) set({ room: { ...room, members: room.members.map((member) => (member.id === memberId ? { ...member, look } : member)) } });
     });
     opened.on("gesture", ({ memberId, kind }) => {
+      if (leaving) return;
       const at = Date.now();
       set({ gestures: [...state.gestures.filter((gesture) => at - gesture.at < GESTURE_KEEP_MS), { memberId, kind, at }] });
     });
@@ -240,6 +252,8 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
 
   function entered(reply: Reply<Joined>): Reply<Joined> {
     if (reply.ok) {
+      // The server answers in order, so a join accepted after a leave means the leave is done with, answered or not.
+      leaving = 0;
       lookUnsent = false;
       held = reply.token;
       token.write(reply.token);
@@ -260,13 +274,16 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     createRoom: async (name: string) => entered(await request("room:create", { name, look: myLook.get() })),
     joinRoom: async (code: string, name: string) => entered(await request("room:join", { code, name, look: myLook.get() })),
     async leaveRoom(): Promise<Reply> {
-      // Forgotten before asking: a reconnect while the answer is awaited must not resume the room.
-      held = null;
-      token.write(null);
-      const reply = await ask("room:leave", {});
-      // Whatever the server said, this tab is done with the room.
+      // Gone from this tab at once: the entry page (and the end of a VR session) must not wait for the server, which
+      // can take seconds to answer or be reconnecting. Forgetting the token first also means a reconnect while the
+      // answer is awaited does not resume the room. Whatever the server then says, this tab is done with the room.
       leaveLocally(null);
-      return reply;
+      leaving += 1;
+      try {
+        return await ask("room:leave", {});
+      } finally {
+        leaving = Math.max(0, leaving - 1);
+      }
     },
     sit: (tableId: TableId, role: "player" | "host", seat?: Seat) =>
       request("table:sit", seat === undefined ? { tableId, role } : { tableId, role, seat }),

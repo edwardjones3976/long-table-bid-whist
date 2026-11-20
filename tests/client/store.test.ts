@@ -185,6 +185,78 @@ describe("net store", () => {
     expect(sessionStorage.getItem("mansion.token")).toBeNull();
   });
 
+  it("leaves the room on the spot, before the server has answered", async () => {
+    // The server never answers: the person must still be out of the room at once, not after the timeout.
+    const fake = fakeSocket((event) => (event === "room:leave" ? "timeout" : joined));
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", room("spades-1"));
+    fake.serve("table", snapshot);
+    expect(net.getState().room).not.toBeNull();
+
+    const leaving = net.leaveRoom();
+    // Checked before awaiting: nothing has come back from the server yet.
+    expect(net.getState()).toMatchObject({ room: null, table: null, me: null, poses: {}, gestures: [], lastError: null });
+    expect(sessionStorage.getItem("mansion.token")).toBeNull();
+    expect(fake.sent.map((entry) => entry.event)).toEqual(["room:join", "room:leave"]);
+
+    expect(await leaving).toMatchObject({ ok: false, error: "internal" });
+    // A leave the server never acknowledged is not an error worth showing: the room is gone either way.
+    expect(net.getState().lastError).toBeNull();
+  });
+
+  it("drops stale snapshots while the leave is in flight, then follows the next room joined", async () => {
+    let release: (reply: Reply) => void = () => {};
+    const gate = new Promise<Reply>((resolve) => (release = resolve));
+    // The fake's emitWithAck returns whatever the answer gives, so a promise holds the leave's answer open.
+    const fake = fakeSocket((event) => (event === "room:leave" ? (gate as unknown as Reply) : joined));
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", room("spades-1"));
+
+    const leaving = net.leaveRoom();
+    expect(net.getState().room).toBeNull();
+    // Snapshots the server had already queued for the old room arrive after the local leave: they change nothing.
+    fake.serve("room", room("spades-1"));
+    fake.serve("table", snapshot);
+    fake.serve("poses", { other: { x: 1 } });
+    fake.serve("gesture", { memberId: "other", kind: "wave" });
+    fake.serve("table:left", { tableId: "spades-1", reason: "stale" });
+    expect(net.getState()).toMatchObject({ room: null, table: null, me: null, poses: {}, gestures: [], lastError: null });
+
+    release({ ok: true });
+    await leaving;
+    // Once answered, the next room's snapshots are followed as usual.
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", room(null));
+    expect(net.getState().room?.code).toBe("ABCDEFGH");
+    expect(net.getState().me).toBe("me");
+  });
+
+  it("follows a new room joined before an unanswered leave times out", async () => {
+    let release: (reply: Reply) => void = () => {};
+    const gate = new Promise<Reply>((resolve) => (release = resolve));
+    const fake = fakeSocket((event) => (event === "room:leave" ? (gate as unknown as Reply) : joined));
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", room(null));
+
+    const leaving = net.leaveRoom();
+    // The server answers the join (it handles requests in order, so the leave is done) while the leave's ack is still missing.
+    await net.createRoom("Ann");
+    fake.serve("room", room(null));
+    expect(net.getState().room?.code).toBe("ABCDEFGH");
+    release({ ok: true });
+    await leaving;
+    expect(net.getState().room?.code).toBe("ABCDEFGH");
+  });
+
   it("leaves for good when Leave is pressed while reconnecting", async () => {
     const fake = fakeSocket(() => joined);
     const net = createNet(() => fake.socket);
