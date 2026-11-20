@@ -256,17 +256,35 @@ class BidWhistRulesEngine(
         }
     }
 
+    /**
+     * Declarer names the trump suit after winning a suit bid (codex D-01 / F-03).
+     *
+     * The direction (Uptown/Downtown) and the Trump vs. No-Trump declaration were
+     * made in the auction and are binding: they are read from the winning bid in
+     * [AuthoritativeState.highestBid]. Only the suit is chosen here, and it must be
+     * non-null because a No-Trump winner never enters SELECT_TRUMP (see [submitBid]).
+     */
     fun selectTrumpAndPickUpKitty(
         state: AuthoritativeState,
         seat: Seat,
-        trumpSuit: Suit?,
-        direction: BidDirection
+        trumpSuit: Suit?
     ): AuthoritativeState {
         require(state.phase == TablePhase.SELECT_TRUMP && state.currentTurn == seat) {
             "Not in SELECT_TRUMP for $seat"
         }
-        val winningBid = state.highestBid?.action as? BidAction.Bid
-            ?: error("Missing winning bid")
+        val winningRecord = state.highestBid ?: error("Missing winning bid")
+        val winningBid = winningRecord.action as? BidAction.Bid
+            ?: error("Winning record is not a bid")
+        require(winningRecord.seat == seat) {
+            "Only the auction winner (${winningRecord.seat}) may name trump, not $seat"
+        }
+        require(!winningBid.isNoTrump) {
+            "Winning bid ${winningBid.formatShort()} is No-Trump; trump selection does not apply"
+        }
+        require(trumpSuit != null) {
+            "Winning bid ${winningBid.formatShort()} is a suit bid; a trump suit must be named"
+        }
+        val direction = winningBid.direction
 
         val contract = Contract(
             declarer = seat,
@@ -285,7 +303,7 @@ class BidWhistRulesEngine(
             if (s == seat) combinedHand else sortHand(hand, trumpSuit, direction)
         }
 
-        val trumpLabel = trumpSuit?.let { "${it.symbol} ${it.label}" } ?: "No-Trump"
+        val trumpLabel = "${trumpSuit.symbol} ${trumpSuit.label}"
         val caption = "${seat.displayName} calls $trumpLabel (${direction.label}) and takes the kitty."
         val event = AuditEvent(
             sequence = state.auditLog.size + 1,
@@ -306,6 +324,22 @@ class BidWhistRulesEngine(
             auditLog = state.auditLog + event
         )
     }
+
+    /**
+     * Legacy signature retained for source compatibility. The [direction] argument is
+     * ignored: the contract direction always comes from the winning bid.
+     */
+    @Deprecated(
+        message = "Direction is fixed by the winning bid; use selectTrumpAndPickUpKitty(state, seat, trumpSuit).",
+        replaceWith = ReplaceWith("selectTrumpAndPickUpKitty(state, seat, trumpSuit)")
+    )
+    @Suppress("UNUSED_PARAMETER")
+    fun selectTrumpAndPickUpKitty(
+        state: AuthoritativeState,
+        seat: Seat,
+        trumpSuit: Suit?,
+        direction: BidDirection
+    ): AuthoritativeState = selectTrumpAndPickUpKitty(state, seat, trumpSuit)
 
     fun submitKittyDiscard(
         state: AuthoritativeState,

@@ -10,7 +10,6 @@ import com.example.data.TablePreferences
 import com.example.data.TablePreferencesRepository
 import com.example.engine.AiPlayerPolicy
 import com.example.engine.BidAction
-import com.example.engine.BidDirection
 import com.example.engine.BidWhistRulesEngine
 import com.example.engine.RoleMode
 import com.example.engine.Seat
@@ -118,11 +117,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         scheduleAiAdvanceIfNeeded()
     }
 
-    fun selectTrumpAndTakeKitty(trumpSuit: Suit?, direction: BidDirection) {
+    /**
+     * South names the trump suit after winning a suit bid. Direction and Trump/No-Trump
+     * were declared in the auction and are enforced by the engine.
+     */
+    fun selectTrumpAndTakeKitty(trumpSuit: Suit) {
         val current = authoritativeState ?: return
         if (current.phase != TablePhase.SELECT_TRUMP || current.currentTurn != Seat.SOUTH) return
         SoundFeedback.playTrickChime(preferences.value.soundEffectsEnabled)
-        authoritativeState = engine.selectTrumpAndPickUpKitty(current, Seat.SOUTH, trumpSuit, direction)
+        authoritativeState = engine.selectTrumpAndPickUpKitty(current, Seat.SOUTH, trumpSuit)
         publishState(selectedCardId = null, selectedDiscardIds = emptySet(), notice = null)
     }
 
@@ -305,9 +308,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     val seat = latest.currentTurn
                     if (!seat.isHuman) {
                         val obs = engine.projectAiObservation(latest, seat)
-                        val (suit, dir) = aiPolicy.chooseTrumpAndDirection(obs)
+                        val suit = aiPolicy.chooseTrumpSuit(obs)
                         SoundFeedback.playTrickChime(preferences.value.soundEffectsEnabled)
-                        authoritativeState = engine.selectTrumpAndPickUpKitty(latest, seat, suit, dir)
+                        authoritativeState = engine.selectTrumpAndPickUpKitty(latest, seat, suit)
                         publishState()
                         scheduleAiAdvanceIfNeeded()
                     }

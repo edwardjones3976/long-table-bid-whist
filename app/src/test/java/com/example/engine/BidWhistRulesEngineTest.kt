@@ -2,6 +2,9 @@ package com.example.engine
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -288,5 +291,97 @@ class BidWhistRulesEngineTest {
         assertEquals(Suit.DIAMONDS, chosen.suit)
         // 9♦ is the cheapest card that beats the 5♦; the A♠ may not be sloughed.
         assertEquals("DIAMONDS_NINE", chosen.id)
+    /** South bids [bid]; the other three pass. Leaves the table in SELECT_TRUMP for SOUTH on a suit bid. */
+    private fun auctionWonBySouth(bid: BidAction.Bid, seed: Long = 7L): BidWhistRulesEngine.AuthoritativeState {
+        var state = engine.startNewMatch(initialSeed = seed)
+        // Dealer is EAST; bidding opens at SOUTH -> WEST -> NORTH -> EAST
+        state = engine.submitBid(state, Seat.SOUTH, bid)
+        state = engine.submitBid(state, Seat.WEST, BidAction.Pass)
+        state = engine.submitBid(state, Seat.NORTH, BidAction.Pass)
+        state = engine.submitBid(state, Seat.EAST, BidAction.Pass)
+        return state
+    }
+
+    @Test
+    fun selectTrump_contractDirectionIsBoundToWinningBid() {
+        val uptownWin = auctionWonBySouth(BidAction.Bid(4, isNoTrump = false, direction = BidDirection.UPTOWN))
+        assertEquals(TablePhase.SELECT_TRUMP, uptownWin.phase)
+
+        val uptownContract = engine.selectTrumpAndPickUpKitty(uptownWin, Seat.SOUTH, Suit.HEARTS).contract
+        assertNotNull(uptownContract)
+        assertEquals(BidDirection.UPTOWN, uptownContract!!.direction)
+        assertEquals(Suit.HEARTS, uptownContract.trumpSuit)
+        assertEquals(4, uptownContract.booksOverSix)
+        assertFalse(uptownContract.isNoTrump)
+
+        val downtownWin = auctionWonBySouth(BidAction.Bid(5, isNoTrump = false, direction = BidDirection.DOWNTOWN))
+        val downtownContract = engine.selectTrumpAndPickUpKitty(downtownWin, Seat.SOUTH, Suit.CLUBS).contract
+        assertEquals(BidDirection.DOWNTOWN, downtownContract!!.direction)
+        assertEquals(Suit.CLUBS, downtownContract.trumpSuit)
+        assertEquals(5, downtownContract.booksOverSix)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun selectTrump_legacyDirectionArgumentCannotOverrideDeclaredDirection() {
+        val state = auctionWonBySouth(BidAction.Bid(4, isNoTrump = false, direction = BidDirection.UPTOWN))
+
+        // The F-03 repro: caller passes DOWNTOWN against an UPTOWN bid. The declared direction wins.
+        val after = engine.selectTrumpAndPickUpKitty(state, Seat.SOUTH, Suit.SPADES, BidDirection.DOWNTOWN)
+        assertEquals(BidDirection.UPTOWN, after.contract!!.direction)
+        assertEquals(Suit.SPADES, after.contract!!.trumpSuit)
+        assertEquals(TablePhase.KITTY_DISCARD, after.phase)
+        assertEquals(18, after.hands.getValue(Seat.SOUTH).size)
+    }
+
+    @Test
+    fun selectTrump_suitBidWinnerCannotDeclareNoTrump() {
+        val state = auctionWonBySouth(BidAction.Bid(4, isNoTrump = false, direction = BidDirection.UPTOWN))
+
+        assertThrows(IllegalArgumentException::class.java) {
+            engine.selectTrumpAndPickUpKitty(state, Seat.SOUTH, null)
+        }
+        // State is immutable; the failed call must not have advanced the table.
+        assertEquals(TablePhase.SELECT_TRUMP, state.phase)
+        assertNull(state.contract)
+    }
+
+    @Test
+    fun noTrumpBidWinner_skipsSelectTrumpAndKeepsDeclaredDirection() {
+        val state = auctionWonBySouth(BidAction.Bid(4, isNoTrump = true, direction = BidDirection.DOWNTOWN))
+
+        assertEquals(TablePhase.KITTY_DISCARD, state.phase)
+        val contract = state.contract!!
+        assertTrue(contract.isNoTrump)
+        assertNull(contract.trumpSuit)
+        assertEquals(BidDirection.DOWNTOWN, contract.direction)
+        assertThrows(IllegalArgumentException::class.java) {
+            engine.selectTrumpAndPickUpKitty(state, Seat.SOUTH, Suit.SPADES)
+        }
+    }
+
+    @Test
+    fun aiTrumpSelection_respectsDirectionDeclaredInItsBid() {
+        val policy = AiPlayerPolicy(engine)
+        for (seed in 1L..60L) {
+            for (direction in BidDirection.entries) {
+                var state = engine.startNewMatch(initialSeed = seed)
+                state = engine.submitBid(state, Seat.SOUTH, BidAction.Pass)
+                state = engine.submitBid(state, Seat.WEST, BidAction.Bid(4, isNoTrump = false, direction = direction))
+                state = engine.submitBid(state, Seat.NORTH, BidAction.Pass)
+                state = engine.submitBid(state, Seat.EAST, BidAction.Pass)
+                assertEquals(TablePhase.SELECT_TRUMP, state.phase)
+
+                val obs = engine.projectAiObservation(state, Seat.WEST)
+                val suit = policy.chooseTrumpSuit(obs)
+                val expectedPlan = policy.evaluateBestPlan(obs.ownHand, fixedDirection = direction, allowNoTrump = false)
+                assertEquals(expectedPlan.trumpSuit, suit)
+                assertEquals(direction, expectedPlan.direction)
+
+                val contract = engine.selectTrumpAndPickUpKitty(state, Seat.WEST, suit).contract!!
+                assertEquals(direction, contract.direction)
+                assertEquals(suit, contract.trumpSuit)
+            }
+        }
     }
 }

@@ -65,9 +65,36 @@ class AiPlayerPolicy(
         return BidAction.Pass to passLine
     }
 
+    /**
+     * Names the trump suit after this seat won a suit bid. The direction was declared in
+     * the auction and is binding (codex D-01), so the best suit is chosen *given* that
+     * direction rather than re-optimising direction and Trump/No-Trump from scratch.
+     */
+    fun chooseTrumpSuit(obs: AiSeatObservation): Suit {
+        val winningBid = requireNotNull(obs.highestBid?.action as? BidAction.Bid) {
+            "No winning bid available for trump selection"
+        }
+        require(!winningBid.isNoTrump) { "No-Trump winner does not name a suit" }
+        val plan = evaluateBestPlan(
+            hand = obs.ownHand,
+            fixedDirection = winningBid.direction,
+            allowNoTrump = false
+        )
+        return requireNotNull(plan.trumpSuit) { "Suit-only evaluation must yield a suit" }
+    }
+
+    @Deprecated(
+        message = "Direction is fixed by the winning bid; use chooseTrumpSuit(obs).",
+        replaceWith = ReplaceWith("chooseTrumpSuit(obs)")
+    )
     fun chooseTrumpAndDirection(obs: AiSeatObservation): Pair<Suit?, BidDirection> {
-        val plan = evaluateBestPlan(obs.ownHand)
-        return plan.trumpSuit to plan.direction
+        val winningBid = obs.highestBid?.action as? BidAction.Bid
+        return if (winningBid != null && !winningBid.isNoTrump) {
+            chooseTrumpSuit(obs) to winningBid.direction
+        } else {
+            val plan = evaluateBestPlan(obs.ownHand)
+            plan.trumpSuit to plan.direction
+        }
     }
 
     fun chooseSixDiscards(obs: AiSeatObservation): Set<String> {
@@ -128,9 +155,14 @@ class AiPlayerPolicy(
                 suggested
             }
             TablePhase.SELECT_TRUMP -> {
-                val plan = evaluateBestPlan(view.localHand)
+                val winningBid = view.highestBid?.action as? BidAction.Bid
+                val plan = evaluateBestPlan(
+                    hand = view.localHand,
+                    fixedDirection = winningBid?.direction,
+                    allowNoTrump = winningBid == null
+                )
                 val label = plan.trumpSuit?.label ?: "No-Trump"
-                "Best fit from your 12 cards: $label (${plan.direction.label})."
+                "You declared ${plan.direction.label}. Best suit fit from your 12 cards: $label."
             }
             TablePhase.KITTY_DISCARD -> {
                 "Tip: Keep Jokers, trumps, and Aces. Discard weak cards from short side suits to create voids."
@@ -216,11 +248,24 @@ class AiPlayerPolicy(
         return trick.maxBy { engine.cardStrength(it.card, ledSuit, contract) }.seat
     }
 
-    fun evaluateBestPlan(hand: List<Card>): TrumpPlan {
+    /**
+     * Scores every (suit or No-Trump) × direction plan for [hand] and returns the best.
+     *
+     * @param fixedDirection when non-null, only plans in that direction are considered
+     *   (used after the auction, where the direction is already declared).
+     * @param allowNoTrump when false, No-Trump plans are excluded (used when the winning
+     *   bid was a suit bid and a suit must be named).
+     */
+    fun evaluateBestPlan(
+        hand: List<Card>,
+        fixedDirection: BidDirection? = null,
+        allowNoTrump: Boolean = true
+    ): TrumpPlan {
         val jokers = hand.count { it.isJoker }
         val candidates = mutableListOf<TrumpPlan>()
+        val directions = fixedDirection?.let { listOf(it) } ?: BidDirection.entries
 
-        for (direction in BidDirection.entries) {
+        for (direction in directions) {
             for (suit in Suit.entries) {
                 val suitCards = hand.filter { it.suit == suit }
                 val highCards = suitCards.count { engine.rankStrength(it.rank, direction) >= 12 }
@@ -231,6 +276,7 @@ class AiPlayerPolicy(
                 val estimate = 4.2 + jokers * 0.95 + suitCards.size * 0.68 + highCards * 0.45 + offSuitWinners * 0.65
                 candidates += TrumpPlan(suit, direction, estimate)
             }
+            if (!allowNoTrump) continue
             // No-Trump evaluation (Jokers do not win tricks)
             val acesAndHigh = hand.count { !it.isJoker && engine.rankStrength(it.rank, direction) >= 13 }
             val mediumWinners = hand.count { !it.isJoker && engine.rankStrength(it.rank, direction) == 12 }
