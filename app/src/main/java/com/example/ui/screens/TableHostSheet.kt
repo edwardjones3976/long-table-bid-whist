@@ -46,7 +46,7 @@ fun TableHostAndAuditSheet(
     onDismiss: () -> Unit
 ) {
     var showAuditOnly by remember { mutableStateOf(prefs.roleMode != RoleMode.SEATED_PLAYER_HOST) }
-    var voidConfirmVisible by remember { mutableStateOf(false) }
+    val pendingVoid = view.pendingVoidRequest
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
@@ -129,14 +129,22 @@ fun TableHostAndAuditSheet(
 
                     HorizontalDivider()
 
-                    if (!voidConfirmVisible) {
+                    if (pendingVoid == null) {
                         OutlinedButton(
-                            onClick = { voidConfirmVisible = true },
+                            onClick = { viewModel.requestVoidAsHost("Table unanimous pause/redeal") },
+                            enabled = view.canRequestVoid,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("host_void_request_button")
                         ) {
                             Text("Request Audited Unanimous Void")
+                        }
+                        if (!view.canRequestVoid) {
+                            Text(
+                                "Hand #${view.handNumber} is settled; a void can only be requested while a hand is in progress.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     } else {
                         Card(
@@ -151,11 +159,16 @@ fun TableHostAndAuditSheet(
                                     "Confirm Audited Void? Concealed cards stay unrevealed and Hand #${view.handNumber} closes with 0 points.",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
+                                Text(
+                                    "Requested by ${pendingVoid.requestedBy.displayName} · " +
+                                        "Awaiting consent: ${pendingVoid.outstandingSeats.joinToString { it.displayName }}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                     Button(
                                         onClick = {
-                                            viewModel.voidHandAsHost("Table unanimous pause/redeal")
-                                            voidConfirmVisible = false
+                                            viewModel.consentToVoidAsHost()
                                             onDismiss()
                                         },
                                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
@@ -163,7 +176,7 @@ fun TableHostAndAuditSheet(
                                     ) {
                                         Text("Confirm Void")
                                     }
-                                    OutlinedButton(onClick = { voidConfirmVisible = false }) {
+                                    OutlinedButton(onClick = { viewModel.withdrawVoidRequestAsHost() }) {
                                         Text("Cancel")
                                     }
                                 }

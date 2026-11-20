@@ -34,7 +34,8 @@ class BidWhistRulesEngine(
         val seatCaptions: Map<Seat, String>,
         val latestCaption: String,
         val auditLog: List<AuditEvent>,
-        val isBetweenHandPaused: Boolean = false
+        val isBetweenHandPaused: Boolean = false,
+        val pendingVoidRequest: VoidRequest? = null
     )
 
     fun createStandardDeck(): List<Card> {
@@ -613,34 +614,140 @@ class BidWhistRulesEngine(
     }
 
     /**
-     * Host control: Audited unanimous void (allowed only via explicit host/table agreement,
-     * logged immutably in the audit trail, never alters concealed cards).
+     * Phases in which a hand can no longer be voided: it is already settled, the match is
+     * over, it was already voided, or no hand is in progress.
      */
-    fun voidCurrentHandAsHost(state: AuthoritativeState, reason: String): AuthoritativeState {
+    private val voidRefusedPhases = setOf(
+        TablePhase.IDLE,
+        TablePhase.HAND_COMPLETE,
+        TablePhase.MATCH_COMPLETE,
+        TablePhase.VOIDED_HAND
+    )
+
+    fun canRequestVoid(state: AuthoritativeState): Boolean = state.phase !in voidRefusedPhases
+
+    /**
+     * Audited unanimous void, step 1: a seat asks the table to void the current hand.
+     * The request is logged and stays pending until every human seat has consented via
+     * [consentToVoid]; AI seats consent implicitly. Never touches concealed cards or scores.
+     */
+    fun requestVoid(state: AuthoritativeState, seat: Seat, reason: String): AuthoritativeState {
+        require(canRequestVoid(state)) {
+            "Cannot void Hand #${state.handNumber} in phase ${state.phase}"
+        }
+        require(state.pendingVoidRequest == null) {
+            "A void request by ${state.pendingVoidRequest?.requestedBy} is already pending"
+        }
+        require(reason.isNotBlank()) { "Void request requires a reason" }
+
+        val implicitAiConsents = Seat.entries.filter { !it.isHuman }.toSet()
+        val request = VoidRequest(
+            reason = reason.trim(),
+            requestedBy = seat,
+            consents = implicitAiConsents
+        )
+        val outstanding = request.outstandingSeats
+        val event = AuditEvent(
+            sequence = state.auditLog.size + 1,
+            phase = state.phase,
+            actor = seat.displayName,
+            summary = "Void requested for Hand #${state.handNumber}",
+            detail = "${request.formatAuditDetail()} Awaiting consent from: " +
+                outstanding.joinToString(", ") { it.displayName } + "."
+        )
+        val caption = "${seat.displayName} requests an audited void ($reason). " +
+            "Awaiting ${outstanding.joinToString(", ") { it.displayName }}."
+        return state.copy(
+            pendingVoidRequest = request,
+            latestCaption = caption,
+            auditLog = state.auditLog + event
+        )
+    }
+
+    /**
+     * Audited unanimous void, step 2: a seat consents to the pending request. When every
+     * human seat has consented the hand is voided; otherwise the request stays pending.
+     */
+    fun consentToVoid(state: AuthoritativeState, seat: Seat): AuthoritativeState {
+        val pending = requireNotNull(state.pendingVoidRequest) {
+            "No void request is pending for Hand #${state.handNumber}"
+        }
+        require(canRequestVoid(state)) {
+            "Cannot void Hand #${state.handNumber} in phase ${state.phase}"
+        }
+        if (seat in pending.consents) return state
+
+        val updated = pending.copy(consents = pending.consents + seat)
+        if (updated.isUnanimous) {
+            return applyVoid(state, updated)
+        }
+
+        val outstanding = updated.outstandingSeats
+        val event = AuditEvent(
+            sequence = state.auditLog.size + 1,
+            phase = state.phase,
+            actor = seat.displayName,
+            summary = "Consented to void of Hand #${state.handNumber}",
+            detail = "${updated.formatAuditDetail()} Still awaiting: " +
+                outstanding.joinToString(", ") { it.displayName } + "."
+        )
+        return state.copy(
+            pendingVoidRequest = updated,
+            latestCaption = "${seat.displayName} consents to the void. " +
+                "Awaiting ${outstanding.joinToString(", ") { it.displayName }}.",
+            auditLog = state.auditLog + event
+        )
+    }
+
+    /**
+     * Withdraws a pending void request before it becomes unanimous. Logged like every other
+     * void action so the audit trail shows the request was raised and dropped.
+     */
+    fun withdrawVoidRequest(state: AuthoritativeState, seat: Seat): AuthoritativeState {
+        val pending = state.pendingVoidRequest ?: return state
+        val event = AuditEvent(
+            sequence = state.auditLog.size + 1,
+            phase = state.phase,
+            actor = seat.displayName,
+            summary = "Void request withdrawn for Hand #${state.handNumber}",
+            detail = "${pending.formatAuditDetail()} Withdrawn by ${seat.displayName}; play continues."
+        )
+        return state.copy(
+            pendingVoidRequest = null,
+            latestCaption = "${seat.displayName} withdrew the void request. Play continues.",
+            auditLog = state.auditLog + event
+        )
+    }
+
+    private fun applyVoid(state: AuthoritativeState, request: VoidRequest): AuthoritativeState {
+        check(request.isUnanimous) { "Void applied without unanimous consent" }
         val nextDealer = state.dealer.nextClockwise()
         val outcome = HandOutcome(
             handNumber = state.handNumber,
-            contract = state.contract ?: Contract(state.dealer, 4, null, BidDirection.UPTOWN),
+            contract = state.contract,
             booksWonUs = state.booksWonUs,
             booksWonThem = state.booksWonThem,
             contractMade = false,
             isBoston = false,
-            pointsAwardedTo = Partnership.US,
+            pointsAwardedTo = null,
             pointsDelta = 0,
             wasVoided = true,
-            voidReason = reason
+            voidReason = request.reason,
+            voidRequest = request
         )
         val event = AuditEvent(
             sequence = state.auditLog.size + 1,
             phase = TablePhase.VOIDED_HAND,
-            actor = "Table Host (Audited)",
-            summary = "Hand #${state.handNumber} voided",
-            detail = "Reason: $reason. Concealed hands discarded unrevealed; next dealer ${nextDealer.displayName}."
+            actor = "Authoritative Rules Service",
+            summary = "Hand #${state.handNumber} voided (unanimous)",
+            detail = "${request.formatAuditDetail()} No points awarded; concealed hands discarded unrevealed; " +
+                "next dealer ${nextDealer.displayName}."
         )
         return state.copy(
             phase = TablePhase.VOIDED_HAND,
+            pendingVoidRequest = null,
             lastOutcome = outcome,
-            latestCaption = "Hand #${state.handNumber} voided by Host ($reason). Ready for next deal.",
+            latestCaption = "Hand #${state.handNumber} voided by unanimous consent (${request.reason}). Ready for next deal.",
             auditLog = state.auditLog + event
         )
     }
@@ -717,6 +824,8 @@ class BidWhistRulesEngine(
             latestCaption = state.latestCaption,
             auditLog = state.auditLog,
             isBetweenHandPaused = state.isBetweenHandPaused,
+            pendingVoidRequest = state.pendingVoidRequest,
+            canRequestVoid = canRequestVoid(state),
             guidedHint = guidedHint
         )
     }

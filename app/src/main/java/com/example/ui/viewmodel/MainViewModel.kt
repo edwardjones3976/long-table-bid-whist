@@ -221,12 +221,53 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         publishState(notice = if (paused) "Table paused by Host." else "Table resumed.")
     }
 
-    fun voidHandAsHost(reason: String) {
+    /**
+     * Audited unanimous void, step 1: the Host (seated at South) raises the request.
+     * The engine records it and waits for every human seat to consent.
+     */
+    fun requestVoidAsHost(reason: String) {
         val current = authoritativeState ?: return
         if (preferences.value.roleMode != RoleMode.SEATED_PLAYER_HOST) return
-        aiTurnJob?.cancel()
-        authoritativeState = engine.voidCurrentHandAsHost(current, reason)
-        publishState(selectedCardId = null, selectedDiscardIds = emptySet(), notice = null)
+        if (!engine.canRequestVoid(current)) {
+            _tableState.value = _tableState.value.copy(
+                statusNotice = "Hand #${current.handNumber} is already settled and cannot be voided."
+            )
+            return
+        }
+        if (current.pendingVoidRequest != null) return
+        authoritativeState = engine.requestVoid(current, Seat.SOUTH, reason)
+        publishState(notice = null)
+    }
+
+    /**
+     * Audited unanimous void, step 2: South consents. With South the only human seat this
+     * completes the void immediately; the engine refuses it once the hand is settled.
+     */
+    fun consentToVoidAsHost() {
+        val current = authoritativeState ?: return
+        if (preferences.value.roleMode != RoleMode.SEATED_PLAYER_HOST) return
+        if (current.pendingVoidRequest == null) return
+        if (!engine.canRequestVoid(current)) {
+            authoritativeState = engine.withdrawVoidRequest(current, Seat.SOUTH)
+            publishState(notice = "Hand #${current.handNumber} settled before the void completed.")
+            return
+        }
+        val next = engine.consentToVoid(current, Seat.SOUTH)
+        authoritativeState = next
+        if (next.phase == TablePhase.VOIDED_HAND) {
+            aiTurnJob?.cancel()
+            publishState(selectedCardId = null, selectedDiscardIds = emptySet(), notice = null)
+            scheduleAiAdvanceIfNeeded()
+        } else {
+            publishState(notice = null)
+        }
+    }
+
+    fun withdrawVoidRequestAsHost() {
+        val current = authoritativeState ?: return
+        if (current.pendingVoidRequest == null) return
+        authoritativeState = engine.withdrawVoidRequest(current, Seat.SOUTH)
+        publishState(notice = null)
     }
 
     fun applySeatPreset(presetName: String) {
