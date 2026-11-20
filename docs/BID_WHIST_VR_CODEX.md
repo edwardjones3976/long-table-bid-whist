@@ -199,6 +199,11 @@ engine (resolved F-04):
 
 On a local table the host sheet shows "Request" → "Confirm" (South's consent)
 → void, with the pending request and outstanding seats visible in `SeatView`.
+The host types the reason into the sheet (single line, 60 characters, with
+tap-to-fill suggestions such as "Misdeal" and "Card exposed"); an empty field
+records "Table agreed to throw the hand in". The pending-request card repeats
+the reason before consent, and it then appears in the audit event and on the
+voided hand's outcome card via `HandOutcome.voidReason`.
 
 ---
 
