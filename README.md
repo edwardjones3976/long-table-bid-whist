@@ -7,6 +7,12 @@ An authentic VR/MR recreation of Bid Whist centered on deterministic rules,
 inhabited table presence, respected house rules, accessible interaction, and
 dignified cultural specificity.
 
+This repository holds three pieces of that work:
+
+- the **mansion multiplayer app**, a browser and VR card room (`client/`, `server/`, `shared/`);
+- the **browser prototype**, the single-player rules and interaction proof it grew from (`src/`);
+- the **Android app**, a four-seat Bid Whist table in Kotlin and Jetpack Compose (`app/`).
+
 ## Mansion multiplayer app
 
 A browser and VR multiplayer card app (Tonk, Spades, Bid Whist) in a walkable
@@ -28,12 +34,12 @@ npx playwright install chromium-headless-shell   # once
 npm run test:e2e
 ```
 
-The project is currently a **reshaped technical prototype**. A local production
+## Browser prototype
+
+The prototype is a **reshaped technical prototype**. A local production
 build can complete a deterministic hand from auction through scoring in either
 AI Dealer or Human Host presentation. It becomes a `REVIEW_READY` candidate
 only after exact-SHA review; final `COMPLETE` remains gated on human acceptance.
-
-## Run the prototype
 
 ```powershell
 npm install
@@ -51,6 +57,35 @@ commit controls.
 This is a browser interaction and rules proof—not a native Quest build, real
 multiplayer room, production concealed-state security boundary, Meta Avatar SDK
 integration, or completed cultural/human acceptance study.
+
+## Android app
+
+An authentic, accessible four-seat **Bid Whist** Android application built with **Kotlin** and **Jetpack Compose (Material 3)**.
+
+### Features
+
+- **Deterministic Strict Table Rules Engine (`strict-table-v1.0.0`)**:
+  - 54-card deck (52 standard cards + Big Joker and Little Joker), 12 cards per seat, and a 6-card Kitty.
+  - Full auction (`4–7` books, `Uptown` / `Downtown` direction, `No-Trump` outranking suit bids at the same level, forced minimum dealer bid of 4).
+  - Exact Downtown ranking (Ace high, 2 second strongest down to King), Joker behavior in Trump vs. No-Trump, Kitty 13th-book credit, and Boston (`+14`) / No-Trump (`2×`) scoring.
+- **Concealed-Information Isolation & Role Separation**:
+  - Authoritative rules engine projects strictly redacted `SeatView` (South) and `AiSeatObservation` (West, North, East) states.
+  - Distinct **Seated Player** and **Seated Player + Table Host** modes with between-hand pause, AI tablemate presets, table-talk tone (`Quiet`, `Social`, `Lively`), and audited unanimous voids — without exposing concealed hands.
+- **Bid School Interactive Trainer**:
+  - 4 guided lessons covering tricks/books, Uptown vs. Downtown & Joker order, bidding & Kitty discards, and guided table play.
+- **Accessibility & Comfort Calibration**:
+  - One-handed commit button alignment (`Left-Handed` / `Right-Handed`), scalable cards (`Standard`, `Large`, `Extra Large`), Two-Step Card Commit (`Select → Preview → Commit`), 4-color high-contrast suit badges, live table captions (100% playable without audio), reduced motion, and procedural sound taps.
+- **Rights & Asset Provenance Ledger**:
+  - Transparent asset registry for bundled fonts, original illustrations, procedural PCM audio, and an external venue music policy.
+
+### Build & Test
+
+- Compile APK: `gradle assembleDebug`
+- Run deterministic rules tests: `gradle :app:testDebugUnitTest`
+
+## VR Codex
+
+[`docs/BID_WHIST_VR_CODEX.md`](docs/BID_WHIST_VR_CODEX.md) is the reference for carrying the table to a seated VR/MR experience: the enforced Strict Table rules, state machine, information boundaries, role permissions, VR interaction spec, accessibility gates, rights policy, acceptance tests, a register of engine findings, and the open decisions. [`docs/VR_TOOLCHAIN.md`](docs/VR_TOOLCHAIN.md) pins the Unity 6.3 LTS / OpenXR / Meta Quest toolchain with verified sources and the compatibility-spike checklist. [`docs/RULES_COUNCIL_BRIEF.md`](docs/RULES_COUNCIL_BRIEF.md) is the brief for the experienced-player Rules Council that reviews the Strict Table rules. [`docs/ACCESSIBILITY_GATES.md`](docs/ACCESSIBILITY_GATES.md) defines the thirteen accessibility and comfort launch gates with their pass/fail criteria and verified sources.
 
 ## Avatar and cultural direction
 
