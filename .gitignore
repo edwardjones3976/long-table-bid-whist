@@ -11,6 +11,9 @@ AGENTS.md
 venv/
 
 # Editors, operating systems, and build/test output.
+_restart_archive/
+_provider_worktrees/
+.firecrawl/
 .vs/
 .vscode/
 .idea/
@@ -21,6 +24,10 @@ venv/
 .DS_Store
 Thumbs.db
 coverage/
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
 TestResults/
 Build/
 Builds/
@@ -31,3 +38,17 @@ Library/
 UserSettings/
 .gradle/
 # [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]]
+
+# Browser-test scratch output.
+client/.e2e-screens/
+test-results/
+playwright-report/
+.playwright-mcp/
+
+# Each checkout's lane facts (written by tools/lane.mjs) stay local.
+.lane.json
+# The provider instructions are tracked again; the older block above ignored them.
+!AGENTS.md
+
+# The detached game server's process id (.claude/mansion-server.py); its log is covered by *.log.
+.claude/mansion-server.pid

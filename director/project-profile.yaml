@@ -1,0 +1,324 @@
+# [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]]
+# [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]]
+# [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]]
+# [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | BEGIN]]
+# [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | BEGIN]]
+# [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | BEGIN]]
+# Living project-local authority record. Do not store secrets or tokens here.
+schema_version: "director-project-profile/v1"
+
+project:
+  id: "long-table-bid-whist"
+  name: "The Long Table — Bid Whist"
+  proposition: "Create an authentic, auditable VR/MR Bid Whist table that teaches real play and supports private social and hosted events."
+  state: "validating"
+  owner: "project owner"
+  created_at: "2026-08-24T20:48:09Z"
+  updated_at: "2026-08-25T02:51:35Z"
+
+source_context:
+  thread: "current VR/Meta Quest Games project conversation"
+  preserve:
+    - "Deterministic and auditable Bid Whist rules"
+    - "A serious, inhabited table rather than a casino or fantasy metagame"
+    - "House-rule respect through an acknowledged rules manifest"
+    - "Dignified, advisor-led cultural specificity"
+    - "Controller and hand-tracking accessibility"
+    - "No AI access to concealed cards"
+    - "Rights-clean game assets and music"
+  reshape:
+    - "Separate AI dealer, rotating player dealer, and human event host permissions"
+    - "Constrain rules combinations to validated presets and compatible switches"
+    - "Separate core table play from optional heritage presentation"
+    - "Treat shared host music as a rights and transmission feature, not a file-format feature"
+  discard:
+    - "Director Orchestrator repository permissions, credentials, budgets, channels, deployments, and provider state"
+    - "Any assumption that historic jazz or blues recordings are automatically public domain"
+  inherited_authority: false
+
+outcomes:
+  desired:
+    - value: "A prototype-ready interaction and state-machine specification for one strict four-seat table"
+      status: "confirmed"
+    - value: "AI dealer and human host modes with server-authoritative fairness boundaries"
+      status: "confirmed"
+    - value: "A commercial MVP roadmap after the gameplay prototype is evaluated"
+      status: "confirmed"
+    - value: "A rights-clean bundled soundtrack and bounded host-audio policy"
+      status: "confirmed"
+  non_goals:
+    - "No casino mechanics, collectible advantages, deck construction, or card powers"
+    - "No public ranked play, prize tournaments, live spectators, or manual renege adjudication in the first prototype"
+    - "No unlicensed third-party music, samples, likenesses, oral histories, photographs, or archival assets"
+    - "No service deployment or provider launch during workflow bootstrap"
+  evidence_standard:
+    - "Every rule transition is represented in a deterministic state model and focused acceptance scenarios"
+    - "Experienced-player review confirms authentic table flow"
+    - "Beginner usability test confirms that teaching transfers to a physical table"
+    - "Every shipped asset has recorded provenance and usage authority"
+  stopping_point: "Reach a Technical Candidate / REVIEW_READY handoff, then require human testing and owner acceptance before COMPLETE."
+
+surfaces:
+  slack:
+    channel: "not_applicable"
+    thread: "current Codex project task"
+    status: "not_applicable"
+  repositories:
+    - name: "edwardjones3976/long-table-bid-whist"
+      starting_ref: "main"
+      worktree: "C:\\Users\\edwar\\.codex\\.chatgpt-projects\\g-p-6a8baa37498881918581f26b68f1fb4c"
+      status: "confirmed"
+  systems_and_data:
+    classification: "private"
+    allowed_sources:
+      - "User-provided concept and decisions in this project"
+      - "Public sources used for bounded rules, platform, accessibility, cultural, and rights research"
+      - "Private project repository edwardjones3976/long-table-bid-whist"
+    prohibited_sources:
+      - "Secrets, credentials, tokens, or unrelated private project context"
+      - "Unlicensed media or unverifiable scrape artifacts"
+      - "Any mutation of synced sources/ content"
+  browser_conversations:
+    - "current project conversation"
+  external_effects:
+    mode: "explicitly_scoped"
+    allowed:
+      - "Create and revise project files outside sources/"
+      - "Commit and push project workflow artifacts to the confirmed private repository"
+      - "Owner-authorized OpenAI/Codex production for the bounded accelerated technical prototype"
+      - "One read-only zero-incremental-cost provider attempt per configured lane"
+    prohibited:
+      - "Paid provider runs, account login, credential changes, or duplicate ambiguous dispatches"
+      - "Slack posts or messages"
+      - "Public release, deployment, purchases, credential changes, or service activation"
+      - "Shared host-audio transmission or third-party content ingestion"
+
+modules:
+  discovery:
+    state: "enabled"
+    purpose: "Resolve only prototype-blocking uncertainties; exploratory activity is intentionally limited."
+  research_and_evidence:
+    state: "optional"
+    purpose: "Use bounded authoritative sources only when a rules, platform, cultural, accessibility, or rights claim affects design."
+  design_and_decision:
+    state: "enabled"
+    purpose: "Convert the accepted critique into a gameplay prototype specification."
+  implementation:
+    state: "enabled"
+    purpose: "Bounded React/TypeScript browser technical prototype with a headless deterministic rules kernel."
+  quality_and_security:
+    state: "enabled"
+    purpose: "Verify determinism, logical concealed-information projection, interactions, responsive layout, permissions, and asset provenance without claiming server security."
+  review_to_merge:
+    state: "gated"
+    purpose: "Candidate commit/push is authorized; different-provider exact-candidate review and human acceptance remain open gates."
+  operations:
+    state: "disabled"
+    purpose: "No live service is authorized."
+  learning_and_reuse:
+    state: "enabled"
+    purpose: "Keep decisions, tests, and advisor findings reusable within this project without copying private context elsewhere."
+
+team:
+  provider_roles_contract: "provider-roles-contract.yaml"
+  responsibility_standard:
+    research: "Investigate systematically with diverse relevant sources, provenance, and explicit fact, inference, disagreement, and unknown labels."
+    evidence_verification: "Cross-check material claims against independent or authoritative sources; report contradictions, freshness limits, and missing evidence."
+    programming: "Build, debug, maintain, and refactor only inside the assignment repository and side-effect boundaries."
+    deep_reasoning: "Compare credible alternatives, challenge assumptions, and anticipate consequences before recommendation."
+    innovation: "Use explicit hypotheses, reversible experiments, feasibility checks, and failure criteria."
+    development: "Improve product, process, documentation, productivity, and reusable project knowledge."
+    quality_assurance: "Reproduce defects, test in proportion to risk, verify acceptance checks, and report exact results."
+    leadership: "Coordinate dependencies, surface dissent, unblock bounded work, and align the team to the owner objective."
+  director:
+    provider: "openai"
+    responsibilities: ["intake interpretation", "planning", "decomposition", "neutral coordination", "evidence collection", "routing", "recovery decisions", "acceptance review", "milestone reporting", "bounded escalation"]
+    measured_in_direct_production: false
+    specialist_assignment_target: false
+    functions:
+      moderator: "Neutral framing and counter-bias check; no advocacy or vote."
+      participant: "At most one independently formed position and the one existing OpenAI advisory vote."
+      director: "Evidence synthesis, dissent and uncertainty reporting, deterministic-gate routing, tie judgment, acceptance review, and escalation."
+  workload:
+    direct_production_targets:
+      claude: 60
+      cursor: 28
+      gemini_antigravity: 7
+      perplexity: 4
+      external_openai_codex: 1
+    external_openai_codex:
+      authorization: "separate owner authorization required outside the Director runtime"
+      review: "different-provider exact-candidate review required"
+    coordination_capacity:
+      productive_percent: 95
+      reserve_percent: 5
+      reserve_purpose: "checks, drift reconciliation, evidence gaps, recovery, process failures, and infrastructure variance"
+    avoidable_micro_fixup_commit_reduction_target_percent: 33
+  lanes:
+    - id: "chief-programmer"
+      provider: "claude"
+      title: "Chief Programmer"
+      direct_production_target_percent: 60
+      role: "producer"
+      workflow_skill: "none"
+      responsibilities:
+        - "Primary implementation, repository-scale reasoning, debugging, and eligible independent review when not the producer"
+      forbidden_authority:
+        - "No unnamed repository access, self-review, merge, deployment, publication, spending, or permission changes"
+    - id: "project-secretary"
+      provider: "cursor"
+      title: "Project Secretary"
+      direct_production_target_percent: 28
+      capability_parity_target_percent: 90
+      eligible_responsibility_areas: ["research", "evidence_verification", "programming", "deep_reasoning", "innovation", "development", "quality_assurance", "leadership"]
+      role: "producer"
+      workflow_skill: "cursor-agent-workflow"
+      responsibilities:
+        - "Technical continuity, canonical records, writer leases, branch and candidate maps, full-spectrum implementation, QA, and eligible independent review"
+      forbidden_authority:
+        - "No self-review, Director acceptance, merge, deployment, publication, spending, or permission changes"
+    - id: "specialist-backup"
+      provider: "gemini_antigravity"
+      title: "Specialist and Backup Programmer"
+      direct_production_target_percent: 7
+      primary_team_substitute: false
+      debate_participant: "only_after_owner_or_director_invitation"
+      exact_candidate_reviewer: false
+      outbound_contract: "fixed strings, closed enums, and bounded integers only; no model-authored prose or repository context"
+      invited_debate:
+        equally_debate_eligible: true
+        may_initiate: false
+        exact_outbound_payload_approval_required: true
+        allowed_context: "public, non-private, abstract decision framing only"
+        continuation: "Director-relayed bounded turns only"
+        authority_effect: "none"
+      role: "producer"
+      workflow_skill: "antigravity-sandbox-workflow"
+      responsibilities:
+        - "Bounded boilerplate, scaffolding, mechanical implementation, and alternate ideation under the closed outbound contract"
+      forbidden_authority:
+        - "No repository context, private prose, self-initiated debate, autonomous continuation, exact-candidate review, acceptance, merge, deployment, publication, or external write"
+    - id: "research-programmer"
+      provider: "perplexity"
+      title: "Research Programmers"
+      direct_production_target_percent: 4
+      output_authority: "untrusted evidence until evaluated by the Director or an authorized primary-team member"
+      required_provenance: ["query", "result URL", "page title", "publication date", "update date", "retrieval date", "supporting excerpt or extracted content", "source type", "confidence", "contradictions", "unavailable evidence"]
+      role: "researcher"
+      workflow_skill: "perplexity-research-workflow"
+      responsibilities:
+        - "Bounded public-source research, methodology evidence, source discovery, and fact verification"
+      forbidden_authority:
+        - "No repository context, private data, programming, provider voting, Slack posts, or operational verdicts"
+  shared_skill_catalog:
+    cursor_agent_workflow: "discovered"
+    antigravity_sandbox_workflow: "discovered"
+    perplexity_research_workflow: "discovered"
+
+coordination:
+  live_transport: "current_codex_project_task"
+  execution_transport: "local_cli_in_verified_worktree"
+  canonical_review_and_merge: "github"
+  browser_role: "continuity_only"
+  provider_messages_relay_through_director: true
+
+contribution_attribution:
+  enabled: true
+  canonical_format: "[[Contributor | System | YYYY-MM-DD | HH:MM UTC | BEGIN|END]]"
+  preserve_prior_valid_tags: true
+  safe_human_text: "matching_inline_or_message_envelope"
+  structured_or_syntax_sensitive_artifacts: "external_submission_envelope"
+  authentication_or_authority_effect: "none"
+
+controls:
+  total_budget: "$0 incremental provider spend; existing authenticated subscription access only"
+  phase_budget: "$0 incremental spend for the accelerated technical-candidate cycle"
+  timeout: "one bounded phase at a time"
+  provider_contact_attempt_limit: 3
+  minimal_fix:
+    enabled: true
+    attempt_limit: 1
+    changed_candidate_invalidates_evidence: true
+  revision_limit: 3
+  revision_policy:
+    candidate_change_invalidates_evidence: true
+    perplexity: "A revision requires a new owner-approved bounded public query; never silently rerun the original."
+  hop_limit: 2
+  runtime_activation:
+    director_host_completion_runners: {permitted: true, enabled: false}
+    live_langgraph_packet_runtime: {permitted: true, enabled: false}
+    live_provider_dispatch: {permitted: true, enabled: false}
+    parallel_external_dispatch: {permitted: true, enabled: false}
+    regex_based_privacy_controls: {permitted: false, enabled: false, role: "prohibited", activation_path: "none"}
+    merge_side_effects: false
+  allowlists:
+    projects: ["long-table-bid-whist"]
+    repositories: ["edwardjones3976/long-table-bid-whist"]
+    starting_refs: ["main"]
+  approval_gates:
+    - "The browser candidate may reach REVIEW_READY but not COMPLETE before human acceptance"
+    - "Owner explicitly scopes any paid-provider, public-room, upload, publication, purchase, credential, or deployment effect"
+    - "Specialist rights review before shared host-supplied music is enabled"
+    - "Different-provider review for each exact implementation candidate"
+  acceptance_checks:
+    - "One versioned house-rules manifest drives bidding, play, scoring, endings, and replay"
+    - "AI dealer, player dealer, and human host permissions cannot reveal or alter concealed state"
+    - "Input prototype proves reliable select, inspect, discard, bid, and commit interactions"
+    - "Rights ledger covers composition, recording, samples, voice, likeness, environment, and archival assets"
+  serious_safety_stop: true
+
+review_chain:
+  producer: "owner-authorized external OpenAI/Codex accelerated prototype lane"
+  material_authors: ["OpenAI Codex root", "OpenAI Codex rules_ai", "OpenAI Codex spatial_ui", "OpenAI Codex ui_tests", "OpenAI Codex avatar_policy", "OpenAI Codex app_flow_tests"]
+  eligible_reviewer: "different authenticated provider; currently unavailable"
+  candidate:
+    repository: "edwardjones3976/long-table-bid-whist"
+    base_sha: "c9613093af704fdd3e4bedf87bdf375e15d03f00"
+    implementation_sha: "510a4229ccc4295685333581826e67346482e2e3"
+    head_sha: "pending governance-integration commit based on 510a4229ccc4295685333581826e67346482e2e3"
+    artifact_digest: "artifacts/technical-candidate-build.sha256"
+  required_evidence:
+    - "Different-provider exact-candidate review"
+    - "Focused deterministic rules and interaction tests"
+    - "Current security and privacy evidence when networked play exists"
+    - "Trusted CI when a repository is configured"
+  candidate_change_invalidates_evidence: true
+  assignment_completion_authority: "A provider assignment may be accepted without completing the project."
+  project_completion_authority: "Human testing and owner acceptance of the unchanged exact candidate are mandatory."
+  merge_authority: "pure eligibility decision after all required owner, review, CI, security, and rights checks; no merge side effect"
+
+assumptions:
+  confirmed:
+    - "The game is a serious VR/MR Bid Whist recreation with optional teaching and heritage material."
+    - "An AI dealer and a human-host option are required."
+    - "Bundled content must be rights-clean, with particular care for jazz and blues."
+    - "Host music must be legally cleared; file format alone is not a rights control."
+    - "Exploratory activities should remain limited."
+    - "All existing files under sources/ are read-only."
+  provisional:
+    - "Meta Quest is the initial headset target."
+    - "The first prototype uses one room, one strict preset, four seats, and optional AI fill."
+    - "The human host may be a seated player or a non-playing fifth participant, with different permissions."
+  unknown:
+    - "Prototype delivery schedule beyond the current zero-dollar planning phase"
+    - "Whether a paid provider will ever be useful or authorized"
+    - "Whether shared host audio will be deferred, venue-external, or supported through rights-verified virtual transmission"
+  not_applicable:
+    - "Deployment, merge, public matchmaking, prize tournaments, and live operations during project framing"
+
+fallbacks:
+  unavailable_provider: "Use a different eligible lane or reduce scope; do not duplicate an ambiguous paid dispatch."
+  incomplete_evidence: "Keep the affected decision provisional or pause it; never force acceptance."
+  ambiguous_paid_dispatch: "reconcile_existing_run_before_retry"
+  changed_scope: "reshape_profile_before_dependent_work"
+
+next:
+  action: "Commit the governance overlay with the existing implementation candidate, rerun affected validation, then request different-provider exact-candidate review and human critique."
+  responsible_party: "Director"
+  expected_evidence: "Exact SHA, production artifact digest, test/browser packet, review status, known limitations, and human-test plan."
+# [[Codex | GPT-5.6 | 2026-08-24 | 20:48 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-24 | 20:53 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-24 | 21:06 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]]
+# [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]]
