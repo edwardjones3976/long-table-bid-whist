@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.data.TablePreferences
+import com.example.engine.DealCommitmentHasher
 import com.example.engine.RoleMode
 import com.example.engine.SeatView
 import com.example.engine.TableTalkTone
@@ -186,7 +187,7 @@ fun TableHostAndAuditSheet(
                 }
             } else {
                 Text(
-                    "Deterministic Audit Stream · Hand #${view.handNumber}",
+                    "Deterministic Audit Stream · Hand #${view.handNumber} · Deal commitment ${DealCommitmentHasher.shortForm(view.dealCommitment.commitmentHex)}",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary
                 )

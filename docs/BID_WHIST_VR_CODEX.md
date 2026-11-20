@@ -1,8 +1,10 @@
 # The Long Table — Bid Whist VR Codex
 
-**Version:** codex-v0.2.0 · **Date:** 2026-11-20 · **Rules preset:** `strict-table-v1.0.0`
+**Version:** codex-v0.3.0 · **Date:** 2026-11-20 · **Rules preset:** `strict-table-v1.0.0`
 
-> **v0.2.0:** owner decided D-01 and D-02 (yes to both); findings F-01–F-06 fixed
+> **v0.3.0:** owner decided D-05 (yes); the deal-commitment hash ships
+> (`DealCommitment` / `DealReveal`, `DealCommitmentHasher`), live seeds come from
+> `SecureRandom`. **v0.2.0:** owner decided D-01 and D-02 (yes to both); findings F-01–F-06 fixed
 > (engine fixes integrated from the single-finding branches for F-01…F-05 and the
 > `.gradle` cleanup), plus F-07–F-11 found by adversarial review of those fixes;
 > 30 engine tests. **v0.1.0:** initial Codex and findings register.
@@ -91,7 +93,8 @@ be dealt in.
 | First dealer | East; rotates clockwise each hand | `startNewMatch()`, `dealNextHand()` |
 | Seat order | South → West → North → East (clockwise) | `Seat.nextClockwise()` |
 | Partnerships | **Us** = South + North · **Them** = West + East | `Seat.partnership` |
-| Shuffle | Seeded `kotlin.random.Random(seed)`; deterministic and replayable | `dealHand()` |
+| Shuffle | Seeded `kotlin.random.Random(seed)`; deterministic and replayable. Live seeds come from `SecureRandom` (`newSeed()`); tests pass explicit seeds. | `dealHand()` |
+| Deal commitment | `SHA-256(manifestVersion \| hand=N \| seed=S \| nonce=X)` published with the deal; seed and nonce revealed after scoring (§4.2, D-05) | `DealCommitmentHasher`, `dealHand()` |
 
 ### 2.2 Auction — `SHIPPED`
 
@@ -268,10 +271,28 @@ kitty**. The seed therefore lives only in `AuthoritativeState`:
 - `SeatView` has no seed property; the deal audit event names deck, hand and
   kitty sizes and the manifest version but not the seed. A test asserts no
   caption or audit string in a fresh view contains the seed.
-- Replay files for testing carry the seed; production projections never do.
-- `SPECIFIED`: after `HAND_COMPLETE`/`MATCH_COMPLETE` the service *may* publish
-  a commitment (e.g. SHA-256 of `seed || handNumber`) announced at deal time,
-  so players can verify fairness post-hoc without pre-hoc leakage (D-05).
+- Replay files for testing carry the seed; production projections never do
+  while a hand is live.
+
+**Deal commitment — `SHIPPED` (D-05).** At deal time the service publishes
+`DealCommitment(handNumber, SHA-256("<manifestVersion>|hand=<N>|seed=<S>|nonce=<X>"))`
+in `SeatView.dealCommitment` and in the deal audit event. `X` is a fresh 128-bit
+random nonce (32 lowercase hex characters) held privately with the seed. The
+nonce is not optional: a clock-derived seed has only ~2^41 possibilities, so a
+bare `H(seed)` could be brute-forced mid-hand and would reopen F-01 through the
+commitment itself.
+
+When the hand is **scored** (`HAND_COMPLETE` / `MATCH_COMPLETE`) the service
+reveals `DealReveal(handNumber, seed, nonceHex)` in `SeatView.dealReveal` and a
+"Deal revealed for verification" audit event. A client verifies in two steps:
+`DealCommitmentHasher.verify(manifestVersion, commitment, reveal)` recomputes
+the hash, and re-shuffling `createStandardDeck()` with `Random(seed)` reproduces
+the cards it was dealt. The Android outcome card shows "Deal verified ·
+commitment ab12cd34ef56… matches seed …".
+
+**Voided hands never reveal.** Their concealed cards stay concealed, so the
+commitment for a voided hand is published but not opened. The canonical string
+and SHA-256 are pinned by test so the C# port reproduces them byte for byte.
 
 ### 4.3 Boundary rules for every future surface
 
@@ -517,7 +538,8 @@ that is never authoritative.
 
 | Function | Purpose |
 | --- | --- |
-| `createStandardDeck`, `dealHand`, `startNewMatch`, `dealNextHand` | deck and deal |
+| `createStandardDeck`, `newSeed`, `dealHand`, `startNewMatch`, `dealNextHand`, `dealRevealFor` | deck, deal, and deal reveal |
+| `DealCommitmentHasher.newNonceHex`, `commit`, `verify`, `shortForm` | deal commitment (pure; port to C# under the pinned canonical string) |
 | `isBidValid`, `isBidHigher`, `submitBid` | auction |
 | `selectTrumpAndPickUpKitty(state, seat, trumpSuit)`, `submitKittyDiscard` | contract (direction bound to the bid) and kitty |
 | `effectiveSuit`, `governingSuit`, `legalCards`, `rankStrength`, `cardStrength`, `determineTrickWinner`, `playCard`, `collectCompletedTrick` | play and scoring |
@@ -592,7 +614,7 @@ oral history, or archival element needs a documented source and permission
 
 ## 13. Testing and acceptance gates
 
-### 13.1 Deterministic tests — `SHIPPED` (30) / `SPECIFIED` (rest)
+### 13.1 Deterministic tests — `SHIPPED` (38) / `SPECIFIED` (rest)
 
 Shipped in `BidWhistRulesEngineTest.kt` (all pass on a plain JVM):
 
@@ -607,6 +629,7 @@ Shipped in `BidWhistRulesEngineTest.kt` (all pass on a plain JVM):
 | Jokers in NT | Led joker loses to the first suited card, even the lowest; both jokers lose; second player unconstrained, later players must follow the governing suit; `playCard` enforces it; AI follows it; trump contracts unchanged (F-02) |
 | Void | Refused once the hand is complete and in `MATCH_COMPLETE`/`VOIDED_HAND`/`IDLE`; pending until South consents; audit records requester, consents, reason; scores unchanged and contract preserved; consent without a request refused; duplicate refused; withdraw clears (F-04, F-05) |
 | Whole hand | 150 AI-only hands terminate with 13 books, 48 unique cards, contract bound to the bid, contiguous audit sequence; 120 forced-NT hands never let a joker win a book |
+| Deal commitment | Deterministic and input-sensitive; pinned to an independent SHA-256 of the canonical string; nonce validated and fresh; commitment published at deal with no seed/nonce leak; scored hand reveals seed + nonce that verify and reproduce the dealt cards; tampered reveal fails; voided hand never reveals; live defaults unpredictable (D-05) |
 
 Still required before VR acceptance:
 
@@ -649,7 +672,7 @@ Each was a difference between the declared rules/boundaries and the code.
 
 | ID | Severity | Status | Finding | Evidence at discovery | Resolution |
 | --- | --- | --- | --- | --- | --- |
-| **F-01** | Critical for VR/multiplayer | **Fixed** | `SeatView.seed` and the deal audit event (`"… seed #<n> …"`) exposed the shuffle seed; with it the West hand and kitty were reconstructed exactly. | `createStandardDeck().shuffled(Random(view.seed))` reproduced `state.hands[WEST]` and `state.kitty`. | `seed` removed from `SeatView`; audit detail names sizes and manifest only; test `seatView_neverCarriesTheShuffleSeed`. Hash commitment remains D-05. |
+| **F-01** | Critical for VR/multiplayer | **Fixed** | `SeatView.seed` and the deal audit event (`"… seed #<n> …"`) exposed the shuffle seed; with it the West hand and kitty were reconstructed exactly. | `createStandardDeck().shuffled(Random(view.seed))` reproduced `state.hands[WEST]` and `state.kitty`. | `seed` removed from `SeatView`; audit detail names sizes and manifest only; test `seatView_neverCarriesTheShuffleSeed`. Post-hand verification now comes from the nonce-salted deal commitment (D-05, §4.2). |
 | **F-02** | Rules conformance | **Fixed** (D-02) | In No-Trump a *led* joker won the book: all cards scored 0 and `maxBy` kept the first; the null led suit also let anyone play anything. | Trick LJ, A♣, K♣, A♥ under NT → winner South (the joker). | `governingSuit()` = first card with an effective suit; NT jokers score −1; `legalCards`, `determineTrickWinner` and the AI policy all use the governing suit. Tests `noTrump_ledJokerLosesToFirstSuitedCard_whichGovernsTheTrick`, `trumpContract_ledJokerIsStillTopTrump_andFollowersMustPlayTrump`, `forcedNoTrumpHands_neverLetAJokerWinABook`. |
 | **F-03** | Rules conformance / exploit | **Fixed** (D-01) | `selectTrumpAndPickUpKitty` accepted any `direction` and `trumpSuit = null`, so a declarer could convert "4 Uptown suit" into "4 Downtown No-Trump", changing the ranking the table bid against and doubling the points. | Won with `Bid(4, isNoTrump=false, UPTOWN)`; contract became `4 Downtown · No-Trump`. | Signature is now `(state, seat, trumpSuit: Suit)`; direction comes from the winning bid; NT winners are refused. AI `chooseTrumpSuit` picks a suit for the bid's direction; UI direction chips replaced by read-only text. Tests `selectTrump_usesWinningBidDirection_andOnlyNamesASuit`, `noTrumpWinner_skipsSelectTrump_andCannotEnterIt`. |
 | **F-04** | Role boundary | **Fixed** | `voidCurrentHandAsHost` had no phase guard and no consent record; the role check lived only in `MainViewModel`. | Void accepted in `BIDDING` with no consent data. | `VoidRequest` in state; `requestVoid` / `consentToVoid` / `withdrawVoidRequest`; applied only when unanimous among human seats; refused outside live phases; audit records requester, consents, reason. Tests `void_*`. Service-side *role* verification remains `SPECIFIED` (Chapter 5). |
@@ -679,7 +702,7 @@ recommendation.
 | D-02 | May a joker be led in No-Trump, and what does it do? | **Decided yes** (owner, 2026-11-20): lead allowed, joker loses to any suited card, first suited card sets the suit; implemented, see F-02. |
 | D-03 | Which experienced-player council approves `strict-table-v1.0.0`? | Convene a compensated council of 5–7 players across regions and family traditions, separate from the usability panel. |
 | D-04 | Unity/OpenXR as provisional toolchain, with Kotlin engine as reference and C# port under golden replay? | **Yes**, pending a compatibility spike at G1. |
-| D-05 | Publish a deal commitment hash for post-hand fairness verification? | **Yes, after F-01 is fixed**; cheap and legible to players who ask "was that deal fair?" |
+| D-05 | Publish a deal commitment hash for post-hand fairness verification? | **Decided yes** (owner, 2026-11-20); implemented, see §4.2. Nonce-salted SHA-256, revealed only after scoring, never for voided hands. |
 | D-06 | Is external venue music accepted for the MVP, with in-room transmission deferred? | **Yes.** |
 | D-07 | Which accessibility paths are launch gates? | The gate rows in Chapter 8; everything else is a later enhancement. |
 | D-08 | What evidence advances the project from local VR hand to private multiplayer? | All Chapter 13.1 tests green including replay and boundary tests, plus the Chapter 13.2 human evidence. |

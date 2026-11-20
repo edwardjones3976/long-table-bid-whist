@@ -1,6 +1,9 @@
 package com.example.engine
 
+import java.security.SecureRandom
 import kotlin.random.Random
+
+private val seedSource = SecureRandom()
 
 /**
  * Pure, deterministic Bid Whist rules engine with zero Android or UI dependencies.
@@ -15,6 +18,10 @@ class BidWhistRulesEngine(
     data class AuthoritativeState(
         val handNumber: Int,
         val seed: Long,
+        /** Private nonce behind [dealCommitment]; revealed with the seed once the hand is scored. */
+        val dealNonceHex: String,
+        /** Public pre-deal commitment to this hand's shuffle (D-05). */
+        val dealCommitment: DealCommitment,
         val phase: TablePhase,
         val dealer: Seat,
         val currentTurn: Seat,
@@ -57,14 +64,21 @@ class BidWhistRulesEngine(
         return standard + jokers
     }
 
-    fun startNewMatch(initialSeed: Long = System.currentTimeMillis()): AuthoritativeState {
+    /** Unpredictable shuffle seeds for live play; tests pass explicit seeds for replay. */
+    fun newSeed(): Long = seedSource.nextLong()
+
+    fun startNewMatch(
+        initialSeed: Long = newSeed(),
+        dealNonceHex: String = DealCommitmentHasher.newNonceHex()
+    ): AuthoritativeState {
         return dealHand(
             handNumber = 1,
             seed = initialSeed,
             dealer = Seat.EAST,
             scoreUs = 0,
             scoreThem = 0,
-            priorLog = emptyList()
+            priorLog = emptyList(),
+            dealNonceHex = dealNonceHex
         )
     }
 
@@ -74,8 +88,13 @@ class BidWhistRulesEngine(
         dealer: Seat,
         scoreUs: Int,
         scoreThem: Int,
-        priorLog: List<AuditEvent> = emptyList()
+        priorLog: List<AuditEvent> = emptyList(),
+        dealNonceHex: String = DealCommitmentHasher.newNonceHex()
     ): AuthoritativeState {
+        val commitment = DealCommitment(
+            handNumber = handNumber,
+            commitmentHex = DealCommitmentHasher.commit(manifest.version, handNumber, seed, dealNonceHex)
+        )
         val shuffled = createStandardDeck().shuffled(Random(seed))
         val southHand = sortHand(shuffled.subList(0, 12), null, BidDirection.UPTOWN)
         val westHand = sortHand(shuffled.subList(12, 24), null, BidDirection.UPTOWN)
@@ -89,12 +108,15 @@ class BidWhistRulesEngine(
             phase = TablePhase.BIDDING,
             actor = "Authoritative Rules Service",
             summary = "Hand #$handNumber dealt (Dealer: ${dealer.displayName})",
-            detail = "${manifest.deckSize} cards shuffled; ${manifest.handSize} cards per seat, ${manifest.kittySize} cards sealed in kitty. Manifest ${manifest.version}."
+            detail = "${manifest.deckSize} cards shuffled; ${manifest.handSize} cards per seat, ${manifest.kittySize} cards sealed in kitty. " +
+                "Manifest ${manifest.version}. Deal commitment ${commitment.commitmentHex} (seed and nonce revealed after scoring)."
         )
 
         return AuthoritativeState(
             handNumber = handNumber,
             seed = seed,
+            dealNonceHex = dealNonceHex,
+            dealCommitment = commitment,
             phase = TablePhase.BIDDING,
             dealer = dealer,
             currentTurn = firstBidder,
@@ -608,6 +630,15 @@ class BidWhistRulesEngine(
                 summary = if (made) "Contract Made (+$basePoints)" else "Contract Set (+$basePoints)",
                 detail = "$outcomeCaption Match score: Us $newScoreUs – Them $newScoreThem."
             )
+            // The hand is settled, so the deal's private inputs can be published for verification.
+            val revealEvent = AuditEvent(
+                sequence = state.auditLog.size + 2,
+                phase = nextPhase,
+                actor = "Authoritative Rules Service",
+                summary = "Deal revealed for verification",
+                detail = "Hand #${state.handNumber}: seed ${state.seed}, nonce ${state.dealNonceHex} reproduce deal commitment " +
+                    "${state.dealCommitment.commitmentHex}. Re-shuffle with the seed to confirm the cards you were dealt."
+            )
 
             return state.copy(
                 phase = nextPhase,
@@ -618,7 +649,7 @@ class BidWhistRulesEngine(
                 lastOutcome = outcome,
                 latestCaption = outcomeCaption,
                 pendingVoidRequest = null,
-                auditLog = state.auditLog + scoreEvent
+                auditLog = state.auditLog + scoreEvent + revealEvent
             )
         }
 
@@ -779,15 +810,26 @@ class BidWhistRulesEngine(
         )
     }
 
-    fun dealNextHand(state: AuthoritativeState, nextSeed: Long = System.currentTimeMillis()): AuthoritativeState {
+    fun dealNextHand(
+        state: AuthoritativeState,
+        nextSeed: Long = newSeed(),
+        dealNonceHex: String = DealCommitmentHasher.newNonceHex()
+    ): AuthoritativeState {
         return dealHand(
             handNumber = state.handNumber + 1,
             seed = nextSeed,
             dealer = state.dealer.nextClockwise(),
             scoreUs = state.scoreUs,
             scoreThem = state.scoreThem,
-            priorLog = state.auditLog
+            priorLog = state.auditLog,
+            dealNonceHex = dealNonceHex
         )
+    }
+
+    /** The seed and nonce behind the deal commitment, available only once the hand is scored. */
+    fun dealRevealFor(state: AuthoritativeState): DealReveal? {
+        val scored = state.phase == TablePhase.HAND_COMPLETE || state.phase == TablePhase.MATCH_COMPLETE
+        return if (scored) DealReveal(state.handNumber, state.seed, state.dealNonceHex) else null
     }
 
     fun sortHand(hand: List<Card>, trumpSuit: Suit?, direction: BidDirection): List<Card> {
@@ -853,6 +895,8 @@ class BidWhistRulesEngine(
             isBetweenHandPaused = state.isBetweenHandPaused,
             pendingVoidRequest = state.pendingVoidRequest,
             canRequestVoid = canRequestVoid(state),
+            dealCommitment = state.dealCommitment,
+            dealReveal = dealRevealFor(state),
             guidedHint = guidedHint
         )
     }
