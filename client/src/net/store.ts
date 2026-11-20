@@ -139,6 +139,11 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
   let lookUnsent = false;
   // Also kept here: where storage is blocked the token must still survive a reconnect.
   let held = token.read();
+  // True from pressing Leave until the server answers (or the wait runs out): the room is already gone from the
+  // screen, and a snapshot the server had queued before it heard the leave must not bring it back.
+  let leaving = false;
+  // Counts leaves, so an earlier leave's answer cannot end the guard for a later one (left, joined again, left again).
+  let leaves = 0;
 
   function set(partial: Partial<NetState>): void {
     state = { ...state, ...partial };
@@ -173,10 +178,12 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     });
     opened.on("connect_error", () => set({ connection: everOnline ? "reconnecting" : "offline" }));
     opened.on("room", (room) => {
+      if (leaving) return;
       const atTable = room.members.find((member) => member.id === room.you)?.tableId != null;
       set({ room, roomAt: Date.now(), me: room.you, ...(atTable ? {} : { table: null }) });
     });
     opened.on("table", (table) => {
+      if (leaving) return;
       // A strike is told once, as it is given: not on a table's first snapshot (after a reload), nor when a new match clears it.
       const seat = table.you;
       const before = seat !== null && state.table?.tableId === table.tableId ? (state.table.strikes?.[seat] ?? 0) : Infinity;
@@ -184,13 +191,21 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
       const notice = `Your time ran out, so a bot played your turn. Strike ${strikes} of ${MAX_STRIKES}: at ${MAX_STRIKES} a bot takes your seat.`;
       set({ table, tableAt: Date.now(), ...(strikes > before ? { lastError: notice } : {}) });
     });
-    opened.on("table:left", ({ reason }) => set({ table: null, ...(reason ? { lastError: reason } : {}) }));
-    opened.on("poses", (poses) => set({ poses }));
+    opened.on("table:left", ({ reason }) => {
+      if (leaving) return;
+      set({ table: null, ...(reason ? { lastError: reason } : {}) });
+    });
+    opened.on("poses", (poses) => {
+      if (leaving) return;
+      set({ poses });
+    });
     opened.on("look", ({ memberId, look }) => {
+      if (leaving) return;
       const room = state.room;
       if (room) set({ room: { ...room, members: room.members.map((member) => (member.id === memberId ? { ...member, look } : member)) } });
     });
     opened.on("gesture", ({ memberId, kind }) => {
+      if (leaving) return;
       const at = Date.now();
       set({ gestures: [...state.gestures.filter((gesture) => at - gesture.at < GESTURE_KEEP_MS), { memberId, kind, at }] });
     });
@@ -240,6 +255,8 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
 
   function entered(reply: Reply<Joined>): Reply<Joined> {
     if (reply.ok) {
+      // A new room is on screen: nothing of the one being left can come back.
+      leaving = false;
       lookUnsent = false;
       held = reply.token;
       token.write(reply.token);
@@ -263,10 +280,16 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
       // Forgotten before asking: a reconnect while the answer is awaited must not resume the room.
       held = null;
       token.write(null);
-      const reply = await ask("room:leave", {});
-      // Whatever the server said, this tab is done with the room.
+      // This tab is done with the room whatever the server will say, so the entry page (and the end of a VR
+      // session) comes on this frame rather than after the round trip. Snapshots are ignored until the answer.
+      const mine = ++leaves;
+      leaving = true;
       leaveLocally(null);
-      return reply;
+      try {
+        return await ask("room:leave", {});
+      } finally {
+        if (mine === leaves) leaving = false;
+      }
     },
     sit: (tableId: TableId, role: "player" | "host", seat?: Seat) =>
       request("table:sit", seat === undefined ? { tableId, role } : { tableId, role, seat }),
