@@ -107,6 +107,7 @@ import {
   buryButton,
   dropCard,
   feltFloor,
+  feltTrick,
   foresee,
   frameFor,
   HAND,
@@ -746,11 +747,14 @@ export function AtTable({ spot, actions }: { spot: TableSpot; actions: TableActi
   const noticeId = useRef(0);
 
   const { tableCards, seats } = description;
+  const felt = feltTrick(tableCards);
   const me = seats.find((seat) => seat.isYou) ?? null;
   const viewer = me ? spot.seats[me.seat] : spot.host;
   const side = dominant === "right" ? 1 : -1;
   const frame = useMemo<Frame>(() => frameFor(spot, me?.seat ?? null), [spot, me?.seat]);
   const reach = frame.reach;
+  // The finished trick's winner is named just above the card that took it.
+  const wonAt = felt.won ? toward(frame, felt.won.seat, 0.2) : null;
   const mode = tableMode(description);
   const zones = useMemo(() => tableZones(description, frame), [description, frame]);
   const spread = useMemo(() => pruneSpread(description, staged), [description, staged]);
@@ -1183,7 +1187,7 @@ export function AtTable({ spot, actions }: { spot: TableSpot; actions: TableActi
 
         <CardBacks items={backs} />
         {seats.map((seat) => (seat.isYou ? null : <SeatPlate key={seat.seat} seat={seat} at={toward(frame, seat.seat, 0.54)} uiScale={uiScale} />))}
-        {tableCards.trick.map((play) => {
+        {felt.plays.map((play) => {
           const [x, z] = toward(frame, play.seat, 0.2);
           return (
             <group key={play.card.id} position={[x, standing(TRICK_CARD / CARD_ASPECT), z]} rotation={[LEAN, 0, 0]}>
@@ -1191,6 +1195,14 @@ export function AtTable({ spot, actions }: { spot: TableSpot; actions: TableActi
             </group>
           );
         })}
+        {felt.won && wonAt && (
+          <Label
+            lines={[`${felt.won.name} won`]}
+            box={[0.14 * uiScale, 0.032 * uiScale]}
+            position={[wonAt[0], TABLE_HEIGHT + 0.115, wonAt[1]]}
+            rotation={[LEAN, 0, 0]}
+          />
+        )}
         {melds.map((row) => {
           const add = tapIn(`meld-${row.index}`);
           return (

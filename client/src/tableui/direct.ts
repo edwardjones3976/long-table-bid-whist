@@ -31,9 +31,10 @@
  *   layButton / buryButton                the buttons behind the two pucks
  *   tokenButtons / tokenGrid / objectName the choices laid out as tokens
  *   withinReach(x, y, z)                  whether a seated arm gets there
+ *   feltTrick(cards)                      the plays on the felt: the trick, or the one just won until the next lead
  */
 import type { Card } from "../../../shared/cards";
-import type { TableButton, TableDescription } from "../ui/actions";
+import type { TableButton, TableCards, TableDescription } from "../ui/actions";
 import { EYE_HEIGHT_SEATED, TABLE_HEIGHT, TABLE_RADIUS, type TableSpot } from "../world/layout";
 
 /** describeTable() for the table as it is now, with these cards picked. */
@@ -178,6 +179,19 @@ export function whyNot(description: TableDescription): string {
 export function toward(frame: Frame, seat: number, radius: number): [x: number, z: number] {
   const angle = frame.seatAngle(seat);
   return [Math.sin(angle) * radius, Math.cos(angle) * radius - frame.reach];
+}
+
+/**
+ * The plays on the felt. The rules clear a trick the moment its fourth card lands, so until the next card is led the
+ * finished trick stays where it was played, with its winner: the last card of a trick, often a bot's straight after
+ * the one before, is otherwise never seen.
+ */
+export function feltTrick(cards: Pick<TableCards, "trick" | "lastTrick">): {
+  plays: TableCards["trick"];
+  won: { seat: TableCards["trick"][number]["seat"]; name: string } | null;
+} {
+  if (cards.trick.length > 0 || !cards.lastTrick) return { plays: cards.trick, won: null };
+  return { plays: cards.lastTrick.plays, won: { seat: cards.lastTrick.winner, name: cards.lastTrick.winnerName } };
 }
 
 /**
