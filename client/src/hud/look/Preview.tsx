@@ -125,13 +125,25 @@ export function Preview({
 }) {
   const turn = useRef<Turn>({ angle: 0 });
   const dragFrom = useRef<number | null>(null);
+  const pad = useRef<HTMLDivElement>(null);
   const [drawable] = useState(canDraw);
   const own = useMemo(ownMaterials, []);
   useEffect(() => () => own.dispose(), [own]);
+  // touch-action alone still lets a quick drag start a fling the page never sees, and the next tap (Save, say) is spent stopping it.
+  // A cancelled touchmove starts no scroll, so no fling. Native and not passive: React's touch listeners cannot cancel.
+  // The entry screen's waving preview keeps native scrolling, so a swipe over it on a phone still scrolls the page.
+  useEffect(() => {
+    if (wave) return;
+    const element = pad.current;
+    const hold = (event: TouchEvent) => event.preventDefault();
+    element?.addEventListener("touchmove", hold, { passive: false });
+    return () => element?.removeEventListener("touchmove", hold);
+  }, [wave]);
   const sky = LOOKS[light];
   const by = (angle: number) => void (turn.current.angle += angle);
   return (
     <div
+      ref={pad}
       className="look-preview"
       role="img"
       aria-label={label}

@@ -103,6 +103,14 @@ describe("look editor", () => {
     expect(screen.getByRole("button", { name: /^Starting look 1: skin Tone \d+ of 14.*hair, .* top:/ })).toBeTruthy();
   });
 
+  it("stops a touch drag on the editor's preview from scrolling, but a swipe over the entry screen's waving preview still scrolls", () => {
+    render(<Entry />);
+    // fireEvent answers false when a listener cancelled the event.
+    expect(fireEvent.touchMove(screen.getByRole("img", { name: /^Your saved look, waving/ }))).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: "Your look" }));
+    expect(fireEvent.touchMove(within(dialog()).getByRole("img"))).toBe(false);
+  });
+
   it("switches Before on and off with a click that has no pointer (Enter, a screen reader, voice control)", () => {
     open();
     fireEvent.click(tab("Hair"));

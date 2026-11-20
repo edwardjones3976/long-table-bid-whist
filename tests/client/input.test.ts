@@ -3,7 +3,7 @@
  * docs name, read through a stubbed navigator.getGamepads.
  */
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { desk, pollGamepad } from "../../client/src/controls/input";
+import { desk, pollGamepad, spinOrTurn } from "../../client/src/controls/input";
 import { local } from "../../client/src/state/local";
 
 const pad = {
@@ -153,6 +153,13 @@ describe("gamepad", () => {
     hold(5, 0);
     hold(0, 1);
     expect((document.getElementById("tick") as HTMLInputElement).checked).toBe(true);
+  });
+
+  it("gives the VR turning stick to the look panel's preview while a draft is open, and to the view otherwise", () => {
+    expect(spinOrTurn(-1, true)).toBe(0);
+    expect(desk.padSpin).toBe(-1);
+    expect(spinOrTurn(0.5, false)).toBe(0.5);
+    expect(desk.padSpin).toBe(0);
   });
 
   it("steps focus with the bumpers (4 back, 5 on) and opens the menu with Start (9)", () => {

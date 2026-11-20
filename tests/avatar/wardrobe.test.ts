@@ -7,7 +7,7 @@
  * on its own joint; the ears (with whatever is worn behind them) left clear; four ears that differ in shape; and a
  * moustache that leaves the resting smile's corners showing.
  */
-import { Mesh, type BufferGeometry, type Object3D, type SkinnedMesh } from "three";
+import { Mesh, Vector3, type BufferGeometry, type Object3D, type SkinnedMesh } from "three";
 import { describe, expect, it } from "vitest";
 import { accessories } from "../../client/src/avatar/accessories";
 import { topAndBottom } from "../../client/src/avatar/body";
@@ -15,7 +15,7 @@ import { coilSpot, EARS, earShape, face, headProfile, LIPS, MOUTHS, MUSTACHE } f
 import { buildFigure, JOINT_NAMES, TRIANGLE_BUDGET, type Detail, type Figure, type JointName } from "../../client/src/avatar/figure";
 import { BELOW_HAT, hair, LONG, standOff } from "../../client/src/avatar/hair";
 import { headwear } from "../../client/src/avatar/headwear";
-import { measure } from "../../client/src/avatar/measure";
+import { measure, type Measurements } from "../../client/src/avatar/measure";
 import { frontZ, luma, merge, radiusAt, SEGMENTS, tint, triangles, type Dressing } from "../../client/src/avatar/shapes";
 import { CATALOG, cleanLook, shuffleLook, SKIN_TONES, STARTING_LOOKS, type Look } from "../../shared/avatar";
 
@@ -63,6 +63,11 @@ const finite = (dressing: Dressing) =>
   [...Object.values(dressing.shell), ...Object.values(dressing.detail)].flat().every((g) => (g!.attributes.position.array as Float32Array).every(Number.isFinite));
 const joints = (dressing: Dressing): JointName[] => [...new Set([...Object.keys(dressing.shell), ...Object.keys(dressing.detail)])].sort() as JointName[];
 const count = (dressing: Dressing) => [...Object.values(dressing.shell), ...Object.values(dressing.detail)].flat().reduce((sum, g) => sum + triangles(g!), 0);
+/** Each hat, the crown hat and the beanie, worn over this look: its lower edge (hatEdge) and brim (hatDrop) with it. */
+const hats = (look: Look, m: Measurements) => [
+  ...(["cap", "bucket", "fedora"] as const).map((hat) => [hat, accessories({ ...look, accessories: [hat] }, m, "near")] as const),
+  ...(["crown-hat", "beanie"] as const).map((covering) => [covering, headwear({ ...look, headwear: covering }, m, "near")] as const),
+];
 
 describe("hair", () => {
   it.each(HAIRS)("%s, bare and tucked, on every build, near and far", (style) => {
@@ -142,14 +147,10 @@ describe("accessories", () => {
     }
   }, 30_000);
 
-  it("keeps long locs, braids, long hair and a ponytail hanging below a hat, a crown hat or a beanie, the ends of short locs, cornrows and knots below a hat's edge, and tucks every other style under it", () => {
+  it("keeps long locs, braids, long hair and a ponytail hanging below a hat, a crown hat or a beanie, the ends of short locs, cornrows and knots and an afro's volume below a hat's edge, and tucks every other style under it", () => {
     const m = measure(BASE);
     const tucked = count(hair(BASE, m, "near", true));
-    const edges = [
-      ...(["cap", "bucket", "fedora"] as const).map((hat) => [hat, accessories({ ...BASE, accessories: [hat] }, m, "near").hatEdge] as const),
-      ...(["crown-hat", "beanie"] as const).map((covering) => [covering, headwear({ ...BASE, headwear: covering }, m, "near").hatEdge] as const),
-    ];
-    for (const [hat, edge] of edges) {
+    for (const [hat, { hatEdge: edge }] of hats(BASE, m)) {
       expect(edge, hat).toBeDefined();
       for (const style of HAIRS.filter((id) => id !== "bald")) {
         for (const detail of DETAILS) {
@@ -173,6 +174,21 @@ describe("accessories", () => {
       }
     }
     expect(tucked).toBeGreaterThan(0);
+  });
+
+  it("shows a large afro from the front below every hat, a crown hat and a beanie, and out past the brim", () => {
+    const m = measure(BASE);
+    const look = cleanLook({ ...BASE, hair: "afro-l" });
+    // The head pieces' points on the front half, seen from the front.
+    const front = (worn: Dressing) =>
+      (worn.shell.head ?? []).flatMap((geometry) => Array.from({ length: geometry.attributes.position.count }, (_, i) => new Vector3().fromBufferAttribute(geometry.attributes.position, i))).filter((p) => p.z < 0.01);
+    for (const [hat, worn] of hats(look, m)) {
+      // Below the hat's lowest point and wider than its brim, so no brim hides it, even seen from a little above.
+      const lowest = Math.min(...front(worn).map((p) => p.y));
+      const widest = Math.max(...front(worn).map((p) => Math.abs(p.x)));
+      const shown = front(hair(look, m, "near", worn.hatEdge, false, worn.hatDrop)).filter((p) => p.y < lowest - 0.005 && Math.abs(p.x) > widest);
+      expect(shown.length, hat).toBeGreaterThan(0);
+    }
   });
 
   it("wears the first of two hats and ignores the second", () => {
@@ -257,6 +273,7 @@ it("keeps hair, coverings and hats clear of the ears and anything worn behind th
       ["tucked", hair(look, m, "near", true)],
       ...COVERINGS.filter((id) => id !== "hijab").map((id) => [id, headwear({ ...look, headwear: id }, m, "near")] as [string, Dressing]),
       ...(["cap", "bucket", "fedora"] as const).map((id) => [id, accessories({ ...look, accessories: [id] }, m, "near")] as [string, Dressing]),
+      ...hats({ ...look, hair: "afro-l" }, m).map(([id, worn]) => [`afro-l under ${id}`, hair({ ...look, hair: "afro-l" }, m, "near", worn.hatEdge, false, worn.hatDrop)] as [string, Dressing]),
     ];
     for (const [name, part] of parts) {
       for (const geometry of [...(part.shell.head ?? []), ...(part.detail.head ?? [])]) {
@@ -352,6 +369,18 @@ describe("the face", () => {
       for (let i = 0; i < p.count; i++) out += frontZ(profile, SEGMENTS.near.head, m.headDepth / m.headWidth, p.getX(i), p.getY(i)) - p.getZ(i);
       expect(out / p.count).toBeGreaterThan(0.0005);
     }
+  });
+
+  it("draws a salt-and-pepper beard up close in more than one tone, so the mix reads as mixed", () => {
+    const m = measure(BASE);
+    const plain = cleanLook({ ...BASE, marks: [], liner: "none", cheekColor: "none", facialHair: "none" });
+    const look: Look = { ...plain, browColor: "salt-pepper", facialHair: "short-beard" };
+    // The beard's masses: what it adds to the face's detail.
+    const masses = face(look, m, "near").detail.slice(face(plain, m, "near").detail.length);
+    const tones = new Set<string>();
+    for (const { attributes: { color } } of masses) for (let i = 0; i < color.count; i++) tones.add(`${color.getX(i)} ${color.getY(i)} ${color.getZ(i)}`);
+    expect(masses.length).toBeGreaterThan(0);
+    expect(tones.size).toBeGreaterThan(1);
   });
 
   it("tints the nose's top, a bare lower lip and a blush quietly on every skin tone, the deepest no more than the lightest", () => {

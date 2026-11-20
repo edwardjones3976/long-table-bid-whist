@@ -33,6 +33,7 @@ import {
   type Object3D,
 } from "three";
 import type { Pose } from "../../../shared/protocol";
+import { lookDraft } from "../avatar/draft";
 import { bodyYaw, poseToSend, type Tracked } from "../avatar/pose";
 import { local } from "../state/local";
 import { useActiveTableId, useTableDescription } from "../state/table";
@@ -42,7 +43,7 @@ import { EYE_HEIGHT_SEATED, EYE_HEIGHT_STANDING, spawn } from "../world/layout";
 import { activateAt, isInteractiveAt } from "./activate";
 import { cue } from "./feedback";
 import { aimSpace, ControllerHints, handSpace, Hands, noRaycast } from "./Hands";
-import { attachDesktop, desk, pollGamepad } from "./input";
+import { attachDesktop, desk, pollGamepad, spinOrTurn } from "./input";
 import {
   aimStep,
   ARC_GRAVITY,
@@ -480,7 +481,8 @@ export function Player({ children }: { children?: ReactNode }) {
       rig.pushed[off] = !walks && stickAim(rig.pushed[off], moveX, moveY);
       // The main-hand stick turns left and right, and pushed forward it aims; while it aims it does not turn.
       rig.pushed[main] = stickAim(rig.pushed[main], turnX, turn?.yAxis ?? 0);
-      const turnBy = rig.pushed[main] ? 0 : turnX;
+      // While the VR look panel is open it turns the preview figure instead (avatar/VrLook.tsx).
+      const turnBy = spinOrTurn(rig.pushed[main] ? 0 : turnX, lookDraft.get() !== null);
       input.turn = comfort.snapTurn ? 0 : deadZone(turnBy);
       if (comfort.snapTurn) snap += flick(turnBy, rig.turnStick);
       wants.left = rig.pushed.left;

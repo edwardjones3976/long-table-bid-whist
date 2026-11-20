@@ -295,10 +295,11 @@ export function face(look: Look, m: Measurements, detail: "near" | "far", overHa
   ];
   // Hair's grain in two close tones over the small shapes, so a moustache reads as hair: salt and pepper as dark and
   // soft light flecks, any other colour as itself flecked a little deeper.
-  const [tone, fleck] = look.browColor === "salt-pepper" ? [shade(hair, 0.55), mix(hair, "#f4f1ea", 0.12)] : [hair, shade(hair, 0.8)];
+  const [tone, fleck] = look.browColor === "salt-pepper" ? [shade(hair, 0.35), mix(hair, "#f4f1ea", 0.12)] : [hair, shade(hair, 0.8)];
   const grain: Paint = (at) => (Math.abs(Math.sin(at.x * 127.1 + at.y * 311.7 + at.z * 74.7) * 43758.5453) % 1 < 0.42 ? fleck : tone);
-  // The large masses in one blended tone: a fleck the size of a whole far triangle reads as a plate, not as hair.
-  const even: Paint = () => mix(tone, fleck, 0.3);
+  // The large masses in one blended tone: a fleck the size of a whole far triangle reads as a plate, not as hair. Salt and
+  // pepper up close keeps its flecks there too, or one blended grey hides the mix.
+  const mass: Paint = near && look.browColor === "salt-pepper" ? grain : () => mix(tone, fleck, 0.3);
   const smooth = (x: number) => {
     const c = Math.min(1, Math.max(0, x));
     return c * c * (3 - 2 * c);
@@ -328,7 +329,7 @@ export function face(look: Look, m: Measurements, detail: "near" | "far", overHa
       else p.setXYZ(i, x * (1 + out / r), y, z * (1 + out / r));
     }
     geometry.computeVertexNormals();
-    return piece(geometry, even, { scale: [1, 1, zs] });
+    return piece(geometry, mass, { scale: [1, 1, zs] });
   };
   const sides = (y0: number, y1: number, lift: number, options: { onBelow?: boolean } = {}) => [
     tuft(y0, y1, -0.47 * Math.PI, -0.3 * Math.PI, lift, options),
@@ -363,8 +364,8 @@ export function face(look: Look, m: Measurements, detail: "near" | "far", overHa
   if (beard === "short-beard" || beard === "full-beard" || beard === "long-beard") {
     f.detail.push(tuft(0, jawTop, -0.47 * Math.PI, 0.47 * Math.PI, bulk, { closed: true }), ...sides(jawTop, 0.45 * h, bulk, { onBelow: true }));
     f.shell.push(...mustache());
-    if (beard !== "short-beard") f.shell.push(piece(ball(1), even, { at: [0, 0.03 * h, -0.45 * depth], scale: [0.62 * w, 0.12 * h, 0.5 * depth] }));
-    if (beard === "long-beard") f.shell.push(piece(new ConeGeometry(0.5 * w, 0.4 * h, s.small, 1, false), even, { at: [0, -0.12 * h, -0.5 * depth], rot: [Math.PI, 0, 0] }));
+    if (beard !== "short-beard") f.shell.push(piece(ball(1), mass, { at: [0, 0.03 * h, -0.45 * depth], scale: [0.62 * w, 0.12 * h, 0.5 * depth] }));
+    if (beard === "long-beard") f.shell.push(piece(new ConeGeometry(0.5 * w, 0.4 * h, s.small, 1, false), mass, { at: [0, -0.12 * h, -0.5 * depth], rot: [Math.PI, 0, 0] }));
   }
   if (beard === "sideburns" && near) f.detail.push(...sides(0.28 * h, 0.47 * h, 0.006));
   if (beard === "soul-patch") f.detail.push(piece(disc(0.022 * h, s.disc), grain, scaled(onFace(0, mouthY - 2 * t - 0.022 * h, 0.0015), 0.7, 1, 1)));

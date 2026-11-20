@@ -16,7 +16,8 @@
  *
  * The tucked version of every style is one close layer under the natural hairline (TUCKED_LIFT off the
  * head), so a covering or hat only has to clear that one shape. Under a hat the long styles (LONG) keep what
- * hangs below its edge, so long locs, braids and a ponytail stay the wearer's own. Beyond 8 m each style keeps
+ * hangs below its edge, so long locs, braids and a ponytail stay the wearer's own, and an afro (PUFFS) puffs out
+ * below its brim, so from the front its outline stays wider than the head there. Beyond 8 m each style keeps
  * its outline in a few triangles: ropes, rows and knots become a fall, colours or a few cones.
  */
 import { BufferGeometry, ConeGeometry, CylinderGeometry, Float32BufferAttribute, Matrix4, Quaternion, SphereGeometry, Vector3 } from "three";
@@ -157,6 +158,8 @@ interface Kit {
   back: number;
   /** Under a hat, its lower edge (t by f): only what hangs below it is drawn, over the tucked layer. */
   under?: (f: number) => number;
+  /** Under a hat, how far below that edge its brim reaches (metres, by f): an afro puffs out only below it. */
+  brim: (f: number) => number;
   shell: (...pieces: BufferGeometry[]) => void;
   detail: (...pieces: BufferGeometry[]) => void;
 }
@@ -242,8 +245,40 @@ const round = (size: number, t: number, u: number) => size * (1 + 0.15 * Math.si
 /** How far up a round style's underside curls back to the head. */
 const CURL = 0.3;
 
+/** Over an afro (PUFFS) a hat sits up on the hair, its lower edge (t by f) no lower than this, so the afro has room to show below its brim above the ears. */
+export const PERCH = (f: number): number => 0.95 + 0.27 * Math.max(0, (2 * f) / Math.PI - 1);
+
+/**
+ * Under a hat, an afro pressed close beneath it, then puffing out its full size just below the hat's brim (k.brim), so
+ * from the front it shows below the brim, wider than the head: down to just past the hairline at the sides (still
+ * above the ears) and to the nape behind them, in rounded, uneven bumps. Nothing puffs over the forehead.
+ */
+function puff(k: Kit, size: number): BufferGeometry {
+  const cols = k.near ? 16 : k.cols;
+  const half = k.m.head / 2;
+  // Down each meridian: where a row sits (0 the hat's edge, 1 just below the brim, 2 halfway on, 3 the bottom) and its
+  // share of the size out, as full at its widest as a bare afro's sides (round).
+  const rows = k.near ? [[0, 0], [1, 0], [1, 0.9], [2, 1.15], [3, 1], [3, 0]] : [[0, 0], [1, 0], [3, 1.15], [3, 0]];
+  const geometry = grid(cols, rows.length - 1, (i, j) => {
+    const phi = (TAU * i) / cols;
+    const f = fromFace(phi);
+    const top = k.under!(f);
+    const bottom = Math.max(top, naturalEdge(phi) + 0.06 * sides(phi));
+    // Where the head is 4 mm below the brim's lowest point: the puff's top, between the hat's edge and its bottom.
+    const clear = Math.acos(Math.max(-1, Math.min(1, Math.cos(top) - (k.brim(f) + 0.004) / half)));
+    const rim = Math.min(bottom, Math.max(top, clear));
+    const [at, share] = rows[j];
+    const t = [top, rim, (rim + bottom) / 2, bottom][at];
+    const out = size * sides(phi) * share * (1 + 0.08 * Math.sin(4 * phi + 7 * t));
+    const on = k.head.at(phi, t, j === rows.length - 1 && bottom > top ? RIM : k.min);
+    return on.add(new Vector3(on.x, 0, on.z).normalize().multiplyScalar(out));
+  });
+  return piece(geometry, plait(k.hue, mix(k.hue, k.mid, 0.5), cols));
+}
+
 function afro(size: number) {
   return (k: Kit) => {
+    if (k.under) return k.shell(puff(k, size));
     const lift = (phi: number, t: number, u: number) => lifted(k, round(size, t, u) * (1 + 0.08 * Math.sin(4 * phi + 7 * t)));
     k.shell(piece(layer(k.head, k.near ? 16 : k.cols, k.near ? 6 : 2, naturalEdge, lift, RIM, CURL), speckle(k.hue, k.mid, 0.4)));
   };
@@ -444,17 +479,27 @@ const STYLES: Record<Exclude<Look["hair"], "bald">, (k: Kit) => void> = {
   },
   "curly-bob": (k) => {
     // Full curls to the jaw, framing the face in front of the ears and falling behind them, lifted clear over each ear.
-    // Deep relief in three clear shades, so it reads as curls rather than a smooth helmet: each curl lit on its crown and
-    // shaded in the grooves round it, with smaller curls drawn in the colour over the larger ones.
+    // Up close each curl is a bump of its own, so the outline and the light break into curls rather than a smooth
+    // helmet: a crown on every other point of every other row, offset row to row (so the lower edge is scalloped too),
+    // some fuller than others so the rows do not read as a pattern.
     const bob = curve([[0, 1.13], [0.2 * Math.PI, 1.2], [0.36 * Math.PI, 2.0], [0.45 * Math.PI, 1.36], [0.62 * Math.PI, 1.36], [0.76 * Math.PI, 2.35], [Math.PI, 2.35]]);
     const edge = (phi: number) => bob(fromFace(phi));
-    const wave = (phi: number, t: number) => 0.3 * Math.sin(5 * phi + 8 * t) + 0.12 * Math.cos(7 * phi - 5 * t);
-    const lift = (phi: number, t: number, u: number) => lifted(k, 0.026 * (1 + wave(phi, t)) * fullness(u, 0.7, 0.6));
+    const [cols, rows] = k.near ? [24, 8] : [k.cols, 2];
+    // On the layer's points: 2 on a crown, 0 beside it, -1 in the rows between.
+    const curl = (phi: number, u: number) => Math.cos(Math.PI * ((cols * phi) / TAU - (rows * u) / 2)) + Math.cos(Math.PI * rows * u);
+    const lift = (phi: number, _: number, u: number) => lifted(k, 0.026 * (1 + (k.near ? 0.12 * curl(phi, u) * (1 + 0.5 * Math.sin(5 * phi + 11 * u)) : 0)) * fullness(u, 0.7, 0.6));
+    // The six triangles round each crown point: the upper three a touch lighter, the lower three the soft grain, as a curl
+    // lit from above. Close to the hue, so the curls read by their outline and light, never as shards of two colours.
+    const [light, deep] = [mix(k.hue, "#fff6e8", 0.03), k.mid];
     const curls = byAngles(k, (phi, t) => {
-      const crown = wave(phi, t) + 0.16 * Math.sin(11 * phi + 17 * t);
-      return crown > 0.16 ? mix(k.hue, "#fff6e8", 0.07) : crown < -0.14 ? shade(k.hue, 0.85) : k.hue;
+      const [x, y] = [(cols * phi) / TAU, (rows * t) / edge(phi)];
+      for (const row of [2 * Math.floor(y / 2), 2 * Math.floor(y / 2) + 2]) {
+        const [dx, dy] = [x - row / 2 - 2 * Math.round((x - row / 2) / 2), y - row];
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1 && Math.abs(dx + dy) < 1) return dy < 0 ? light : deep;
+      }
+      return k.hue;
     });
-    k.shell(piece(layer(k.head, k.near ? 16 : k.cols, k.near ? 6 : 2, edge, lift, RIM), curls));
+    k.shell(piece(layer(k.head, cols, rows, edge, lift, RIM), curls));
   },
   pixie: (k) => {
     // Short and tapered, its fringe swept across the forehead to the figure's left.
@@ -526,11 +571,16 @@ export function standOff(dressing: Dressing, at: Vector3, normal: Vector3, reach
 
 /** Styles that hang below a hat's edge, to the jaw or further. */
 export const LONG: readonly Look["hair"][] = ["locs-long", "box-braids", "silk-press", "long-straight", "ponytail"];
-/** Styles that keep what shows below a hat's edge: the long ones, and the ends of short locs, cornrows and knots at the nape. The rest tuck under it. */
-export const BELOW_HAT: readonly Look["hair"][] = [...LONG, "locs-short", "cornrows", "knots"];
+/** Styles that puff out below a hat's edge. */
+export const PUFFS: readonly Look["hair"][] = ["afro-s", "afro-m", "afro-l"];
+/** Styles that keep what shows below a hat's edge: the long ones, the ends of short locs, cornrows and knots at the nape, and the afros. The rest tuck under it. */
+export const BELOW_HAT: readonly Look["hair"][] = [...LONG, "locs-short", "cornrows", "knots", ...PUFFS];
 
-/** `covered`: a covering (a crown hat, a beanie) hides the whole scalp, so a long style under it needs no close layer of its own. */
-export function hair(look: Look, m: Measurements, detail: Detail, tucked: boolean | ((f: number) => number) = false, covered = false): Dressing {
+/**
+ * `covered`: a covering (a crown hat, a beanie) hides the whole scalp, so a style kept below it (BELOW_HAT) needs no close layer of its own.
+ * `brim`: under a hat, how far below its edge its brim reaches (Dressing.hatDrop).
+ */
+export function hair(look: Look, m: Measurements, detail: Detail, tucked: boolean | ((f: number) => number) = false, covered = false, brim: (f: number) => number = () => 0): Dressing {
   const out = dressing();
   if (look.hair === "bald" || detail === "simple") return out;
   const near = detail === "near";
@@ -549,6 +599,7 @@ export function hair(look: Look, m: Measurements, detail: Detail, tucked: boolea
     skin: hexOf("skin", look.skin) ?? SKIN_TONES[22],
     back: m.chest * m.depth + 0.03,
     under: typeof tucked === "function" ? tucked : undefined,
+    brim,
     shell: (...pieces) => add(out.shell, "head", ...pieces),
     detail: (...pieces) => add(out.detail, "head", ...pieces),
   };
