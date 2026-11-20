@@ -180,8 +180,10 @@ A hand may be voided only as an **audited unanimous void**, enforced by the
 engine (resolved F-04):
 
 1. `requestVoid(state, seat, reason)` — refused unless `canRequestVoid(state)`
-   (the hand is live: `BIDDING` … `TRICK_COMPLETE`), no other request is
-   pending, and a reason is given. AI seats consent implicitly at request time.
+   (the hand is live: `BIDDING` … `TRICK_COMPLETE`, **and** the final trick has
+   not yet been played — once all 13 books are decided only scoring remains),
+   no other request is pending, and a reason is given. AI seats consent
+   implicitly at request time.
 2. `consentToVoid(state, seat)` — adds a human consent. `withdrawVoidRequest`
    cancels; both are audited.
 3. When every human seat has consented, the void applies: concealed hands are
@@ -653,6 +655,8 @@ Each was a difference between the declared rules/boundaries and the code.
 | **F-04** | Role boundary | **Fixed** | `voidCurrentHandAsHost` had no phase guard and no consent record; the role check lived only in `MainViewModel`. | Void accepted in `BIDDING` with no consent data. | `VoidRequest` in state; `requestVoid` / `consentToVoid` / `withdrawVoidRequest`; applied only when unanimous among human seats; refused outside live phases; audit records requester, consents, reason. Tests `void_*`. Service-side *role* verification remains `SPECIFIED` (Chapter 5). |
 | F-05 | Minor | **Fixed** | The void outcome fabricated a placeholder `Contract(dealer, 4, null, UPTOWN)` when no contract existed, and set `pointsAwardedTo = US` on a voided hand. | Code read. | `HandOutcome.contract` and `pointsAwardedTo` are nullable; a voided outcome carries the agreed contract (or none) and the `VoidRequest`. UI renders "No contract" and no award. |
 | F-06 | Hygiene | **Fixed** | `.gradle/` build state (≈1.2 MB of binaries) was committed although `.gitignore` targets build output. | `git ls-files .gradle`. | `.gradle/` added to `.gitignore` and removed from the index. |
+| F-07 | Minor (found in review of the fixes) | **Fixed** | A void was still accepted in `TRICK_COMPLETE` after the 12th trick, when every book is decided and only scoring remains. | Review probe. | `canRequestVoid` also returns false once `completedTricks.size >= handSize` in `TRICK_COMPLETE`; test `voidRequest_isRefusedOnceTheFinalTrickIsPlayed_butAllowedAfterEarlierTricks`. |
+| F-08 | Minor (found in review of the fixes) | **Fixed** | The coach hint said a seat "currently holds this book" when the only card in a No-Trump trick was a led joker, which cannot win. | Review trace. | When `governingSuit` is null on a non-empty trick the hint explains the joker lead; test `coachHint_explainsAJokerLeadInNoTrump`. |
 
 Positive results worth keeping: AI-vs-AI hands terminate with 13 books and 48
 unique played cards each; the whole suite runs on a plain JVM with no Android

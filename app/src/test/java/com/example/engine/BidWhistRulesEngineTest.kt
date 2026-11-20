@@ -442,6 +442,66 @@ class BidWhistRulesEngineTest {
     }
 
     @Test
+    fun voidRequest_isRefusedOnceTheFinalTrickIsPlayed_butAllowedAfterEarlierTricks() {
+        // Drive the hand to TRICK_COMPLETE after the 12th trick (result fully determined, not yet scored).
+        var state = engine.startNewMatch(initialSeed = 1234L)
+        state = engine.submitBid(state, Seat.SOUTH, BidAction.Bid(4, isNoTrump = false, direction = BidDirection.UPTOWN))
+        state = engine.submitBid(state, Seat.WEST, BidAction.Pass)
+        state = engine.submitBid(state, Seat.NORTH, BidAction.Pass)
+        state = engine.submitBid(state, Seat.EAST, BidAction.Pass)
+        state = engine.selectTrumpAndPickUpKitty(state, Seat.SOUTH, Suit.SPADES)
+        state = engine.submitKittyDiscard(state, Seat.SOUTH, state.hands.getValue(Seat.SOUTH).takeLast(6).map { it.id }.toSet())
+        var sawEarlyTrickComplete = false
+        while (state.completedTricks.size < engine.manifest.handSize) {
+            if (state.phase == TablePhase.TRICK_COMPLETE) {
+                // After any trick but the last, the hand is still open and may be voided.
+                assertTrue(engine.canRequestVoid(state))
+                sawEarlyTrickComplete = true
+                state = engine.collectCompletedTrick(state)
+            } else {
+                val seat = state.currentTurn
+                val legal = engine.legalCards(state.hands.getValue(seat), state.currentTrick, requireNotNull(state.contract))
+                state = engine.playCard(state, seat, legal.first().id)
+            }
+        }
+        assertTrue(sawEarlyTrickComplete)
+        assertEquals(TablePhase.TRICK_COMPLETE, state.phase)
+        assertEquals(engine.manifest.handSize, state.completedTricks.size)
+        assertEquals(13, state.booksWonUs + state.booksWonThem)
+
+        assertVoidRefused(state)
+        assertFalse(engine.projectSeatView(state).canRequestVoid)
+    }
+
+    @Test
+    fun coachHint_explainsAJokerLeadInNoTrump() {
+        val policy = AiPlayerPolicy(engine)
+        val base = engine.startNewMatch(initialSeed = 21L)
+        val southHand = listOf(
+            Card("SPADES_ACE", Suit.SPADES, Rank.ACE),
+            Card("DIAMONDS_TWO", Suit.DIAMONDS, Rank.TWO)
+        )
+        val state = base.copy(
+            phase = TablePhase.PLAYING_TRICK,
+            currentTurn = Seat.SOUTH,
+            contract = noTrumpContract,
+            hands = base.hands + (Seat.SOUTH to southHand),
+            currentTrick = listOf(PlayedCard(Seat.NORTH, littleJoker))
+        )
+        val view = engine.projectSeatView(state)
+        assertEquals(southHand.map { it.id }.toSet(), view.legalPlayCardIds)
+        val hint = requireNotNull(policy.generateCoachHint(view))
+        assertTrue(hint, hint.contains("joker", ignoreCase = true))
+        assertTrue(hint, hint.contains("cannot win"))
+        assertFalse(hint, hint.contains("holds this book"))
+
+        // Once a suited card governs, the normal follow/hold hints resume.
+        val afterSuit = state.copy(currentTrick = state.currentTrick + PlayedCard(Seat.EAST, Card("DIAMONDS_FIVE", Suit.DIAMONDS, Rank.FIVE)))
+        val afterHint = requireNotNull(policy.generateCoachHint(engine.projectSeatView(afterSuit)))
+        assertTrue(afterHint, afterHint.contains("Must follow ♦ Diamonds"))
+    }
+
+    @Test
     fun voidRequest_isRefusedInMatchCompleteVoidedAndIdle() {
         val base = engine.startNewMatch(initialSeed = 5L)
         assertVoidRefused(base.copy(phase = TablePhase.MATCH_COMPLETE))

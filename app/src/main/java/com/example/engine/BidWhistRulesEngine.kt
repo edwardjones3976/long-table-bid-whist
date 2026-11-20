@@ -624,7 +624,17 @@ class BidWhistRulesEngine(
         TablePhase.VOIDED_HAND
     )
 
-    fun canRequestVoid(state: AuthoritativeState): Boolean = state.phase !in voidRefusedPhases
+    /**
+     * A hand may be voided only while its result is still open: not once it is settled, and
+     * not after the final trick has been played (TRICK_COMPLETE with every book decided),
+     * when the only remaining step is scoring.
+     */
+    fun canRequestVoid(state: AuthoritativeState): Boolean {
+        if (state.phase in voidRefusedPhases) return false
+        val finalTrickPlayed = state.phase == TablePhase.TRICK_COMPLETE &&
+            state.completedTricks.size >= manifest.handSize
+        return !finalTrickPlayed
+    }
 
     /**
      * Audited unanimous void, step 1: a seat asks the table to void the current hand.

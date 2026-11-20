@@ -173,7 +173,10 @@ class AiPlayerPolicy(
                     "You have the lead. Pulling trumps early or cashing Aces sets the pace."
                 } else {
                     val ledSuit = engine.governingSuit(view.currentTrick, contract)
-                    if (ledSuit != null && view.legalPlayCardIds.size < view.localHand.size) {
+                    if (ledSuit == null) {
+                        // Only possible in No-Trump when every card so far is a joker.
+                        "A joker led in No-Trump cannot win the book. Any card is legal — the first suited card sets the suit to follow."
+                    } else if (view.legalPlayCardIds.size < view.localHand.size) {
                         "Must follow ${ledSuit.symbol} ${ledSuit.label}. Dimmed cards are locked by house rules."
                     } else {
                         val winningSeat = currentWinningSeat(view.currentTrick, contract)
