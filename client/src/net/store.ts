@@ -261,6 +261,10 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
   }
 
   function entered(reply: Reply<Joined>): Reply<Joined> {
+    // The server sends the room's first snapshot before it acknowledges the create or join, so Leave can be pressed
+    // while that answer is still on its way. A late answer for a membership this tab has already left must not bring
+    // the token or the member id back: the room would reopen from queued snapshots, or resume on a reconnect.
+    if (reply.ok && reply.memberId === leftAs) return reply;
     if (reply.ok) {
       // A fresh membership: whatever was left before is history, and its id can no longer mark anything stale.
       leftAs = null;
