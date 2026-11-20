@@ -11,14 +11,15 @@
  * earrings hang from the lobes, in front of any hearing aid or processor; the chain lies round the base of
  * the neck over any top; the watch goes on the left wrist and bracelets on the right, just below any
  * sleeve. Hats sit over tucked hair (and over a durag) in the head-covering colour, above the ears, and say where
- * their lower edge is (Dressing.hatEdge), so long hair can hang below it. Under
+ * their lower edge is (Dressing.hatEdge), so long hair can hang below it and an afro puff out below it (a cap
+ * or bucket hat sits up on an afro, hair.ts PERCH). Under
  * a hijab the earrings and chain are hidden, so they are not drawn. Beyond 8 m only hats are drawn.
  */
 import { CatmullRomCurve3, CylinderGeometry, Matrix4, OctahedronGeometry, RingGeometry, SphereGeometry, TubeGeometry, Vector3, type BufferGeometry } from "three";
 import { hexOf, type Look } from "../../../shared/avatar";
 import { earShape } from "./face";
 import type { Detail } from "./figure";
-import { fromFace, curve, grid, layer, scalp, type Scalp } from "./hair";
+import { fromFace, curve, grid, layer, PERCH, PUFFS, scalp, type Scalp } from "./hair";
 import { HIJAB_SIDE } from "./headwear";
 import type { Measurements } from "./measure";
 import { add, dressing, lathe, piece, shade, tube, type Dressing, type Paint } from "./shapes";
@@ -171,9 +172,13 @@ function hat(k: Kit, id: Hat): void {
   const cols = near ? 12 : 6;
   const around = (from: number, to: number, n: number) => Array.from({ length: n + 1 }, (_, i) => from + ((to - from) * i) / n);
   const shell = (...pieces: BufferGeometry[]) => add(k.out.shell, "head", ...pieces);
+  // Over an afro a cap or bucket hat sits up on the hair, so the afro shows below its brim (the fedora's band is high enough already).
+  const perch = (edge: (f: number) => number) => (PUFFS.includes(k.look.hair) ? (f: number) => Math.min(edge(f), PERCH(f)) : edge);
   if (id === "cap") {
-    const edge = curve([[0, 1.18], [0.5 * Math.PI, 1.3], [Math.PI, 1.45]]);
+    const edge = perch(curve([[0, 1.18], [0.5 * Math.PI, 1.3], [Math.PI, 1.45]]));
     k.out.hatEdge = edge;
+    // Only the visor, over the front, has a brim.
+    k.out.hatDrop = (f) => (f < 0.3 * Math.PI ? 0.017 : 0);
     const panels: Paint = (at) => (Math.floor((head.angles(at)[0] * 6) / TAU) % 2 ? shade(colour, 0.88) : colour);
     shell(piece(layer(head, cols, near ? 3 : 2, (phi) => edge(fromFace(phi)), () => lift, 0.003), panels));
     // The visor reaches forward over the face, curved round the forehead.
@@ -183,8 +188,9 @@ function hat(k: Kit, id: Hat): void {
     return;
   }
   if (id === "bucket") {
-    const edge = curve([[0, 1.25], [0.5 * Math.PI, 1.38], [Math.PI, 1.45]]);
+    const edge = perch(curve([[0, 1.25], [0.5 * Math.PI, 1.38], [Math.PI, 1.45]]));
     k.out.hatEdge = edge;
+    k.out.hatDrop = () => 0.035 * k.s + 0.005;
     shell(piece(layer(head, cols, near ? 3 : 2, (phi) => edge(fromFace(phi)), () => lift + 0.004), colour));
     // Sloping down all round, stitched in rings.
     const stitched: Paint = (_, n) => (Math.floor(n / (2 * cols)) === 0 ? shade(colour, 0.85) : colour);
@@ -195,6 +201,8 @@ function hat(k: Kit, id: Hat): void {
   const h = m.head;
   const yb = 0.7 * h;
   k.out.hatEdge = () => Math.acos(yb / (h / 2) - 1);
+  const turn = (f: number) => -0.012 * Math.cos(f) + 0.01 * Math.sin(f) ** 2;
+  k.out.hatDrop = (f) => 0.004 - Math.min(0, turn(f));
   const rb = m.headWidth * Math.sqrt(1 - (yb / (h / 2) - 1) ** 2) + lift;
   const zs = m.headDepth / m.headWidth;
   // The crown's dip clears the top of the head by the hat's own lift, so tucked hair or a durag never shows through it.
@@ -204,7 +212,7 @@ function hat(k: Kit, id: Hat): void {
     : [[rb, yb - 0.004], [rb * 0.9, top + 0.005], [0, top]] as const;
   shell(piece(lathe(crown, cols), (at) => (at.y < yb + 0.022 ? shade(colour, 0.4) : colour), { scale: [1, 1, zs] }));
   const inner = (phi: number) => new Vector3(rb * Math.sin(phi), yb, rb * zs * Math.cos(phi));
-  shell(piece(brim(k, around(0, TAU, cols), inner, 0.05 * k.s, (f) => -0.012 * Math.cos(f) + 0.01 * Math.sin(f) ** 2, 0.004), colour));
+  shell(piece(brim(k, around(0, TAU, cols), inner, 0.05 * k.s, turn, 0.004), colour));
 }
 
 /** Worn under a hijab, so not drawn: the earrings and the chain. */

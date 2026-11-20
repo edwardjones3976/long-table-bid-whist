@@ -6,7 +6,7 @@
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CATALOG, FIELDS, GESTURES, SET_FIELDS, STARTING_LOOKS, type Field, type Look } from "../../shared/avatar";
-import { lookDraft, shownLook, stepOption } from "../../client/src/avatar/draft";
+import { lookDraft, shownLook, stepLines, stepOption } from "../../client/src/avatar/draft";
 import { GESTURE_COOLDOWN_MS } from "../../client/src/avatar/gestures";
 import { bodyYaw, HEAD_LEAD, poseToSend } from "../../client/src/avatar/pose";
 import { reactionsOn } from "../../client/src/avatar/reactions";
@@ -148,6 +148,12 @@ describe("VR look panel", () => {
     lookDraft.change(STARTING_LOOKS[3]);
     expect(lookDraft.get()).toMatchObject({ draft: STARTING_LOOKS[3], future: [], past: [STARTING_LOOKS[0], STARTING_LOOKS[1]] });
     lookDraft.close();
+  });
+
+  it("says on Undo and Redo why they wait when there is no step to take", () => {
+    expect(stepLines("Undo", 0)).toEqual(["Undo", "(nothing)"]);
+    expect(stepLines("Redo", 0)).toEqual(["Redo", "(nothing)"]);
+    expect(stepLines("Undo", 2)).toEqual(["Undo"]);
   });
 
   it("keeps a draft with Undo and Before, and leaves the saved look alone until Save", () => {

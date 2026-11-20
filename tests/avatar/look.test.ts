@@ -131,14 +131,10 @@ describe("the catalog", () => {
   });
 
   it("keeps every garment colour off the skin ramp, so no outfit reads as bare skin", () => {
-    const tones = SKIN_TONES.map((hex) => lab(hex));
-    for (const colour of GARMENT_PALETTE) {
-      const nearest = Math.min(...tones.map((tone) => apart(lab(colour.hex), tone)));
-      expect(nearest, colour.id).toBeGreaterThanOrEqual(4);
-    }
-    // The darkest garment colour stays well clear of the deepest tones (13w to 14c), the ones it could pass for.
-    const deep = SKIN_TONES.slice(-6).map((hex) => lab(hex));
-    expect(Math.min(...deep.map((tone) => apart(lab(hexOf("topColor", "chocolate")!), tone)))).toBeGreaterThanOrEqual(8);
+    for (const colour of GARMENT_PALETTE) for (const tone of CATALOG.skin) expect(apart(lab(colour.hex), lab(tone.hex!)), `${colour.id} / ${tone.id}`).toBeGreaterThanOrEqual(4);
+    // Chocolate, past the ramp's deep end on the ramp's own hue, keeps a wider gap: the night light crushes the dark end,
+    // where a gap of 8 let it nearly merge with the deepest tone.
+    for (const tone of CATALOG.skin) expect(apart(lab(hexOf("topColor", "chocolate")!), lab(tone.hex!)), tone.id).toBeGreaterThanOrEqual(10);
   });
 
   it("keeps every two garment colours apart under protanopia, deuteranopia and tritanopia", () => {
