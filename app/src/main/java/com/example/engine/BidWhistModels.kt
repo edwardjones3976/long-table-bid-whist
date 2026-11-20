@@ -284,6 +284,10 @@ data class SeatView(
     val isBetweenHandPaused: Boolean,
     val pendingVoidRequest: VoidRequest?,
     val canRequestVoid: Boolean,
+    /** Published at deal time; lets the seat verify the shuffle after the hand is scored (D-05). */
+    val dealCommitment: DealCommitment,
+    /** Seed and nonce behind [dealCommitment]; null until the hand is scored, never for a voided hand. */
+    val dealReveal: DealReveal?,
     val guidedHint: String?
 )
 

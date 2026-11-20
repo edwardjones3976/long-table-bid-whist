@@ -81,7 +81,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (guidedMode != null) {
             viewModelScope.launch { prefsRepo.updateGuidedHintEnabled(guidedMode) }
         }
-        val state = engine.startNewMatch(System.currentTimeMillis())
+        val state = engine.startNewMatch()
         authoritativeState = state
         publishState(selectedCardId = null, selectedDiscardIds = emptySet(), notice = null)
         scheduleAiAdvanceIfNeeded()
@@ -96,7 +96,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             return
         }
         aiTurnJob?.cancel()
-        val next = engine.dealNextHand(current, System.currentTimeMillis())
+        val next = engine.dealNextHand(current)
         authoritativeState = next
         publishState(selectedCardId = null, selectedDiscardIds = emptySet(), notice = null)
         scheduleAiAdvanceIfNeeded()

@@ -64,6 +64,7 @@ import com.example.data.Handedness
 import com.example.data.TablePreferences
 import com.example.engine.BidAction
 import com.example.engine.BidDirection
+import com.example.engine.DealCommitmentHasher
 import com.example.engine.Partnership
 import com.example.engine.Seat
 import com.example.engine.SeatView
@@ -482,6 +483,20 @@ private fun CenterPlayZone(
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.tertiary
                             )
+                            val reveal = view.dealReveal
+                            if (reveal != null) {
+                                val verified = DealCommitmentHasher.verify(view.manifest.version, view.dealCommitment, reveal)
+                                Text(
+                                    text = if (verified) {
+                                        "Deal verified · commitment ${DealCommitmentHasher.shortForm(view.dealCommitment.commitmentHex)} matches seed ${reveal.seed}"
+                                    } else {
+                                        "Deal commitment did NOT verify — see the audit log"
+                                    },
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = if (verified) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.testTag("deal_verification_label")
+                                )
+                            }
                         } else {
                             Text(outcome.voidReason ?: "Voided by unanimous consent", style = MaterialTheme.typography.bodyMedium)
                             val request = outcome.voidRequest
