@@ -140,7 +140,7 @@ class AiPlayerPolicy(
                 if (view.currentTrick.isEmpty()) {
                     "You have the lead. Pulling trumps early or cashing Aces sets the pace."
                 } else {
-                    val ledSuit = engine.effectiveSuit(view.currentTrick.first().card, contract)
+                    val ledSuit = engine.governingSuit(view.currentTrick, contract)
                     if (ledSuit != null && view.legalPlayCardIds.size < view.localHand.size) {
                         "Must follow ${ledSuit.symbol} ${ledSuit.label}. Dimmed cards are locked by house rules."
                     } else {
@@ -177,7 +177,7 @@ class AiPlayerPolicy(
         currentTrick: List<PlayedCard>,
         contract: Contract
     ): Card {
-        val ledSuit = engine.effectiveSuit(currentTrick.first().card, contract)
+        val ledSuit = engine.governingSuit(currentTrick, contract)
         val currentWinner = currentWinningSeat(currentTrick, contract)
         val currentBestStrength = currentTrick.maxOf {
             engine.cardStrength(it.card, ledSuit, contract)
@@ -193,7 +193,12 @@ class AiPlayerPolicy(
             engine.cardStrength(it, ledSuit, contract) > currentBestStrength
         }
         if (beatingCards.isNotEmpty()) {
-            return beatingCards.minBy { engine.cardStrength(it, ledSuit, contract) }
+            // Cheapest winner; among equal strengths (e.g. any suited card over a led
+            // Joker in No-Trump) throw the lowest-ranked card.
+            return beatingCards.minWith(
+                compareBy<Card>({ engine.cardStrength(it, ledSuit, contract) })
+                    .thenBy { engine.rankStrength(it.rank, contract.direction) }
+            )
         }
 
         // Cannot beat: throw lowest-value card (avoid throwing Jokers/Aces if possible)
@@ -207,7 +212,7 @@ class AiPlayerPolicy(
     }
 
     private fun currentWinningSeat(trick: List<PlayedCard>, contract: Contract): Seat {
-        val ledSuit = engine.effectiveSuit(trick.first().card, contract)
+        val ledSuit = engine.governingSuit(trick, contract)
         return trick.maxBy { engine.cardStrength(it.card, ledSuit, contract) }.seat
     }
 
