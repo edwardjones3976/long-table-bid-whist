@@ -1,3 +1,4 @@
+# [[OpenAI Director | GPT-5.6 | 2026-08-26 | 02:49 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]]
 # [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]]
 schema_version: "long-table-provider-roles/v1"
@@ -28,6 +29,14 @@ providers:
     capability_parity_target_percent: 90
     eligible_areas: ["research", "evidence_verification", "programming", "deep_reasoning", "innovation", "development", "quality_assurance", "leadership"]
     independent_review_only_when_not_material_author: true
+  grok:
+    role: "supplemental_adversarial_qa_within_cursor_workload_lane"
+    workload_accounting: "suballocated_from_cursor_target_not_additive"
+    current_stage1_suballocation_percent: 8
+    eligible_areas: ["evidence_verification", "deep_reasoning", "quality_assurance"]
+    repository_access: "read_only_named_worktree_at_exact_candidate"
+    output_authority: "advisory_findings_only_until_claude_or_cursor_reconciles"
+    may_not: ["edit or commit the candidate", "review or accept its own authored work", "issue final acceptance", "merge", "deploy", "publish", "spend", "change permissions", "post externally"]
   gemini_antigravity:
     role: "specialist_backup_and_invited_debate_participant"
     direct_production_target_percent: 7
@@ -102,3 +111,4 @@ runtime_permissions:
     activation_requires: ["exact-candidate acceptance", "current review and checks", "owner authority"]
 # [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]]
 # [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]]
+# [[OpenAI Director | GPT-5.6 | 2026-08-26 | 02:49 UTC | END]]

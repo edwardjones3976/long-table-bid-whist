@@ -1,0 +1,59 @@
+{
+  "schema_version": "prestage.v1",
+  "packet_id": "LT-CLAUDE-S1-PAGES-003-R4",
+  "goal": "Bind the corrected Stage 1 exact-artifact Pages implementation to the immutable candidate that can deploy from the accepted milestone branch before merge.",
+  "terminal_condition": "Candidate ddb8244763a2e6e68499adc53ff0be96e5a2cccb remains unchanged through independent review, current-head CI, exact-artifact deployment, physical Quest gates, and owner acceptance.",
+  "repository": "edwardjones3976/long-table-bid-whist",
+  "worktree": "<local path removed>",
+  "branch": "codex/stage1-exact-artifact",
+  "base_sha": "bb94bbd65c1c551b02b0e99937037a5c14161548",
+  "candidate_sha": "ddb8244763a2e6e68499adc53ff0be96e5a2cccb",
+  "producer": "claude",
+  "independent_reviewer": "openai",
+  "owned_paths": [
+    ".github/workflows/prototype-ci.yml",
+    "director/providers/2026-08-29-claude-stage1-exact-artifact-assignment.md",
+    "index.html",
+    "tests/deploy/pages-artifact.test.ts",
+    "vite.config.ts"
+  ],
+  "prohibited_paths": [
+    "director/providers/2026-08-29-claude-stage1-exact-artifact-prestage-v2.json",
+    "package-lock.json",
+    "package.json",
+    "sources",
+    "src"
+  ],
+  "required_tests": [
+    "npm test",
+    "VITE_BUILD_SHA set to the exact 40-character candidate SHA during npm run build",
+    "built HTML contains the full SHA metadata and mount-independent asset paths",
+    "workflow structure proves one build and no deploy-time rebuild",
+    "workflow push routing deploys the accepted milestone branch but pull_request never deploys"
+  ],
+  "required_security_evidence": [
+    "build job has read-only contents permission",
+    "deploy job alone has pages write and id-token write permissions",
+    "pull_request events cannot deploy",
+    "accepted milestone branch push deploys the same github.sha artifact before merge",
+    "no credential or private data enters the artifact"
+  ],
+  "budget_units": 5,
+  "timeout_seconds": 1800,
+  "retry_limit": 3,
+  "merge_eligibility_conditions": [
+    "different-provider exact-SHA ACCEPT",
+    "current exact-head GitHub CI is green",
+    "deployed artifact SHA and digest match the frozen candidate",
+    "physical Quest acceptance gates pass",
+    "owner accepts the unchanged candidate"
+  ],
+  "stopping_conditions": [
+    "ambiguous external dispatch or write",
+    "candidate or artifact identity mismatch",
+    "incremental provider charge is required",
+    "required test or build fails",
+    "scope requires game behavior, secrets, or broader permissions"
+  ],
+  "digest": "sha256:66623fff55282047d228a9e4c95ad9f3f52c4509c34e7054ac44742bcea57275"
+}

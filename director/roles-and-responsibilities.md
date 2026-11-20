@@ -1,3 +1,4 @@
+<!-- [[OpenAI Director | GPT-5.6 | 2026-08-26 | 02:49 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | BEGIN]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | BEGIN]] -->
@@ -75,6 +76,24 @@ review, security, CI, and merge evidence.
   external-write authority.
 - Committee voting weight is 1.5; capability coverage, workload percentage, and
   voting power are separate controls.
+
+## Grok — Supplemental adversarial QA within the Cursor lane
+
+- Grok is included in the active Stage 1 workload as a named model/operator
+  suballocation inside Cursor's existing 28% direct-production target. It does
+  not add a sixth percentage bucket or increase the 100-unit denominator.
+- Its Stage 1 assignment is read-only, exact-candidate adversarial QA: reproduce
+  tests/build, inspect the shared intent path, structural XR projection,
+  lifecycle cleanup, and unsupported product claims, then return attributable
+  findings with exact file/test evidence.
+- Grok receives repository context only in the explicitly named Long Table
+  review worktree. It does not receive credentials, concealed player data, or
+  another project's context.
+- Grok does not edit or commit the candidate and cannot issue the canonical
+  independent acceptance verdict. Claude remains the eligible different-
+  provider reviewer for a Cursor-authored Stage 1 candidate.
+- Grok cannot merge, deploy, publish, spend, change permissions, post to Slack,
+  Linear, or GitHub, or widen its own assignment.
 
 ## Gemini/Antigravity — Specialist and Backup Programmer
 
@@ -160,3 +179,4 @@ ownership, guaranteed usage, or low-value assignments.
 <!-- [[Codex | GPT-5.6 | 2026-08-24 | 21:15 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-25 | 01:46 UTC | END]] -->
 <!-- [[Codex | GPT-5.6 | 2026-08-25 | 02:51 UTC | END]] -->
+<!-- [[OpenAI Director | GPT-5.6 | 2026-08-26 | 02:49 UTC | END]] -->
