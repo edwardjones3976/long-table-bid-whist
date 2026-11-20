@@ -222,11 +222,12 @@ data class HandOutcome(
 /**
  * Concealed-information boundary for a seated human player (South).
  * Contains zero access to other seats' hands or unrevealed kitty cards.
+ * Deliberately omits the deal seed: with it, the shuffle (and every concealed hand)
+ * could be reproduced from this view alone.
  */
 data class SeatView(
     val manifest: TableRulesManifest,
     val handNumber: Int,
-    val seed: Long,
     val phase: TablePhase,
     val dealer: Seat,
     val currentTurn: Seat,

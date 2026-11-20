@@ -111,4 +111,36 @@ class BidWhistRulesEngineTest {
         assertTrue(southIds.intersect(westIds).isEmpty())
         assertTrue(southView.kittyCardIdsInHand.isEmpty())
     }
+
+    @Test
+    fun concealedBoundary_seatViewNeverExposesDealSeed() {
+        // A seed distinctive enough that its decimal string cannot appear by coincidence.
+        val seed = 8_675_309_112_233L
+        val seedText = seed.toString()
+
+        var state = engine.startNewMatch(initialSeed = seed)
+        assertEquals(seed, state.seed) // authoritative state keeps it for replays
+        var view = engine.projectSeatView(state)
+        assertNoSeedLeak(view, seedText)
+
+        // The seed must also stay out of the audit log for every later hand.
+        val nextSeed = 9_988_776_655_443L
+        state = engine.dealNextHand(state, nextSeed = nextSeed)
+        view = engine.projectSeatView(state)
+        assertNoSeedLeak(view, seedText)
+        assertNoSeedLeak(view, nextSeed.toString())
+
+        // SeatView must carry no seed property at all (removal is enforced at compile time;
+        // this guards against it being reintroduced under the same name).
+        assertTrue(SeatView::class.java.declaredFields.none { it.name.equals("seed", ignoreCase = true) })
+    }
+
+    private fun assertNoSeedLeak(view: SeatView, seedText: String) {
+        view.auditLog.forEach { event ->
+            assertFalse("audit detail leaks seed: ${event.detail}", event.detail.contains(seedText))
+            assertFalse("audit summary leaks seed: ${event.summary}", event.summary.contains(seedText))
+        }
+        assertFalse(view.latestCaption.contains(seedText))
+        assertFalse(view.seatCaptions.values.any { it.contains(seedText) })
+    }
 }

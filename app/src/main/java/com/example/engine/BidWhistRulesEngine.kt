@@ -88,7 +88,7 @@ class BidWhistRulesEngine(
             phase = TablePhase.BIDDING,
             actor = "Authoritative Rules Service",
             summary = "Hand #$handNumber dealt (Dealer: ${dealer.displayName})",
-            detail = "54 cards shuffled with seed #$seed; 12 cards per seat, 6 cards sealed in kitty. Manifest ${manifest.version}."
+            detail = "${manifest.deckSize} cards shuffled; ${manifest.handSize} cards per seat, ${manifest.kittySize} cards sealed in kitty. Manifest ${manifest.version}."
         )
 
         return AuthoritativeState(
@@ -647,7 +647,6 @@ class BidWhistRulesEngine(
         return SeatView(
             manifest = manifest,
             handNumber = state.handNumber,
-            seed = state.seed,
             phase = state.phase,
             dealer = state.dealer,
             currentTurn = state.currentTurn,
