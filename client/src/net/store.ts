@@ -29,6 +29,7 @@ import {
   type RoomSnapshot,
   type Seat,
   type ServerEvents,
+  type SeatInfo,
   type TableId,
   type TableSnapshot,
   type TableSummary,
@@ -95,6 +96,38 @@ const token = {
   },
 };
 
+/**
+ * The room as the server will show it once it has handled `me` standing up from `tableId`: unseated, and gone from
+ * the table the way the server empties a place (server/rooms.ts vacate): a seat in a match goes to a bot, a seat in a
+ * lobby opens, the host's chair is simply left, the manager falls to the host or a remaining player, and a match or
+ * lobby with nobody left ends. One round trip later the server's own snapshot replaces this.
+ */
+export function withoutMeAt(room: RoomSnapshot, me: string, tableId: TableId): RoomSnapshot {
+  return {
+    ...room,
+    members: room.members.map((member) => (member.id === me ? { ...member, tableId: null } : member)),
+    tables: room.tables.map((table) => (table.id === tableId ? leftBy(table, me) : table)),
+  };
+}
+
+function leftBy(table: TableSummary, me: string): TableSummary {
+  const open: SeatInfo = { occupant: "open", memberId: null, name: null, ready: false, connected: false };
+  const host = table.host?.memberId === me ? null : table.host;
+  const inMatch = table.status === "playing" || table.status === "results";
+  let seats = table.seats.map((info) => (info.memberId === me ? (inMatch ? { ...open, occupant: "bot" as const } : open) : info)) as TableSummary["seats"];
+  const players = seats.filter((info) => info.occupant === "human");
+  let status = table.status;
+  let matchTime = table.matchTime;
+  if (inMatch && players.length === 0) {
+    // A match with no people left to play it is over.
+    seats = seats.map((info) => (info.occupant === "bot" ? open : info)) as TableSummary["seats"];
+    status = host ? "lobby" : "available";
+    matchTime = null;
+  } else if (status === "lobby" && !host && players.length === 0) status = "available";
+  const managerId = table.managerId === me ? (host?.memberId ?? players[0]?.memberId ?? null) : table.managerId;
+  return { ...table, host, seats, managerId, status, ...(matchTime === undefined ? {} : { matchTime }) };
+}
+
 export function myTable(state: NetState = net.getState()): TableSummary | null {
   const { room, me } = state;
   const tableId = room?.members.find((member) => member.id === me)?.tableId;
@@ -145,8 +178,9 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
   let leftAs: string | null = null;
   // The table this tab is standing up from, until the server confirms it (its table:left, a room snapshot that no
   // longer seats me there, or the answer to the stand). Snapshots of that table queued before the server heard the
-  // stand are stale: a table snapshot is dropped, and a room snapshot is taken with me already unseated.
-  let standingFrom: TableId | null = null;
+  // stand are stale: a table snapshot is kept aside, and a room snapshot is shown with me already gone from the table.
+  // What the server last said (which still seats me) is kept to put back should it refuse the stand.
+  let standing: { from: TableId; room: RoomSnapshot; table: TableSnapshot | null } | null = null;
 
   function set(partial: Partial<NetState>): void {
     state = { ...state, ...partial };
@@ -164,6 +198,7 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
   function leaveLocally(message: string | null): void {
     leftAs = state.me ?? leftAs;
     held = null;
+    standing = null;
     token.write(null);
     set({ room: null, table: null, poses: {}, gestures: [], me: null, lastError: message });
   }
@@ -193,17 +228,22 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
       if (leftAs !== null && incoming.you === leftAs) return;
       let room = incoming;
       const seatedAt = room.members.find((member) => member.id === room.you)?.tableId ?? null;
-      if (standingFrom !== null) {
-        if (seatedAt === standingFrom) {
+      if (standing !== null) {
+        if (seatedAt === standing.from) {
           // Queued before the server heard the stand: everyone else's news is current, my seat is not.
-          room = { ...room, members: room.members.map((member) => (member.id === room.you ? { ...member, tableId: null } : member)) };
-        } else standingFrom = null;
+          standing.room = incoming;
+          room = withoutMeAt(incoming, incoming.you, standing.from);
+        } else standing = null;
       }
-      const atTable = seatedAt !== null && seatedAt !== standingFrom;
+      const atTable = seatedAt !== null && standing === null;
       set({ room, roomAt: Date.now(), me: room.you, ...(atTable ? {} : { table: null }) });
     });
     opened.on("table", (table) => {
-      if (stale() || table.tableId === standingFrom) return;
+      if (stale()) return;
+      if (standing !== null && table.tableId === standing.from) {
+        standing.table = table;
+        return;
+      }
       // A strike is told once, as it is given: not on a table's first snapshot (after a reload), nor when a new match clears it.
       const seat = table.you;
       const before = seat !== null && state.table?.tableId === table.tableId ? (state.table.strikes?.[seat] ?? 0) : Infinity;
@@ -213,7 +253,7 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     });
     opened.on("table:left", ({ tableId, reason }) => {
       if (stale()) return;
-      if (tableId === standingFrom) standingFrom = null;
+      if (tableId === standing?.from) standing = null;
       set({ table: null, ...(reason ? { lastError: reason } : {}) });
     });
     opened.on("poses", (poses) => {
@@ -310,27 +350,28 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     sit: (tableId: TableId, role: "player" | "host", seat?: Seat) => {
       // Sitting again, even at the table just left: the server handles the stand first, so what it sends for the new
       // seat is current and must not be mistaken for the old table's leftovers.
-      standingFrom = null;
+      standing = null;
       return request("table:sit", seat === undefined ? { tableId, role } : { tableId, role, seat });
     },
     async stand(): Promise<Reply> {
-      // Up from the table on this frame: my hand goes, my seat in the room empties (so the camera stands and the panels
-      // change at once) and the server is told afterwards. In a match it hands the seat to a bot; nothing here depends
-      // on its answer. Until it confirms, snapshots of this table are stale.
+      // Up from the table on this frame: my hand goes and my place at the table empties (so the camera stands and the
+      // panels change at once); the server is told afterwards and, in a match, hands the seat to a bot. Until it
+      // confirms, snapshots of this table are stale. Should it refuse instead, or not answer, I am still seated there
+      // as far as it knows, so what it last said is put back; a refusal that I was not at a table needs no putting back.
+      // Offline, the request is refused here without being sent, so nothing moves.
       const mine = myTable(state);
       const { room, me } = state;
-      if (mine && room && me !== null) {
-        standingFrom = mine.id;
-        set({
-          table: null,
-          room: { ...room, members: room.members.map((member) => (member.id === me ? { ...member, tableId: null } : member)) },
-        });
+      const now = mine && room && me !== null && open().connected ? { from: mine.id, room, table: state.table, me } : null;
+      if (now) {
+        standing = now;
+        set({ table: null, room: withoutMeAt(now.room, now.me, now.from) });
       }
-      try {
-        return await request("table:stand", {});
-      } finally {
-        if (mine && standingFrom === mine.id) standingFrom = null;
+      const reply = await request("table:stand", {});
+      if (now && standing === now) {
+        standing = null;
+        if (!reply.ok && reply.error !== "not-at-table") set({ room: now.room, table: now.table });
       }
+      return reply;
     },
     setReady: (ready: boolean) => request("table:ready", { ready }),
     setOptions: (options: unknown) => request("table:options", { options }),
