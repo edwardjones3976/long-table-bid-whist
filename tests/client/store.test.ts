@@ -237,6 +237,43 @@ describe("net store", () => {
     expect(net.getState().me).toBe("me");
   });
 
+  it("follows the next room even when its first snapshot lands before the create is acknowledged", async () => {
+    // Over long polling, one poll response can carry [ack room:leave][room NEW][ack room:create] and Socket.IO hands
+    // them over as consecutive microtasks: the new room's snapshot is seen before the leave's await has even resumed.
+    // The guard is by member id, not by timing, so the new room (a fresh id) is followed and only the old id is stale.
+    let releaseLeave: (reply: Reply) => void = () => {};
+    let releaseCreate: (reply: Reply) => void = () => {};
+    const leaveGate = new Promise<Reply>((resolve) => (releaseLeave = resolve));
+    const createGate = new Promise<Reply>((resolve) => (releaseCreate = resolve));
+    const fake = fakeSocket((event) => {
+      if (event === "room:leave") return leaveGate as unknown as Reply;
+      if (event === "room:create") return createGate as unknown as Reply;
+      return joined;
+    });
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", room(null));
+
+    const leaving = net.leaveRoom();
+    const creating = net.createRoom("Ann");
+    releaseLeave({ ok: true });
+    await Promise.resolve(); // the ack is in, but leaveRoom's continuation has not run yet
+    // A stale snapshot of the old membership is dropped; the new room, under a new member id, is not.
+    fake.serve("room", room("spades-1"));
+    expect(net.getState().room).toBeNull();
+    const fresh: RoomSnapshot = { ...room(null), code: "NEWROOM1", you: "me2", members: [{ ...room(null).members[0], id: "me2" }] };
+    fake.serve("room", fresh);
+    expect(net.getState().room?.code).toBe("NEWROOM1");
+    expect(net.getState().me).toBe("me2");
+
+    releaseCreate({ ...joined, code: "NEWROOM1", memberId: "me2" } as unknown as Reply);
+    await Promise.all([leaving, creating]);
+    expect(net.getState().room?.code).toBe("NEWROOM1");
+    expect(sessionStorage.getItem("mansion.token")).toBe("secret-token");
+  });
+
   it("follows a new room joined before an unanswered leave times out", async () => {
     let release: (reply: Reply) => void = () => {};
     const gate = new Promise<Reply>((resolve) => (release = resolve));
