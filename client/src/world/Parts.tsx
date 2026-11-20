@@ -1,11 +1,11 @@
 /**
- * Draws a list of plan.ts Parts as one instanced mesh per (material, shape):
- * the whole house and its furniture cost about a dozen draw calls.
+ * Draws a list of plan.ts Parts as one instanced mesh per (material, texture, shape):
+ * the whole house and its furniture cost under two dozen draw calls.
  *
  *   <Parts parts={structure()} />
  *
- * The unit geometries and the four materials are shared by every batch and
- * live as long as the page; only the per-batch instance buffers are freed.
+ * The unit geometries and shared materials live as long as the page; only the
+ * per-batch instance buffers are freed.
  */
 import { useEffect, useMemo } from "react";
 import {
@@ -25,6 +25,7 @@ import {
 } from "three";
 import { DOOR_HEIGHT, WALL_HEIGHT, WALL_THICKNESS } from "./layout";
 import type { Part } from "./plan";
+import { getSurfaceTexture, type PartTex } from "./textures";
 
 /** The wall above a door, with an arched underside, `width` metres wide. Drawn in metres, base at the floor. */
 function archGeometry(width: number): BufferGeometry {
@@ -67,8 +68,9 @@ function geometryFor(shape: string): BufferGeometry {
 }
 
 let materials: Record<Part["mat"], Material> | null = null;
+const litTexturedMaterials = new Map<PartTex, MeshLambertMaterial>();
 
-function buildMeshes(parts: readonly Part[]): InstancedMesh[] {
+function materialFor(mat: Part["mat"], tex?: PartTex): Material {
   // Lambert, not Standard: per-pixel physically based shading is too dear for a headset browser.
   materials ??= {
     lit: new MeshLambertMaterial(),
@@ -76,9 +78,22 @@ function buildMeshes(parts: readonly Part[]): InstancedMesh[] {
     glass: new MeshBasicMaterial({ transparent: true, opacity: 0.25, depthWrite: false }),
     water: new MeshLambertMaterial({ transparent: true, opacity: 0.72 }),
   };
+  if (mat !== "lit" || !tex) return materials[mat];
+  let textured = litTexturedMaterials.get(tex);
+  if (!textured) {
+    const map = getSurfaceTexture(tex);
+    if (!map) return materials.lit;
+    textured = new MeshLambertMaterial({ map });
+    litTexturedMaterials.set(tex, textured);
+  }
+  return textured;
+}
+
+function buildMeshes(parts: readonly Part[]): InstancedMesh[] {
   const groups = new Map<string, Part[]>();
   for (const p of parts) {
-    const key = `${p.mat}|${p.shape}`;
+    const texKey = p.mat === "lit" && p.tex ? p.tex : "";
+    const key = `${p.mat}|${texKey}|${p.shape}`;
     const group = groups.get(key);
     if (group) group.push(p);
     else groups.set(key, [p]);
@@ -86,7 +101,8 @@ function buildMeshes(parts: readonly Part[]): InstancedMesh[] {
   const placer = new Object3D();
   const color = new Color();
   return [...groups.values()].map((group) => {
-    const mesh = new InstancedMesh(geometryFor(group[0].shape), materials![group[0].mat], group.length);
+    const sample = group[0];
+    const mesh = new InstancedMesh(geometryFor(sample.shape), materialFor(sample.mat, sample.tex), group.length);
     group.forEach((p, i) => {
       placer.position.set(p.x, p.y, p.z);
       placer.rotation.set(p.rx, p.ry, p.rz);

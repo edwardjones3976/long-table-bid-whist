@@ -350,9 +350,9 @@ export function LookEditor({ onClose }: { onClose: () => void }) {
                 ))}
               </span>
               <span role="group" aria-label="Light">
-                {(["july4", "newyear"] as const).map((to) => (
+                {(["golden", "july4", "newyear"] as const).map((to) => (
                   <button key={to} type="button" aria-pressed={light === to} onClick={() => setLight(to)}>
-                    {to === "july4" ? "Day" : "Night"}
+                    {to === "golden" ? "Golden" : to === "july4" ? "Day" : "Night"}
                   </button>
                 ))}
               </span>

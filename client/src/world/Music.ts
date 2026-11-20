@@ -4,12 +4,13 @@
  * were written for this project. Each theme has its own feel.
  *
  * useMusic() (called by World) starts playing only after the first tap or key
- * press, follows the local store's music switch, volume and theme, and places
- * the sound at the music booth so it gets louder as you walk toward it.
+ * press, follows the local store's music switch, volume and theme, places the
+ * sound at the music booth, and softens highs indoors. Also updates a shared
+ * lightweight `musicPulse` object so the booth and dance floor stay in step.
  */
 import { useEffect } from "react";
 import { local, type Theme } from "../state/local";
-import { obstacles } from "./layout";
+import { HOUSE, obstacles } from "./layout";
 
 export interface Groove {
   bpm: number;
@@ -27,9 +28,34 @@ export interface Groove {
   bars: { root: number; chord: number[] }[];
 }
 
+export const musicPulse = {
+  playing: false,
+  step: 0,
+  beat: 0,
+  bpm: 86,
+  kickAt: 0,
+  stabAt: 0,
+};
+
 const _ = null;
 
 export const GROOVES: Record<Theme, Groove> = {
+  // Warm, unhurried twilight soul groove ("Golden Time of Day" spirit; 100% original).
+  golden: {
+    bpm: 86,
+    swing: 0.18,
+    kick: [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    snap: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
+    hat: [1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0],
+    stabs: [0, 6, 11, 14],
+    bass: [0, _, _, 7, _, _, 5, _, 0, _, _, 10, _, 7, _, _],
+    bars: [
+      { root: 41, chord: [65, 69, 72, 76, 79] },
+      { root: 40, chord: [64, 67, 71, 74, 79] },
+      { root: 38, chord: [62, 65, 69, 72, 76] },
+      { root: 43, chord: [62, 65, 69, 72, 77] },
+    ],
+  },
   // A laid-back, sunny afternoon shuffle.
   july4: {
     bpm: 92,
@@ -107,10 +133,17 @@ function playStep(context: AudioContext, out: AudioNode, noise: AudioBuffer, gro
     source.buffer = noise;
     return source;
   };
+  const nowMs = typeof performance !== "undefined" ? performance.now() : Date.now();
+  musicPulse.playing = true;
+  musicPulse.step = i;
+  musicPulse.beat = Math.floor(i / 4);
+  musicPulse.bpm = groove.bpm;
+
   if (groove.kick[i]) {
     const kick = tone("sine", 120);
     kick.frequency.exponentialRampToValueAtTime(45, at + 0.12);
     note(context, out, at, 0.25, 0.9, kick);
+    musicPulse.kickAt = nowMs;
   }
   if (groove.snap[i]) note(context, out, at, 0.12, 0.3, hiss(), { type: "bandpass", frequency: 1800 });
   if (groove.hat[i]) note(context, out, at, 0.05, 0.12, hiss(), { type: "highpass", frequency: 7000 });
@@ -118,6 +151,7 @@ function playStep(context: AudioContext, out: AudioNode, noise: AudioBuffer, gro
   if (bass !== null) note(context, out, at, stepLength * 1.8, 0.5, tone("triangle", hertz(bar.root + bass)), { type: "lowpass", frequency: 500 });
   if (groove.stabs.includes(i)) {
     for (const midi of bar.chord) note(context, out, at, stepLength * 2.5, 0.07, tone("triangle", hertz(midi)), { type: "lowpass", frequency: 1400 });
+    musicPulse.stabAt = nowMs;
   }
 }
 
@@ -127,6 +161,7 @@ export function useMusic(): void {
     const booth = obstacles.find((o) => o.kind === "dj-booth")!.rect;
     let context: AudioContext | null = null;
     let master: GainNode | null = null;
+    let wallFilter: BiquadFilterNode | null = null;
     let noise: AudioBuffer | null = null;
     let timer: ReturnType<typeof setInterval> | null = null;
     let step = 0;
@@ -151,12 +186,16 @@ export function useMusic(): void {
       if (!comfort.music) {
         if (timer) clearInterval(timer);
         timer = null;
+        musicPulse.playing = false;
         void context?.suspend();
         return;
       }
       if (!context) {
         context = new AudioContext();
         master = context.createGain();
+        wallFilter = context.createBiquadFilter();
+        wallFilter.type = "lowpass";
+        wallFilter.frequency.value = 14000;
         const panner = context.createPanner();
         panner.panningModel = "equalpower";
         panner.refDistance = 6;
@@ -164,12 +203,16 @@ export function useMusic(): void {
         panner.positionX.value = (booth.x0 + booth.x1) / 2;
         panner.positionY.value = 1.2;
         panner.positionZ.value = (booth.z0 + booth.z1) / 2;
-        master.connect(panner).connect(context.destination);
+        master.connect(wallFilter).connect(panner).connect(context.destination);
         noise = context.createBuffer(1, context.sampleRate / 4, context.sampleRate);
         const samples = noise.getChannelData(0);
         for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
       }
       master!.gain.value = comfort.musicVolume * 0.6;
+      if (wallFilter) {
+        const indoors = playerPose ? playerPose.z > HOUSE.z0 : true;
+        wallFilter.frequency.value = indoors ? 1900 : 14000;
+      }
       if (playerPose) {
         const { listener } = context;
         // The ears turn with the head: in VR the pose's ry is the body, and the head's yaw is relative to it.
@@ -208,6 +251,7 @@ export function useMusic(): void {
       window.removeEventListener("keydown", wake);
       unsubscribe();
       if (timer) clearInterval(timer);
+      musicPulse.playing = false;
       void context?.close();
     };
   }, []);

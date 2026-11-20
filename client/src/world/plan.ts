@@ -15,6 +15,7 @@
  */
 import type { GameId } from "../../../shared/protocol";
 import type { Theme } from "../state/local";
+import { bidWhistHearth, centerpieceParts, craftedTableAccents, goldenDecor, HERITAGE_ARTWORKS, openSkyFraming, type HeritageArtwork } from "./heritage";
 import {
   doors,
   HOUSE,
@@ -36,6 +37,7 @@ import {
   type Room,
   type TableSpot,
 } from "./layout";
+import type { PartTex } from "./textures";
 
 export interface Part {
   /** "box", "cyl", "ball", "cone", "star", or "arch:<width>" (a door-head piece already in metres). */
@@ -53,9 +55,10 @@ export interface Part {
   rz: number;
   color: string;
   tag?: string;
+  tex?: PartTex;
 }
 
-type Extra = Partial<Pick<Part, "rx" | "ry" | "rz" | "mat" | "tag">>;
+type Extra = Partial<Pick<Part, "rx" | "ry" | "rz" | "mat" | "tag" | "tex">>;
 
 const part = (shape: string, x: number, y: number, z: number, sx: number, sy: number, sz: number, color: string, extra: Extra = {}): Part => ({
   shape,
@@ -173,8 +176,13 @@ const room = (id: string): Room => rooms.find((r) => r.id === id)!;
 
 function floors(): Part[] {
   const far = { x0: PROPERTY.x0 - 80, z0: PROPERTY.z0 - 80, x1: PROPERTY.x1 + 80, z1: PROPERTY.z1 + 80 };
+  const floorTex = (r: Room): PartTex | undefined =>
+    r.kind === "lounge" ? "wood" : r.kind === "foyer" || r.kind === "gallery" || r.kind === "kitchen" || r.id === "cookout" || r.id === "yard-lounge" || r.id === "pool" ? "stone" : undefined;
   return [
-    ...rooms.flatMap((r) => (r.id === "pool" ? subtract(r.rect, pool.water) : [r.rect]).map((area) => slab(area, -0.1, 0.1, FLOOR[r.id] ?? C.stone))),
+    ...rooms.flatMap((r) => {
+      const tex = floorTex(r);
+      return (r.id === "pool" ? subtract(r.rect, pool.water) : [r.rect]).map((area) => slab(area, -0.1, 0.1, FLOOR[r.id] ?? C.stone, tex ? { tex } : undefined));
+    }),
     ...subtract(far, PROPERTY).map((area) => slab(area, -0.15, 0.1, "#55744a")),
   ];
 }
@@ -211,15 +219,15 @@ function wallParts(): Part[] {
     if (alongX && !fence && w.az === HOUSE.z0 && length >= 4) {
       // The back wall looks onto the yard: a long window between two piers.
       const span = length - 2;
-      piece(w.ax + 0.5, 0, 1, w.height, C.wall);
-      piece(w.bx - 0.5, 0, 1, w.height, C.wall);
-      piece(cx, 0, span, 1, C.wall);
-      piece(cx, 2.3, span, w.height - 2.3, C.wall);
+      piece(w.ax + 0.5, 0, 1, w.height, C.wall, { tex: "plaster" });
+      piece(w.bx - 0.5, 0, 1, w.height, C.wall, { tex: "plaster" });
+      piece(cx, 0, span, 1, C.wall, { tex: "plaster" });
+      piece(cx, 2.3, span, w.height - 2.3, C.wall, { tex: "plaster" });
       out.push(box(cx, 1, cz, span, 1.3, 0.04, C.glass, { mat: "glass" }));
       const bays = Math.round(span / 2.2);
       for (let i = 1; i < bays; i++) out.push(box(w.ax + 1 + (i * span) / bays, 1, cz, 0.08, 1.3, 0.12, C.trim));
     } else {
-      piece(alongX ? cx : cz, 0, length, fence ? w.height - 0.1 : w.height, fence ? C.hedge : C.wall);
+      piece(alongX ? cx : cz, 0, length, fence ? w.height - 0.1 : w.height, fence ? C.hedge : C.wall, fence ? undefined : { tex: "plaster" });
     }
     for (const [x, z] of [[w.ax, w.az], [w.bx, w.bz]]) {
       const key = `${x},${z}`;
@@ -228,11 +236,11 @@ function wallParts(): Part[] {
   }
   // A round column at every wall end softens the corners and the door openings.
   for (const { x, z, height } of ends.values()) {
-    out.push(height < WALL_HEIGHT ? cyl(x, 0, z, 0.24, height + 0.1, C.darkWood) : cyl(x, 0, z, WALL_THICKNESS * 1.6, height, C.wall));
+    out.push(height < WALL_HEIGHT ? cyl(x, 0, z, 0.24, height + 0.1, C.darkWood, { tex: "wood" }) : cyl(x, 0, z, WALL_THICKNESS * 1.6, height, C.wall, { tex: "plaster" }));
   }
-  for (const d of doors) out.push(part(`arch:${d.width}`, d.x, 0, d.z, 1, 1, 1, C.wall, { ry: d.wallAxis === "x" ? 0 : Math.PI / 2 }));
+  for (const d of doors) out.push(part(`arch:${d.width}`, d.x, 0, d.z, 1, 1, 1, C.wall, { ry: d.wallAxis === "x" ? 0 : Math.PI / 2, tex: "plaster" }));
   // Open rafters instead of a ceiling: the sky and the fireworks stay in view.
-  for (let z = HOUSE.z0; z <= HOUSE.z1; z += 2) out.push(box(0, WALL_HEIGHT, z, HOUSE.x1 - HOUSE.x0 + 0.4, 0.22, 0.18, C.wood));
+  for (let z = HOUSE.z0; z <= HOUSE.z1; z += 2) out.push(box(0, WALL_HEIGHT, z, HOUSE.x1 - HOUSE.x0 + 0.4, 0.22, 0.18, C.wood, { tex: "wood" }));
   return out;
 }
 
@@ -276,27 +284,29 @@ function tableFurniture(spot: TableSpot): Part[] {
   const { x, z } = spot;
   const look = GAME[spot.game];
   const [hx, hz] = [x + (spot.host.x - x) * 0.72, z + (spot.host.z - z) * 0.72];
+  const [mx, mz] = markerPosition(spot);
   return [
-    cyl(x, 0, z, 4.6, 0.02, look.rug),
+    cyl(x, 0, z, 4.6, 0.02, look.rug, { tex: "rug" }),
     ...tagged(spot.id, [
       cyl(x, 0, z, 0.7, 0.05, C.charcoal),
       cyl(x, 0.05, z, 0.22, TABLE_HEIGHT - 0.11, C.brass),
-      cyl(x, TABLE_HEIGHT - 0.06, z, TABLE_RADIUS * 2, 0.05, C.darkWood),
+      cyl(x, TABLE_HEIGHT - 0.06, z, TABLE_RADIUS * 2, 0.05, C.darkWood, { tex: "wood" }),
       // The felt's top is exactly TABLE_HEIGHT, where the table interface lays the cards.
-      cyl(x, TABLE_HEIGHT - 0.011, z, TABLE_RADIUS * 2 - 0.1, 0.011, look.felt),
+      cyl(x, TABLE_HEIGHT - 0.011, z, TABLE_RADIUS * 2 - 0.1, 0.011, look.felt, { tex: "felt" }),
+      ...craftedTableAccents(spot, TABLE_HEIGHT, C),
     ]),
     ...spot.seats.flatMap((seat) => chair(seat.x, seat.z, seat.ry, look.seat)),
     // The dealer's stand, between the host and the table.
-    cyl(hx, 0, hz, 0.3, 0.98, C.darkWood),
+    cyl(hx, 0, hz, 0.3, 0.98, C.darkWood, { tex: "wood" }),
     cyl(hx, 0.98, hz, 0.42, 0.04, C.brass),
-    // Marker post behind the far corner; its two faces are in labels().
-    cyl(spot.x - MARKER, 0, spot.z - MARKER, 0.07, 2.25, C.brass),
-    box(spot.x - MARKER, 1.85, spot.z - MARKER, 0.04, 0.4, 1.7, C.charcoal),
+    // Marker post tucked behind the outer table corner so sightlines from the gallery stay clear.
+    cyl(mx, 0, mz, 0.07, 2.25, C.brass),
+    box(mx, 1.85, mz, 0.04, 0.4, 1.7, C.charcoal),
   ];
 }
 
-/** How far the marker post stands from the table centre along both x and z. */
-const MARKER = 1.1;
+/** Outer back corner behind each table so marker posts stay out of gallery sightlines. */
+const markerPosition = (spot: TableSpot): [number, number] => [spot.x + (spot.x > 0 ? 1.55 : -1.55), spot.z - 1.35];
 
 function lounge(r: Room): Part[] {
   const west = r.rect.x0 === HOUSE.x0;
@@ -387,11 +397,13 @@ function obstacleParts(o: Obstacle): Part[] {
       const dir = cz >= boards.reduce((sum, b) => sum + mid(b.rect)[1], 0) / boards.length ? 1 : -1;
       const tilt = -dir * 0.2;
       return [
-        box(cx, 0.14, cz, w, 0.04, d, C.wood, { rx: tilt }),
+        box(cx, 0.14, cz, w, 0.04, d, C.wood, { rx: tilt, tex: "wood" }),
         part("cyl", cx, 0.23, cz + dir * 0.33, 0.16, 0.045, 0.16, C.charcoal, { rx: tilt }),
-        box(cx, 0, cz + dir * 0.52, w - 0.1, 0.22, 0.04, C.darkWood),
+        box(cx, 0, cz + dir * 0.52, w - 0.1, 0.22, 0.04, C.darkWood, { tex: "wood" }),
       ];
     }
+    case "centerpiece":
+      return centerpieceParts(o, C);
   }
 }
 
@@ -403,22 +415,29 @@ function indoors(): Part[] {
   const potluck = obstacles.find((o) => o.kind === "potluck-counter")!.rect;
   const out: Part[] = [];
 
-  // Foyer: a round rug, a console under the welcome sign and a bench across from it.
-  out.push(cyl(mid(foyer)[0], 0, mid(foyer)[1], 5, 0.02, "#8c8478"));
+  // Foyer: a round woven rug, a console under the welcome sign and a bench across from it.
+  out.push(cyl(mid(foyer)[0], 0, mid(foyer)[1], 5, 0.02, "#8c8478", { tex: "rug" }));
   out.push(...pill(welcome.x, 0, welcome.z + 0.3, 2.4, 0.4, 0.85, C.wood), cyl(welcome.x - 0.7, 0.85, welcome.z + 0.3, 0.22, 0.3, C.brass), ball(welcome.x - 0.7, 1.35, welcome.z + 0.3, 0.45, C.leaf));
   out.push(ball(welcome.x + 0.6, 1.02, welcome.z + 0.3, 0.3, C.lamp, { mat: "glow" }));
   out.push(...pill(-welcome.x, 0, welcome.z + 0.4, 2.4, 0.5, 0.45, C.cushion));
   for (const x of [foyer.x0 + 0.8, foyer.x1 - 0.8]) out.push(...planter(x, foyer.z1 - 0.8, 1.2));
 
-  // Gallery: a bench under each artwork and a seating cluster at each back window.
+  // Gallery and lounge artworks: framed on x-walls or z-walls, with benches under main gallery pieces.
   for (const art of ARTWORKS) {
-    const inward = Math.sin(art.ry);
-    out.push(box(art.x - inward * 0.035, art.y - art.h / 2 - 0.08, art.z, 0.06, art.h + 0.16, art.w + 0.16, C.darkWood));
-    out.push(...pill(art.x + inward * 0.6, 0, art.z, 2.4, 0.5, 0.45, C.cushion, Math.PI / 2));
+    const inwardX = Math.sin(art.ry);
+    const inwardZ = Math.cos(art.ry);
+    if (Math.abs(inwardX) > 0.5) {
+      out.push(box(art.x - inwardX * 0.035, art.y - art.h / 2 - 0.08, art.z, 0.06, art.h + 0.16, art.w + 0.16, C.darkWood, { tex: "wood" }));
+      if (art.bench) out.push(...pill(art.x + inwardX * 0.6, 0, art.z, 2.2, 0.5, 0.45, C.cushion, Math.PI / 2));
+    } else {
+      out.push(box(art.x, art.y - art.h / 2 - 0.08, art.z - inwardZ * 0.035, art.w + 0.16, art.h + 0.16, 0.06, C.darkWood, { tex: "wood" }));
+    }
   }
+  out.push(...openSkyFraming(HOUSE, WALL_HEIGHT, C));
+  out.push(...bidWhistHearth(room("bid-whist-lounge").rect, C));
   for (const x of [gallery.x0 + 3, gallery.x1 - 3]) {
     const z = gallery.z0 + 3.5;
-    out.push(cyl(x, 0, z, 3.6, 0.02, "#8c8478"), ...lowTable(x, z));
+    out.push(cyl(x, 0, z, 3.6, 0.02, "#8c8478", { tex: "rug" }), ...lowTable(x, z));
     out.push(...chair(x - 1.1, z, -Math.PI / 2, C.cushion, 1.25), ...chair(x + 1.1, z, Math.PI / 2, C.cushion, 1.25));
     out.push(...pouffe(x, z + 1.1, C.pot), ...pouffe(x, z - 1.1, C.pot));
   }
@@ -490,28 +509,8 @@ function outdoors(): Part[] {
   return out;
 }
 
-export interface Artwork {
-  id: "gathering" | "rhythm";
-  x: number;
-  y: number;
-  z: number;
-  ry: number;
-  w: number;
-  h: number;
-}
-
-/** One piece on each long gallery wall, centred between the two signs that share that wall. */
-export const ARTWORKS: readonly Artwork[] = (
-  [
-    ["gathering", "tonk-gallery", "spades-gallery"],
-    ["rhythm", "bid-whist-gallery", "kitchen-gallery"],
-  ] as const
-).map(([id, a, b]) => {
-  const [first, second] = [signs.find((s) => s.id === a)!, signs.find((s) => s.id === b)!];
-  const inward = Math.sin(first.ry);
-  const wallX = inward > 0 ? room("gallery").rect.x0 : room("gallery").rect.x1;
-  return { id, x: wallX + inward * (WALL_THICKNESS / 2 + 0.07), y: 1.7, z: (first.z + second.z) / 2, ry: first.ry, w: 2.4, h: 1.8 };
-});
+export type Artwork = HeritageArtwork;
+export const ARTWORKS: readonly Artwork[] = HERITAGE_ARTWORKS;
 
 let built: Part[] | null = null;
 
@@ -547,6 +546,9 @@ export const CLOCK = { x: 0, y: 2.75, z: room("yard-lounge").rect.z0 + 0.2, w: 2
 
 /** The celebration dressing: same layout, different party. */
 export function decor(theme: Theme): Part[] {
+  const gallery = room("gallery").rect;
+  if (theme === "golden") return goldenDecor(LIGHT_LINES, tableSpots, gallery, rooms, WALL_HEIGHT, C);
+
   const out: Part[] = [];
   const colors = theme === "july4" ? JULY : NEWYEAR;
   const bulbs = theme === "july4" ? JULY : ["#ffd98a"];
@@ -561,14 +563,13 @@ export function decor(theme: Theme): Part[] {
   // A band of the theme's colours under every table top.
   tableSpots.forEach((spot, i) => out.push(cyl(spot.x, TABLE_HEIGHT - 0.12, spot.z, TABLE_RADIUS * 2 + 0.03, 0.06, colors[(i * 2) % 3])));
 
-  const gallery = room("gallery").rect;
   if (theme === "july4") {
     out.push(...bunting(HOUSE.x0, HOUSE.z0 - 0.3, HOUSE.x1, HOUSE.z0 - 0.3, JULY));
     const foyer = room("foyer").rect;
     out.push(...bunting(foyer.x0, foyer.z0 + 0.3, foyer.x1, foyer.z0 + 0.3, JULY));
     for (const r of rooms.filter((r) => r.kind === "lounge" || r.kind === "kitchen")) {
-      const z = (r.rect.z0 + r.rect.z1) / 2;
-      out.push(...bunting(r.rect.x0 + 0.5, z, r.rect.x1 - 0.5, z, JULY));
+      out.push(...bunting(r.rect.x0 + 0.5, r.rect.z0 + 0.35, r.rect.x1 - 0.5, r.rect.z0 + 0.35, JULY));
+      out.push(...bunting(r.rect.x0 + 0.5, r.rect.z1 - 0.35, r.rect.x1 - 0.5, r.rect.z1 - 0.35, JULY));
     }
     // Star lanterns down the gallery and on top of the yard light poles.
     for (let i = 0; i < 5; i++) {
@@ -624,16 +625,17 @@ export interface Label {
 export function labels(): Label[] {
   return [
     ...signs.map((s) => ({ key: s.id, text: s.label, x: s.x, y: s.y, z: s.z, ry: s.ry, height: s.id.endsWith("-inside") ? 0.9 : 0.45 })),
-    ...tableSpots.flatMap((spot) =>
-      [1, -1].map((side) => ({
+    ...tableSpots.flatMap((spot) => {
+      const [mx, mz] = markerPosition(spot);
+      return [1, -1].map((side) => ({
         key: `${spot.id}-${side}`,
         text: spot.label,
-        x: spot.x - MARKER + side * 0.03,
+        x: mx + side * 0.03,
         y: 2.05,
-        z: spot.z - MARKER,
+        z: mz,
         ry: (side * Math.PI) / 2,
         height: 0.3,
-      })),
-    ),
+      }));
+    }),
   ];
 }

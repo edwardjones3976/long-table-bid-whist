@@ -1,9 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { artwork } from "../../client/src/world/art";
-import { doors, isWalkable, obstacles, pool, rooms, signs, TABLE_HEIGHT, TABLE_RADIUS, tableSpots } from "../../client/src/world/layout";
+import { ARTWORK_META, artwork, type ArtworkId } from "../../client/src/world/art";
+import { doors, isWalkable, MIRROR, obstacles, pool, rooms, signs, TABLE_HEIGHT, TABLE_RADIUS, tableSpots } from "../../client/src/world/layout";
 import { GROOVES } from "../../client/src/world/Music";
 import { ARTWORKS, decor, footprint, labels, rng, structure, subtract, type Part } from "../../client/src/world/plan";
-import { BURST_POINTS, burstDirections, burstFrame, burstPlan, countdownText, LOOKS } from "../../client/src/world/theme";
+import {
+  BURST_POINTS,
+  DRINKING_GOURD_EDGES,
+  DRINKING_GOURD_STARS,
+  LOOKS,
+  burstDirections,
+  burstFrame,
+  burstPlan,
+  burstStyle,
+  countdownText,
+} from "../../client/src/world/theme";
 
 const area = (r: { x0: number; z0: number; x1: number; z1: number }) => (r.x1 - r.x0) * (r.z1 - r.z0);
 const count = (parts: readonly Part[], test: (p: Part) => boolean) => parts.filter(test).length;
@@ -18,7 +28,7 @@ describe("world plan", () => {
 
   it("is the same every time and has only finite, positive-sized parts", () => {
     expect(structure()).toBe(structure());
-    for (const p of [...structure(), ...decor("july4"), ...decor("newyear")]) {
+    for (const p of [...structure(), ...decor("golden"), ...decor("july4"), ...decor("newyear")]) {
       for (const n of [p.x, p.y, p.z, p.rx, p.ry, p.rz]) expect(Number.isFinite(n)).toBe(true);
       for (const n of [p.sx, p.sy, p.sz]) expect(n).toBeGreaterThan(0);
       expect(p.color).toMatch(/^#[0-9a-f]{6}$/);
@@ -48,7 +58,7 @@ describe("world plan", () => {
   it("draws each card table inside its round collider with the felt at table height", () => {
     for (const spot of tableSpots) {
       const parts = structure().filter((p) => p.tag === spot.id);
-      expect(parts.length).toBe(4);
+      expect(parts.length).toBeGreaterThanOrEqual(4);
       for (const p of parts) expect(Math.hypot(p.x - spot.x, p.z - spot.z) + p.sx / 2).toBeLessThanOrEqual(TABLE_RADIUS + 1e-6);
       expect(Math.max(...parts.map((p) => p.y + p.sy / 2))).toBeCloseTo(TABLE_HEIGHT);
     }
@@ -89,12 +99,22 @@ describe("world plan", () => {
     }
   });
 
-  it("hangs the two artworks on the gallery walls, clear of doors and signs", () => {
-    expect(ARTWORKS.map((art) => art.id)).toEqual(["gathering", "rhythm"]);
+  it("hangs the artworks on solid walls, clear of doors, signs and the foyer mirror", () => {
+    expect(ARTWORKS.map((art) => art.id)).toContain("gathering");
+    expect(ARTWORKS.map((art) => art.id)).toContain("rhythm");
+    expect(ARTWORKS).toHaveLength(12);
     for (const art of ARTWORKS) {
       expect(Math.abs(art.x)).toBeGreaterThan(7.7);
-      for (const door of doors.filter((d) => d.wallAxis === "z" && Math.abs(d.x - art.x) < 1)) expect(Math.abs(door.z - art.z)).toBeGreaterThan(art.w / 2 + door.width / 2);
-      for (const sign of signs.filter((s) => Math.abs(s.x - art.x) < 0.5)) expect(Math.abs(sign.z - art.z)).toBeGreaterThan(art.w / 2 + 2);
+      const onZWall = Math.abs(Math.sin(art.ry)) > 0.5;
+      for (const door of doors.filter((d) => (onZWall ? d.wallAxis === "z" && Math.abs(d.x - art.x) < 1 : d.wallAxis === "x" && Math.abs(d.z - art.z) < 1))) {
+        expect(Math.abs(onZWall ? door.z - art.z : door.x - art.x)).toBeGreaterThan(art.w / 2 + door.width / 2);
+      }
+      for (const sign of signs.filter((s) => (onZWall ? Math.abs(s.x - art.x) < 0.5 : Math.abs(s.z - art.z) < 0.5))) {
+        expect(Math.abs(onZWall ? sign.z - art.z : sign.x - art.x)).toBeGreaterThan(art.w / 2 + 2);
+      }
+      if (Math.abs(art.x - MIRROR.x) < 0.5) {
+        expect(Math.abs(art.z - MIRROR.z)).toBeGreaterThan(art.w / 2 + MIRROR.w / 2);
+      }
     }
   });
 });
@@ -180,5 +200,67 @@ describe("gallery artwork", () => {
   it("uses a seeded generator, not Math.random", () => {
     const [a, b] = [rng(5), rng(5)];
     expect([a(), a(), a()]).toEqual([b(), b(), b()]);
+  });
+});
+
+describe("golden time of day, centerpiece & heritage gallery", () => {
+  it("gives Golden Time of Day an open-sky twilight look, original slow-jam groove and clean decor", () => {
+    const golden = decor("golden");
+    expect(decor("golden")).toEqual(golden);
+    expect(LOOKS.golden.stars).toBe(true);
+    expect(LOOKS.golden.moon).toBe("crescent");
+    expect(LOOKS.golden.constellations).toBe(true);
+    expect(count(golden, (p) => p.mat === "glow" && p.shape === "ball" && p.z < -18)).toBe(60);
+    expect(count(golden, (p) => p.shape === "cyl" && tableSpots.some((spot) => spot.x === p.x && spot.z === p.z))).toBe(6);
+    for (const p of golden) if (p.shape !== "cyl") expect(p.y - p.sy / 2).toBeGreaterThan(2.2);
+
+    expect(GROOVES.golden.bpm).not.toBe(GROOVES.july4.bpm);
+    expect(GROOVES.golden.bpm).not.toBe(GROOVES.newyear.bpm);
+    expect(GROOVES.golden.kick).not.toEqual(GROOVES.july4.kick);
+    expect(GROOVES.golden.kick).not.toEqual(GROOVES.newyear.kick);
+    for (const pattern of [GROOVES.golden.kick, GROOVES.golden.snap, GROOVES.golden.hat, GROOVES.golden.bass]) {
+      expect(pattern).toHaveLength(16);
+    }
+  });
+
+  it("places the Drinking Gourd constellation in the northern open sky and varies burst styles", () => {
+    expect(DRINKING_GOURD_STARS).toHaveLength(8);
+    expect(DRINKING_GOURD_EDGES.length).toBeGreaterThanOrEqual(7);
+    for (const star of DRINKING_GOURD_STARS) {
+      expect(star.dir[2]).toBeLessThan(0);
+      expect(star.dir[1]).toBeGreaterThan(0.35);
+      expect(Math.hypot(...star.dir)).toBeCloseTo(1);
+    }
+    expect(new Set([burstStyle("golden", 0, 0), burstStyle("golden", 0, 1), burstStyle("golden", 0, 2)]).size).toBe(3);
+  });
+
+  it("builds the Five-Element Gallery Centerpiece inside its collider and above jump height", () => {
+    const center = obstacles.find((o) => o.kind === "centerpiece");
+    expect(center).toBeTruthy();
+    expect(center!.height).toBeGreaterThan(0.9);
+    const parts = structure().filter((p) => p.tag === center!.id);
+    expect(parts.length).toBeGreaterThanOrEqual(6);
+    expect(parts.some((p) => p.mat === "water")).toBe(false);
+    expect(isWalkable(-3, -4)).toBe(true);
+    expect(isWalkable(3, -4)).toBe(true);
+  });
+
+  it("generates all 12 heritage & house-party artworks deterministically within bounds", () => {
+    const ids = Object.keys(ARTWORK_META) as ArtworkId[];
+    expect(ids).toHaveLength(12);
+    for (const id of ids) {
+      const ops = artwork(id);
+      expect(artwork(id)).toEqual(ops);
+      expect(ops.length).toBeGreaterThan(4);
+      expect(ARTWORK_META[id].title.length).toBeGreaterThan(0);
+      for (const op of ops) {
+        const xs = op.kind === "tri" ? [op.points[0], op.points[2], op.points[4]] : [op.x];
+        const ys = op.kind === "tri" ? [op.points[1], op.points[3], op.points[5]] : [op.y];
+        for (const n of [...xs, ...ys]) {
+          expect(n, `${id} coord`).toBeGreaterThanOrEqual(-0.001);
+          expect(n, `${id} coord`).toBeLessThanOrEqual(1.05);
+        }
+      }
+    }
   });
 });

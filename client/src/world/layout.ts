@@ -157,7 +157,7 @@ export const doors: readonly Door[] = WALL_LINES.flatMap((wall) =>
   ),
 );
 
-export type ObstacleKind = "potluck-counter" | "kitchen-counter" | "grill" | "dj-booth" | "sofa" | "toss-board";
+export type ObstacleKind = "potluck-counter" | "kitchen-counter" | "grill" | "dj-booth" | "sofa" | "toss-board" | "centerpiece";
 
 /**
  * Named furniture, each with a simple collider for isWalkable. The world draws
@@ -181,6 +181,7 @@ export const obstacles: readonly Obstacle[] = [
   { id: "sofa-east", kind: "sofa", label: "Sofa", rect: rect(2, -25, 5, -24), height: 0.8 },
   { id: "toss-board-near", kind: "toss-board", label: "Lawn-Toss Board", rect: rect(11.6, -31.6, 12.4, -30.4), height: 0.3 },
   { id: "toss-board-far", kind: "toss-board", label: "Lawn-Toss Board", rect: rect(11.6, -39.6, 12.4, -38.4), height: 0.3 },
+  { id: "gallery-centerpiece", kind: "centerpiece", label: "Gallery Centerpiece", rect: rect(-1.4, -5.4, 1.4, -2.6), height: 1.15 },
 ];
 
 /**

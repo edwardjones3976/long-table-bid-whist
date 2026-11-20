@@ -18,6 +18,10 @@ export interface TextOptions {
   color?: string;
   /** Fill behind the text; "transparent" for none. Default a near-black panel for contrast. */
   background?: string;
+  /** Optional hairline border colour for architectural plaques. */
+  border?: string;
+  /** Optional corner radius in canvas pixels when drawing a filled panel. */
+  radius?: number;
   align?: "left" | "center";
   bold?: boolean;
   /** Fixed canvas width in pixels; lines are not wrapped, so leave unset to fit the longest line. */
@@ -37,12 +41,27 @@ export function canvasTexture(canvas: HTMLCanvasElement): CanvasTexture {
   return texture;
 }
 
+function roundedRect(context: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {
+  const rad = Math.min(r, w / 2, h / 2);
+  context.beginPath();
+  context.moveTo(x + rad, y);
+  context.lineTo(x + w - rad, y);
+  context.arcTo(x + w, y, x + w, y + rad, rad);
+  context.lineTo(x + w, y + h - rad);
+  context.arcTo(x + w, y + h, x + w - rad, y + h, rad);
+  context.lineTo(x + rad, y + h);
+  context.arcTo(x, y + h, x, y + h - rad, rad);
+  context.lineTo(x, y + rad);
+  context.arcTo(x, y, x + rad, y, rad);
+  context.closePath();
+}
+
 export function makeTextTexture(lines: readonly string[], options: TextOptions = {}): CanvasTexture {
   const key = JSON.stringify([lines, options]);
   const cached = cache.get(key);
   if (cached) return cached;
 
-  const { fontPx = 64, color = "#ffffff", background = "#10131c", align = "center", bold = true } = options;
+  const { fontPx = 64, color = "#ffffff", background = "#10131c", border, radius = 0, align = "center", bold = true } = options;
   const padding = options.padding ?? fontPx / 2;
   const font = `${bold ? "700" : "400"} ${fontPx}px ${FONT_STACK}`;
   const lineHeight = fontPx * 1.3;
@@ -59,6 +78,18 @@ export function makeTextTexture(lines: readonly string[], options: TextOptions =
   if (background !== "transparent") {
     context.fillStyle = background;
     context.fillRect(0, 0, canvas.width, canvas.height);
+    if (border) {
+      const stroke = Math.max(2, Math.round(fontPx * 0.05));
+      const inset = stroke * 1.5;
+      context.strokeStyle = border;
+      context.lineWidth = stroke;
+      if (radius > 0) {
+        roundedRect(context, inset, inset, canvas.width - inset * 2, canvas.height - inset * 2, radius);
+        context.stroke();
+      } else {
+        context.strokeRect(inset, inset, canvas.width - inset * 2, canvas.height - inset * 2);
+      }
+    }
   }
   context.fillStyle = color;
   const x = align === "center" ? canvas.width / 2 : padding;

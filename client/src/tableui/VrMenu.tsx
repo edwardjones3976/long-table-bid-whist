@@ -145,8 +145,8 @@ function Menu() {
     },
     {
       name: "vr-menu-theme",
-      lines: [`Theme: ${theme === "july4" ? "Fourth of July" : "New Year"}`],
-      onPress: () => local.set({ theme: theme === "july4" ? "newyear" : "july4" }),
+      lines: [`Theme: ${theme === "golden" ? "Golden Time of Day" : theme === "july4" ? "Fourth of July" : "New Year"}`],
+      onPress: () => local.set({ theme: theme === "golden" ? "july4" : theme === "july4" ? "newyear" : "golden" }),
     },
     {
       name: "vr-menu-leave-table",

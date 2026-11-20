@@ -15,14 +15,14 @@ const VIEWS: [name: string, pose: Pose][] = [
   ["backyard-pool", { x: -2, z: -29, ry: 0.9 }],
 ];
 
-test("a walk round the house in both themes draws without errors", async ({ browser }) => {
+test("a walk round the house in all three themes draws without errors", async ({ browser }) => {
   const entry = await open(browser);
   await expect(entry.getByTestId("entry-name")).toBeVisible();
   await entry.screenshot({ path: `${SCREENS}/entry.png` });
   await entry.context().close();
 
   const { page } = await enter(browser, "Walker", undefined, true);
-  for (const theme of ["july4", "newyear"]) {
+  for (const theme of ["golden", "july4", "newyear"]) {
     await page.evaluate((t) => window.__mansion.local.set({ theme: t }), theme);
     for (const [name, pose] of VIEWS) {
       await page.evaluate((p) => window.__mansion.teleport(p), pose);

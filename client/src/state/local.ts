@@ -21,7 +21,7 @@
 import { useSyncExternalStore } from "react";
 import type { Pose, TableId } from "../../../shared/protocol";
 
-export type Theme = "july4" | "newyear";
+export type Theme = "golden" | "july4" | "newyear";
 
 export interface Comfort {
   /** The VR movement mode: "smooth" is Walk and teleport (the off-hand stick walks), "teleport" is Teleport only. */
@@ -89,7 +89,7 @@ export const DEFAULT_COMFORT: Comfort = {
 };
 
 function load(): Pick<LocalState, "theme" | "comfort"> {
-  const fresh = { theme: "july4" as Theme, comfort: { ...DEFAULT_COMFORT, reducedMotion: prefersReducedMotion() } };
+  const fresh = { theme: "golden" as Theme, comfort: { ...DEFAULT_COMFORT, reducedMotion: prefersReducedMotion() } };
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");
     if (!saved || typeof saved !== "object") return fresh;
@@ -101,7 +101,8 @@ function load(): Pick<LocalState, "theme" | "comfort"> {
       if (old && key === "locomotion") continue;
       if (typeof saved.comfort?.[key] === typeof comfort[key]) (comfort as Record<string, unknown>)[key] = saved.comfort[key];
     }
-    return { theme: saved.theme === "newyear" ? "newyear" : "july4", comfort };
+    const theme: Theme = saved.theme === "golden" || saved.theme === "july4" || saved.theme === "newyear" ? saved.theme : "golden";
+    return { theme, comfort };
   } catch {
     return fresh;
   }

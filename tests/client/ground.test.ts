@@ -125,13 +125,15 @@ describe("what is drawn is what is solid", () => {
     }
   });
 
-  it("leaves out the theme decor, none of which both themes share and a body could touch", () => {
+  it("leaves out the theme decor, none of which themes share and a body could touch", () => {
     const key = (p: Part) => [p.shape, p.x, p.y, p.z, p.sx, p.sy, p.sz, p.rx, p.ry, p.rz].join();
     const newYear = new Set(decor("newyear").map(key));
-    const shared = decor("july4").filter((p) => newYear.has(key(p)));
-    expect(shared.length).toBeGreaterThan(0);
-    // The shared pieces are the string lights overhead and the band round each card table, inside the table's own solid.
-    for (const p of shared) expect(solidOf(p) === null || ground.blocked(p.x, p.z, Infinity), `${p.shape} at ${p.x},${p.z}`).toBe(true);
+    for (const theme of ["golden", "july4"] as const) {
+      const shared = decor(theme).filter((p) => newYear.has(key(p)));
+      expect(shared.length).toBeGreaterThan(0);
+      // The shared pieces are the string lights overhead and the band round each card table, inside the table's own solid.
+      for (const p of shared) expect(solidOf(p) === null || ground.blocked(p.x, p.z, Infinity), `${theme} ${p.shape} at ${p.x},${p.z}`).toBe(true);
+    }
   });
 });
 

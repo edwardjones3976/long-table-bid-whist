@@ -73,6 +73,7 @@ function Settings() {
       <label>
         Party theme{" "}
         <select data-testid="theme" value={theme} onChange={(event) => local.set({ theme: event.target.value as Theme })}>
+          <option value="golden">Golden Time of Day</option>
           <option value="july4">Fourth of July</option>
           <option value="newyear">New Year's Eve</option>
         </select>

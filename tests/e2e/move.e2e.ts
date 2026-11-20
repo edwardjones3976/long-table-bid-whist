@@ -62,7 +62,7 @@ test("movement: walking, teleport, theme switch and the Enter VR button", async 
   // Theme.
   await openMenu(page);
   await page.getByTestId("settings-toggle").click();
-  await expect(page.locator(".mansion")).toHaveAttribute("data-theme", "july4");
+  await expect(page.locator(".mansion")).toHaveAttribute("data-theme", "golden");
   await page.getByTestId("theme").selectOption("newyear");
   expect(await page.evaluate(() => window.__mansion.local.getState().theme)).toBe("newyear");
   await expect(page.locator(".mansion")).toHaveAttribute("data-theme", "newyear");

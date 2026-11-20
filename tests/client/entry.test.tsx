@@ -119,7 +119,7 @@ describe("HUD", () => {
 describe("local settings", () => {
   it("starts with the comfortable defaults and persists changes", () => {
     const { theme, comfort, seated, xrActive } = local.getState();
-    expect(theme).toBe("july4");
+    expect(theme).toBe("golden");
     // Walking is the normal way to move: "smooth" is the Walk and teleport mode.
     expect(comfort).toMatchObject({ locomotion: "smooth", jump: true, snapTurn: true, snapDegrees: 30, dominantHand: "right", uiScale: 1 });
     expect(seated).toBeNull();
