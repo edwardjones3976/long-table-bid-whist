@@ -34,7 +34,8 @@ class BidWhistRulesEngine(
         val seatCaptions: Map<Seat, String>,
         val latestCaption: String,
         val auditLog: List<AuditEvent>,
-        val isBetweenHandPaused: Boolean = false
+        val isBetweenHandPaused: Boolean = false,
+        val pendingVoidRequest: VoidRequest? = null
     )
 
     fun createStandardDeck(): List<Card> {
@@ -88,7 +89,7 @@ class BidWhistRulesEngine(
             phase = TablePhase.BIDDING,
             actor = "Authoritative Rules Service",
             summary = "Hand #$handNumber dealt (Dealer: ${dealer.displayName})",
-            detail = "54 cards shuffled with seed #$seed; 12 cards per seat, 6 cards sealed in kitty. Manifest ${manifest.version}."
+            detail = "${manifest.deckSize} cards shuffled; ${manifest.handSize} cards per seat, ${manifest.kittySize} cards sealed in kitty. Manifest ${manifest.version}."
         )
 
         return AuthoritativeState(
@@ -256,17 +257,35 @@ class BidWhistRulesEngine(
         }
     }
 
+    /**
+     * Declarer names the trump suit after winning a suit bid (codex D-01 / F-03).
+     *
+     * The direction (Uptown/Downtown) and the Trump vs. No-Trump declaration were
+     * made in the auction and are binding: they are read from the winning bid in
+     * [AuthoritativeState.highestBid]. Only the suit is chosen here, and it must be
+     * non-null because a No-Trump winner never enters SELECT_TRUMP (see [submitBid]).
+     */
     fun selectTrumpAndPickUpKitty(
         state: AuthoritativeState,
         seat: Seat,
-        trumpSuit: Suit?,
-        direction: BidDirection
+        trumpSuit: Suit?
     ): AuthoritativeState {
         require(state.phase == TablePhase.SELECT_TRUMP && state.currentTurn == seat) {
             "Not in SELECT_TRUMP for $seat"
         }
-        val winningBid = state.highestBid?.action as? BidAction.Bid
-            ?: error("Missing winning bid")
+        val winningRecord = state.highestBid ?: error("Missing winning bid")
+        val winningBid = winningRecord.action as? BidAction.Bid
+            ?: error("Winning record is not a bid")
+        require(winningRecord.seat == seat) {
+            "Only the auction winner (${winningRecord.seat}) may name trump, not $seat"
+        }
+        require(!winningBid.isNoTrump) {
+            "Winning bid ${winningBid.formatShort()} is No-Trump; trump selection does not apply"
+        }
+        require(trumpSuit != null) {
+            "Winning bid ${winningBid.formatShort()} is a suit bid; a trump suit must be named"
+        }
+        val direction = winningBid.direction
 
         val contract = Contract(
             declarer = seat,
@@ -285,7 +304,7 @@ class BidWhistRulesEngine(
             if (s == seat) combinedHand else sortHand(hand, trumpSuit, direction)
         }
 
-        val trumpLabel = trumpSuit?.let { "${it.symbol} ${it.label}" } ?: "No-Trump"
+        val trumpLabel = "${trumpSuit.symbol} ${trumpSuit.label}"
         val caption = "${seat.displayName} calls $trumpLabel (${direction.label}) and takes the kitty."
         val event = AuditEvent(
             sequence = state.auditLog.size + 1,
@@ -306,6 +325,22 @@ class BidWhistRulesEngine(
             auditLog = state.auditLog + event
         )
     }
+
+    /**
+     * Legacy signature retained for source compatibility. The [direction] argument is
+     * ignored: the contract direction always comes from the winning bid.
+     */
+    @Deprecated(
+        message = "Direction is fixed by the winning bid; use selectTrumpAndPickUpKitty(state, seat, trumpSuit).",
+        replaceWith = ReplaceWith("selectTrumpAndPickUpKitty(state, seat, trumpSuit)")
+    )
+    @Suppress("UNUSED_PARAMETER")
+    fun selectTrumpAndPickUpKitty(
+        state: AuthoritativeState,
+        seat: Seat,
+        trumpSuit: Suit?,
+        direction: BidDirection
+    ): AuthoritativeState = selectTrumpAndPickUpKitty(state, seat, trumpSuit)
 
     fun submitKittyDiscard(
         state: AuthoritativeState,
@@ -367,13 +402,24 @@ class BidWhistRulesEngine(
         }
     }
 
+    /**
+     * The suit that governs the trick: the effective suit of the first card played
+     * that has one. In a trump contract this is always the led card's effective suit
+     * (Jokers count as trump). In No-Trump a led Joker has no suit, so the first
+     * non-Joker card played sets the suit to follow (Codex decision D-02). Returns
+     * null while no card in the trick has a suit (empty trick, or only Jokers in No-Trump).
+     */
+    fun governingSuit(trick: List<PlayedCard>, contract: Contract): Suit? {
+        return trick.firstNotNullOfOrNull { effectiveSuit(it.card, contract) }
+    }
+
     fun legalCards(
         hand: List<Card>,
         currentTrick: List<PlayedCard>,
         contract: Contract
     ): List<Card> {
         if (currentTrick.isEmpty()) return hand
-        val ledSuit = effectiveSuit(currentTrick.first().card, contract) ?: return hand
+        val ledSuit = governingSuit(currentTrick, contract) ?: return hand
         val matchingSuit = hand.filter { effectiveSuit(it, contract) == ledSuit }
         return matchingSuit.ifEmpty { hand }
     }
@@ -396,8 +442,9 @@ class BidWhistRulesEngine(
             }
             return 0
         } else {
-            // No-Trump: Jokers have no suit and cannot win tricks
-            if (card.isJoker) return 0
+            // No-Trump: Jokers have no suit and lose to every non-Joker card, including
+            // off-suit discards. Strictly below 0 so a led Joker never wins by default.
+            if (card.isJoker) return -1
             if (ledSuit != null && card.suit == ledSuit) {
                 return 100 + rankStrength(card.rank, contract.direction)
             }
@@ -407,7 +454,7 @@ class BidWhistRulesEngine(
 
     fun determineTrickWinner(plays: List<PlayedCard>, contract: Contract): Seat {
         require(plays.size == 4) { "Trick must have 4 plays" }
-        val ledSuit = effectiveSuit(plays.first().card, contract)
+        val ledSuit = governingSuit(plays, contract)
         return plays.maxBy { cardStrength(it.card, ledSuit, contract) }.seat
     }
 
@@ -474,6 +521,21 @@ class BidWhistRulesEngine(
             detail = trickSummary
         )
 
+        // Once the final trick is on the table every book is decided, so a void request that
+        // was still pending lapses: the hand can no longer be voided, only scored.
+        val isFinalTrick = trickNumber >= manifest.handSize
+        val lapsedRequest = state.pendingVoidRequest?.takeIf { isFinalTrick }
+        val lapseEvent = lapsedRequest?.let { request ->
+            AuditEvent(
+                sequence = state.auditLog.size + 3,
+                phase = TablePhase.TRICK_COMPLETE,
+                actor = "Authoritative Rules Service",
+                summary = "Void request lapsed",
+                detail = "Request by ${request.requestedBy.displayName} (${request.reason}) lapsed: " +
+                    "all ${manifest.handSize} tricks are played, so Hand #${state.handNumber} can only be scored."
+            )
+        }
+
         return state.copy(
             phase = TablePhase.TRICK_COMPLETE,
             currentTurn = winner,
@@ -484,7 +546,8 @@ class BidWhistRulesEngine(
             booksWonThem = newBooksThem,
             seatCaptions = state.seatCaptions + (seat to playText),
             latestCaption = trickSummary,
-            auditLog = state.auditLog + playEvent + trickEvent
+            pendingVoidRequest = if (isFinalTrick) null else state.pendingVoidRequest,
+            auditLog = state.auditLog + playEvent + trickEvent + listOfNotNull(lapseEvent)
         )
     }
 
@@ -554,6 +617,7 @@ class BidWhistRulesEngine(
                 currentTrick = emptyList(),
                 lastOutcome = outcome,
                 latestCaption = outcomeCaption,
+                pendingVoidRequest = null,
                 auditLog = state.auditLog + scoreEvent
             )
         }
@@ -567,34 +631,150 @@ class BidWhistRulesEngine(
     }
 
     /**
-     * Host control: Audited unanimous void (allowed only via explicit host/table agreement,
-     * logged immutably in the audit trail, never alters concealed cards).
+     * Phases in which a hand can no longer be voided: it is already settled, the match is
+     * over, it was already voided, or no hand is in progress.
      */
-    fun voidCurrentHandAsHost(state: AuthoritativeState, reason: String): AuthoritativeState {
+    private val voidRefusedPhases = setOf(
+        TablePhase.IDLE,
+        TablePhase.HAND_COMPLETE,
+        TablePhase.MATCH_COMPLETE,
+        TablePhase.VOIDED_HAND
+    )
+
+    /**
+     * A hand may be voided only while its result is still open: not once it is settled, and
+     * not after the final trick has been played (TRICK_COMPLETE with every book decided),
+     * when the only remaining step is scoring.
+     */
+    fun canRequestVoid(state: AuthoritativeState): Boolean {
+        if (state.phase in voidRefusedPhases) return false
+        val finalTrickPlayed = state.phase == TablePhase.TRICK_COMPLETE &&
+            state.completedTricks.size >= manifest.handSize
+        return !finalTrickPlayed
+    }
+
+    /**
+     * Audited unanimous void, step 1: a seat asks the table to void the current hand.
+     * The request is logged and stays pending until every human seat has consented via
+     * [consentToVoid]; AI seats consent implicitly. Never touches concealed cards or scores.
+     */
+    fun requestVoid(state: AuthoritativeState, seat: Seat, reason: String): AuthoritativeState {
+        require(canRequestVoid(state)) {
+            "Cannot void Hand #${state.handNumber} in phase ${state.phase}"
+        }
+        require(state.pendingVoidRequest == null) {
+            "A void request by ${state.pendingVoidRequest?.requestedBy} is already pending"
+        }
+        require(reason.isNotBlank()) { "Void request requires a reason" }
+
+        val implicitAiConsents = Seat.entries.filter { !it.isHuman }.toSet()
+        val request = VoidRequest(
+            reason = reason.trim(),
+            requestedBy = seat,
+            consents = implicitAiConsents
+        )
+        val outstanding = request.outstandingSeats
+        val event = AuditEvent(
+            sequence = state.auditLog.size + 1,
+            phase = state.phase,
+            actor = seat.displayName,
+            summary = "Void requested for Hand #${state.handNumber}",
+            detail = "${request.formatAuditDetail()} Awaiting consent from: " +
+                outstanding.joinToString(", ") { it.displayName } + "."
+        )
+        val caption = "${seat.displayName} requests an audited void ($reason). " +
+            "Awaiting ${outstanding.joinToString(", ") { it.displayName }}."
+        return state.copy(
+            pendingVoidRequest = request,
+            latestCaption = caption,
+            auditLog = state.auditLog + event
+        )
+    }
+
+    /**
+     * Audited unanimous void, step 2: a seat consents to the pending request. When every
+     * human seat has consented the hand is voided; otherwise the request stays pending.
+     */
+    fun consentToVoid(state: AuthoritativeState, seat: Seat): AuthoritativeState {
+        val pending = requireNotNull(state.pendingVoidRequest) {
+            "No void request is pending for Hand #${state.handNumber}"
+        }
+        require(canRequestVoid(state)) {
+            "Cannot void Hand #${state.handNumber} in phase ${state.phase}"
+        }
+        if (seat in pending.consents) return state
+
+        val updated = pending.copy(consents = pending.consents + seat)
+        if (updated.isUnanimous) {
+            return applyVoid(state, updated)
+        }
+
+        val outstanding = updated.outstandingSeats
+        val event = AuditEvent(
+            sequence = state.auditLog.size + 1,
+            phase = state.phase,
+            actor = seat.displayName,
+            summary = "Consented to void of Hand #${state.handNumber}",
+            detail = "${updated.formatAuditDetail()} Still awaiting: " +
+                outstanding.joinToString(", ") { it.displayName } + "."
+        )
+        return state.copy(
+            pendingVoidRequest = updated,
+            latestCaption = "${seat.displayName} consents to the void. " +
+                "Awaiting ${outstanding.joinToString(", ") { it.displayName }}.",
+            auditLog = state.auditLog + event
+        )
+    }
+
+    /**
+     * Withdraws a pending void request before it becomes unanimous. Logged like every other
+     * void action so the audit trail shows the request was raised and dropped.
+     */
+    fun withdrawVoidRequest(state: AuthoritativeState, seat: Seat): AuthoritativeState {
+        val pending = state.pendingVoidRequest ?: return state
+        val event = AuditEvent(
+            sequence = state.auditLog.size + 1,
+            phase = state.phase,
+            actor = seat.displayName,
+            summary = "Void request withdrawn for Hand #${state.handNumber}",
+            detail = "${pending.formatAuditDetail()} Withdrawn by ${seat.displayName}; play continues."
+        )
+        return state.copy(
+            pendingVoidRequest = null,
+            latestCaption = "${seat.displayName} withdrew the void request. Play continues.",
+            auditLog = state.auditLog + event
+        )
+    }
+
+    private fun applyVoid(state: AuthoritativeState, request: VoidRequest): AuthoritativeState {
+        check(request.isUnanimous) { "Void applied without unanimous consent" }
         val nextDealer = state.dealer.nextClockwise()
         val outcome = HandOutcome(
             handNumber = state.handNumber,
-            contract = state.contract ?: Contract(state.dealer, 4, null, BidDirection.UPTOWN),
+            contract = state.contract,
             booksWonUs = state.booksWonUs,
             booksWonThem = state.booksWonThem,
             contractMade = false,
             isBoston = false,
-            pointsAwardedTo = Partnership.US,
+            pointsAwardedTo = null,
             pointsDelta = 0,
             wasVoided = true,
-            voidReason = reason
+            voidReason = request.reason,
+            voidRequest = request
         )
         val event = AuditEvent(
             sequence = state.auditLog.size + 1,
             phase = TablePhase.VOIDED_HAND,
-            actor = "Table Host (Audited)",
-            summary = "Hand #${state.handNumber} voided",
-            detail = "Reason: $reason. Concealed hands discarded unrevealed; next dealer ${nextDealer.displayName}."
+            actor = "Authoritative Rules Service",
+            summary = "Hand #${state.handNumber} voided (unanimous)",
+            detail = "${request.formatAuditDetail()} No points awarded; concealed hands discarded unrevealed; " +
+                "next dealer ${nextDealer.displayName}."
         )
         return state.copy(
             phase = TablePhase.VOIDED_HAND,
+            pendingVoidRequest = null,
             lastOutcome = outcome,
-            latestCaption = "Hand #${state.handNumber} voided by Host ($reason). Ready for next deal.",
+            latestCaption = "Hand #${state.handNumber} voided by unanimous consent (${request.reason}). Ready for next deal.",
             auditLog = state.auditLog + event
         )
     }
@@ -647,7 +827,6 @@ class BidWhistRulesEngine(
         return SeatView(
             manifest = manifest,
             handNumber = state.handNumber,
-            seed = state.seed,
             phase = state.phase,
             dealer = state.dealer,
             currentTurn = state.currentTurn,
@@ -672,6 +851,8 @@ class BidWhistRulesEngine(
             latestCaption = state.latestCaption,
             auditLog = state.auditLog,
             isBetweenHandPaused = state.isBetweenHandPaused,
+            pendingVoidRequest = state.pendingVoidRequest,
+            canRequestVoid = canRequestVoid(state),
             guidedHint = guidedHint
         )
     }

@@ -65,9 +65,36 @@ class AiPlayerPolicy(
         return BidAction.Pass to passLine
     }
 
+    /**
+     * Names the trump suit after this seat won a suit bid. The direction was declared in
+     * the auction and is binding (codex D-01), so the best suit is chosen *given* that
+     * direction rather than re-optimising direction and Trump/No-Trump from scratch.
+     */
+    fun chooseTrumpSuit(obs: AiSeatObservation): Suit {
+        val winningBid = requireNotNull(obs.highestBid?.action as? BidAction.Bid) {
+            "No winning bid available for trump selection"
+        }
+        require(!winningBid.isNoTrump) { "No-Trump winner does not name a suit" }
+        val plan = evaluateBestPlan(
+            hand = obs.ownHand,
+            fixedDirection = winningBid.direction,
+            allowNoTrump = false
+        )
+        return requireNotNull(plan.trumpSuit) { "Suit-only evaluation must yield a suit" }
+    }
+
+    @Deprecated(
+        message = "Direction is fixed by the winning bid; use chooseTrumpSuit(obs).",
+        replaceWith = ReplaceWith("chooseTrumpSuit(obs)")
+    )
     fun chooseTrumpAndDirection(obs: AiSeatObservation): Pair<Suit?, BidDirection> {
-        val plan = evaluateBestPlan(obs.ownHand)
-        return plan.trumpSuit to plan.direction
+        val winningBid = obs.highestBid?.action as? BidAction.Bid
+        return if (winningBid != null && !winningBid.isNoTrump) {
+            chooseTrumpSuit(obs) to winningBid.direction
+        } else {
+            val plan = evaluateBestPlan(obs.ownHand)
+            plan.trumpSuit to plan.direction
+        }
     }
 
     fun chooseSixDiscards(obs: AiSeatObservation): Set<String> {
@@ -96,7 +123,11 @@ class AiPlayerPolicy(
             return only to "${obs.seat.displayName} plays ${only.accessibleDescription}."
         }
 
-        val chosen = if (obs.currentTrick.isEmpty()) {
+        // In No-Trump a trick holding only jokers has no governing suit yet: whatever this
+        // seat plays will set it, so the choice is a lead, not a follow.
+        val nothingGovernsYet = obs.currentTrick.isNotEmpty() &&
+            engine.governingSuit(obs.currentTrick, contract) == null
+        val chosen = if (obs.currentTrick.isEmpty() || nothingGovernsYet) {
             chooseLeadCard(legal, contract)
         } else {
             chooseFollowCard(obs.seat, legal, obs.currentTrick, contract)
@@ -128,9 +159,14 @@ class AiPlayerPolicy(
                 suggested
             }
             TablePhase.SELECT_TRUMP -> {
-                val plan = evaluateBestPlan(view.localHand)
+                val winningBid = view.highestBid?.action as? BidAction.Bid
+                val plan = evaluateBestPlan(
+                    hand = view.localHand,
+                    fixedDirection = winningBid?.direction,
+                    allowNoTrump = winningBid == null
+                )
                 val label = plan.trumpSuit?.label ?: "No-Trump"
-                "Best fit from your 12 cards: $label (${plan.direction.label})."
+                "You declared ${plan.direction.label}. Best suit fit from your 12 cards: $label."
             }
             TablePhase.KITTY_DISCARD -> {
                 "Tip: Keep Jokers, trumps, and Aces. Discard weak cards from short side suits to create voids."
@@ -140,8 +176,11 @@ class AiPlayerPolicy(
                 if (view.currentTrick.isEmpty()) {
                     "You have the lead. Pulling trumps early or cashing Aces sets the pace."
                 } else {
-                    val ledSuit = engine.effectiveSuit(view.currentTrick.first().card, contract)
-                    if (ledSuit != null && view.legalPlayCardIds.size < view.localHand.size) {
+                    val ledSuit = engine.governingSuit(view.currentTrick, contract)
+                    if (ledSuit == null) {
+                        // Only possible in No-Trump when every card so far is a joker.
+                        "A joker led in No-Trump cannot win the book. Any card is legal — the first suited card sets the suit to follow."
+                    } else if (view.legalPlayCardIds.size < view.localHand.size) {
                         "Must follow ${ledSuit.symbol} ${ledSuit.label}. Dimmed cards are locked by house rules."
                     } else {
                         val winningSeat = currentWinningSeat(view.currentTrick, contract)
@@ -165,7 +204,9 @@ class AiPlayerPolicy(
         if (contract.trumpSuit != null && highTrump != null && (highTrump.isJoker || highTrump.rank == Rank.ACE)) {
             return highTrump
         }
-        return legal.maxBy { card ->
+        // In No-Trump a joker can never win, so never lead one while a suited card remains.
+        val leadable = if (contract.isNoTrump) legal.filterNot { it.isJoker }.ifEmpty { legal } else legal
+        return leadable.maxBy { card ->
             val suitBonus = if (card.suit == contract.trumpSuit) -50 else 50
             engine.rankStrength(card.rank, contract.direction) + suitBonus
         }
@@ -177,7 +218,7 @@ class AiPlayerPolicy(
         currentTrick: List<PlayedCard>,
         contract: Contract
     ): Card {
-        val ledSuit = engine.effectiveSuit(currentTrick.first().card, contract)
+        val ledSuit = engine.governingSuit(currentTrick, contract)
         val currentWinner = currentWinningSeat(currentTrick, contract)
         val currentBestStrength = currentTrick.maxOf {
             engine.cardStrength(it.card, ledSuit, contract)
@@ -193,29 +234,48 @@ class AiPlayerPolicy(
             engine.cardStrength(it, ledSuit, contract) > currentBestStrength
         }
         if (beatingCards.isNotEmpty()) {
-            return beatingCards.minBy { engine.cardStrength(it, ledSuit, contract) }
+            // Cheapest winner; among equal strengths (e.g. any suited card over a led
+            // Joker in No-Trump) throw the lowest-ranked card.
+            return beatingCards.minWith(
+                compareBy<Card>({ engine.cardStrength(it, ledSuit, contract) })
+                    .thenBy { engine.rankStrength(it.rank, contract.direction) }
+            )
         }
 
-        // Cannot beat: throw lowest-value card (avoid throwing Jokers/Aces if possible)
+        // Cannot beat: throw lowest-value card. Keep Jokers/Aces in a trump contract;
+        // in No-Trump a joker is a dead card, so dump it first.
         return legal.minBy { card ->
             var throwCost = engine.cardStrength(card, ledSuit, contract)
-            if (card.isJoker) throwCost += 2000
-            if (card.suit == contract.trumpSuit) throwCost += 500
+            if (card.isJoker) throwCost += if (contract.isNoTrump) -2000 else 2000
+            if (card.suit != null && card.suit == contract.trumpSuit) throwCost += 500
             if (card.rank == Rank.ACE) throwCost += 200
             throwCost
         }
     }
 
     private fun currentWinningSeat(trick: List<PlayedCard>, contract: Contract): Seat {
-        val ledSuit = engine.effectiveSuit(trick.first().card, contract)
+        val ledSuit = engine.governingSuit(trick, contract)
         return trick.maxBy { engine.cardStrength(it.card, ledSuit, contract) }.seat
     }
 
-    fun evaluateBestPlan(hand: List<Card>): TrumpPlan {
+    /**
+     * Scores every (suit or No-Trump) × direction plan for [hand] and returns the best.
+     *
+     * @param fixedDirection when non-null, only plans in that direction are considered
+     *   (used after the auction, where the direction is already declared).
+     * @param allowNoTrump when false, No-Trump plans are excluded (used when the winning
+     *   bid was a suit bid and a suit must be named).
+     */
+    fun evaluateBestPlan(
+        hand: List<Card>,
+        fixedDirection: BidDirection? = null,
+        allowNoTrump: Boolean = true
+    ): TrumpPlan {
         val jokers = hand.count { it.isJoker }
         val candidates = mutableListOf<TrumpPlan>()
+        val directions = fixedDirection?.let { listOf(it) } ?: BidDirection.entries
 
-        for (direction in BidDirection.entries) {
+        for (direction in directions) {
             for (suit in Suit.entries) {
                 val suitCards = hand.filter { it.suit == suit }
                 val highCards = suitCards.count { engine.rankStrength(it.rank, direction) >= 12 }
@@ -226,6 +286,7 @@ class AiPlayerPolicy(
                 val estimate = 4.2 + jokers * 0.95 + suitCards.size * 0.68 + highCards * 0.45 + offSuitWinners * 0.65
                 candidates += TrumpPlan(suit, direction, estimate)
             }
+            if (!allowNoTrump) continue
             // No-Trump evaluation (Jokers do not win tricks)
             val acesAndHigh = hand.count { !it.isJoker && engine.rankStrength(it.rank, direction) >= 13 }
             val mediumWinners = hand.count { !it.isJoker && engine.rankStrength(it.rank, direction) == 12 }

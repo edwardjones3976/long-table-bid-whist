@@ -284,7 +284,7 @@ fun TableScreen(
                         }
                         view.phase == TablePhase.SELECT_TRUMP && view.currentTurn == Seat.SOUTH -> {
                             SouthTrumpSelectionControls(
-                                initialDirection = (view.highestBid?.action as? BidAction.Bid)?.direction ?: BidDirection.UPTOWN,
+                                winningBid = view.highestBid?.action as? BidAction.Bid,
                                 onConfirmTrump = viewModel::selectTrumpAndTakeKitty
                             )
                         }
@@ -473,16 +473,27 @@ private fun CenterPlayZone(
                         Text(headline, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
                         if (!outcome.wasVoided) {
                             Text(
-                                text = "${outcome.contract.formatBanner()} · Us ${outcome.booksWonUs} – Them ${outcome.booksWonThem} books",
+                                text = "${outcome.contract?.formatBanner() ?: "No contract"} · Us ${outcome.booksWonUs} – Them ${outcome.booksWonThem} books",
                                 style = MaterialTheme.typography.bodyMedium
                             )
+                            val awardedTo = outcome.pointsAwardedTo
                             Text(
-                                text = "${outcome.pointsAwardedTo.displayName} +${outcome.pointsDelta} pts",
+                                text = if (awardedTo != null) "${awardedTo.displayName} +${outcome.pointsDelta} pts" else "No points awarded",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.tertiary
                             )
                         } else {
-                            Text(outcome.voidReason ?: "Voided by Host", style = MaterialTheme.typography.bodyMedium)
+                            Text(outcome.voidReason ?: "Voided by unanimous consent", style = MaterialTheme.typography.bodyMedium)
+                            val request = outcome.voidRequest
+                            Text(
+                                text = if (request != null) {
+                                    "Requested by ${request.requestedBy.displayName} · No points awarded"
+                                } else {
+                                    "No points awarded"
+                                },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
 
@@ -656,14 +667,20 @@ private fun SouthBiddingControls(
 
 @Composable
 private fun SouthTrumpSelectionControls(
-    initialDirection: BidDirection,
-    onConfirmTrump: (Suit?, BidDirection) -> Unit
+    winningBid: BidAction.Bid?,
+    onConfirmTrump: (Suit) -> Unit
 ) {
-    var selectedSuit by remember { mutableStateOf<Suit?>(Suit.SPADES) }
-    var selectedDir by remember { mutableStateOf(initialDirection) }
+    var selectedSuit by remember { mutableStateOf(Suit.SPADES) }
+    // Direction and Trump/No-Trump were declared in the auction and are binding (codex D-01).
+    val declaredDirection = winningBid?.direction ?: BidDirection.UPTOWN
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("You Won the Auction — Name Trump & Direction", style = MaterialTheme.typography.titleMedium)
+        Text("You Won the Auction — Name Trump", style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = "Declared: ${winningBid?.formatShort() ?: declaredDirection.label} · direction is locked in from your bid.",
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.testTag("trump_declared_direction")
+        )
         Row(
             modifier = Modifier.horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -676,29 +693,18 @@ private fun SouthTrumpSelectionControls(
                     modifier = Modifier.testTag("trump_suit_${suit.name.lowercase()}")
                 )
             }
-            FilterChip(
-                selected = selectedSuit == null,
-                onClick = { selectedSuit = null },
-                label = { Text("No-Trump") },
-                modifier = Modifier.testTag("trump_suit_notrump")
-            )
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                BidDirection.entries.forEach { dir ->
-                    FilterChip(
-                        selected = selectedDir == dir,
-                        onClick = { selectedDir = dir },
-                        label = { Text(dir.label) }
-                    )
-                }
-            }
+            Text(
+                text = "${declaredDirection.label} · ${selectedSuit.symbol} ${selectedSuit.label}",
+                style = MaterialTheme.typography.bodyMedium
+            )
             Button(
-                onClick = { onConfirmTrump(selectedSuit, selectedDir) },
+                onClick = { onConfirmTrump(selectedSuit) },
                 modifier = Modifier.testTag("confirm_trump_button")
             ) {
                 Text("Take Kitty")

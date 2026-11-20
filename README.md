@@ -18,6 +18,10 @@ An authentic, accessible four-seat **Bid Whist** Android application built with 
 - **Rights & Asset Provenance Ledger**:
   - Transparent asset registry for bundled fonts, original illustrations, procedural PCM audio, and an external venue music policy.
 
+## VR Codex
+
+[`docs/BID_WHIST_VR_CODEX.md`](docs/BID_WHIST_VR_CODEX.md) is the reference for carrying the table to a seated VR/MR experience: the enforced Strict Table rules, state machine, information boundaries, role permissions, VR interaction spec, accessibility gates, rights policy, acceptance tests, a register of engine findings, and the open decisions.
+
 ## Build & Test
 
 - Compile APK: `gradle assembleDebug`

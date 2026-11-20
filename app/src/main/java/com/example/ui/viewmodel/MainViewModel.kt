@@ -10,7 +10,6 @@ import com.example.data.TablePreferences
 import com.example.data.TablePreferencesRepository
 import com.example.engine.AiPlayerPolicy
 import com.example.engine.BidAction
-import com.example.engine.BidDirection
 import com.example.engine.BidWhistRulesEngine
 import com.example.engine.RoleMode
 import com.example.engine.Seat
@@ -118,11 +117,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         scheduleAiAdvanceIfNeeded()
     }
 
-    fun selectTrumpAndTakeKitty(trumpSuit: Suit?, direction: BidDirection) {
+    /**
+     * South names the trump suit after winning a suit bid. Direction and Trump/No-Trump
+     * were declared in the auction and are enforced by the engine.
+     */
+    fun selectTrumpAndTakeKitty(trumpSuit: Suit) {
         val current = authoritativeState ?: return
         if (current.phase != TablePhase.SELECT_TRUMP || current.currentTurn != Seat.SOUTH) return
         SoundFeedback.playTrickChime(preferences.value.soundEffectsEnabled)
-        authoritativeState = engine.selectTrumpAndPickUpKitty(current, Seat.SOUTH, trumpSuit, direction)
+        authoritativeState = engine.selectTrumpAndPickUpKitty(current, Seat.SOUTH, trumpSuit)
         publishState(selectedCardId = null, selectedDiscardIds = emptySet(), notice = null)
     }
 
@@ -171,8 +174,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (current.phase != TablePhase.PLAYING_TRICK || current.currentTurn != Seat.SOUTH) return
         val view = engine.projectSeatView(current)
         if (cardId !in view.legalPlayCardIds) {
-            val ledCard = current.currentTrick.firstOrNull()?.card
-            val ledSuit = ledCard?.let { c -> current.contract?.let { engine.effectiveSuit(c, it) } }
+            val ledSuit = current.contract?.let { engine.governingSuit(current.currentTrick, it) }
             val suitMsg = ledSuit?.let { "Must follow ${it.symbol} ${it.label}." } ?: "Select a legal card."
             _tableState.value = _tableState.value.copy(statusNotice = suitMsg)
             return
@@ -219,12 +221,53 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         publishState(notice = if (paused) "Table paused by Host." else "Table resumed.")
     }
 
-    fun voidHandAsHost(reason: String) {
+    /**
+     * Audited unanimous void, step 1: the Host (seated at South) raises the request.
+     * The engine records it and waits for every human seat to consent.
+     */
+    fun requestVoidAsHost(reason: String) {
         val current = authoritativeState ?: return
         if (preferences.value.roleMode != RoleMode.SEATED_PLAYER_HOST) return
-        aiTurnJob?.cancel()
-        authoritativeState = engine.voidCurrentHandAsHost(current, reason)
-        publishState(selectedCardId = null, selectedDiscardIds = emptySet(), notice = null)
+        if (!engine.canRequestVoid(current)) {
+            _tableState.value = _tableState.value.copy(
+                statusNotice = "Hand #${current.handNumber} is already settled and cannot be voided."
+            )
+            return
+        }
+        if (current.pendingVoidRequest != null) return
+        authoritativeState = engine.requestVoid(current, Seat.SOUTH, reason)
+        publishState(notice = null)
+    }
+
+    /**
+     * Audited unanimous void, step 2: South consents. With South the only human seat this
+     * completes the void immediately; the engine refuses it once the hand is settled.
+     */
+    fun consentToVoidAsHost() {
+        val current = authoritativeState ?: return
+        if (preferences.value.roleMode != RoleMode.SEATED_PLAYER_HOST) return
+        if (current.pendingVoidRequest == null) return
+        if (!engine.canRequestVoid(current)) {
+            authoritativeState = engine.withdrawVoidRequest(current, Seat.SOUTH)
+            publishState(notice = "Hand #${current.handNumber} settled before the void completed.")
+            return
+        }
+        val next = engine.consentToVoid(current, Seat.SOUTH)
+        authoritativeState = next
+        if (next.phase == TablePhase.VOIDED_HAND) {
+            aiTurnJob?.cancel()
+            publishState(selectedCardId = null, selectedDiscardIds = emptySet(), notice = null)
+            scheduleAiAdvanceIfNeeded()
+        } else {
+            publishState(notice = null)
+        }
+    }
+
+    fun withdrawVoidRequestAsHost() {
+        val current = authoritativeState ?: return
+        if (current.pendingVoidRequest == null) return
+        authoritativeState = engine.withdrawVoidRequest(current, Seat.SOUTH)
+        publishState(notice = null)
     }
 
     fun applySeatPreset(presetName: String) {
@@ -306,9 +349,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     val seat = latest.currentTurn
                     if (!seat.isHuman) {
                         val obs = engine.projectAiObservation(latest, seat)
-                        val (suit, dir) = aiPolicy.chooseTrumpAndDirection(obs)
+                        val suit = aiPolicy.chooseTrumpSuit(obs)
                         SoundFeedback.playTrickChime(preferences.value.soundEffectsEnabled)
-                        authoritativeState = engine.selectTrumpAndPickUpKitty(latest, seat, suit, dir)
+                        authoritativeState = engine.selectTrumpAndPickUpKitty(latest, seat, suit)
                         publishState()
                         scheduleAiAdvanceIfNeeded()
                     }
