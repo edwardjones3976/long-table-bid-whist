@@ -159,8 +159,9 @@ data class TableRulesManifest(
     val noTrumpDoublesPoints: Boolean = true,
     val bostonPoints: Int = 14,
     val forcedDealerMinBid: Boolean = true,
+    val directionAndNoTrumpBindingFromAuction: Boolean = true,
     val downtownRankingNote: String = "Ace stays high; 2 is second strongest down to King.",
-    val jokerRuleNote: String = "Big & Little Joker are top trumps in suit contracts; in No-Trump they have no suit and cannot win tricks."
+    val jokerRuleNote: String = "Big & Little Joker are top trumps in suit contracts; in No-Trump they have no suit, lose to any suited card, and the first suited card sets the suit to follow."
 )
 
 @Serializable

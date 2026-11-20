@@ -5,7 +5,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
@@ -147,6 +146,8 @@ class BidWhistRulesEngineTest {
         }
         assertFalse(view.latestCaption.contains(seedText))
         assertFalse(view.seatCaptions.values.any { it.contains(seedText) })
+    }
+
     // --- Codex F-02 / D-02: a Joker led in No-Trump ---
 
     private val noTrumpContract = Contract(
@@ -293,6 +294,10 @@ class BidWhistRulesEngineTest {
         assertEquals(Suit.DIAMONDS, chosen.suit)
         // 9♦ is the cheapest card that beats the 5♦; the A♠ may not be sloughed.
         assertEquals("DIAMONDS_NINE", chosen.id)
+    }
+
+    // --- Codex F-03 / D-01: direction and Trump/No-Trump are binding from the auction ---
+
     /** South bids [bid]; the other three pass. Leaves the table in SELECT_TRUMP for SOUTH on a suit bid. */
     private fun auctionWonBySouth(bid: BidAction.Bid, seed: Long = 7L): BidWhistRulesEngine.AuthoritativeState {
         var state = engine.startNewMatch(initialSeed = seed)
@@ -359,6 +364,9 @@ class BidWhistRulesEngineTest {
         assertEquals(BidDirection.DOWNTOWN, contract.direction)
         assertThrows(IllegalArgumentException::class.java) {
             engine.selectTrumpAndPickUpKitty(state, Seat.SOUTH, Suit.SPADES)
+        }
+    }
+
     // ---- Audited unanimous void (F-04 / F-05) ----
 
     /** Plays Hand #1 of a fresh match to completion: South bids 4 Spades Uptown, all AI seats pass. */
@@ -369,7 +377,7 @@ class BidWhistRulesEngineTest {
         state = engine.submitBid(state, Seat.NORTH, BidAction.Pass)
         state = engine.submitBid(state, Seat.EAST, BidAction.Pass)
         assertEquals(TablePhase.SELECT_TRUMP, state.phase)
-        state = engine.selectTrumpAndPickUpKitty(state, Seat.SOUTH, Suit.SPADES, BidDirection.UPTOWN)
+        state = engine.selectTrumpAndPickUpKitty(state, Seat.SOUTH, Suit.SPADES)
         val discards = state.hands.getValue(Seat.SOUTH).takeLast(6).map { it.id }.toSet()
         state = engine.submitKittyDiscard(state, Seat.SOUTH, discards)
         while (state.phase == TablePhase.PLAYING_TRICK || state.phase == TablePhase.TRICK_COMPLETE) {
@@ -417,6 +425,9 @@ class BidWhistRulesEngineTest {
                 assertEquals(suit, contract.trumpSuit)
             }
         }
+    }
+
+    @Test
     fun voidRequest_isRefusedOnceHandIsComplete() {
         val completed = playHandToCompletion(seed = 1234L)
         assertEquals(TablePhase.HAND_COMPLETE, completed.phase)
@@ -502,7 +513,7 @@ class BidWhistRulesEngineTest {
         state = engine.submitBid(state, Seat.WEST, BidAction.Pass)
         state = engine.submitBid(state, Seat.NORTH, BidAction.Pass)
         state = engine.submitBid(state, Seat.EAST, BidAction.Pass)
-        state = engine.selectTrumpAndPickUpKitty(state, Seat.SOUTH, Suit.HEARTS, BidDirection.DOWNTOWN)
+        state = engine.selectTrumpAndPickUpKitty(state, Seat.SOUTH, Suit.HEARTS)
         val agreedContract = requireNotNull(state.contract)
 
         val requested = engine.requestVoid(state, Seat.SOUTH, "Phone rang, table agreed to redeal")
@@ -552,5 +563,72 @@ class BidWhistRulesEngineTest {
         assertTrue(withdrawn.auditLog.last().summary.contains("withdrawn"))
         // Bidding continues normally after a withdrawn request.
         assertTrue(engine.isBidValid(withdrawn, Seat.SOUTH, BidAction.Pass))
+    }
+
+    // ---- Whole-hand regression: AI-only tables terminate, conserve cards, honour the bound contract ----
+
+    /** Plays a hand to completion with the AI policy acting for every seat from its own observation. */
+    private fun playOutWithAi(start: BidWhistRulesEngine.AuthoritativeState, ai: AiPlayerPolicy, seed: Long): BidWhistRulesEngine.AuthoritativeState {
+        var s = start
+        var guard = 0
+        while (s.phase != TablePhase.HAND_COMPLETE && s.phase != TablePhase.MATCH_COMPLETE) {
+            require(guard++ < 200) { "hand did not terminate for seed $seed" }
+            val seat = s.currentTurn
+            s = when (s.phase) {
+                TablePhase.BIDDING -> engine.submitBid(s, seat, AiPlayerPolicy(engine).chooseBid(engine.projectAiObservation(s, seat), TableTalkTone.QUIET).first)
+                TablePhase.SELECT_TRUMP -> engine.selectTrumpAndPickUpKitty(s, seat, ai.chooseTrumpSuit(engine.projectAiObservation(s, seat)))
+                TablePhase.KITTY_DISCARD -> engine.submitKittyDiscard(s, seat, ai.chooseSixDiscards(engine.projectAiObservation(s, seat)))
+                TablePhase.PLAYING_TRICK -> engine.playCard(s, seat, ai.chooseCardToPlay(engine.projectAiObservation(s, seat), TableTalkTone.QUIET).first.id)
+                TablePhase.TRICK_COMPLETE -> engine.collectCompletedTrick(s)
+                else -> error("unexpected phase ${s.phase} for seed $seed")
+            }
+        }
+        return s
+    }
+
+    private fun assertHandConserved(s: BidWhistRulesEngine.AuthoritativeState) {
+        val contract = requireNotNull(s.contract)
+        val winningBid = s.highestBid?.action as BidAction.Bid
+        assertEquals(winningBid.direction, contract.direction)
+        assertEquals(winningBid.isNoTrump, contract.isNoTrump)
+        assertEquals(13, s.booksWonUs + s.booksWonThem)
+        val played = s.completedTricks.flatMap { t -> t.plays.map { it.card.id } }
+        assertEquals(48, played.toSet().size)
+        // Audit sequence numbers are contiguous 1..n.
+        s.auditLog.forEachIndexed { index, event -> assertEquals(index + 1, event.sequence) }
+    }
+
+    @Test
+    fun aiOnlyHands_terminateAndConserveCards_withContractBoundToTheBid() {
+        val ai = AiPlayerPolicy(engine)
+        for (seed in 1L..150L) {
+            val s = playOutWithAi(engine.dealHand(handNumber = 1, seed = seed, dealer = Seat.EAST, scoreUs = 0, scoreThem = 0), ai, seed)
+            assertHandConserved(s)
+        }
+    }
+
+    @Test
+    fun forcedNoTrumpHands_neverLetAJokerWinABook() {
+        val ai = AiPlayerPolicy(engine)
+        var jokerTricksSeen = 0
+        for (seed in 1L..120L) {
+            // South (first bidder when East deals) opens 4 No-Trump; everyone else passes.
+            var s = engine.dealHand(handNumber = 1, seed = seed, dealer = Seat.EAST, scoreUs = 0, scoreThem = 0)
+            s = engine.submitBid(s, Seat.SOUTH, BidAction.Bid(4, isNoTrump = true, direction = if (seed % 2 == 0L) BidDirection.UPTOWN else BidDirection.DOWNTOWN))
+            s = engine.submitBid(s, Seat.WEST, BidAction.Pass)
+            s = engine.submitBid(s, Seat.NORTH, BidAction.Pass)
+            s = engine.submitBid(s, Seat.EAST, BidAction.Pass)
+            assertEquals(TablePhase.KITTY_DISCARD, s.phase)
+            assertTrue(requireNotNull(s.contract).isNoTrump)
+
+            s = playOutWithAi(s, ai, seed)
+            assertHandConserved(s)
+            for (trick in s.completedTricks) {
+                val winningCard = trick.plays.first { it.seat == trick.winner }.card
+                assertFalse("joker won a No-Trump book in seed $seed: $trick", winningCard.isJoker)
+                if (trick.plays.any { it.card.isJoker }) jokerTricksSeen++
+            }
+        }
+        assertTrue("sample never exercised a joker in a No-Trump trick", jokerTricksSeen > 0)
     }
 }

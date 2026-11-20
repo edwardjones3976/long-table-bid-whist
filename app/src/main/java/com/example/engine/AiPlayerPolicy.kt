@@ -197,7 +197,9 @@ class AiPlayerPolicy(
         if (contract.trumpSuit != null && highTrump != null && (highTrump.isJoker || highTrump.rank == Rank.ACE)) {
             return highTrump
         }
-        return legal.maxBy { card ->
+        // In No-Trump a joker can never win, so never lead one while a suited card remains.
+        val leadable = if (contract.isNoTrump) legal.filterNot { it.isJoker }.ifEmpty { legal } else legal
+        return leadable.maxBy { card ->
             val suitBonus = if (card.suit == contract.trumpSuit) -50 else 50
             engine.rankStrength(card.rank, contract.direction) + suitBonus
         }
@@ -233,11 +235,12 @@ class AiPlayerPolicy(
             )
         }
 
-        // Cannot beat: throw lowest-value card (avoid throwing Jokers/Aces if possible)
+        // Cannot beat: throw lowest-value card. Keep Jokers/Aces in a trump contract;
+        // in No-Trump a joker is a dead card, so dump it first.
         return legal.minBy { card ->
             var throwCost = engine.cardStrength(card, ledSuit, contract)
-            if (card.isJoker) throwCost += 2000
-            if (card.suit == contract.trumpSuit) throwCost += 500
+            if (card.isJoker) throwCost += if (contract.isNoTrump) -2000 else 2000
+            if (card.suit != null && card.suit == contract.trumpSuit) throwCost += 500
             if (card.rank == Rank.ACE) throwCost += 200
             throwCost
         }

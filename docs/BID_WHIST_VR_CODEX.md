@@ -1,6 +1,11 @@
 # The Long Table — Bid Whist VR Codex
 
-**Version:** codex-v0.1.0 · **Date:** 2026-11-20 · **Rules preset:** `strict-table-v1.0.0`
+**Version:** codex-v0.2.0 · **Date:** 2026-11-20 · **Rules preset:** `strict-table-v1.0.0`
+
+> **v0.2.0:** owner decided D-01 and D-02 (yes to both); findings F-01–F-06 fixed
+> (engine fixes integrated from the single-finding branches for F-01…F-05 and the
+> `.gradle` cleanup) and covered by 26 engine tests. **v0.1.0:** initial Codex and
+> findings register.
 
 This Codex is the single reference for carrying The Long Table from the shipped
 Android build to a seated VR/MR table on Meta Quest. It records what the rules
@@ -102,22 +107,25 @@ be dealt in.
 The engine checks every bid with `isBidValid()`; an illegal bid is refused, not
 silently corrected.
 
-### 2.3 Naming trump and the kitty — `SHIPPED`, with one `OPEN` deviation
+### 2.3 Naming trump and the kitty — `SHIPPED`
 
 - If the winning bid was **No-Trump**, the contract is fixed immediately and the
-  declarer receives the kitty (`KITTY_DISCARD`).
-- If the winning bid was a **suit bid**, the declarer first names the trump suit
-  (`SELECT_TRUMP`), then receives the kitty.
+  declarer receives the kitty (`KITTY_DISCARD`). `SELECT_TRUMP` is never entered
+  and the engine refuses any attempt to enter it.
+- If the winning bid was a **suit bid**, the declarer names **only the trump
+  suit** (`SELECT_TRUMP`), then receives the kitty. The direction (Uptown /
+  Downtown) is taken from the winning bid
+  (`directionAndNoTrumpBindingFromAuction = true`, decision D-01): the other
+  three seats bid against that declaration, so it cannot change afterwards.
 - The declarer sees the six kitty cards (marked `kittyCardIdsInHand`), holds 18
   cards, and must lay down exactly six. Discards are never revealed.
 - **Kitty book:** the kitty counts as the declarer's partnership's first book
   (`kittyCountsAsDeclarerBook = true`). Hands therefore total 13 books.
 
-> **Deviation (see F-03):** the current `SELECT_TRUMP` step lets the declarer
-> change the *direction* and switch a suit bid to *No-Trump*. The Codex
-> position is that the direction and trump/no-trump declaration made during
-> the auction are binding; only the suit is chosen at `SELECT_TRUMP`. This
-> needs rules-council confirmation (`OPEN`, decision D-01).
+Resolved F-03: `selectTrumpAndPickUpKitty(state, seat, trumpSuit)` takes the
+direction from the winning bid and refuses a null suit; a deprecated legacy
+overload still accepts a direction argument but ignores it. The UI shows the
+declared bid read-only.
 
 ### 2.4 Card ranking — `SHIPPED`
 
@@ -130,16 +138,16 @@ Ace is high in both directions (`Rank.downtownOrder`: ACE = 14, TWO = 13 … KIN
 
 | Joker rule | Trump contract | No-Trump contract |
 | --- | --- | --- |
-| Big Joker | Highest trump (strength 1000) | No suit; strength 0 |
-| Little Joker | Second-highest trump (strength 999) | No suit; strength 0 |
+| Big Joker | Highest trump (strength 1000) | No suit; strength −1 (below every suited card) |
+| Little Joker | Second-highest trump (strength 999) | No suit; strength −1 |
 | Effective suit | The trump suit | `null` |
+| Led to a trick | Sets trump as the suit to follow | Sets **no** suit; the first suited card played governs the trick (decision D-02) |
 
-> **Deviation (see F-02):** in No-Trump, a joker *led* to a trick currently
-> wins it because every other card also scores 0 and `maxBy` keeps the first
-> maximum. The manifest note says jokers "cannot win tricks" in No-Trump. The
-> Codex position: in No-Trump a led joker sets no suit, any card may follow,
-> and the joker loses to the first non-joker card played. Rules-council item
-> D-02 should also decide whether jokers may be *led* in No-Trump at all.
+**Governing suit.** `governingSuit(trick, contract)` is the effective suit of
+the first card in the trick that has one. In a trump contract that is always
+the led card. In No-Trump, after a joker lead the second player is
+unconstrained; once a suited card is played, later players must follow *that*
+suit, and the joker cannot win. Resolved F-02.
 
 ### 2.5 Play — `SHIPPED`
 
@@ -166,12 +174,23 @@ before the No-Trump doubling). Negative scores are not tracked: a set awards
 points *to the opponents* rather than subtracting from the declarer. These are
 the house rules of this preset, not errors.
 
-### 2.7 Voided hands — `SHIPPED` mechanics, `SPECIFIED` guards
+### 2.7 Voided hands — `SHIPPED`
 
-A hand may be voided only as an **audited unanimous void**: the host requests
-it, every seated human consents, and the engine records the reason in the
-audit log. Concealed hands are discarded unrevealed, no points move, and the
-deal passes clockwise. See F-04 for the guard that is still missing.
+A hand may be voided only as an **audited unanimous void**, enforced by the
+engine (resolved F-04):
+
+1. `requestVoid(state, seat, reason)` — refused unless `canRequestVoid(state)`
+   (the hand is live: `BIDDING` … `TRICK_COMPLETE`), no other request is
+   pending, and a reason is given. AI seats consent implicitly at request time.
+2. `consentToVoid(state, seat)` — adds a human consent. `withdrawVoidRequest`
+   cancels; both are audited.
+3. When every human seat has consented, the void applies: concealed hands are
+   discarded unrevealed, no points move, `HandOutcome` carries the
+   `VoidRequest` with a null contract/award (F-05), the audit event records
+   requester, consenting seats and reason, and the deal passes clockwise.
+
+On a local table the host sheet shows "Request" → "Confirm" (South's consent)
+→ void, with the pending request and outstanding seats visible in `SeatView`.
 
 ---
 
@@ -184,14 +203,14 @@ IDLE
  └─ startNewMatch / dealNextHand ─────────────────────────────▶ BIDDING
 BIDDING ── 4 bids recorded ──┬─ winner bid No-Trump ──────────▶ KITTY_DISCARD
                              └─ winner bid a suit ────────────▶ SELECT_TRUMP
-SELECT_TRUMP ── declarer names suit (+ direction) ───────────▶ KITTY_DISCARD
+SELECT_TRUMP ── declarer names the suit (direction bound) ───▶ KITTY_DISCARD
 KITTY_DISCARD ── declarer lays down exactly 6 ───────────────▶ PLAYING_TRICK
 PLAYING_TRICK ── 4th card of a trick ────────────────────────▶ TRICK_COMPLETE
 TRICK_COMPLETE ── collectCompletedTrick ──┬─ < 12 tricks ────▶ PLAYING_TRICK
                                            ├─ 12 tricks, game not over ▶ HAND_COMPLETE
                                            └─ 12 tricks, ≥ 7 points ──▶ MATCH_COMPLETE
 HAND_COMPLETE / VOIDED_HAND ── dealNextHand ─────────────────▶ BIDDING
-any phase ── voidCurrentHandAsHost ──────────────────────────▶ VOIDED_HAND   (guard pending, F-04)
+live phase ── requestVoid / consentToVoid, once unanimous ──▶ VOIDED_HAND
 ```
 
 **Who acts in each phase**
@@ -199,7 +218,7 @@ any phase ── voidCurrentHandAsHost ─────────────�
 | Phase | Actor | Human input | AI input |
 | --- | --- | --- | --- |
 | `BIDDING` | `currentTurn` seat | Bid or Pass via bidding panel | `AiPlayerPolicy.chooseBid` |
-| `SELECT_TRUMP` | declarer | Suit (+ direction) panel | `chooseTrumpAndDirection` |
+| `SELECT_TRUMP` | declarer | Suit panel; declared direction shown read-only | `chooseTrumpSuit` |
 | `KITTY_DISCARD` | declarer | Toggle 6 cards → Confirm | `chooseSixDiscards` |
 | `PLAYING_TRICK` | `currentTurn` seat | Select → Preview → Commit | `chooseCardToPlay` |
 | `TRICK_COMPLETE` | rules service | Optional "collect now" tap | Auto-advance after a pause |
@@ -238,22 +257,19 @@ optional coach hint computed from the local hand only.
 `BidWhistRulesEngineTest.kt` checks that South's view and West's observation
 share no card ids and that South sees no kitty ids before winning the bid.
 
-### 4.2 Seed exposure — `SPECIFIED` (currently violated, F-01)
+### 4.2 Seed exposure — `SHIPPED` (resolved F-01)
 
-`SeatView.seed` and the first audit event's `detail` string both carry the
-shuffle seed. Because the shuffle is `createStandardDeck().shuffled(Random(seed))`
-with fixed deal offsets, **any client holding the seed can reconstruct every
-hand and the kitty** (verified by probe; see F-01). Acceptable in a single-
-device Android build; disqualifying for networked VR.
+The shuffle is `createStandardDeck().shuffled(Random(seed))` with fixed deal
+offsets, so **any client holding the seed can reconstruct every hand and the
+kitty**. The seed therefore lives only in `AuthoritativeState`:
 
-Requirements:
-
-- The seed is never included in any projection or any caption/audit string
-  delivered during a hand.
-- After `HAND_COMPLETE`/`MATCH_COMPLETE`, the service *may* publish a commitment
-  (e.g. SHA-256 of `seed || handNumber`) that was announced at deal time, so
-  players can verify fairness post-hoc without pre-hoc leakage. (`OPEN`, D-05.)
-- Replay files for testing carry the seed; production projections do not.
+- `SeatView` has no seed property; the deal audit event names deck, hand and
+  kitty sizes and the manifest version but not the seed. A test asserts no
+  caption or audit string in a fresh view contains the seed.
+- Replay files for testing carry the seed; production projections never do.
+- `SPECIFIED`: after `HAND_COMPLETE`/`MATCH_COMPLETE` the service *may* publish
+  a commitment (e.g. SHA-256 of `seed || handNumber`) announced at deal time,
+  so players can verify fairness post-hoc without pre-hoc leakage (D-05).
 
 ### 4.3 Boundary rules for every future surface
 
@@ -289,16 +305,15 @@ presentation voice, not an authority. The Rules Service is the only authority.
 | Control room music / announcements | enforces policy | ✖ | ✔ | ✖ |
 | Bid, name trump, discard, play own cards | validates | ✖ | own seat only | ✔ |
 
-Status today: pause-between-hands, tone, AI presets, and the void *mechanics*
-are `SHIPPED` in `TableHostSheet.kt` / `MainViewModel.kt`. Two gaps are
-`SPECIFIED`:
+Status today: pause-between-hands, tone, AI presets, and the consent-gated
+void are `SHIPPED` in `TableHostSheet.kt` / `MainViewModel.kt` /
+`BidWhistRulesEngine.kt`. The engine records requester, consents and reason and
+refuses voids outside a live hand (F-04). One gap remains `SPECIFIED`:
 
-- **Host authority must be enforced by the service, not the UI.** Today
-  `MainViewModel` checks `roleMode` before calling `voidCurrentHandAsHost`; the
-  engine itself accepts the call from anyone. In VR/multiplayer the service
-  verifies the caller's role.
-- **Unanimous consent is recorded** (who consented, when) before the void
-  transition is applied (F-04).
+- **Host authority must be enforced by the service, not the UI.** The engine
+  has no notion of who is host; `MainViewModel` checks `roleMode` before
+  calling `requestVoid`. In VR/multiplayer the match service verifies the
+  caller's role before forwarding host intents (pause, reseat, request void).
 
 ---
 
@@ -377,8 +392,9 @@ off by experienced players for one-step commit; the preview still flashes.
 
 ### 7.4 Trump and kitty
 
-- `SELECT_TRUMP`: four suit tiles; direction tiles shown but locked to the
-  auction's declared direction once D-01 is accepted.
+- `SELECT_TRUMP`: four suit tiles only; the declared direction is shown as
+  read-only text ("Downtown — declared in your bid"). There is no No-Trump
+  tile here because a No-Trump winner never enters this step.
 - `KITTY_DISCARD`: the six kitty cards slide into the fan with a distinct
   edge mark; the player selects six to lay face-down into the tray. The tray
   shows "6 of 6" and refuses a seventh (`toggleKittyDiscardCard` behaviour).
@@ -501,9 +517,9 @@ that is never authoritative.
 | --- | --- |
 | `createStandardDeck`, `dealHand`, `startNewMatch`, `dealNextHand` | deck and deal |
 | `isBidValid`, `isBidHigher`, `submitBid` | auction |
-| `selectTrumpAndPickUpKitty`, `submitKittyDiscard` | contract and kitty |
-| `effectiveSuit`, `legalCards`, `rankStrength`, `cardStrength`, `determineTrickWinner`, `playCard`, `collectCompletedTrick` | play and scoring |
-| `voidCurrentHandAsHost` | audited void |
+| `selectTrumpAndPickUpKitty(state, seat, trumpSuit)`, `submitKittyDiscard` | contract (direction bound to the bid) and kitty |
+| `effectiveSuit`, `governingSuit`, `legalCards`, `rankStrength`, `cardStrength`, `determineTrickWinner`, `playCard`, `collectCompletedTrick` | play and scoring |
+| `canRequestVoid`, `requestVoid`, `consentToVoid`, `withdrawVoidRequest` | audited unanimous void |
 | `sortHand` | presentation ordering (jokers, trump, then ♠ ♥ ♣ ♦) |
 | `projectSeatView`, `projectAiObservation` | information boundary |
 
@@ -574,26 +590,31 @@ oral history, or archival element needs a documented source and permission
 
 ## 13. Testing and acceptance gates
 
-### 13.1 Deterministic tests — `SHIPPED` (6) / `SPECIFIED` (rest)
+### 13.1 Deterministic tests — `SHIPPED` (26) / `SPECIFIED` (rest)
 
-Existing (`BidWhistRulesEngineTest.kt`): 54 unique cards across seats and
-kitty; forced dealer bid; Downtown ranking with jokers in trump; jokers cannot
-*beat* a suit card in No-Trump; follow-suit restriction; seat/AI boundary
-isolation.
+Shipped in `BidWhistRulesEngineTest.kt` (all pass on a plain JVM):
 
-Required before VR acceptance:
+| Area | Shipped test |
+| --- | --- |
+| Deal | 54 unique cards across four seats and kitty |
+| Auction | Forced dealer bid when three pass |
+| Ranking | Downtown A·2…K with jokers top in trump; jokers cannot beat a suited card in NT |
+| Follow suit | Restriction when the led suit is held |
+| Boundary | Seat view and AI observation share no cards; kitty hidden before the bid; **no seed in any projection string across consecutive hands, and `SeatView` has no seed field** (F-01) |
+| Contract | Direction taken from the winning bid for Uptown and Downtown; legacy direction argument cannot override it; suit-bid winner cannot declare No-Trump; NT winner never enters `SELECT_TRUMP`; AI names a suit in its declared direction (F-03) |
+| Jokers in NT | Led joker loses to the first suited card, even the lowest; both jokers lose; second player unconstrained, later players must follow the governing suit; `playCard` enforces it; AI follows it; trump contracts unchanged (F-02) |
+| Void | Refused once the hand is complete and in `MATCH_COMPLETE`/`VOIDED_HAND`/`IDLE`; pending until South consents; audit records requester, consents, reason; scores unchanged and contract preserved; consent without a request refused; duplicate refused; withdraw clears (F-04, F-05) |
+| Whole hand | 150 AI-only hands terminate with 13 books, 48 unique cards, contract bound to the bid, contiguous audit sequence; 120 forced-NT hands never let a joker win a book |
+
+Still required before VR acceptance:
 
 | Area | Test |
 | --- | --- |
 | Auction | NT outranks suit at equal level; suit does not outrank NT; levels outside 4–7 refused; out-of-turn refused |
-| Contract | Declared direction/NT are binding at `SELECT_TRUMP` (after D-01) |
 | Kitty | Exactly 6 discards; discards never appear in any projection; kitty book credited once |
-| Jokers | Led joker in NT loses to first non-joker (after D-02); legal follow after a NT joker lead |
 | Scoring | Made/set for every level; NT doubling; Boston only on 7; game ends at 7; no negative scores |
-| Void | Refused without recorded unanimous consent; audit entry present; no points move |
-| Boundary | No projection contains `seed`; no caption contains the seed; AI observation never contains another seat's card |
 | Replay | Golden audit logs identical across Kotlin and C# engines for ≥ 1 000 seeds |
-| Property | For 10 000 random seeds with random legal actions: no duplicate card, no impossible count, no out-of-turn transition, termination within 60 transitions |
+| Property | For 10 000 random seeds with random legal actions: no duplicate card, no impossible count, no out-of-turn transition, contiguous audit sequence numbers, termination within 60 transitions |
 
 ### 13.2 Human evidence
 
@@ -621,22 +642,21 @@ Required before VR acceptance:
 
 ## 14. Engine findings register
 
-Found by probe tests run against the engine on 2026-11-20 (JVM, Kotlin 2.2.21,
-all six existing tests passing). Each is a difference between the declared
-rules/boundaries and the code. None is fixed in this Codex commit.
+Found by probe tests run against the engine on 2026-11-20 (JVM, Kotlin 2.2.21).
+Each was a difference between the declared rules/boundaries and the code.
 
-| ID | Severity | Finding | Evidence | Fix direction |
-| --- | --- | --- | --- | --- |
-| **F-01** | Critical for VR/multiplayer | `SeatView.seed` and the deal audit event (`"… seed #<n> …"`) expose the shuffle seed; with it the West hand and kitty were reconstructed exactly. | Probe: `createStandardDeck().shuffled(Random(view.seed))` reproduced `state.hands[WEST]` and `state.kitty`. | Remove `seed` from `SeatView`; strip it from `dealHand()`'s audit detail; keep it in `AuthoritativeState` and test replays only. Optionally publish a hash commitment (D-05). |
-| **F-02** | Rules conformance | In No-Trump, a *led* joker wins the book: all cards score 0 and `maxBy` returns the first. The manifest says jokers cannot win tricks in NT. A joker lead also leaves `ledSuit == null`, so any card may follow. | Probe: trick LJ, A♣, K♣, A♥ under NT → winner South (the joker). | In `determineTrickWinner`, when the led card has no effective suit, treat the first non-joker as setting the suit, or score jokers below every other card explicitly. Decide D-02 on whether NT joker leads are legal at all. |
-| **F-03** | Rules conformance / exploit | `selectTrumpAndPickUpKitty` accepts any `direction` and `trumpSuit = null`, so a declarer who won with "4 Uptown ♠-style suit bid" can convert to "4 Downtown No-Trump", changing both the ranking the table bid against and the point multiplier. | Probe: won with `Bid(4, isNoTrump=false, UPTOWN)`, contract became `4 Downtown · No-Trump`. | Carry `direction` and `isNoTrump` from the winning `BidAction.Bid` into the contract; `SELECT_TRUMP` accepts only a non-null suit. Lock the direction tiles in `SouthTrumpSelectionControls`. Pending D-01. |
-| **F-04** | Role boundary | `voidCurrentHandAsHost` has no phase guard and no consent record; the role check lives only in `MainViewModel`. | Probe: void accepted in `BIDDING` with no consent data. | Add a `VoidRequest` with per-seat consents to the state; the engine applies the void only when all human seats have consented and records them in the audit event. Service-side role verification for VR. |
-| F-05 | Minor | `voidCurrentHandAsHost` fabricates a placeholder `Contract(dealer, 4, null, UPTOWN)` when no contract exists, and `pointsAwardedTo = US` on a voided hand. | Code read. | Make `HandOutcome.contract` and `pointsAwardedTo` nullable for voided hands. |
-| F-06 | Hygiene | `.gradle/` build state (≈1.2 MB of binaries) is committed although `.gitignore` targets build output. | `git ls-files .gradle`. | Add `.gradle/` to `.gitignore` and remove it from the index. |
+| ID | Severity | Status | Finding | Evidence at discovery | Resolution |
+| --- | --- | --- | --- | --- | --- |
+| **F-01** | Critical for VR/multiplayer | **Fixed** | `SeatView.seed` and the deal audit event (`"… seed #<n> …"`) exposed the shuffle seed; with it the West hand and kitty were reconstructed exactly. | `createStandardDeck().shuffled(Random(view.seed))` reproduced `state.hands[WEST]` and `state.kitty`. | `seed` removed from `SeatView`; audit detail names sizes and manifest only; test `seatView_neverCarriesTheShuffleSeed`. Hash commitment remains D-05. |
+| **F-02** | Rules conformance | **Fixed** (D-02) | In No-Trump a *led* joker won the book: all cards scored 0 and `maxBy` kept the first; the null led suit also let anyone play anything. | Trick LJ, A♣, K♣, A♥ under NT → winner South (the joker). | `governingSuit()` = first card with an effective suit; NT jokers score −1; `legalCards`, `determineTrickWinner` and the AI policy all use the governing suit. Tests `noTrump_ledJokerLosesToFirstSuitedCard_whichGovernsTheTrick`, `trumpContract_ledJokerIsStillTopTrump_andFollowersMustPlayTrump`, `forcedNoTrumpHands_neverLetAJokerWinABook`. |
+| **F-03** | Rules conformance / exploit | **Fixed** (D-01) | `selectTrumpAndPickUpKitty` accepted any `direction` and `trumpSuit = null`, so a declarer could convert "4 Uptown suit" into "4 Downtown No-Trump", changing the ranking the table bid against and doubling the points. | Won with `Bid(4, isNoTrump=false, UPTOWN)`; contract became `4 Downtown · No-Trump`. | Signature is now `(state, seat, trumpSuit: Suit)`; direction comes from the winning bid; NT winners are refused. AI `chooseTrumpSuit` picks a suit for the bid's direction; UI direction chips replaced by read-only text. Tests `selectTrump_usesWinningBidDirection_andOnlyNamesASuit`, `noTrumpWinner_skipsSelectTrump_andCannotEnterIt`. |
+| **F-04** | Role boundary | **Fixed** | `voidCurrentHandAsHost` had no phase guard and no consent record; the role check lived only in `MainViewModel`. | Void accepted in `BIDDING` with no consent data. | `VoidRequest` in state; `requestVoid` / `consentToVoid` / `withdrawVoidRequest`; applied only when unanimous among human seats; refused outside live phases; audit records requester, consents, reason. Tests `void_*`. Service-side *role* verification remains `SPECIFIED` (Chapter 5). |
+| F-05 | Minor | **Fixed** | The void outcome fabricated a placeholder `Contract(dealer, 4, null, UPTOWN)` when no contract existed, and set `pointsAwardedTo = US` on a voided hand. | Code read. | `HandOutcome.contract` and `pointsAwardedTo` are nullable; a voided outcome carries the agreed contract (or none) and the `VoidRequest`. UI renders "No contract" and no award. |
+| F-06 | Hygiene | **Fixed** | `.gradle/` build state (≈1.2 MB of binaries) was committed although `.gitignore` targets build output. | `git ls-files .gradle`. | `.gradle/` added to `.gitignore` and removed from the index. |
 
-Positive probe results worth keeping: 300 AI-vs-AI hands terminated with 13
-books and 48 unique played cards each; the six shipped tests pass on a plain
-JVM with no Android SDK, confirming the engine is genuinely platform-free.
+Positive results worth keeping: AI-vs-AI hands terminate with 13 books and 48
+unique played cards each; the whole suite runs on a plain JVM with no Android
+SDK, confirming the engine is genuinely platform-free.
 
 ---
 
@@ -648,8 +668,8 @@ recommendation.
 
 | ID | Decision | Recommendation |
 | --- | --- | --- |
-| D-01 | Are direction and Trump/No-Trump binding from the auction, with only the suit named afterwards? | **Yes.** It matches the declared bid the other three seats competed against. Rules council to confirm. |
-| D-02 | May a joker be led in No-Trump, and what does it do? | **Lead allowed, joker loses to any non-joker; first non-joker sets the suit.** Rules council to confirm against the house tables they know. |
+| D-01 | Are direction and Trump/No-Trump binding from the auction, with only the suit named afterwards? | **Decided yes** (owner, 2026-11-20); implemented, see F-03. Rules council may still confirm against the house tables they know. |
+| D-02 | May a joker be led in No-Trump, and what does it do? | **Decided yes** (owner, 2026-11-20): lead allowed, joker loses to any suited card, first suited card sets the suit; implemented, see F-02. |
 | D-03 | Which experienced-player council approves `strict-table-v1.0.0`? | Convene a compensated council of 5–7 players across regions and family traditions, separate from the usability panel. |
 | D-04 | Unity/OpenXR as provisional toolchain, with Kotlin engine as reference and C# port under golden replay? | **Yes**, pending a compatibility spike at G1. |
 | D-05 | Publish a deal commitment hash for post-hand fairness verification? | **Yes, after F-01 is fixed**; cheap and legible to players who ask "was that deal fair?" |
