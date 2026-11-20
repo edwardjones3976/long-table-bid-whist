@@ -139,13 +139,26 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
   let lookUnsent = false;
   // Also kept here: where storage is blocked the token must still survive a reconnect.
   let held = token.read();
+  // The member id this tab just left a room as. Snapshots the server had already queued for that membership can still
+  // arrive after the local leave; they are stale and are dropped so they cannot bring the room back on screen. A room
+  // joined afterwards comes with a fresh member id, so its snapshots are followed whatever order the packets arrive in.
+  let leftAs: string | null = null;
 
   function set(partial: Partial<NetState>): void {
     state = { ...state, ...partial };
     for (const listener of listeners) listener();
   }
 
+  /**
+   * True for table, pose and gesture events that belong to the membership just left: between the local leave and the
+   * first snapshot of a room joined afterwards, nothing the server says about a table or other members is for this tab.
+   */
+  function stale(): boolean {
+    return leftAs !== null && state.room === null;
+  }
+
   function leaveLocally(message: string | null): void {
+    leftAs = state.me ?? leftAs;
     held = null;
     token.write(null);
     set({ room: null, table: null, poses: {}, gestures: [], me: null, lastError: message });
@@ -173,10 +186,12 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     });
     opened.on("connect_error", () => set({ connection: everOnline ? "reconnecting" : "offline" }));
     opened.on("room", (room) => {
+      if (leftAs !== null && room.you === leftAs) return;
       const atTable = room.members.find((member) => member.id === room.you)?.tableId != null;
       set({ room, roomAt: Date.now(), me: room.you, ...(atTable ? {} : { table: null }) });
     });
     opened.on("table", (table) => {
+      if (stale()) return;
       // A strike is told once, as it is given: not on a table's first snapshot (after a reload), nor when a new match clears it.
       const seat = table.you;
       const before = seat !== null && state.table?.tableId === table.tableId ? (state.table.strikes?.[seat] ?? 0) : Infinity;
@@ -184,13 +199,20 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
       const notice = `Your time ran out, so a bot played your turn. Strike ${strikes} of ${MAX_STRIKES}: at ${MAX_STRIKES} a bot takes your seat.`;
       set({ table, tableAt: Date.now(), ...(strikes > before ? { lastError: notice } : {}) });
     });
-    opened.on("table:left", ({ reason }) => set({ table: null, ...(reason ? { lastError: reason } : {}) }));
-    opened.on("poses", (poses) => set({ poses }));
+    opened.on("table:left", ({ reason }) => {
+      if (stale()) return;
+      set({ table: null, ...(reason ? { lastError: reason } : {}) });
+    });
+    opened.on("poses", (poses) => {
+      if (stale()) return;
+      set({ poses });
+    });
     opened.on("look", ({ memberId, look }) => {
       const room = state.room;
       if (room) set({ room: { ...room, members: room.members.map((member) => (member.id === memberId ? { ...member, look } : member)) } });
     });
     opened.on("gesture", ({ memberId, kind }) => {
+      if (stale()) return;
       const at = Date.now();
       set({ gestures: [...state.gestures.filter((gesture) => at - gesture.at < GESTURE_KEEP_MS), { memberId, kind, at }] });
     });
@@ -239,7 +261,13 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
   }
 
   function entered(reply: Reply<Joined>): Reply<Joined> {
+    // The server sends the room's first snapshot before it acknowledges the create or join, so Leave can be pressed
+    // while that answer is still on its way. A late answer for a membership this tab has already left must not bring
+    // the token or the member id back: the room would reopen from queued snapshots, or resume on a reconnect.
+    if (reply.ok && reply.memberId === leftAs) return reply;
     if (reply.ok) {
+      // A fresh membership: whatever was left before is history, and its id can no longer mark anything stale.
+      leftAs = null;
       lookUnsent = false;
       held = reply.token;
       token.write(reply.token);
@@ -260,13 +288,11 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     createRoom: async (name: string) => entered(await request("room:create", { name, look: myLook.get() })),
     joinRoom: async (code: string, name: string) => entered(await request("room:join", { code, name, look: myLook.get() })),
     async leaveRoom(): Promise<Reply> {
-      // Forgotten before asking: a reconnect while the answer is awaited must not resume the room.
-      held = null;
-      token.write(null);
-      const reply = await ask("room:leave", {});
-      // Whatever the server said, this tab is done with the room.
+      // Gone from this tab at once: the entry page (and the end of a VR session) must not wait for the server, which
+      // can take seconds to answer or be reconnecting. Forgetting the token first also means a reconnect while the
+      // answer is awaited does not resume the room. Whatever the server then says, this tab is done with the room.
       leaveLocally(null);
-      return reply;
+      return ask("room:leave", {});
     },
     sit: (tableId: TableId, role: "player" | "host", seat?: Seat) =>
       request("table:sit", seat === undefined ? { tableId, role } : { tableId, role, seat }),

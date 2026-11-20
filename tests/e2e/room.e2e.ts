@@ -73,6 +73,39 @@ test("reconnect: a seated player reloads mid-game and is back in the same seat w
   expect(problems).toEqual([]);
 });
 
+test("leave room: the entry page comes back at once, and the server still hands the seat to a bot", async ({ browser }) => {
+  const ann = await enter(browser, "Ann");
+  const bea = (await enter(browser, "Bea", ann.code)).page;
+  for (const [seat, page] of [ann.page, bea].entries()) {
+    await page.getByTestId("table-bid-whist-2").click();
+    await page.getByTestId(`sit-${seat}`).click();
+    await page.getByTestId("ready").click();
+  }
+  await ann.page.getByTestId("start").click();
+  await expect(bea.locator('[data-testid="table-panel"] .hand button')).toHaveCount(12);
+
+  // The room is gone from Bea's screen as the button is pressed, without waiting on the server's answer.
+  await openMenu(bea);
+  await bea.getByTestId("leave-room").click();
+  expect(await bea.evaluate(() => window.__mansion.getState().room)).toBeNull();
+  await expect(bea.getByTestId("entry-create")).toBeVisible();
+  await expect(bea.getByTestId("hud")).toHaveCount(0);
+
+  // The server heard the leave all the same: Ann's room has one member, and a bot took Bea's seat.
+  await openMenu(ann.page);
+  await expect(ann.page.getByTestId("members")).toHaveText("In the room (1): Ann");
+  await expect(ann.page.getByTestId("seat-1")).toContainText("Bot 2");
+
+  // Bea can come straight back in, as a new member.
+  await bea.getByTestId("entry-name").fill("Bea");
+  await bea.getByTestId("entry-code").fill(ann.code);
+  await bea.getByTestId("entry-join").click();
+  await expect(bea.getByTestId("hud")).toBeVisible();
+  await expect(ann.page.getByTestId("members")).toHaveText("In the room (2): Ann, Bea");
+  await closeAll([ann.page, bea]);
+  expect(problems).toEqual([]);
+});
+
 test("leave: a bot takes over a seat left mid-game, and another table in the room is untouched", async ({ browser }) => {
   const ann = await enter(browser, "Ann");
   const bea = (await enter(browser, "Bea", ann.code)).page;
