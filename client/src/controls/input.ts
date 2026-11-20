@@ -68,7 +68,7 @@ export const desk = {
   three: null as (() => RootState) | null,
   /** Browser tests only: where the body is and what it is doing; set by the rig. */
   rig: null as (() => RigReport) | null,
-  /** data-testid of the DOM controls the gamepad bumpers step through; set by the rig. */
+  /** data-testid of the DOM controls the gamepad bumpers step through; set by App.tsx PadFocus, with or without the 3D view. */
   focusIds: [] as readonly string[],
 };
 

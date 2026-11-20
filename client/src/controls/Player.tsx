@@ -36,7 +36,6 @@ import type { Pose } from "../../../shared/protocol";
 import { lookDraft } from "../avatar/draft";
 import { bodyYaw, poseToSend, type Tracked } from "../avatar/pose";
 import { local } from "../state/local";
-import { useActiveTableId, useTableDescription } from "../state/table";
 import { makeTextTexture, releaseTexture, textAspect } from "../ui/text";
 import { ground, STEP_UP } from "../world/ground";
 import { EYE_HEIGHT_SEATED, EYE_HEIGHT_STANDING, spawn } from "../world/layout";
@@ -359,17 +358,6 @@ export function Player({ children }: { children?: ReactNode }) {
   s.current ??= makeRig();
   const props = useMemo(makeProps, []);
   useEffect(() => props.dispose, [props]);
-
-  // The gamepad bumpers step through my selectable cards, then the table's enabled buttons, in the DOM panel.
-  const description = useTableDescription(useActiveTableId());
-  useEffect(() => {
-    desk.focusIds = description
-      ? [
-          ...description.hand.filter((card) => card.selectable).map((card) => `card-${card.card.id}`),
-          ...description.buttons.filter((button) => !button.disabled).map((button) => button.id),
-        ]
-      : [];
-  }, [description]);
 
   useEffect(() => {
     desk.three = get;

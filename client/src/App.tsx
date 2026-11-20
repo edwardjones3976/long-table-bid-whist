@@ -73,8 +73,9 @@ function TurnCues(): null {
 
 /**
  * The gamepad in the DOM panel, kept outside the 3D view so it still works when that cannot start: the bumpers step
- * through my selectable cards, then the table's enabled buttons. The view reads the pad each frame (controls/Player.tsx);
- * without it, `poll` does the same here. Its own component for the same reason as TurnCues.
+ * through my selectable cards, then the table's enabled buttons. This is the only place that list is kept. The view reads
+ * the pad each frame (controls/Player.tsx); without it, `poll` does the same here. Its own component for the same reason
+ * as TurnCues.
  */
 function PadFocus({ poll }: { poll: boolean }): null {
   const description = useTableDescription(useActiveTableId());
