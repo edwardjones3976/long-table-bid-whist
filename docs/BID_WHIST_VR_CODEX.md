@@ -1,8 +1,10 @@
 # The Long Table — Bid Whist VR Codex
 
-**Version:** codex-v0.4.0 · **Date:** 2026-11-20 · **Rules preset:** `strict-table-v1.0.0`
+**Version:** codex-v0.5.0 · **Date:** 2026-11-20 · **Rules preset:** `strict-table-v1.0.0`
 
-> **v0.4.0:** owner decided D-04 (yes); the Unity/OpenXR toolchain is pinned in
+> **v0.5.0:** owner decided D-03; the Rules Council's composition, mandate and
+> process are fixed and its brief is drafted in
+> [`RULES_COUNCIL_BRIEF.md`](RULES_COUNCIL_BRIEF.md). **v0.4.0:** owner decided D-04 (yes); the Unity/OpenXR toolchain is pinned in
 > [`VR_TOOLCHAIN.md`](VR_TOOLCHAIN.md) from verified official sources. **v0.3.0:** owner decided D-05 (yes); the deal-commitment hash ships
 > (`DealCommitment` / `DealReveal`, `DealCommitmentHasher`), live seeds come from
 > `SecureRandom`. **v0.2.0:** owner decided D-01 and D-02 (yes to both); findings F-01–F-06 fixed
@@ -659,8 +661,9 @@ Still required before VR acceptance:
 
 ### 13.2 Human evidence
 
-- Experienced-player council confirms the declared manifest matches the table
-  they recognise.
+- The Rules Council (D-03, [`RULES_COUNCIL_BRIEF.md`](RULES_COUNCIL_BRIEF.md))
+  confirms the declared manifest matches the table they recognise; its
+  ACCEPT / CHANGE / VARIANT rulings are recorded by name.
 - Usability sessions cover every age band 30–70, headset novices and veterans,
   glasses users, and participants with mobility, dexterity, hearing, or vision
   considerations. Measure bid, play, mistake recovery, captions, one-handed
@@ -716,7 +719,7 @@ recommendation.
 | --- | --- | --- |
 | D-01 | Are direction and Trump/No-Trump binding from the auction, with only the suit named afterwards? | **Decided yes** (owner, 2026-11-20); implemented, see F-03. Rules council may still confirm against the house tables they know. |
 | D-02 | May a joker be led in No-Trump, and what does it do? | **Decided yes** (owner, 2026-11-20): lead allowed, joker loses to any suited card, first suited card sets the suit; implemented, see F-02. |
-| D-03 | Which experienced-player council approves `strict-table-v1.0.0`? | Convene a compensated council of 5–7 players across regions and family traditions, separate from the usability panel. |
+| D-03 | Which experienced-player council approves `strict-table-v1.0.0`? | **Decided** (owner, 2026-11-20): a compensated, independent **Rules Council** of 5–7 players with 10+ years of regular play from different cities and family traditions, separate from the usability panel and the cultural/art advisors; three sessions (response forms as the independent positions → prepared hands on paper or phone → ruling) plus a written confirmation round; majority of members present for CHANGE with a five-member quorum, abstentions recorded, dissent in the member's own words; outcomes ACCEPT / CHANGE (→ `strict-table-v1.1.0`, "second edition" to members) / VARIANT (→ declared preset; a majority preference for the other tradition is a CHANGE). The owner recruits and pays but does not speak in deliberation; the facilitator is the single channel for rules questions. Brief: [`RULES_COUNCIL_BRIEF.md`](RULES_COUNCIL_BRIEF.md). |
 | D-04 | Unity/OpenXR as the toolchain, with Kotlin engine as reference and C# port under golden replay? | **Decided yes** (owner, 2026-11-20); versions pinned in [`VR_TOOLCHAIN.md`](VR_TOOLCHAIN.md) from verified official sources (§10.4). The G1 spike validates the pins; it no longer chooses them. |
 | D-05 | Publish a deal commitment hash for post-hand fairness verification? | **Decided yes** (owner, 2026-11-20); implemented, see §4.2. Nonce-salted SHA-256, revealed only after scoring, never for voided hands. |
 | D-06 | Is external venue music accepted for the MVP, with in-room transmission deferred? | **Yes.** |

@@ -20,7 +20,7 @@ An authentic, accessible four-seat **Bid Whist** Android application built with 
 
 ## VR Codex
 
-[`docs/BID_WHIST_VR_CODEX.md`](docs/BID_WHIST_VR_CODEX.md) is the reference for carrying the table to a seated VR/MR experience: the enforced Strict Table rules, state machine, information boundaries, role permissions, VR interaction spec, accessibility gates, rights policy, acceptance tests, a register of engine findings, and the open decisions. [`docs/VR_TOOLCHAIN.md`](docs/VR_TOOLCHAIN.md) pins the Unity 6.3 LTS / OpenXR / Meta Quest toolchain with verified sources and the compatibility-spike checklist.
+[`docs/BID_WHIST_VR_CODEX.md`](docs/BID_WHIST_VR_CODEX.md) is the reference for carrying the table to a seated VR/MR experience: the enforced Strict Table rules, state machine, information boundaries, role permissions, VR interaction spec, accessibility gates, rights policy, acceptance tests, a register of engine findings, and the open decisions. [`docs/VR_TOOLCHAIN.md`](docs/VR_TOOLCHAIN.md) pins the Unity 6.3 LTS / OpenXR / Meta Quest toolchain with verified sources and the compatibility-spike checklist. [`docs/RULES_COUNCIL_BRIEF.md`](docs/RULES_COUNCIL_BRIEF.md) is the brief for the experienced-player Rules Council that reviews the Strict Table rules.
 
 ## Build & Test
 
