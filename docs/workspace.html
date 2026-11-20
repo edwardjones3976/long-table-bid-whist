@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>The workspace: one repository, many writers</title>
+<style>
+  :root { --bg:#fbfaf7; --fg:#22201c; --muted:#5f5a50; --line:#d9d3c5; --card:#f1ede3; --accent:#8a3b22; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#17161a; --fg:#ece8df; --muted:#a8a294; --line:#3a3740; --card:#232128; --accent:#e8a27c; }
+  }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui,"Segoe UI",Roboto,Arial,sans-serif; }
+  main { max-width:56rem; margin:0 auto; padding:1.5rem 1rem 4rem; }
+  h1 { font-size:1.8rem; margin:.2rem 0 .6rem; }
+  h2 { font-size:1.3rem; margin:2.2rem 0 .5rem; padding-top:.6rem; border-top:1px solid var(--line); }
+  h3 { font-size:1.05rem; margin:1.3rem 0 .3rem; }
+  a { color:var(--accent); }
+  nav { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:.6rem 1rem; }
+  nav a { margin-right:.9rem; white-space:nowrap; }
+  pre, code { font-family:ui-monospace,Consolas,Menlo,monospace; font-size:.92em; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:.7rem .9rem; overflow-x:auto; }
+  code { background:var(--card); padding:.05rem .3rem; border-radius:4px; }
+  pre code { background:none; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:.6rem 0 1rem; font-size:.95rem; }
+  th, td { border:1px solid var(--line); padding:.35rem .55rem; text-align:left; vertical-align:top; }
+  th { background:var(--card); }
+  li { margin:.35rem 0; }
+  .wrap { overflow-x:auto; }
+  /* Paths and commands stay on one line; a table that gets too wide scrolls inside its .wrap. */
+  .paths code, .terms td:first-child { white-space:nowrap; }
+  .note { border-left:4px solid var(--accent); background:var(--card); padding:.5rem .9rem; border-radius:0 8px 8px 0; margin:.8rem 0; }
+  small, .muted { color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+<h1>The workspace: one repository, many writers</h1>
+<p class="muted">The longer guide for AI coding agents (called providers on this page) that work on this game, and for the people who direct them. The short rules are in <a href="../AGENTS.md">AGENTS.md</a>. What the app is and how it is built is in <a href="mansion-app.html">mansion-app.html</a>. If a command does something different from what this page says, trust what the command prints and tell the workspace owner.</p>
+<nav aria-label="Sections">
+  <a href="#lane">1 Lanes</a>
+  <a href="#commands">2 Commands</a>
+  <a href="#first">3 First session</a>
+  <a href="#noshell">4 Without commands</a>
+  <a href="#areas">5 Areas</a>
+  <a href="#ports">6 Ports</a>
+  <a href="#checks">7 Checks and hand-in</a>
+  <a href="#merge">8 Into the game</a>
+  <a href="#owner">9 Workspace owner</a>
+  <a href="#never">10 Never do</a>
+  <a href="#map">11 Code map</a>
+  <a href="#trouble">12 Troubleshooting</a>
+</nav>
+
+<h2 id="lane">1. What a lane is, and why</h2>
+<p>Many providers work on this game at the same time, each with its own tools. If they all wrote into one folder, one would overwrite another's files, a test would fail and nobody could tell whose change broke it, and nobody could say who wrote what. The answer here is simple: <strong>one repository, many writers, and nobody overwrites anybody</strong>. Every provider works in its own lane.</p>
+<p>A lane is a second folder of the same repository, on its own branch (git calls this a worktree). With a lane you get four things:</p>
+<div class="wrap terms"><table>
+<tr><th>You get</th><th>What it is</th></tr>
+<tr><td>A folder</td><td><code>_provider_worktrees/&lt;provider&gt;-&lt;task&gt;</code> inside the main folder. Git ignores that folder name and the main folder's test runner skips it, so your files never show up in anyone else's work.</td></tr>
+<tr><td>A branch</td><td><code>lane/&lt;provider&gt;-&lt;task&gt;</code>. Your reviewed work is committed to it before it is merged into the game.</td></tr>
+<tr><td>Areas</td><td>The folders and files you may edit. No other lane can claim them while you hold them.</td></tr>
+<tr><td>Two ports</td><td>One for your game server and one for your client, so several lanes can run the app at the same time.</td></tr>
+</table></div>
+
+<h3>Words used on this page</h3>
+<div class="wrap terms"><table>
+<tr><th>Word</th><th>Meaning</th></tr>
+<tr><td>Main folder</td><td>The repository's first checkout, where the workspace owner works. Its ports are 3000 and 5173.</td></tr>
+<tr><td>Integration branch</td><td>The branch the main folder has checked out. A new lane starts from its last commit, and finished work is merged into it.</td></tr>
+<tr><td>Workspace owner</td><td>The session that keeps the main folder. It makes lanes on request, settles who holds which area, and puts reviewed work into the game.</td></tr>
+<tr><td>Provider</td><td>An AI coding agent doing a task here.</td></tr>
+<tr><td>Area</td><td>A folder or one file that one lane has claimed, written from the top of the repository.</td></tr>
+<tr><td>Stray</td><td>A changed file that lies outside the lane's areas.</td></tr>
+<tr><td>Base</td><td>The commit a lane started from.</td></tr>
+<tr><td>Hand-in</td><td>The block of text the <code>handin</code> command prints: what you changed and whether the checks pass.</td></tr>
+</table></div>
+
+<h3>The lane's facts: <code>.lane.json</code></h3>
+<p>Each lane keeps its facts in a small file at its top, <code>.lane.json</code>. Git ignores it. The main folder has one too once the workspace owner has claimed an area there: its provider is <code>owner</code>, its task is <code>main</code>, its number is 0 and its ports are 3000 and 5173. The lane commands write this file. Do not edit it by hand.</p>
+<pre><code>{
+  "provider": "codex",
+  "task": "tonk-bot",
+  "number": 1,
+  "serverPort": 3101,
+  "clientPort": 5201,
+  "areas": ["server/games/tonk-bot.ts", "tests/server/tonk.test.ts"],
+  "base": "0123456789abcdef0123456789abcdef01234567",
+  "created": "2026-11-18T17:20:05Z"
+}</code></pre>
+<p class="muted"><code>base</code> is the commit the lane started from, and <code>created</code> is when it was made, in UTC. The values above are examples.</p>
+
+<h2 id="commands">2. The lane commands</h2>
+<p>Every command is typed as <code>npm run lane -- &lt;command&gt;</code>. Keep the two dashes: without them npm keeps options such as <code>--area</code> for itself and the tool never sees them. The tool is one file, <code>tools/lane.mjs</code>, and needs nothing but Node, npm and git. It behaves the same from cmd, Git Bash and a POSIX shell, and it works when folder names contain spaces.</p>
+<div class="wrap"><table>
+<tr><th>Command</th><th>Run it in</th><th>What it does</th></tr>
+<tr><td><code>new &lt;provider&gt; &lt;task&gt; --area &lt;path&gt; [--area &lt;path&gt; ...] [--install]</code></td><td>The main folder, or any lane</td><td>Makes a lane from the integration branch: the folder, the branch, the smallest free lane number (starting at 1) with its two ports, and <code>.lane.json</code>. With <code>--install</code> it also runs <code>npm ci</code> in the lane. It prints the lane folder, the ports and the next commands, and says plainly that work not yet committed in the main folder is not in the lane.</td></tr>
+<tr><td><code>status</code></td><td>The main folder, or any lane</td><td>Prints one block for the main folder and one for each lane: provider, task, branch, areas, ports, how many files differ from its base (committed or not, new files included), and which of those lie outside its areas.</td></tr>
+<tr><td><code>claim --area &lt;path&gt; ...</code></td><td>The lane that needs the areas (or the main folder)</td><td>Adds areas to the folder it is run in, with the same overlap check as <code>new</code>. In the main folder it creates <code>.lane.json</code> if there is none yet.</td></tr>
+<tr><td><code>release --area &lt;path&gt; ...</code></td><td>The lane that holds the areas (or the main folder)</td><td>Gives areas back, so that another lane can claim them.</td></tr>
+<tr><td><code>run &lt;typecheck|test|build|e2e|server|client&gt;</code></td><td>A lane, or the main folder</td><td>Runs the matching npm script (<code>typecheck</code>, <code>test</code>, <code>build</code>, <code>test:e2e</code>, <code>dev:server</code>, <code>dev:client</code>) with <code>PORT</code> set to that folder's server port and <code>CLIENT_PORT</code> set to its client port. You see the script's own output and get its exit code.</td></tr>
+<tr><td><code>handin [--build] [--e2e]</code></td><td>A lane only</td><td>Runs the type check and the unit tests, plus the build and the browser tests when asked. Lists the files that differ from the base, marks the strays, and prints the <code>LANE HAND-IN</code> block. It ends with a non-zero exit code when a check failed or a stray exists.</td></tr>
+</table></div>
+<p><code>new</code> refuses, and changes nothing, when the lane or its branch already exists, when no area is given, when an area does not stay inside the repository, or when an area overlaps one that another lane or the main folder holds. In the last case it names who holds it.</p>
+<p><strong>What the tool never does:</strong> it never deletes a lane, never commits, pushes or merges, and never runs PowerShell. It handles one <code>new</code> at a time, so two lanes made at the same moment cannot get the same number or the same area. For a command it does not know, it prints one line of usage.</p>
+<p><strong>Packages.</strong> The checks need the project's packages. <code>--install</code> runs <code>npm ci</code> in the lane, so the lane has its own set. Where this was measured, that took about a quarter of a minute and a little over 200 MB of disk for each lane. Without <code>--install</code>, the lane uses the packages installed in the main folder, because the lane folder is inside it. That works, but a reinstall in the main folder then disturbs your checks while it runs. You can still run <code>npm ci</code> in the lane later.</p>
+
+<h2 id="first">3. Your first session, if you can run commands</h2>
+<div class="note">If the only shell your tool has is PowerShell, you cannot run commands here (rule 6 in AGENTS.md). Use <a href="#noshell">section 4</a> instead.</div>
+<ol>
+<li><strong>Start in the main folder and change nothing there.</strong> Read <a href="../AGENTS.md">AGENTS.md</a>. Running <code>status</code> and <code>new</code> is all you do in the main folder.</li>
+<li><strong>See what is taken.</strong>
+<pre><code>npm run lane -- status</code></pre>
+It lists the main folder and every lane, with the areas each one holds.</li>
+<li><strong>Choose your names.</strong> Use lower-case letters, digits and dashes only, starting with a letter or a digit, and at most 40 characters. For the provider, use the one-word name of the product you are, such as <code>codex</code>, <code>cursor</code>, <code>gemini</code> or <code>grok</code>. For the task, use one to three short words, such as <code>tonk-bot</code> or <code>pool-lights</code>. The workspace owner later commits your work with you as the author, so use a name that says plainly who you are.</li>
+<li><strong>Choose your areas.</strong> Pick the smallest set of folders and files that covers the task, and include its tests. The <a href="#map">code map</a> shows what lives where.</li>
+<li><strong>Make the lane.</strong>
+<pre><code>npm run lane -- new codex tonk-bot --area server/games/tonk-bot.ts --area tests/server/tonk.test.ts --install</code></pre>
+If the tool refuses, it changes nothing and says why:
+<div class="wrap"><table>
+<tr><th>It says</th><th>What to do</th></tr>
+<tr><td>The lane or its branch already exists</td><td>Choose another task name. If it is your own lane from an earlier session, go into it and carry on.</td></tr>
+<tr><td>No area was given</td><td>Add at least one <code>--area</code>.</td></tr>
+<tr><td>An area does not stay inside the repository</td><td>Write the path from the top of the repository with forward slashes. Do not use <code>..</code>, a drive letter or a leading slash.</td></tr>
+<tr><td>An area overlaps one that is already held</td><td>The message names who holds it. Choose a narrower area, or ask the workspace owner. See <a href="#areas">section 5</a>.</td></tr>
+<tr><td>A name or an area is not written the allowed way</td><td>Names: lower-case letters, digits and dashes. Areas: a plain path with forward slashes and no wildcards.</td></tr>
+</table></div></li>
+<li><strong>Read what it printed, then go into the lane folder.</strong> It prints the lane folder, your two ports and the next commands, like this:
+<pre><code>Created lane codex-tonk-bot.
+  folder: &lt;main folder&gt;/_provider_worktrees/codex-tonk-bot
+  branch: lane/codex-tonk-bot, started from &lt;integration branch&gt; at 0123456789ab
+  areas:  server/games/tonk-bot.ts, tests/server/tonk.test.ts
+  ports:  server 3101, client 5201
+Uncommitted work in the main folder is NOT in the lane: the lane starts from the last commit on &lt;integration branch&gt;.
+Next:
+  cd "&lt;main folder&gt;/_provider_worktrees/codex-tonk-bot"
+  npm run lane -- status
+  npm run lane -- run test
+  npm run lane -- handin</code></pre>
+With <code>--install</code>, npm's own lines appear in the middle, before <code>Next:</code>. From here on, every command and every edit happens in the lane folder. If your tool starts each command in the main folder again, begin every command with <code>cd "&lt;your lane folder&gt;" &amp;&amp;</code>. Your file tools need the same care: read and save files by their full path inside your lane folder. A path such as <code>server/games/tonk-bot.ts</code>, given from the folder you were started in, is the main folder's file. If <code>handin</code> does not list the files you changed, your edits went to the wrong folder: stop and tell the workspace owner. The tool works out where it is from the folder it is started in: started in the main folder, <code>run server</code> would use the main folder's ports.</li>
+<li><strong>Run the checks once before you change anything.</strong>
+<pre><code>npm run lane -- run typecheck
+npm run lane -- run test</code></pre>
+They should pass. If one fails now, it is not your change. Run it once more: a test that runs out of time on a busy machine usually passes the next time. If it still fails, copy the output, tell the workspace owner, and ask whether to go on.</li>
+<li><strong>Do the work.</strong> Edit only inside your areas. Now and then run <code>npm run lane -- status</code>: it shows your changed files and any that lie outside your areas. Your lane's block looks like this, and <code>outside areas</code> should stay at 0:
+<pre><code>LANE codex-tonk-bot
+  folder:        &lt;main folder&gt;/_provider_worktrees/codex-tonk-bot
+  provider:      codex
+  task:          tonk-bot
+  branch:        lane/codex-tonk-bot
+  areas:         server/games/tonk-bot.ts, tests/server/tonk.test.ts
+  ports:         server 3101, client 5201
+  changed files: 2 (compared with base 0123456789ab; uncommitted and untracked included)
+  outside areas: 0</code></pre></li>
+<li><strong>See it run, if your change shows in the browser.</strong> Start two commands that keep running. Neither one returns, so give each its own terminal, or start it in the background if your tool has no terminal:
+<pre><code>npm run lane -- run server
+npm run lane -- run client</code></pre>
+Open <code>http://localhost:&lt;your client port&gt;</code>. Stop both when you are done: a server left running keeps its port busy. Then check that they are really gone, as shown under <a href="#stop">Stopping your servers</a>.</li>
+<li><strong>Hand in.</strong>
+<pre><code>npm run lane -- handin</code></pre>
+Add <code>--build</code> or <code>--e2e</code> when you were asked to. Fix what it reports and run it again, until every check says PASS and there are no strays. If a check keeps failing for a reason that is not your change, do not go round again: see <a href="#trouble">Troubleshooting</a>. Paste the whole block, from the line <code>LANE HAND-IN</code> to the end of the output, unchanged, where you were asked to report.</li>
+<li><strong>Stop.</strong> Do not edit the lane while it is being reviewed. A review counts only for the exact diff it looked at. If you must change something, say so, make the change, and hand in again.</li>
+</ol>
+<p><strong>Already in a lane, or coming back in a later session?</strong> If the folder you were started in is under <code>_provider_worktrees/</code>, it is your lane: begin at step 7. If you come back later, your lane and its files are still there: find it with <code>npm run lane -- status</code>, go into its folder and carry on. Do not make a second lane for the same task.</p>
+
+<h2 id="noshell">4. Your first session, if you cannot run commands</h2>
+<p>Some tools can read and write files but cannot run a command. That is fine: the workspace owner runs the commands for you.</p>
+<ol>
+<li><strong>Read</strong> <a href="../AGENTS.md">AGENTS.md</a> and this page.</li>
+<li><strong>Ask the workspace owner for a lane.</strong> Give four things: your provider name, a task name, the areas you need, and whether the task needs the browser tests. For example:
+<pre><code>Please make a lane for me.
+provider: gemini
+task: pool-lights
+areas: client/src/world/Parts.tsx, tests/client/world.test.ts
+browser tests: no</code></pre></li>
+<li><strong>Wait for the answer.</strong> The workspace owner makes the lane and tells you its folder, its areas and its ports.</li>
+<li><strong>Work in that folder only.</strong> Open, create and change files only under the lane folder, and only inside your areas. Write LF line endings.</li>
+<li><strong>Ask for the checks.</strong> When your change is ready, ask the workspace owner to run the hand-in in your lane. You cannot run it, so do not guess its result: never write a hand-in block yourself, and never say a check passed unless you were shown its output.</li>
+<li><strong>Fix and ask again.</strong> The workspace owner posts the block. If a check failed or a file is a stray, fix it and ask for the hand-in again.</li>
+<li><strong>Stop</strong> when the block is clean, and wait for the review.</li>
+</ol>
+
+<h2 id="areas">5. Areas, and how overlaps are refused</h2>
+<ul>
+<li>An area is a path written from the top of the repository: a folder such as <code>client/src/world</code>, or one file such as <code>server/games/tonk.ts</code>.</li>
+<li>Use forward slashes, on Windows too. A backslash, a wildcard such as <code>*</code>, <code>..</code>, a leading slash and a drive letter are all refused.</li>
+<li>A folder area covers everything inside it.</li>
+<li>An area may name a file or folder that does not exist yet. That is how you claim room for new code.</li>
+<li>Two areas overlap when they are the same, or when one is a parent folder of the other. Upper and lower case make no difference.</li>
+<li>An area that overlaps one held by another lane, or by the main folder, is refused. The tool names who holds it and changes nothing.</li>
+</ul>
+<div class="wrap paths"><table>
+<tr><th>Already held</th><th>You ask for</th><th>Result</th></tr>
+<tr><td><code>server/games</code></td><td><code>server/games/tonk.ts</code></td><td>Refused. The folder around your file is held.</td></tr>
+<tr><td><code>server/games/tonk.ts</code></td><td><code>server/games</code></td><td>Refused. Your folder would take in a file that is held.</td></tr>
+<tr><td><code>client/src/world</code></td><td><code>Client/Src/World</code></td><td>Refused. It is the same area; case makes no difference.</td></tr>
+<tr><td><code>server/games/tonk.ts</code></td><td><code>server/games/tonk-bot.ts</code></td><td>Fine. Two different files.</td></tr>
+<tr><td><code>client/src/ui</code></td><td><code>client/src/ui-kit</code></td><td>Fine. The names only start alike; neither folder is inside the other.</td></tr>
+</table></div>
+<p>A refusal looks like this:</p>
+<pre><code>Refused: area "server/games/tonk.ts" overlaps "server/games", which lane cursor-card-rules holds. Choose another area, or ask the workspace owner to sort it out.</code></pre>
+<p><strong>When you are refused:</strong> choose a narrower area (one file instead of its folder), or wait until the holder has finished, or ask the workspace owner. The owner can ask the holder to release the area, or can line up the two tasks one after the other.</p>
+<p><strong>The main folder holds areas too.</strong> The workspace owner claims areas there for work that is in flight in the main folder, so that no lane starts on top of it. In <code>status</code> they show under provider <code>owner</code>, task <code>main</code>.</p>
+<h3>Changing your areas later</h3>
+<ul>
+<li><strong>Wider:</strong> ask the workspace owner first. The owner runs <code>npm run lane -- claim --area &lt;path&gt;</code> in your lane, or tells you to run it. The same overlap check applies.</li>
+<li><strong>Narrower:</strong> run <code>npm run lane -- release --area &lt;path&gt;</code> in your lane for an area you no longer need, and say so in your report. Others can then claim it.</li>
+<li><strong>Never by hand:</strong> do not edit <code>.lane.json</code> yourself. The tool checks areas for overlap when it writes them, and <code>handin</code> checks them again and fails on an overlap.</li>
+</ul>
+<h3>Strays</h3>
+<p>A stray is a changed file outside your areas. <code>status</code> lists strays, and <code>handin</code> fails while one exists. Either put the file back the way it was, or ask the workspace owner to widen your areas. Do not hand in with a stray and a promise to explain it.</p>
+
+<h2 id="ports">6. Ports</h2>
+<div class="wrap"><table>
+<tr><th>Folder</th><th>Lane number</th><th>Game server (<code>PORT</code>)</th><th>Client (<code>CLIENT_PORT</code>)</th></tr>
+<tr><td>Main folder</td><td>0</td><td>3000</td><td>5173</td></tr>
+<tr><td>First lane</td><td>1</td><td>3101</td><td>5201</td></tr>
+<tr><td>Second lane</td><td>2</td><td>3102</td><td>5202</td></tr>
+<tr><td>Lane number n</td><td>n</td><td>3100 + n</td><td>5200 + n</td></tr>
+</table></div>
+<ul>
+<li>A new lane gets the smallest number that is free, starting at 1. Your ports are printed when the lane is made, and <code>status</code> shows them again.</li>
+<li><strong>Always start the app through the lane tool:</strong> <code>npm run lane -- run server</code> and <code>npm run lane -- run client</code>. The tool sets <code>PORT</code> and <code>CLIENT_PORT</code> for the script. The game server listens on <code>PORT</code>. The client's dev server listens on <code>CLIENT_PORT</code> and passes the game traffic (<code>/socket.io</code>) on to <code>http://localhost:&lt;PORT&gt;</code>. So your client talks to your server and to nobody else's.</li>
+<li>If you type <code>npm run dev:server</code> or <code>npm run dev:client</code> yourself, neither variable is set and the script uses 3000 or 5173. Those are the main folder's ports. Do not do that in a lane.</li>
+<li>Open <code>http://localhost:&lt;your client port&gt;</code> in the browser.</li>
+<li>The browser tests choose a free port of their own for each run. They do not use your lane's ports, and several lanes can run them at the same time.</li>
+<li>The tool wraps six scripts only. <code>npm start</code> (one process, after a build) reads <code>PORT</code>, and <code>npm run dev:xr</code> (the client over https for a headset) reads both variables. If you need one of them, set the variables to your lane's numbers yourself.</li>
+<li>The older prototype's scripts, <code>npm run dev</code> and <code>npm run preview</code>, always use port 4173 in every folder, so only one of them can run on a machine at a time. Ask the workspace owner before you use them.</li>
+</ul>
+<h3 id="stop">Stopping your servers</h3>
+<p>In a terminal, Ctrl+C stops the command. If you started it in the background, or your tool stopped the command for you, check that the server is really gone: on Windows, ending the shell does not end the server it started, and the server keeps the port. Do this for each of your two ports (3101 stands for your own port):</p>
+<div class="wrap paths"><table>
+<tr><th>Shell</th><th>See what listens on the port</th><th>Stop that process</th></tr>
+<tr><td>cmd</td><td><code>netstat -ano | findstr LISTENING | findstr :3101</code></td><td><code>taskkill /PID &lt;number&gt; /T /F</code></td></tr>
+<tr><td>Git Bash on Windows</td><td><code>netstat -ano | grep LISTENING | grep :3101</code></td><td><code>taskkill //PID &lt;number&gt; //T //F</code></td></tr>
+<tr><td>A POSIX shell</td><td><code>lsof -ti tcp:3101 -sTCP:LISTEN</code></td><td><code>kill &lt;number&gt;</code></td></tr>
+</table></div>
+<p>The number is the last one on each line that netstat prints (the game server shows two lines with the same number), or the only thing lsof prints. If nothing is printed, nothing listens there and the port is free. Stop only a process on your own lane's ports that you started yourself. If something else holds one of your ports, do not stop it: tell the workspace owner.</p>
+
+<h2 id="checks">7. The checks and the hand-in block</h2>
+<div class="wrap paths terms"><table>
+<tr><th>Check</th><th>Lane command</th><th>What it runs</th></tr>
+<tr><td>Type check</td><td><code>npm run lane -- run typecheck</code></td><td><code>tsc -b</code> over the server, the shared code, the client, the tests and the older prototype.</td></tr>
+<tr><td>Unit tests</td><td><code>npm run lane -- run test</code></td><td>Vitest, every suite under <code>tests/</code> except the browser tests. Usually under a minute.</td></tr>
+<tr><td>Build</td><td><code>npm run lane -- run build</code></td><td>The type check, then a production build of the older prototype and of the client.</td></tr>
+<tr><td>Browser tests</td><td><code>npm run lane -- run e2e</code></td><td>A build, then Playwright: real browser pages against a real server, one test at a time. No graphics card is needed. This takes minutes, and needs a browser download once (see <a href="#trouble">Troubleshooting</a>).</td></tr>
+</table></div>
+<p>The checks run in your lane, on your files. They do not touch the main folder or any other lane.</p>
+<p><code>npm run lane -- handin</code> always runs the type check and the unit tests. <code>--build</code> adds the build and <code>--e2e</code> adds the browser tests; use them when you were asked to. Then it prints the block, as the last thing in its output. This is a sample in the tool's own layout:</p>
+<pre><code>LANE HAND-IN
+provider:    codex
+task:        tonk-bot
+branch:      lane/codex-tonk-bot
+base commit: 0123456789abcdef0123456789abcdef01234567
+time (UTC):  2026-11-18T17:42:10Z
+areas:       server/games/tonk-bot.ts, tests/server/tonk.test.ts
+changed files: 2
+  server/games/tonk-bot.ts
+  tests/server/tonk.test.ts
+strays: 0
+overlaps: 0
+checks:
+  typecheck: PASS (exit 0)
+  test: PASS (exit 0)</code></pre>
+<p>And one that is not ready. A check failed and one changed file is outside the lane's areas, so the command also ends with a non-zero exit code:</p>
+<pre><code>LANE HAND-IN
+provider:    codex
+task:        tonk-bot
+branch:      lane/codex-tonk-bot
+base commit: 0123456789abcdef0123456789abcdef01234567
+time (UTC):  2026-11-18T18:05:31Z
+areas:       server/games/tonk-bot.ts, tests/server/tonk.test.ts
+changed files: 3
+  client/src/ui/actions.ts   (outside the lane's areas)
+  server/games/tonk-bot.ts
+  tests/server/tonk.test.ts
+strays: 1
+  client/src/ui/actions.ts
+overlaps: 0
+checks:
+  typecheck: FAIL (exit 2)
+  test: PASS (exit 0)</code></pre>
+<div class="wrap terms"><table>
+<tr><th>Part of the block</th><th>What it tells the reader</th></tr>
+<tr><td>provider, task, branch</td><td>Whose work this is and where it lives.</td></tr>
+<tr><td>base commit</td><td>The commit the lane started from. The diff to review is everything between this commit and the lane's files.</td></tr>
+<tr><td>time (UTC)</td><td>When the command ran, read from the clock.</td></tr>
+<tr><td>areas</td><td>What the lane was allowed to change.</td></tr>
+<tr><td>changed files</td><td>How many files differ from the base, then each one: changed, new or removed, committed or not. A file outside the areas is marked.</td></tr>
+<tr><td>strays</td><td>How many changed files are outside the areas, then each one. It must be 0.</td></tr>
+<tr><td>overlaps</td><td>How many of the lane's areas overlap an area another lane or the main folder holds, then each one with its holder. It must be 0.</td></tr>
+<tr><td>checks</td><td>Each check with PASS or FAIL and the exit code of its script.</td></tr>
+</table></div>
+<ul>
+<li>Paste the whole block, unchanged. Never type a block yourself and never change a line in one.</li>
+<li>If a check fails for a reason that is not your change, still paste the block as it is, and explain underneath it.</li>
+<li>A clean block means the checks pass. It does not mean the work has been reviewed.</li>
+</ul>
+
+<h2 id="merge">8. How your work gets into the game</h2>
+<ol>
+<li><strong>You hand in.</strong> You paste the block where you were asked to report, and you stop editing.</li>
+<li><strong>A different provider reviews the exact diff.</strong> That is every difference between the base commit and the files in your lane: changed, new and removed. The reviewer is never the author, and never another session of the author's provider.</li>
+<li><strong>If the reviewer asks for changes,</strong> you make them in the same lane and hand in again. The new diff is reviewed again, because a review counts only for the diff it looked at.</li>
+<li><strong>The workspace owner commits your lane</strong> on its branch, with you as the author.</li>
+<li><strong>The workspace owner merges that branch</strong> into the integration branch. Now your work is in the game.</li>
+<li><strong>The lane is finished.</strong> The workspace owner gives its areas back and removes the lane when it is no longer needed. The tool never removes a lane, and neither do you.</li>
+</ol>
+<p>At no point do you commit, push, merge or rebase.</p>
+<h3>If you are asked to review a lane</h3>
+<ul>
+<li>You must be a different provider from the author.</li>
+<li>Read the lane. Do not change anything in it.</li>
+<li>Review exactly what the hand-in block names: that lane, that base commit, those changed files. In the lane, <code>git diff &lt;base commit&gt;</code> shows the changes to files git already knew, and <code>git status</code> lists the new files. Neither command changes a file.</li>
+<li>Say what you checked and what you found, where you were asked to report.</li>
+</ul>
+
+<h2 id="owner">9. What the workspace owner does</h2>
+<ul>
+<li><strong>Keeps the main folder</strong> and its branch, the integration branch. Nobody else edits there.</li>
+<li><strong>Creates lanes on request,</strong> and always for a provider that cannot run commands. It tells that provider the lane folder, the areas and the ports.</li>
+<li><strong>Holds the claims for work in flight.</strong> It claims areas in the main folder for work going on there, widens a lane's areas when asked, and decides who gets an area when two tasks want the same one.</li>
+<li><strong>Runs the checks and the hand-in</strong> for providers that cannot.</li>
+<li><strong>Integrates.</strong> It makes sure a different provider has reviewed the exact diff, commits the lane with the author's name, and merges it into the integration branch.</li>
+<li><strong>Keeps lanes usable.</strong> It commits shared files so that new lanes have them, brings a lane up to date when it needs newer work, and removes lanes that are finished. After it brings a lane up to date, it sets <code>base</code> in that lane's <code>.lane.json</code> to the integration commit it brought in. Otherwise <code>status</code> and <code>handin</code> count every file that came in as a change made by that lane.</li>
+<li><strong>Decides about dependencies.</strong> Any change to the dependencies in <code>package.json</code>, or to <code>package-lock.json</code>, goes to the workspace owner first.</li>
+</ul>
+<p><strong>Ask the workspace owner when</strong> you need a lane and cannot make one, you need a wider area or one that someone else holds, a file you need is missing from your lane, a check fails for a reason that is not your change, you need a new dependency, or you are not sure a rule allows something.</p>
+
+<h2 id="never">10. What never to do, and why</h2>
+<div class="wrap"><table>
+<tr><th>Never</th><th>Why</th></tr>
+<tr><td>Edit, create or remove files in the main folder.</td><td>Other work is in flight there. Your edit can overwrite it, and nothing would show who made it.</td></tr>
+<tr><td>Edit outside your areas.</td><td>Another lane may hold that file, and two versions of one file cannot both go into the game.</td></tr>
+<tr><td>Commit, push, merge or rebase.</td><td>Only reviewed work is committed, by the workspace owner, under the right author. A merge or rebase also changes the diff the reviewer saw.</td></tr>
+<tr><td>Delete a lane or a branch.</td><td>It can hold work that is not in the game yet, and the tool finds a lane by its folder and its branch.</td></tr>
+<tr><td>Change the dependencies in <code>package.json</code>, or change <code>package-lock.json</code>, without asking first. To install, use <code>npm ci</code>, never <code>npm install</code>.</td><td>Every lane and the main folder build from the same lock file. A change there changes everybody's build, and <code>npm install</code> can rewrite it without telling you.</td></tr>
+<tr><td>Use port 3000 or 5173, or start a server without the lane tool.</td><td>Those ports belong to the main folder. A second server on a port does not start, or a browser ends up talking to the wrong game.</td></tr>
+<tr><td>Use PowerShell in any form: no <code>powershell</code>, no <code>pwsh</code>, no <code>.ps1</code> file, and not through another program.</td><td>It is not allowed for any agent on the machines this workspace runs on, and nothing here needs it: the tool and the checks run with Node and npm.</td></tr>
+<tr><td>Save files with CRLF line endings.</td><td>The repository keeps LF on every checkout, and some tests read files as text and match on the line breaks.</td></tr>
+<tr><td>Put anything private in a file: a person's name, an email address, a home-folder path, a key or token, the name of a private chat channel.</td><td>The repository is public. Anyone can read every file, and git history keeps a line even after it is removed.</td></tr>
+<tr><td>Add art, sound, fonts or models that were not made in this project's code.</td><td>The app ships only original content that its own code draws and plays, so there are no rights to clear and nothing to download.</td></tr>
+<tr><td>Let the client decide a card, a turn or a score.</td><td>The server deals and checks every move, so that each player sees only their own cards and nobody can cheat.</td></tr>
+<tr><td>Write or change a hand-in block by hand, or say a check passed that you did not see pass.</td><td>The block is the evidence for your work. A typed one proves nothing.</td></tr>
+<tr><td>Edit a lane while it is being reviewed.</td><td>A review counts only for the exact diff it looked at.</td></tr>
+<tr><td>Edit <code>.lane.json</code> by hand.</td><td>Areas a person writes there never went through the overlap check; <code>handin</code> fails when they overlap somebody else's.</td></tr>
+<tr><td>Use <code>git stash</code>, <code>git reset</code> or <code>git clean</code>, or switch your lane to another branch.</td><td>The stash is shared by every folder of the repository, and the others can throw away work or break the link between your lane and its branch.</td></tr>
+</table></div>
+<p class="muted">The first eleven rows are the working rules in AGENTS.md. The last four follow from them.</p>
+
+<h2 id="map">11. A map of the code, by area</h2>
+<p>Use this to pick areas. Paths are written the way <code>--area</code> wants them.</p>
+<h3>The server: rules, rooms and the network</h3>
+<div class="wrap paths"><table>
+<tr><th>Area</th><th>What is in it</th><th>Its tests</th></tr>
+<tr><td><code>server/games/tonk.ts</code></td><td>The Tonk rules as pure functions: the deal, the legal moves, applying a move, scoring, and what each seat may see.</td><td><code>tests/server/tonk.test.ts</code></td></tr>
+<tr><td><code>server/games/tonk-bot.ts</code></td><td>The Tonk bot. It picks a move from its own seat's view only.</td><td><code>tests/server/tonk.test.ts</code></td></tr>
+<tr><td><code>server/games/spades.ts</code></td><td>The Spades rules.</td><td><code>tests/server/spades.test.ts</code></td></tr>
+<tr><td><code>server/games/spades-bot.ts</code></td><td>The Spades bot.</td><td><code>tests/server/spades.test.ts</code></td></tr>
+<tr><td><code>server/games/bidwhist.ts</code></td><td>The Bid Whist rules.</td><td><code>tests/server/bidwhist.test.ts</code></td></tr>
+<tr><td><code>server/games/bidwhist-bot.ts</code></td><td>The Bid Whist bot.</td><td><code>tests/server/socket.test.ts</code> (the full games with bots)</td></tr>
+<tr><td><code>server/games/game.ts</code></td><td>The contract every game follows. All three games and the match code depend on it.</td><td>All of <code>tests/server</code></td></tr>
+<tr><td><code>server/games/index.ts</code></td><td>The list of games the server offers.</td><td><code>tests/server/socket.test.ts</code></td></tr>
+<tr><td><code>server/match.ts</code></td><td>One match of any game: the revision counter, the action-id rules and the bot loop.</td><td><code>tests/server/tonk.test.ts</code>, <code>tests/server/socket.test.ts</code></td></tr>
+<tr><td><code>server/rooms.ts</code></td><td>Rooms, the six tables, seats, the host, ready flags, house rules, the reconnect hold and poses.</td><td><code>tests/server/socket.test.ts</code></td></tr>
+<tr><td><code>server/index.ts</code></td><td>The network front: the origin check, the rate limit, one socket per member, and the file server for the built client.</td><td><code>tests/server/socket.test.ts</code></td></tr>
+<tr><td><code>server/main.ts</code>, <code>server/shuffle.ts</code></td><td>Starting the server on <code>PORT</code>; the shuffle.</td><td><code>tests/server/bidwhist.test.ts</code> uses the shuffle</td></tr>
+</table></div>
+<h3>Shared by the server and the client</h3>
+<div class="wrap paths"><table>
+<tr><th>Area</th><th>What is in it</th></tr>
+<tr><td><code>shared/protocol.ts</code></td><td>The wire contract between the browser and the server: events, error codes, snapshot types and limits. Almost every part of the app imports it.</td></tr>
+<tr><td><code>shared/cards.ts</code></td><td>The card and deck types.</td></tr>
+</table></div>
+<h3>The client: <code>client/src</code></h3>
+<div class="wrap paths"><table>
+<tr><th>Area</th><th>What is in it</th><th>Its tests</th></tr>
+<tr><td><code>client/src/world</code></td><td>The mansion: layout, floor plan, the two themes, the generated art and the music.</td><td><code>tests/client/world.test.ts</code>, <code>tests/client/layout.test.ts</code></td></tr>
+<tr><td><code>client/src/controls</code></td><td>Keyboard, mouse, gamepad and VR controllers, and the movement maths.</td><td><code>tests/client/controls.test.ts</code>, <code>tests/client/controls-activate.test.ts</code></td></tr>
+<tr><td><code>client/src/tableui</code></td><td>The table interface inside the world, the matching HTML panel, and the menu shown in VR.</td><td><code>tests/client/tableui.test.tsx</code></td></tr>
+<tr><td><code>client/src/ui</code></td><td>The buttons and house-rule texts for each game (<code>actions.ts</code>), and the drawing of cards and text.</td><td><code>tests/client/actions.test.ts</code></td></tr>
+<tr><td><code>client/src/hud</code></td><td>The entry screen, the top bar, the settings and the controls help.</td><td><code>tests/client/entry.test.tsx</code></td></tr>
+<tr><td><code>client/src/net</code></td><td>The socket connection and the store that holds what the server sent.</td><td><code>tests/client/store.test.ts</code></td></tr>
+<tr><td><code>client/src/state</code></td><td>Local settings, the description of a table, and the XR session.</td><td><code>tests/client/entry.test.tsx</code>, <code>tests/client/tableui.test.tsx</code></td></tr>
+<tr><td><code>client/src/App.tsx</code>, <code>client/src/main.tsx</code>, <code>client/src/styles.css</code></td><td>The shell that ties the parts together, and the page styles. Many client tasks want these.</td><td>The browser tests</td></tr>
+<tr><td><code>client/index.html</code>, <code>client/public</code>, <code>client/vite.config.ts</code></td><td>The page, the two controller-profile files, and the dev server settings (the ports are read here).</td><td></td></tr>
+</table></div>
+<h3>Tests, by folder</h3>
+<div class="wrap paths"><table>
+<tr><th>Area</th><th>What is in it</th></tr>
+<tr><td><code>tests/server</code></td><td>Vitest: the rules of each game, the bots, and rooms and sockets end to end.</td></tr>
+<tr><td><code>tests/client</code></td><td>Vitest: the client's logic and its panels.</td></tr>
+<tr><td><code>tests/e2e</code></td><td>Playwright browser tests. Files end in <code>.e2e.ts</code>: <code>games</code> (each game played to the results), <code>room</code> (entering, reconnecting, leaving), <code>move</code> (walking, teleport, themes), <code>tour</code> (a walk round the house), <code>xr</code> (an emulated headset). <code>helpers.ts</code> is used by all of them.</td></tr>
+<tr><td><code>tests/app</code>, <code>tests/game</code>, <code>tests/table</code>, <code>tests/xr</code></td><td>Suites for the older single-player prototype in <code>src/</code>.</td></tr>
+<tr><td><code>tests/deploy</code>, <code>tests/governance</code></td><td>Checks on the deploy workflow and on the project's policy files.</td></tr>
+</table></div>
+<h3>Docs and the rest</h3>
+<div class="wrap paths"><table>
+<tr><th>Area</th><th>What is in it</th></tr>
+<tr><td><code>docs</code></td><td><code>mansion-app.html</code> (the app guide), <code>workspace.html</code> (this page), and other project notes.</td></tr>
+<tr><td><code>src</code>, and <code>index.html</code> at the top</td><td>The older single-player prototype. It is kept unchanged; leave it alone unless your task is about it.</td></tr>
+<tr><td><code>director</code></td><td>Project coordination records. Some tests read these files. It is not game code.</td></tr>
+<tr><td><code>tools/lane.mjs</code></td><td>The lane tool.</td></tr>
+<tr><td><code>package.json</code>, <code>package-lock.json</code>, <code>tsconfig*.json</code>, <code>vite.config.ts</code> at the top (it also holds the unit test settings), <code>playwright.config.ts</code>, <code>.github</code></td><td>Setup shared by everybody. Ask the workspace owner before any change here.</td></tr>
+</table></div>
+<h3>How to pick sensible areas</h3>
+<ul>
+<li><strong>Claim the code and its tests together.</strong> Tests live in their own folder tree, so they need their own <code>--area</code>.</li>
+<li><strong>One game is three files:</strong> its rules, its bot and its test file. Claim the ones you will change.</li>
+<li><strong>Prefer files to folders.</strong> A folder area blocks everything inside it for everybody else.</li>
+<li><strong>Some files are wanted by many tasks:</strong> <code>shared/protocol.ts</code>, <code>server/rooms.ts</code>, <code>client/src/App.tsx</code>, <code>client/src/ui/actions.ts</code> and <code>tests/e2e/helpers.ts</code>. Claim one only when you must, keep the change small, and release it when you are done with it.</li>
+<li><strong>Types cross areas.</strong> The client imports types from <code>shared</code> and from <code>server/games</code>, and <code>shared/protocol.ts</code> imports each game's view type. A change to what a game sends can break the type check in files outside your areas. Do not fix those files yourself: tell the workspace owner.</li>
+</ul>
+
+<h2 id="trouble">12. Troubleshooting</h2>
+<div class="wrap"><table>
+<tr><th>What you see</th><th>Why</th><th>What to do</th></tr>
+<tr><td>In your lane, npm says <code>Missing script: "lane"</code>, or <code>tools/lane.mjs</code> is not there.</td><td>The lane was made from a commit that did not have the tool yet. <code>new</code> said so when it made the lane.</td><td>From inside your lane, run the main folder's copy, as <code>new</code> told you: <code>node "&lt;main folder&gt;/tools/lane.mjs" &lt;command&gt;</code>. Do not copy the tool into your lane. Tell the workspace owner, because such a lane may lack other new files too.</td></tr>
+<tr><td>You used <code>run client</code>, but the client starts on 5173, or says 5173 is in use.</td><td>The lane was made from a commit in which the client did not read <code>CLIENT_PORT</code> yet, so it falls back to the main folder's ports.</td><td>Stop it at once and tell the workspace owner. Do not run the client in that lane until it has been brought up to date.</td></tr>
+<tr><td>A file you were told about is not in your lane.</td><td>It is not committed in the main folder yet. A lane starts from the last commit; work that is not committed in the main folder is not in it.</td><td>Ask the workspace owner to commit it and to bring your lane up to date. Do not copy the file over: it would count as your change.</td></tr>
+<tr><td>A port is busy: the server stops with <code>EADDRINUSE</code>, or the client says its port is already in use.</td><td>A server from an earlier run is still going, or another program has the port.</td><td>If you started a server on that port earlier, it is still running: stop it as shown under <a href="#stop">Stopping your servers</a>. If you did not start it, do not stop it: find the lane with that port in <code>npm run lane -- status</code> and tell the workspace owner. Do not move to another port by hand, and never to 3000 or 5173.</td></tr>
+<tr><td>The browser tests stop at once and say the browser is missing.</td><td>Playwright's browser has not been downloaded on this machine.</td><td>Run <code>npx playwright install chromium-headless-shell</code> once, then run the tests again. It is once for the machine, not once for each lane.</td></tr>
+<tr><td>A check cannot find a program or a package (<code>tsc</code>, <code>vite</code>, <code>vitest</code>, "Cannot find module").</td><td>No installed packages are within reach of your lane.</td><td>Run <code>cd "&lt;your lane folder&gt;" &amp;&amp; npm ci</code>. It installs exactly what <code>package-lock.json</code> lists and changes neither that file nor <code>package.json</code>. Do not use <code>npm install</code> for this.</td></tr>
+<tr><td><code>npm ci</code> ends with warnings: a count of vulnerabilities with the advice to run <code>npm audit fix</code>, or a package whose install script was not run.</td><td>npm prints these after every install. They do not come from your lane.</td><td>Leave them alone. The checks, the build and the app work as they are. Do not run <code>npm audit fix</code> or approve anything: that changes <code>package.json</code> or <code>package-lock.json</code>, which everybody shares. If you think a package needs an update, tell the workspace owner.</td></tr>
+<tr><td><code>npm ci</code> cannot run in your lane, for example because your tool has no network.</td><td>It has to download the packages.</td><td>Try the checks anyway: a lane can use the packages installed in the main folder. If they cannot find their packages, ask the workspace owner to run <code>npm ci</code> in your lane.</td></tr>
+<tr><td>A lane command says it cannot write <code>lane.lock</code>, or that your session may not be allowed to change the workspace.</td><td><code>new</code>, <code>claim</code> and <code>release</code> write a lock in the repository's shared git folder, and your tool may only be allowed to write inside your lane.</td><td>Ask the workspace owner to run that command for you.</td></tr>
+<tr><td>A lane command says another lane command still holds the lock.</td><td>Somebody else is making a lane or changing areas at this moment.</td><td>Wait a little and try again. If it stays, tell the workspace owner. Do not remove the lock file yourself.</td></tr>
+<tr><td><code>handin</code> reports a stray that you did not mean to change.</td><td>A tool changed it. The usual ones: <code>package-lock.json</code> after <code>npm install</code>, a file your editor saved again, or a new file made in the wrong folder.</td><td>Put a file git knows back with <code>git -C "&lt;your lane folder&gt;" restore &lt;path&gt;</code>; this throws away your change to that one file. Move a new file into your areas, or remove it. If the file really must change, ask the workspace owner to widen your areas.</td></tr>
+<tr><td>A unit test you did not touch fails with <code>Test timed out</code>.</td><td>The machine was busy, for example because other lanes were running their checks at the same moment. Some tests play whole games and need a few seconds.</td><td>Run the check once more. If it fails again, hand in anyway: paste the block as it is, say under it which test ran out of time, and tell the workspace owner. Do not change a test or a time limit outside your areas.</td></tr>
+<tr><td>A check prints no error of its own and ends with a very large exit code, such as <code>3221225477</code>.</td><td>The program itself crashed. On Windows that number means a memory fault inside the process. It is not a result of the type check or of a test.</td><td>Run the check again. If it happens again, copy the output and tell the workspace owner.</td></tr>
+<tr><td>A check fails before you changed anything, or fails in files outside your areas.</td><td>The problem was already in the commit your lane started from, or your change to shared types reaches code outside your areas.</td><td>Do not fix files outside your areas. Copy the output and tell the workspace owner.</td></tr>
+<tr><td>You need work that reached the integration branch after your lane was made.</td><td>A lane does not update by itself.</td><td>Ask the workspace owner. Do not merge or rebase yourself.</td></tr>
+<tr><td>A test that reads a file as text fails after you saved that file, or git warns about CRLF.</td><td>The file was saved with CRLF line endings.</td><td>Set your editor or tool to LF and save the file again.</td></tr>
+<tr><td><code>new</code> refuses.</td><td>It says why, and it has changed nothing.</td><td>See the list in <a href="#first">section 3</a>, step 5.</td></tr>
+<tr><td>The only shell you have is PowerShell.</td><td>PowerShell is not allowed here.</td><td>Work as a provider that cannot run commands: <a href="#noshell">section 4</a>.</td></tr>
+</table></div>
+</main>
+</body>
+</html>

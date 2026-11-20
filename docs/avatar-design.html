@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Avatars in the mansion: a design proposal</title>
+<style>
+  :root { --bg:#fbfaf7; --fg:#22201c; --muted:#5f5a50; --line:#d9d3c5; --card:#f1ede3; --accent:#8a3b22; --ok:#2f6b3a; --later:#6a4c93; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#17161a; --fg:#ece8df; --muted:#a8a294; --line:#3a3740; --card:#232128; --accent:#e8a27c; --ok:#8fd19e; --later:#c7b3ec; }
+  }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui,"Segoe UI",Roboto,Arial,sans-serif; }
+  main { max-width:58rem; margin:0 auto; padding:1.5rem 1rem 4rem; }
+  h1 { font-size:1.8rem; margin:.2rem 0 .6rem; }
+  h2 { font-size:1.3rem; margin:2.2rem 0 .5rem; padding-top:.6rem; border-top:1px solid var(--line); }
+  h3 { font-size:1.05rem; margin:1.3rem 0 .3rem; }
+  a { color:var(--accent); }
+  nav { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:.6rem 1rem; }
+  nav a { margin-right:.9rem; white-space:nowrap; }
+  code { font-family:ui-monospace,Consolas,Menlo,monospace; font-size:.92em; background:var(--card); padding:.05rem .3rem; border-radius:4px; }
+  table { border-collapse:collapse; width:100%; margin:.6rem 0 1rem; font-size:.95rem; }
+  th, td { border:1px solid var(--line); padding:.35rem .55rem; text-align:left; vertical-align:top; }
+  th { background:var(--card); }
+  li { margin:.35rem 0; }
+  .wrap { overflow-x:auto; }
+  .note { border-left:4px solid var(--accent); background:var(--card); padding:.5rem .9rem; border-radius:0 8px 8px 0; margin:.8rem 0; }
+  .tag { display:inline-block; font-size:.78rem; font-weight:700; padding:0 .4rem; border-radius:4px; border:1px solid currentColor; white-space:nowrap; }
+  .launch { color:var(--ok); }
+  .later { color:var(--later); }
+  .looks { display:grid; grid-template-columns:repeat(auto-fit, minmax(16rem, 1fr)); gap:.8rem; }
+  .look { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:.6rem .9rem; }
+  .look h3 { margin:.2rem 0 .3rem; }
+  .look ul { margin:.2rem 0; padding-left:1.1rem; }
+  small, .muted { color:var(--muted); }
+  figure { margin:1rem 0; }
+  figcaption { color:var(--muted); font-size:.9rem; }
+  svg text { font: 12px system-ui, sans-serif; fill: currentColor; }
+</style>
+</head>
+<body>
+<main>
+<h1>Avatars in the mansion: a design proposal</h1>
+<p class="muted">Status: the first release is built; the rest is still a proposal. Built: the look record and its server checks (<code>shared/avatar.ts</code>), every baseline option in the section 2 table, the six starting looks and Shuffle, the bodies, faces, hair, head coverings, clothes, shoes, accessories and assistive items made in code (<code>client/src/avatar/</code>), the "Your look" editor on the entry screen and in the Menu, the VR look panel, the foyer mirror, the seven gestures, seated avatars with card backs, glances and end-of-hand reactions, live VR heads and hands, the comfort switches for simple shapes, hidden gestures and table reactions, each avatar drawn as one skinned body, an outline and a face (3 draws up close and beyond 8 m, 2 as simple shapes), and gamepad access to the editor and the gesture picker (described for players in <code>docs/mansion-app.html</code>, section 7). Still a proposal: every unlockable extra, the table photo, profile cards, the pin shelf, option pictures rendered from the avatar (options are text buttons), and prosthetic limbs and a wheelchair option. Still to do, and not something code can do: a review by players and artists who know this style first-hand (sections 1 and 5). Below, the proposal as it was written. It describes how players could look in the mansion: what avatars are like, what can be changed, where they show up, how they are made, and what to ship first. Every choice below starts from the feel of the house: warm, soulful, full of style, and in easy balance. The visual reference is the approachable, stylized look of social-VR avatars on Meta Quest headsets, used only as a general direction. This game is not affiliated with Meta, uses none of its assets, and every shape and colour here is original and made in code.</p>
+
+<nav aria-label="Sections">
+  <a href="#summary">Concept</a>
+  <a href="#foundation">The feel</a>
+  <a href="#assumptions">Assumptions</a>
+  <a href="#visual">1. Visual direction</a>
+  <a href="#custom">2. Customization</a>
+  <a href="#presence">3. Presence</a>
+  <a href="#flow">4. Creation flow</a>
+  <a href="#inclusion">5. Inclusion</a>
+  <a href="#production">6. Production</a>
+  <a href="#first">First release</a>
+  <a href="#looks">Example looks</a>
+</nav>
+
+<h2 id="summary">Concept summary</h2>
+<p><strong>Family and friends at the card table, recognizable at a glance.</strong> The mansion is a family gathering: the cookout, the potluck, the music, and Spades, Bid Whist and Tonk played the way families play them. Every person there has a warm, rounded, slightly cartoon avatar. It looks like them, or like who they want to be tonight, and is easy to pick out across a room or across a table in a headset. Avatars have no part in the rules. Cards, turns and scores stay with the server, and an avatar never shows anything a player could not already see. What they add is presence: you know who is sitting with you, who just walked in, and who is waving from the backyard.</p>
+<p>The look is soft shapes, a slightly large head, big expressive eyes and brows, simple flat-shaded colours, and bold hair and outfit silhouettes. It is built from a few parts that fit every body, so a large wardrobe stays cheap to make and light to run on a headset. Every identity choice (body, skin, face, hair, everyday clothes) is free and available from the first visit. Extras are earned by playing and are purely for fun.</p>
+
+<h2 id="foundation">The feel: warmth, style and easy balance</h2>
+<h3>The energy and the look</h3>
+<p>Cookouts, reunions, holidays, and a card table where the talk is as good as the play. The avatars carry that energy in how they look and move, with warmth and pride.</p>
+<ul>
+  <li><strong>Style with roots.</strong> The wardrobe is all original designs:
+    <ul>
+      <li>Sunday best: crown hats, suits with pocket squares, sharp dresses.</li>
+      <li>Cookout fits: matching family-reunion tees with no text, linen sets, track suits.</li>
+      <li>Barbershop and salon craft: fades with parts and designs, waves under a durag, finger waves, silk press, laid edges, cornrows, locs, twists.</li>
+      <li>Gold accents.</li>
+    </ul>
+  </li>
+  <li><strong>Card-table culture in the gestures.</strong> The slap of the last card on a book, the celebration when a team runs a Boston (takes every trick), the friendly head shake when a hand goes wrong, and the dap between partners.</li>
+  <li><strong>Celebration, never caricature.</strong> No exaggerated features and no costumes. The deep end of the skin range is lit and shaded with the same care as the light end, so it never turns grey or flat. The work is reviewed by players and artists who know this style first-hand.</li>
+  <li><strong>Everyone is welcome.</strong> Any guest can wear any look; the house makes everyone at home.</li>
+</ul>
+<h3>Harmony and flow</h3>
+<p>The house and its people are arranged for balance and easy movement.</p>
+<ul>
+  <li><strong>The entrance welcomes energy in.</strong> The entry screen and the foyer are open, bright and uncluttered. That is where you first meet your own avatar.</li>
+  <li><strong>Mirrors are placed with care.</strong> The look mirror hangs on a foyer side wall, never facing the front door, so the welcome is not reflected back out.</li>
+  <li><strong>Commanding seats.</strong> Card-table chairs face the room with a clear view of the way in, and avatars sit upright and settled in them.</li>
+  <li><strong>A balanced palette.</strong> Garment colours come in five families: greens; reds and plums; golds, tans and browns; whites, silvers and greys; blues and blacks. Starting looks and the table photo draw on all five, so a full table feels balanced.</li>
+  <li><strong>Calm and uncluttered.</strong> The cap on accessories, soft rounded forms and gentle idle motion keep the room at ease. The editor itself is a quiet, open space, not a crowded menu.</li>
+</ul>
+
+<h2 id="assumptions">What this proposal assumes</h2>
+<ul>
+  <li><strong>The game today.</strong> A browser game for desktops, phones and standalone VR headsets (WebXR). Rooms hold up to 32 people, with six tables (two each of Tonk, Spades and Bid Whist), a foyer, lounges and a backyard with a pool, in two seasonal themes. Most play happens seated at a table.</li>
+  <li><strong>Identity is light.</strong> There are no accounts. A player is a name typed on the entry screen. Settings and the name are remembered per browser. Anything saved about an avatar is therefore saved in that browser too, and unlocks cannot be verified by a server.</li>
+  <li><strong>What others see today.</strong> A plain capsule body with a head, a nose that shows facing, and a name plate. Positions arrive about ten times a second: place, facing and feet height. Head tilt and hands are not sent. Bots are drawn as steel-blue robots and stay separate from people (see below).</li>
+  <li><strong>Art is made in code.</strong> The repository allows only original art built in code: no downloaded models, textures, fonts or images. Avatars are therefore assembled from generated shapes, which suits the stylized look.</li>
+  <li><strong>No shop.</strong> The game has no store or currency, and this proposal adds none. Where it says "unlockable", it means earned through play.</li>
+  <li><strong>Nothing below exists yet</strong> unless this list says so. The presence features in section 3 are optional; each works on its own.</li>
+</ul>
+<div class="note"><strong>Bots stay robots.</strong> Bot seats already show a steel-blue robot with a square head and an antenna. Keep bots out of avatar customization entirely, so a person is never mistaken for a bot, or a bot for a person.</div>
+
+<h2 id="visual">1. Visual direction</h2>
+
+<h3>Proportions</h3>
+<ul>
+  <li><strong>Stylized, not realistic.</strong> About five heads tall, so the head is slightly large. Faces and hair then read from across a lounge, and expressions read across a table in a headset.</li>
+  <li><strong>Soft, rounded forms.</strong> A capsule-like torso, tapered limbs and rounded hands with a thumb and a single grouped-finger shape. Hands stay simple: in VR a player's own hands are already drawn by the game, and other people's hands mostly hold cards or wave.</li>
+  <li><strong>Full body, sensible legs.</strong> Players stand on benches, jump and float in the pool, so others get a full body with short, simple legs and feet. Seated at a table, the legs tuck under it. In a headset you do not see your own body below the hands. That avoids arm and leg poses that disagree with your real ones.</li>
+</ul>
+<figure>
+  <svg viewBox="0 0 520 210" width="100%" role="img" aria-labelledby="prop-title prop-desc">
+    <title id="prop-title">Proportion sketch</title>
+    <desc id="prop-desc">Three simple figures: a standing avatar about five heads tall, a seated avatar holding a fan of card backs, and a waving avatar, drawn as rounded shapes.</desc>
+    <g fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="80" cy="38" r="22"/><rect x="58" y="62" width="44" height="66" rx="20"/><rect x="62" y="128" width="14" height="52" rx="7"/><rect x="84" y="128" width="14" height="52" rx="7"/>
+      <rect x="40" y="66" width="14" height="52" rx="7"/><rect x="106" y="66" width="14" height="52" rx="7"/>
+      <circle cx="260" cy="70" r="22"/><rect x="238" y="94" width="44" height="60" rx="20"/><rect x="200" y="154" width="120" height="10" rx="4"/>
+      <path d="M244 120 l22 -14 l8 6 M252 118 l20 -16 M260 118 l18 -18"/>
+      <circle cx="430" cy="38" r="22"/><rect x="408" y="62" width="44" height="66" rx="20"/><rect x="412" y="128" width="14" height="52" rx="7"/><rect x="434" y="128" width="14" height="52" rx="7"/>
+      <rect x="456" y="30" width="14" height="48" rx="7" transform="rotate(25 463 54)"/><rect x="390" y="66" width="14" height="52" rx="7"/>
+    </g>
+    <text x="80" y="200" text-anchor="middle">standing, about 5 heads</text>
+    <text x="260" y="200" text-anchor="middle">seated, holding card backs</text>
+    <text x="430" y="200" text-anchor="middle">a wave</text>
+  </svg>
+  <figcaption>Proportion sketch only; the real shapes are softer and come from the same parts list in section 6.</figcaption>
+</figure>
+
+<h3>Face</h3>
+<ul>
+  <li><strong>Eyes and brows carry the expression.</strong> Large eyes with a clear iris and a light highlight, and bold brows that move. Small details vanish at headset resolution, so the face relies on a few strong shapes instead.</li>
+  <li><strong>Simple nose and mouth.</strong> The mouth swaps between a handful of shapes (relaxed, smile, open, grin, surprise) rather than being sculpted.</li>
+  <li><strong>Alive but calm.</strong> Blinks every few seconds, eyes that glance toward whoever is moving nearby, and a soft smile at rest.</li>
+</ul>
+
+<h3>Materials and rendering</h3>
+<ul>
+  <li>Flat-to-soft shading with matte surfaces, close to the house's own low-poly look, so avatars belong in the scene. Colours come from a fixed, curated palette (section 2), not textures.</li>
+  <li>A thin darker rim or outline around each avatar keeps silhouettes readable against busy rooms, fireworks and the pool.</li>
+  <li>Both themes (the July 4th day and the New Year's night) light avatars well. Every palette colour is checked in both, so no outfit vanishes at night.</li>
+</ul>
+
+<h3>Animation and idle poses</h3>
+<p>Avatars move with the data the game already has, plus a few player-chosen gestures:</p>
+<ul>
+  <li><strong>Moving.</strong> A walk cycle whose speed follows how fast the avatar's position changes; running leans in. A tuck when jumping (feet height already arrives with each pose), and a gentle bob with paddling arms when floating in the pool.</li>
+  <li><strong>Seated at a table.</strong> The avatar holds a small fan of card <em>backs</em>, sized to its hand count (already public on the seat plates); faces are never drawn. It leans in a little when it plays. At your own table, others glance toward whoever has the turn. You know whose turn it is; people at other tables do not, so their seated avatars just idle.</li>
+  <li><strong>Gestures (emotes).</strong> Wave, clap, laugh, a small bow for "good game", the card slap on a won book, the Boston celebration, and a friendly head shake. Later: a dap between partners when two hands meet. Each lasts under two seconds, a player can send at most a few at a time, and all are friendly.</li>
+  <li><strong>Later: real head and hands.</strong> VR players could also send head direction and two hand positions, a few small numbers several times a second, so nods and real waves show. Desktop and phone players keep the drawn idles.</li>
+</ul>
+
+<h3>Personality</h3>
+<p>Relaxed, welcoming, quietly playful: the feel of family gathered at the house for game night, with the talk and laughter of the card table. Expressions are friendly; nothing is mocking or aggressive. Avatars never react to someone's cards, and they never react to a mistake; the bow and applause belong to the end of a hand or game.</p>
+
+<h2 id="custom">2. Customization</h2>
+<p><strong>Every identity choice is free and available from the start</strong>: body, skin, face, hair, head coverings, everyday clothes, shoes and assistive items. Unlockables are only fun extras on top, earned by playing.</p>
+
+<div class="wrap">
+<table>
+  <thead><tr><th>Category</th><th>Baseline (free, always available)</th><th>Unlockable extras (earned)</th></tr></thead>
+  <tbody>
+    <tr><td>Body</td><td>4 builds (slender, medium, broad, round); 5 heights. The height only changes how the avatar looks to others, never the player's own view in VR.</td><td>None: body is identity, never unlocked.</td></tr>
+    <tr><td>Skin</td><td>14 tones from very light to very deep, evenly spaced, each in warm, neutral or cool undertone (42 in all).</td><td>Playful non-human tones (soft blue, mint, lilac, gold), offered as a separate "fun colours" row, never mixed into the human range.</td></tr>
+    <tr><td>Face</td><td>Eye shape (6), eye colour (8), brow shape (8) and colour, nose (6), mouth and lips (6), ears (4); freckles, beauty marks, vitiligo patterns, laugh lines; facial hair (none plus 10 styles); make-up accents (liner, lip and cheek colour). All open to everyone.</td><td>Face paint for each season's theme (a small star or sparkle).</td></tr>
+    <tr><td>Hair</td><td>24 styles across all textures: short coils, afro (3 sizes), twist-out, locs (short, long, updo), box braids, cornrows, knot buns, buzz cut, fades (low, high-top, with a part or design), 360 waves, finger waves, silk press with laid edges, curly bob, pixie cut, long straight, ponytail, bun, mohawk, bald. Each has a version that sits under a hat. Colours: 10 natural (black through brown, auburn, blond, grey and white) and 8 bright dyes.</td><td>Two-tone and tipped dyes; beads and cuffs for braids and locs.</td></tr>
+    <tr><td>Head coverings</td><td>Hijab, turban, headwrap, durag, wide-brim crown hat and beanie, in the same garment palette. They sit in their own category, never with costumes.</td><td>Seasonal hats (a New Year's party hat, a July 4th sun hat).</td></tr>
+    <tr><td>Outfits</td><td>12 tops (tee, polo, button-up, patterned shirt, blouse, sweater, cardigan, hoodie, generic sports jersey without real logos, vest, jacket, turtleneck), 7 bottoms (jeans, chinos, wide-leg trousers, shorts, track pants, midi skirt, maxi skirt) and 3 one-piece outfits (dress, jumpsuit, suit). Every item fits every build, with two colour slots each.</td><td>Patterned and seasonal variants: sparkle sweater, star-print shirt, game-night jacket with card-suit trim.</td></tr>
+    <tr><td>Footwear</td><td>Sneakers, high-tops, loafers, boots, sandals, low block heels; one colour slot each.</td><td>Seasonal colourways.</td></tr>
+    <tr><td>Accessories</td><td>Glasses (round, square, cat-eye, rectangular, thin wire), earrings (studs, hoops, drops), necklace, watch or bracelets, cap, bucket hat, fedora. Up to three at once.</td><td>Card-suit pins and brooches; sunglasses.</td></tr>
+    <tr><td>Assistive and personal</td><td>Hearing aids, a cochlear-implant processor, glasses (above). Offered matter-of-factly alongside everything else.</td><td>None: never gated.</td></tr>
+    <tr><td>Name plate</td><td>Plate colour from the same palette, and a small symbol (one of the four suits, a star, a heart).</td><td>Plate frames earned by milestones.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Varied and personal, still cohesive</h3>
+<ul>
+  <li><strong>One shape language:</strong> everything is rounded and slightly chunky, with no realistic textures. A sneaker and a fedora look like they come from the same world.</li>
+  <li><strong>One curated palette of about 24 garment colours</strong>, balanced across five colour families and chosen to look rich on every skin tone, the deepest included, and in both themes. Each garment has two colour slots, so a dozen tops give hundreds of distinct outfits.</li>
+  <li><strong>Parts fit every body automatically</strong>, because all clothing is built on the same few body measurements (section 6).</li>
+  <li><strong>A small cap on the number of accessories</strong> keeps avatars readable rather than cluttered.</li>
+</ul>
+
+<h3>Earned extras, honestly</h3>
+<p>Unlocks come from playing:</p>
+<ul>
+  <li>a first finished game;</li>
+  <li>a game of each of the three;</li>
+  <li>a first win at each game;</li>
+  <li>playing during a seasonal theme (that theme's hat or face paint, kept once earned).</li>
+</ul>
+<p>Without accounts they live in the player's browser and cannot be proven, so they stay light-hearted. There are no rankings and no "rare" status, and a player can hide their pins.</p>
+
+<h2 id="presence">3. Immersive presence</h2>
+<p>All of these are optional presentation features. Each can ship on its own, and none changes play.</p>
+<ul>
+  <li><strong>Recognition first.</strong> Your look travels with your name, so friends find each other across the foyer. The name plate keeps working exactly as it does now.</li>
+  <li><strong>At the table.</strong> Seated avatars holding card backs, glancing toward whoever has the turn, and reacting at the end of a hand (applause for the winners, a shrug or a laugh from anyone) bring the table to life. Automatic reactions can be turned off.</li>
+  <li><strong>Gestures.</strong> A small wheel (the VR menu or a Menu button) with the six friendly emotes from section 1. Being able to wave across a lounge is most of what makes a social space feel shared.</li>
+  <li><strong>A mirror in the foyer.</strong> A tall dressing mirror on a foyer side wall (never facing the front door) where VR players see themselves and can open the look editor in place. Seeing your own avatar is the strongest single moment of presence in VR.</li>
+  <li><strong>Table photo.</strong> When a game ends, the four avatars pose around the table with the final score on a card-shaped frame. The player can save the picture to their own device; nothing is uploaded.</li>
+  <li><strong>Profile card.</strong> Pointing at someone shows a small card with their name, their look up close, and any pins they chose to show. Nothing is tracked about another player.</li>
+  <li><strong>Entry screen.</strong> The new entry screen could show your saved avatar waving beside the room choices, so your look is part of arriving.</li>
+  <li><strong>A pin shelf (later).</strong> A small display in a lounge where your earned pins sit while you are in the room.</li>
+  <li><strong>Comfort switch.</strong> A setting to show others as simple shapes, or hide their gestures, for comfort or slower devices.</li>
+</ul>
+
+<h2 id="flow">4. Customization experience</h2>
+
+<h3>Where it opens</h3>
+<ul>
+  <li>An optional "Your look" step after typing a name on the entry screen. Skip keeps the last saved look, or a varied starting look on a first visit.</li>
+  <li>"Your look" in the Menu at any time.</li>
+  <li>In VR, the foyer mirror.</li>
+</ul>
+
+<h3>The flow</h3>
+<ol>
+  <li><strong>Start from a look.</strong> Six varied starting looks, shown side by side as equals, plus a Shuffle button. There is no single default person.</li>
+  <li><strong>Pick a tab.</strong> Body, Face, Hair, Outfit, Shoes, Extras. Each tab shows its options as small pictures rendered from the real avatar, each with a text label.</li>
+  <li><strong>See it live.</strong> The preview changes as you point at an option, before you choose it. Turn the avatar with a drag or a stick. "Face" and "Full" buttons zoom the preview, and a light switch shows the look in the daytime and the nighttime theme.</li>
+  <li><strong>Compare.</strong> Hold "Before" to see your saved look, and let go to return to the new one. Undo and Redo step through changes, and "Shuffle this tab" tries ideas within one category.</li>
+  <li><strong>Save or leave.</strong> Save keeps the look and returns you exactly where you were: entry screen, table or foyer. Cancel throws the changes away. Others see the new look within a moment.</li>
+</ol>
+
+<h3>Comfort and visibility in VR</h3>
+<ul>
+  <li><strong>Your view never moves.</strong> The preview avatar (or your mirror image) stands about 1.3 m in front of you at eye height. Zooming brings the preview closer; it never moves you.</li>
+  <li><strong>The options panel is easy to reach.</strong> It sits at about arm's length, a little below eye level and tilted toward you. It works with one hand and while seated.</li>
+  <li><strong>Targets and text are large.</strong> Option targets are at least 4 cm across, and text is at least 1.5 cm tall at that distance. A selected option is marked with a check and a thick frame, not by colour alone.</li>
+  <li><strong>Reduce motion is respected.</strong> It stops the preview's idle sway and the gesture previews.</li>
+</ul>
+
+<h3>Desktop and phone</h3>
+<p>The same tabs, with the preview beside them on a desktop and above them on a phone. Every option is a labelled button, reachable by keyboard and announced by screen readers, so the choices still work for someone who cannot see the preview.</p>
+
+<h3>Saving</h3>
+<p>The look is saved in this browser, like the name and settings are now. It is a short list of option choices, sent to the room once when it changes, not with every movement.</p>
+
+<h2 id="inclusion">5. Inclusion and accessibility</h2>
+<ul>
+  <li><strong>No gender field, no gendered presets.</strong> Every item fits and is offered to every body. Nothing is inferred from a name or a look.</li>
+  <li><strong>No "normal" default.</strong> The skin ramp is evenly spaced and unlabelled, starting looks are varied, and Shuffle picks across the whole range with equal chance.</li>
+  <li><strong>Every hair texture gets the same care.</strong> Coily, curly, wavy and straight styles get equal craft and variety. Protective styles, locs and braids are first-class. Head coverings are their own respectful category, never costumes or unlockables.</li>
+  <li><strong>Authentic, not stereotyped.</strong> The feel shows in craft and detail: hair textures done right, Sunday best and cookout style, card-table culture. It never shows as exaggerated features, caricature or costume. Every item is open to everyone, and nothing is presented as "for" one kind of person. Patterns are original, not copies of specific cultural or sacred textiles. Players and artists who know this style first-hand shape and review the work.</li>
+  <li><strong>Many bodies and ages.</strong> Larger and smaller builds get the same outfit quality. Grey hair and laugh lines are ordinary options. Hearing aids, cochlear-implant processors and glasses sit alongside everything else. Later: prosthetic limbs and a wheelchair option, designed with users who live with them.</li>
+  <li><strong>Colour-vision access.</strong> Players are never told apart by colour alone: name plates, silhouettes and, at a table, seat plates carry identity. Palette swatches have text names. The palette is checked under the three common colour-vision deficiencies, and name plates keep high contrast.</li>
+  <li><strong>Readable silhouettes.</strong> Hair, headwear and outfit shapes make outlines distinct from the front, the side and behind, which is how you see people at your table. A thin outline separates avatars from busy backgrounds.</li>
+  <li><strong>Usable controls.</strong> No fine dragging is required. Everything works by mouse, touch, keyboard, gamepad or one VR hand, and with the existing text-size and reduce-motion settings.</li>
+  <li><strong>Safe by design.</strong> There is no free text on avatars apart from the name, which is already limited. Players cannot upload images. Gestures are friendly only, and anyone can hide others' gestures.</li>
+</ul>
+
+<h2 id="production">6. Production considerations</h2>
+
+<h3>Modular parts, built in code</h3>
+<ul>
+  <li><strong>A small set of body measurements</strong> (height, shoulder width, torso depth, hip width, limb thickness, head size) comes from the build and height choices.</li>
+  <li><strong>Every part is a function</strong> that takes those measurements and its own options, and returns a shape: a head, a hairstyle, a sleeve, a shoe. Clothing is a slightly larger shell of the same body parts, so every garment fits every build with no per-body work.</li>
+  <li><strong>No skinned rigs at launch.</strong> The body is a hierarchy of rigid parts: pelvis, torso, head, upper arms, forearms, hands, legs, feet. Animation is a few joint rotations per frame. This is simpler to build in code, easy to test, and cheap on a headset. <em>As built (awaiting the owner's acceptance):</em> the parts are rigid joints (pelvis, torso, neck, head, upper arms, forearms, hands, thighs, shins, feet) drawn as up to three skinned meshes on one skeleton. Every vertex is weighted wholly to its own joint, so each part still moves rigidly, while a figure costs 2 or 3 draws instead of one per part. Two things bend rather than move rigidly: the top below the waist hangs on a "hem" bone that is drawn shorter while seated, and the lids and brows move by morphs.</li>
+  <li><strong>Hair has two versions:</strong> one for a bare head, and a tucked one under hats and coverings, so no headwear clips through hair.</li>
+</ul>
+
+<h3>Performance on a standalone headset</h3>
+<ul>
+  <li><strong>Each avatar becomes 2 or 3 meshes</strong> (body and clothes, face, hair). It is merged once when its look changes and cached by look, with colours stored on the shapes, so 32 people stay near 100 draw calls. <em>As built:</em> one skeleton per avatar with three skinned meshes on it, the body (every part, hair and clothes included), its outline and the face's moving parts: 3 draw calls at any distance (2 for the simple shapes), so 32 people with their name plates come to about 128 per view. That is over the target; drawing all name plates as one instanced mesh would bring it to about 97, and is not built. In a headset each view is drawn once per eye.</li>
+  <li><strong>Triangle budget:</strong> about 3,000 per avatar up close and about 600 beyond 8 m. Animation pauses beyond 15 m and out of view. <em>As built (awaiting the owner's acceptance):</em> the budget counts the shaded figure. The outline pass draws the figure's outer shells a second time from the same buffers, at every distance, so a silhouette reads against a busy room, fireworks or the pool however far off it is; up close that is about 1,900 to 2,200 triangles more, not counted in the budget. Beyond 15 m a figure is posed once to settle into its seat and then holds still, except while a gesture plays, so a wave from the backyard reads across the house.</li>
+  <li><strong>Shared materials</strong> across all avatars. The name plate texture is built as it is today.</li>
+  <li><strong>A low-detail fallback</strong>, today's simple shapes, for slow devices or the comfort switch. <em>As built:</em> it is a switch (Settings, and the VR menu) for slow devices and for comfort; nothing turns it on by itself.</li>
+</ul>
+
+<h3>Network and storage</h3>
+<ul>
+  <li><strong>A look is a small record of option names</strong>, about 20 short fields with a version number. It is sent to the room when it changes and handed to newcomers in the room snapshot. <em>As built:</em> 32 fields, about 600 bytes as JSON (the server takes up to 4 KB). The version number is kept with the look in browser storage only: on the wire every look goes through <code>cleanLook</code>, whose field-by-field fallback already copes with an option one side does not know.</li>
+  <li><strong>The server checks every field</strong> against the known option lists and lengths, just as it checks poses now, and drops anything unknown. A bad record can therefore never break another player's page.</li>
+  <li><strong>Saved per browser</strong>, with the same version number, and a fallback for any option a later release removes.</li>
+</ul>
+
+<h3>Testing</h3>
+<ul>
+  <li>A unit test builds every option on every build and checks the triangle budget, that every part attaches, and that no numbers are invalid.</li>
+  <li>Browser screenshots of the starting looks are taken in both themes.</li>
+  <li>The palette is checked for contrast and under colour-vision simulation.</li>
+</ul>
+
+<h3>Launch versus later</h3>
+<div class="wrap">
+<table>
+  <thead><tr><th>Area</th><th><span class="tag launch">Launch</span></th><th><span class="tag later">Later</span></th></tr></thead>
+  <tbody>
+    <tr><td>Avatar</td><td>Stylized body, 4 builds, 5 heights, face set, blink and glance, outline</td><td>Prosthetics, wheelchair, more face shapes</td></tr>
+    <tr><td>Wardrobe</td><td>Hair (24), head coverings (5), tops (12), bottoms (7), one-piece outfits (3), shoes (6), accessories (13), assistive items</td><td>Seasonal sets, two-tone hair, more patterns</td></tr>
+    <tr><td>Motion</td><td>Walk, run, jump tuck, float, seated card-back hand, lean to play</td><td>Live head and hand tracking from VR players</td></tr>
+    <tr><td>Social</td><td>Six gestures, end-of-hand reactions (can be turned off)</td><td>Table photo, profile card, high-five when hands meet</td></tr>
+    <tr><td>Editing</td><td>"Your look" from the Menu and the entry screen, with live preview, Before, Undo, Save and Cancel</td><td>Foyer mirror in VR, pointer preview in VR</td></tr>
+    <tr><td>Extras</td><td>Name plate colour and symbol</td><td>Earned pins and frames, pin shelf</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="first">Recommended first release</h2>
+<ol>
+  <li>The stylized avatar body with the four builds and five heights, the face set, blink, glance and outline, plus the low-detail fallback.</li>
+  <li>The full baseline wardrobe from section 2, every item free, with the 42-tone skin ramp and the curated two-slot garment palette.</li>
+  <li>Moving and seated poses driven by the data the game already sends, including the card-back hand at tables.</li>
+  <li>Six friendly gestures, and end-of-hand reactions that can be switched off.</li>
+  <li>"Your look" on the entry screen and in the Menu, with live preview, Before, Undo, Save and Cancel, fully keyboard and screen-reader usable, and VR-comfortable.</li>
+  <li>Looks saved per browser, sent once per change, and checked by the server.</li>
+  <li>Name plate colour and symbol.</li>
+</ol>
+<p class="muted">Deliberately not in the first release: unlockables, the mirror, photos, live head and hand tracking. Each is worth adding after people have played with the basics. <em>As built:</em> the foyer mirror and live head and hand tracking shipped in the first release after all. The mirror draws the scene a second time (once per eye in a headset) while the viewer is within 10 m of it and its glass is in view, so near it every avatar's draw calls count twice.</p>
+
+<h2 id="looks">Example looks</h2>
+<p class="muted">Seven combinations that show the range. They describe looks, not people: any player can wear any of them.</p>
+<div class="looks">
+  <div class="look"><h3>Game-night host</h3><ul><li>Deep brown skin, warm undertone</li><li>Low fade with a part design; salt-and-pepper beard</li><li>Round glasses; cardigan over a patterned button-up</li><li>Chinos, loafers; a spade on the name plate; slaps the last card down on every book</li></ul></div>
+  <div class="look"><h3>Backyard regular</h3><ul><li>Medium tan skin, neutral undertone</li><li>Long box braids, dark brown with copper tips and beads (both extras)</li><li>Gold hoops; plain sports jersey</li><li>Shorts, high-tops</li></ul></div>
+  <div class="look"><h3>Bright and bold</h3><ul><li>Very light skin with freckles, cool undertone</li><li>Curly bob dyed teal</li><li>Cat-eye glasses, hearing aid</li><li>Hoodie, wide-leg trousers, boots</li></ul></div>
+  <div class="look"><h3>Sunday best</h3><ul><li>Very deep skin, cool undertone</li><li>Silk press under a wide-brim crown hat in plum</li><li>Pearl drop earrings; tailored dress</li><li>Low block heels; a heart on the name plate</li></ul></div>
+  <div class="look"><h3>Quiet strategist</h3><ul><li>Light-medium skin, warm undertone</li><li>Plum hijab with a contrasting trim</li><li>Rectangular glasses</li><li>Long cardigan, maxi skirt, sneakers</li></ul></div>
+  <div class="look"><h3>Cookout fit</h3><ul><li>Medium-deep skin, warm undertone</li><li>360 waves under a gold durag</li><li>Matching family-reunion tee; gold chain</li><li>Linen shorts, slides</li></ul></div>
+  <div class="look"><h3>Party mode</h3><ul><li>Medium-deep skin, neutral undertone</li><li>High-top fade dyed purple; New Year's party hat (seasonal extra)</li><li>Sparkle sweater (extra)</li><li>Track pants, high-tops</li></ul></div>
+</div>
+
+</main>
+</body>
+</html>
