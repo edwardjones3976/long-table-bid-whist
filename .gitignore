@@ -48,3 +48,6 @@ playwright-report/
 .lane.json
 # The provider instructions are tracked again; the older block above ignored them.
 !AGENTS.md
+
+# The detached game server's process id (.claude/mansion-server.py); its log is covered by *.log.
+.claude/mansion-server.pid

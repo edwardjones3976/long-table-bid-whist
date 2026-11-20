@@ -16,6 +16,7 @@ import {
   DRAG_COMMIT,
   dropCard,
   feltFloor,
+  feltTrick,
   foresee,
   frameFor,
   HAND,
@@ -187,6 +188,38 @@ describe("direct.ts", () => {
     expect(imports.length).toBeGreaterThan(0);
     for (const [, typeOnly, from] of imports) expect(typeOnly === "type " || from === "../world/layout", from).toBe(true);
     expect(readFileSync("client/src/world/layout.ts", "utf8")).not.toMatch(/from "three|@react-three/);
+  });
+});
+
+describe("the trick on the felt", () => {
+  it("keeps a finished trick, with its winner, on the felt until the next card is led", () => {
+    const table = spadesInPlay();
+    const mine = () => {
+      table.state = table.engine.apply(table.state, table.seat, table.engine.chooseAction(table.engine.viewFor(table.state, table.seat)));
+    };
+    // Play on until a trick is won and it is my lead: the rules have already cleared that trick.
+    let cards = table.describe().tableCards;
+    for (let turns = 0; !(cards.trick.length === 0 && cards.lastTrick); turns += 1) {
+      expect(turns).toBeLessThan(12);
+      mine();
+      table.bots();
+      cards = table.describe().tableCards;
+    }
+    expect(table.live()).toBe(true);
+
+    const felt = feltTrick(cards);
+    expect(felt.plays).toEqual(cards.lastTrick!.plays);
+    expect(new Set(felt.plays.map((play) => play.seat)).size).toBe(4);
+    expect(felt.won).toEqual({ seat: cards.lastTrick!.winner, name: cards.lastTrick!.winnerName });
+
+    mine();
+    const led = feltTrick(table.describe().tableCards);
+    expect(led.plays).toHaveLength(1);
+    expect(led.won).toBeNull();
+  });
+
+  it("is empty before the first trick", () => {
+    expect(feltTrick({ trick: [], lastTrick: null })).toEqual({ plays: [], won: null });
   });
 });
 
