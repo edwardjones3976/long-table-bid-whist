@@ -1,8 +1,9 @@
 # The Long Table — Bid Whist VR Codex
 
-**Version:** codex-v0.3.0 · **Date:** 2026-11-20 · **Rules preset:** `strict-table-v1.0.0`
+**Version:** codex-v0.4.0 · **Date:** 2026-11-20 · **Rules preset:** `strict-table-v1.0.0`
 
-> **v0.3.0:** owner decided D-05 (yes); the deal-commitment hash ships
+> **v0.4.0:** owner decided D-04 (yes); the Unity/OpenXR toolchain is pinned in
+> [`VR_TOOLCHAIN.md`](VR_TOOLCHAIN.md) from verified official sources. **v0.3.0:** owner decided D-05 (yes); the deal-commitment hash ships
 > (`DealCommitment` / `DealReveal`, `DealCommitmentHasher`), live seeds come from
 > `SecureRandom`. **v0.2.0:** owner decided D-01 and D-02 (yes to both); findings F-01–F-06 fixed
 > (engine fixes integrated from the single-finding branches for F-01…F-05 and the
@@ -547,12 +548,27 @@ that is never authoritative.
 | `sortHand` | presentation ordering (jokers, trump, then ♠ ♥ ♣ ♦) |
 | `projectSeatView`, `projectAiObservation` | information boundary |
 
-### 10.4 Toolchain — provisional
+### 10.4 Toolchain — `DECIDED` (D-04, 2026-11-20)
 
-Unity LTS (version chosen at the G1 toolchain gate against the then-current
-compatibility matrix), Unity OpenXR, Meta OpenXR package only for required
-Quest/MR extensions, XR Interaction Toolkit for grab/ray/UI/haptics/stationary
-rig/device simulator, Meta XR Audio SDK. `OPEN`, decision D-04.
+Pinned in [`docs/VR_TOOLCHAIN.md`](VR_TOOLCHAIN.md), which carries the full
+rationale, the official sources with access dates, the documentation
+inconsistencies found, the G1 compatibility-spike checklist and the upgrade
+policy. Summary:
+
+| Layer | Pin |
+| --- | --- |
+| Unity Editor | **6000.3.29f1** (Unity 6.3 LTS, supported to Dec 2027); migrate to 6.7 LTS when it ships |
+| XR plug-in | `com.unity.xr.openxr` **1.19.0** (fallback 1.18.0 if the spike finds 6.7-gated features) |
+| Quest extensions | `com.unity.xr.meta-openxr` **2.7.0** (+ management 4.7.0, arfoundation 6.6.0, core-utils 2.6.0, compositionlayers 2.4.0) |
+| Interaction | `com.unity.xr.interaction.toolkit` **3.7.0** · `com.unity.xr.hands` **1.10.0** |
+| Spatial audio | `com.meta.xr.sdk.audio` **209.0.0** (Meta XR Audio SDK; Oculus Spatializer is end-of-life) |
+| Android | target 34 · min 32 · ARM64 only · IL2CPP · Vulkan · APK sig v2 |
+| Devices | Quest 3 / 3S (MR placement), Quest 2 / Quest Pro (frozen at Horizon OS v2.13 / SDK v213, submissions through Dec 2027) |
+
+The G1 gate is now the **spike** in `VR_TOOLCHAIN.md` §4, not the version
+choice: a one-day throwaway project proving the manifest resolves, builds for
+ARM64/Vulkan/API 34, runs seated with controllers and hands, spatializes audio
+without the Meta Core SDK, and passes Meta's binary upload checks.
 
 ---
 
@@ -701,7 +717,7 @@ recommendation.
 | D-01 | Are direction and Trump/No-Trump binding from the auction, with only the suit named afterwards? | **Decided yes** (owner, 2026-11-20); implemented, see F-03. Rules council may still confirm against the house tables they know. |
 | D-02 | May a joker be led in No-Trump, and what does it do? | **Decided yes** (owner, 2026-11-20): lead allowed, joker loses to any suited card, first suited card sets the suit; implemented, see F-02. |
 | D-03 | Which experienced-player council approves `strict-table-v1.0.0`? | Convene a compensated council of 5–7 players across regions and family traditions, separate from the usability panel. |
-| D-04 | Unity/OpenXR as provisional toolchain, with Kotlin engine as reference and C# port under golden replay? | **Yes**, pending a compatibility spike at G1. |
+| D-04 | Unity/OpenXR as the toolchain, with Kotlin engine as reference and C# port under golden replay? | **Decided yes** (owner, 2026-11-20); versions pinned in [`VR_TOOLCHAIN.md`](VR_TOOLCHAIN.md) from verified official sources (§10.4). The G1 spike validates the pins; it no longer chooses them. |
 | D-05 | Publish a deal commitment hash for post-hand fairness verification? | **Decided yes** (owner, 2026-11-20); implemented, see §4.2. Nonce-salted SHA-256, revealed only after scoring, never for voided hands. |
 | D-06 | Is external venue music accepted for the MVP, with in-room transmission deferred? | **Yes.** |
 | D-07 | Which accessibility paths are launch gates? | The gate rows in Chapter 8; everything else is a later enhancement. |
