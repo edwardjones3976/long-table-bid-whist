@@ -1,8 +1,11 @@
 # The Long Table — Bid Whist VR Codex
 
-**Version:** codex-v0.5.0 · **Date:** 2026-11-20 · **Rules preset:** `strict-table-v1.0.0`
+**Version:** codex-v0.6.0 · **Date:** 2026-11-20 · **Rules preset:** `strict-table-v1.0.0`
 
-> **v0.5.0:** owner decided D-03; the Rules Council's composition, mandate and
+> **v0.6.0:** owner decided D-07; the thirteen accessibility and comfort launch
+> gates G1–G13 are normative, each with a pass/fail criterion in
+> [`ACCESSIBILITY_GATES.md`](ACCESSIBILITY_GATES.md), grounded in Meta's current
+> VRCs and design guidance (verified 2026-11-20). **v0.5.0:** owner decided D-03; the Rules Council's composition, mandate and
 > process are fixed and its brief is drafted in
 > [`RULES_COUNCIL_BRIEF.md`](RULES_COUNCIL_BRIEF.md). **v0.4.0:** owner decided D-04 (yes); the Unity/OpenXR toolchain is pinned in
 > [`VR_TOOLCHAIN.md`](VR_TOOLCHAIN.md) from verified official sources. **v0.3.0:** owner decided D-05 (yes); the deal-commitment hash ships
@@ -458,31 +461,47 @@ committed deal.
 
 ---
 
-## 8. Accessibility and comfort
+## 8. Accessibility and comfort — `DECIDED` (D-07, 2026-11-20)
 
-**Launch gates** (the build does not ship without them) — carried forward
-from the Android `CalibrationScreen` where `SHIPPED`:
+The thirteen **launch gates** below are normative; the VR build does not ship
+while any one fails. Each gate's pass/fail criterion, measurement method and
+official basis are in [`ACCESSIBILITY_GATES.md`](ACCESSIBILITY_GATES.md),
+whose sources were verified on 2026-11-20. Two framing facts from that
+verification: every Meta accessibility VRC (1–9) is **recommended, not
+required** — Meta states an app "will not be rejected for missing these items"
+— so these gates are The Long Table's own bar; and the store's **required**
+checks that touch accessibility (declared play mode met with no standing,
+floor reach or >90° pivot; full parity for every declared input modality; clean
+hands↔controllers switching; reset-forward; honest metadata) are gates too.
 
-| Requirement | Android | VR |
-| --- | --- | --- |
-| Playable with no audio at all (captions for every meaningful sound) | `SHIPPED` | gate |
-| Card scale Standard / Large / Extra Large | `SHIPPED` | gate (world-scale cards + private magnifier) |
-| High-contrast four-colour suit badges, suit redundant to colour | `SHIPPED` | gate |
-| Handedness: commit control on dominant side | `SHIPPED` | gate |
-| Two-step commit on by default | `SHIPPED` | gate |
-| Reduced motion | `SHIPPED` | gate — also removes dealing animation |
-| Seated / stationary, stable horizon, no forced head turns | n/a | gate |
-| Recenter, skip-able and re-openable calibration before any menu | partial | gate |
-| Generous hit areas (≥ 2.5 cm at arm's reach) | n/a | gate |
-| Visible speaker identity for every caption | `SHIPPED` (`seatCaptions`) | gate |
+| # | Gate | Android | VR |
+| --- | --- | --- | --- |
+| G1 | Fully playable without audio (every caption and sound has a visible equivalent) | `SHIPPED` | gate |
+| G2 | Captions meet Meta's spec: 3+ sizes (50–200 %), ≤ 32 chars × 2 rows, box, speaker attribution, movable, in the 40° FOV | partial | gate |
+| G3 | Seated, stationary: no standing, floor reach or >90° pivot; height from system player height (VRC.Quest.Tracking.1, **required**) | n/a | gate |
+| G4 | One core action, Select → Preview → Commit, two-step by default; no simultaneous presses, no timed input, no untaught gestures | `SHIPPED` | gate |
+| G5 | Full input parity: two controllers, one controller either hand, hands, gaze + confirm; tracking loss releases a held card (VRC.Quest.Tracking.2, Input.7, Input.8, **required**) | `SHIPPED` | gate |
+| G6 | Hit targets ≥ 48 dp, primary controls ≥ 60 dp, visual ≥ 32 dp, sized for the least precise input | `SHIPPED` | gate (automated) |
+| G7 | Contrast ≥ 4.5:1 text / 3:1 UI; no colour-only meaning; no pure white/black; focus indicators ≥ 2 px | `SHIPPED` | gate (automated) |
+| G8 | Card scale Standard / Large / Extra Large + private magnifier; text in scalable units following the OS size; ≥ 14 px, body ≥ 18 px; no italics | `SHIPPED` | gate |
+| G9 | Reduced motion; stable horizon; no head-locked UI; no forced head turns; self-rated **Comfortable** and justified | `SHIPPED` | gate |
+| G10 | Recenter / reset forward one action away at all times (VRC.Quest.Functional.9, **required**) | n/a | gate |
+| G11 | First-run calibration before any menu, skippable, re-openable, saved at once | `SHIPPED` | gate |
+| G12 | Speaker identity on every caption; every event signalled by ≥ 2 of visual / caption / haptic / audio | `SHIPPED` | gate |
+| G13 | No human turn timers; pause always available; no reach above heart level or < 10 cm from the headset; break prompt | `SHIPPED` | gate |
 
-**Later enhancements** (`OPEN`): private-hand read-aloud on demand, colour-
-blind palettes beyond the current badges, adjustable AI pacing, haptic
-intensity, and a "table-side helper" mode for a sighted companion.
+**Later enhancements** (not gates): screen-reader support in VR (Unity's
+Accessibility module lists no XR platform; the Android app remains the
+screen-reader path), private-hand read-aloud, colour-vision palettes beyond
+the badges, adjustable AI pacing and haptic intensity, a table-side helper
+mode, remappable bindings beyond handedness, system live captions for future
+voice. Locomotion-style VRCs (.7, .8) do not apply: the table has no
+locomotion.
 
 Older-adult evidence favours training, local champions, and testing actual
 preferences over age stereotypes. The first-run calibration therefore asks,
-never assumes.
+never assumes, and every scripted gate session includes testers from each age
+band 30s–70s, headset novices, glasses wearers and at least one wheelchair user.
 
 ---
 
@@ -728,7 +747,7 @@ recommendation.
 | D-04 | Unity/OpenXR as the toolchain, with Kotlin engine as reference and C# port under golden replay? | **Decided yes** (owner, 2026-11-20); versions pinned in [`VR_TOOLCHAIN.md`](VR_TOOLCHAIN.md) from verified official sources (§10.4). The G1 spike validates the pins; it no longer chooses them. |
 | D-05 | Publish a deal commitment hash for post-hand fairness verification? | **Decided yes** (owner, 2026-11-20); implemented, see §4.2. Nonce-salted SHA-256, revealed only after scoring, never for voided hands. |
 | D-06 | Is external venue music accepted for the MVP, with in-room transmission deferred? | **Yes.** |
-| D-07 | Which accessibility paths are launch gates? | The gate rows in Chapter 8; everything else is a later enhancement. |
+| D-07 | Which accessibility paths are launch gates? | **Decided** (owner, 2026-11-20): the thirteen gates G1–G13 in Chapter 8 / [`ACCESSIBILITY_GATES.md`](ACCESSIBILITY_GATES.md), each with a pass/fail criterion and measurement; everything else is a later enhancement. Set deliberately above the store: Meta's accessibility VRCs are all recommended, not required. |
 | D-08 | What evidence advances the project from local VR hand to private multiplayer? | All Chapter 13.1 tests green including replay and boundary tests, plus the Chapter 13.2 human evidence. |
 | D-09 | First room and emotional tone? | One contemporary family/community room; warm, lived-in, unhurried. Art direction with community review before any asset is commissioned. |
 
