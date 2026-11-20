@@ -521,6 +521,21 @@ class BidWhistRulesEngine(
             detail = trickSummary
         )
 
+        // Once the final trick is on the table every book is decided, so a void request that
+        // was still pending lapses: the hand can no longer be voided, only scored.
+        val isFinalTrick = trickNumber >= manifest.handSize
+        val lapsedRequest = state.pendingVoidRequest?.takeIf { isFinalTrick }
+        val lapseEvent = lapsedRequest?.let { request ->
+            AuditEvent(
+                sequence = state.auditLog.size + 3,
+                phase = TablePhase.TRICK_COMPLETE,
+                actor = "Authoritative Rules Service",
+                summary = "Void request lapsed",
+                detail = "Request by ${request.requestedBy.displayName} (${request.reason}) lapsed: " +
+                    "all ${manifest.handSize} tricks are played, so Hand #${state.handNumber} can only be scored."
+            )
+        }
+
         return state.copy(
             phase = TablePhase.TRICK_COMPLETE,
             currentTurn = winner,
@@ -531,7 +546,8 @@ class BidWhistRulesEngine(
             booksWonThem = newBooksThem,
             seatCaptions = state.seatCaptions + (seat to playText),
             latestCaption = trickSummary,
-            auditLog = state.auditLog + playEvent + trickEvent
+            pendingVoidRequest = if (isFinalTrick) null else state.pendingVoidRequest,
+            auditLog = state.auditLog + playEvent + trickEvent + listOfNotNull(lapseEvent)
         )
     }
 
@@ -601,6 +617,7 @@ class BidWhistRulesEngine(
                 currentTrick = emptyList(),
                 lastOutcome = outcome,
                 latestCaption = outcomeCaption,
+                pendingVoidRequest = null,
                 auditLog = state.auditLog + scoreEvent
             )
         }

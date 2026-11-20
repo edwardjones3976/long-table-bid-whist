@@ -474,6 +474,72 @@ class BidWhistRulesEngineTest {
     }
 
     @Test
+    fun voidRequest_lapsesWhenTheFinalTrickIsPlayed() {
+        var state = engine.startNewMatch(initialSeed = 4321L)
+        state = engine.submitBid(state, Seat.SOUTH, BidAction.Bid(4, isNoTrump = false, direction = BidDirection.UPTOWN))
+        state = engine.submitBid(state, Seat.WEST, BidAction.Pass)
+        state = engine.submitBid(state, Seat.NORTH, BidAction.Pass)
+        state = engine.submitBid(state, Seat.EAST, BidAction.Pass)
+        state = engine.selectTrumpAndPickUpKitty(state, Seat.SOUTH, Suit.SPADES)
+        state = engine.submitKittyDiscard(state, Seat.SOUTH, state.hands.getValue(Seat.SOUTH).takeLast(6).map { it.id }.toSet())
+        // Play up to the last card of the final trick.
+        while (!(state.completedTricks.size == engine.manifest.handSize - 1 && state.currentTrick.size == 3)) {
+            state = if (state.phase == TablePhase.TRICK_COMPLETE) {
+                engine.collectCompletedTrick(state)
+            } else {
+                val seat = state.currentTurn
+                val legal = engine.legalCards(state.hands.getValue(seat), state.currentTrick, requireNotNull(state.contract))
+                engine.playCard(state, seat, legal.first().id)
+            }
+        }
+        // An AI seat asks for a void mid-trick; South has not yet consented.
+        state = engine.requestVoid(state, Seat.WEST, "Someone bumped the table")
+        assertNotNull(state.pendingVoidRequest)
+
+        val lastSeat = state.currentTurn
+        val lastCard = engine.legalCards(state.hands.getValue(lastSeat), state.currentTrick, requireNotNull(state.contract)).first()
+        val finalTrick = engine.playCard(state, lastSeat, lastCard.id)
+        assertEquals(TablePhase.TRICK_COMPLETE, finalTrick.phase)
+        assertNull(finalTrick.pendingVoidRequest)
+        assertFalse(engine.canRequestVoid(finalTrick))
+        val lapse = finalTrick.auditLog.last()
+        assertEquals("Void request lapsed", lapse.summary)
+        assertTrue(lapse.detail, lapse.detail.contains("Someone bumped the table"))
+        finalTrick.auditLog.forEachIndexed { index, event -> assertEquals(index + 1, event.sequence) }
+
+        val scored = engine.collectCompletedTrick(finalTrick)
+        assertEquals(TablePhase.HAND_COMPLETE, scored.phase)
+        assertNull(scored.pendingVoidRequest)
+        assertNull(engine.projectSeatView(scored).pendingVoidRequest)
+        assertFalse(engine.projectSeatView(scored).canRequestVoid)
+    }
+
+    @Test
+    fun aiPolicy_treatsAJokerOnlyNoTrumpTrickAsALead() {
+        val policy = AiPlayerPolicy(engine)
+        val base = engine.startNewMatch(initialSeed = 11L)
+        val hand = listOf(
+            Card("SPADES_ACE", Suit.SPADES, Rank.ACE),
+            Card("CLUBS_TWO", Suit.CLUBS, Rank.TWO),
+            Card("HEARTS_KING", Suit.HEARTS, Rank.KING)
+        )
+        for (trick in listOf(
+            listOf(PlayedCard(Seat.NORTH, littleJoker)),
+            listOf(PlayedCard(Seat.WEST, bigJoker), PlayedCard(Seat.NORTH, littleJoker))
+        )) {
+            val obs = engine.projectAiObservation(base, Seat.SOUTH).copy(
+                contract = noTrumpContract,
+                ownHand = hand,
+                currentTrick = trick
+            )
+            val (chosen, _) = policy.chooseCardToPlay(obs, TableTalkTone.QUIET)
+            // Nothing governs yet, so the AI leads its strongest suited card rather than
+            // throwing its lowest card into a suit it would then be out-ranked in.
+            assertEquals("SPADES_ACE", chosen.id)
+        }
+    }
+
+    @Test
     fun coachHint_explainsAJokerLeadInNoTrump() {
         val policy = AiPlayerPolicy(engine)
         val base = engine.startNewMatch(initialSeed = 21L)

@@ -123,7 +123,11 @@ class AiPlayerPolicy(
             return only to "${obs.seat.displayName} plays ${only.accessibleDescription}."
         }
 
-        val chosen = if (obs.currentTrick.isEmpty()) {
+        // In No-Trump a trick holding only jokers has no governing suit yet: whatever this
+        // seat plays will set it, so the choice is a lead, not a follow.
+        val nothingGovernsYet = obs.currentTrick.isNotEmpty() &&
+            engine.governingSuit(obs.currentTrick, contract) == null
+        val chosen = if (obs.currentTrick.isEmpty() || nothingGovernsYet) {
             chooseLeadCard(legal, contract)
         } else {
             chooseFollowCard(obs.seat, legal, obs.currentTrick, contract)

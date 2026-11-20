@@ -4,8 +4,8 @@
 
 > **v0.2.0:** owner decided D-01 and D-02 (yes to both); findings F-01–F-06 fixed
 > (engine fixes integrated from the single-finding branches for F-01…F-05 and the
-> `.gradle` cleanup) and covered by 26 engine tests. **v0.1.0:** initial Codex and
-> findings register.
+> `.gradle` cleanup), plus F-07–F-11 found by adversarial review of those fixes;
+> 30 engine tests. **v0.1.0:** initial Codex and findings register.
 
 This Codex is the single reference for carrying The Long Table from the shipped
 Android build to a seated VR/MR table on Meta Quest. It records what the rules
@@ -114,9 +114,9 @@ silently corrected.
   and the engine refuses any attempt to enter it.
 - If the winning bid was a **suit bid**, the declarer names **only the trump
   suit** (`SELECT_TRUMP`), then receives the kitty. The direction (Uptown /
-  Downtown) is taken from the winning bid
-  (`directionAndNoTrumpBindingFromAuction = true`, decision D-01): the other
-  three seats bid against that declaration, so it cannot change afterwards.
+  Downtown) is taken from the winning bid (decision D-01): the other three
+  seats bid against that declaration, so it cannot change afterwards. This is
+  unconditional in `strict-table-v1.0.0`, not a manifest toggle.
 - The declarer sees the six kitty cards (marked `kittyCardIdsInHand`), holds 18
   cards, and must lay down exactly six. Discards are never revealed.
 - **Kitty book:** the kitty counts as the declarer's partnership's first book
@@ -592,7 +592,7 @@ oral history, or archival element needs a documented source and permission
 
 ## 13. Testing and acceptance gates
 
-### 13.1 Deterministic tests — `SHIPPED` (26) / `SPECIFIED` (rest)
+### 13.1 Deterministic tests — `SHIPPED` (30) / `SPECIFIED` (rest)
 
 Shipped in `BidWhistRulesEngineTest.kt` (all pass on a plain JVM):
 
@@ -657,6 +657,9 @@ Each was a difference between the declared rules/boundaries and the code.
 | F-06 | Hygiene | **Fixed** | `.gradle/` build state (≈1.2 MB of binaries) was committed although `.gitignore` targets build output. | `git ls-files .gradle`. | `.gradle/` added to `.gitignore` and removed from the index. |
 | F-07 | Minor (found in review of the fixes) | **Fixed** | A void was still accepted in `TRICK_COMPLETE` after the 12th trick, when every book is decided and only scoring remains. | Review probe. | `canRequestVoid` also returns false once `completedTricks.size >= handSize` in `TRICK_COMPLETE`; test `voidRequest_isRefusedOnceTheFinalTrickIsPlayed_butAllowedAfterEarlierTricks`. |
 | F-08 | Minor (found in review of the fixes) | **Fixed** | The coach hint said a seat "currently holds this book" when the only card in a No-Trump trick was a led joker, which cannot win. | Review trace. | When `governingSuit` is null on a non-empty trick the hint explains the joker lead; test `coachHint_explainsAJokerLeadInNoTrump`. |
+| F-09 | Minor (found in review of the fixes) | **Fixed** | A void request raised during the last trick survived into `HAND_COMPLETE` / `MATCH_COMPLETE`, so the host sheet kept showing a request that could no longer be consented to. | Review trace. | The request lapses (audited) when the final trick is completed, and the scoring transition clears it; test `voidRequest_lapsesWhenTheFinalTrickIsPlayed`. |
+| F-10 | Minor (found in review of the fixes) | **Fixed** | In No-Trump, when only jokers had been played, the AI evaluated its choice as a *follow* with no governing suit, so every suited card tied and it threw its lowest card — which then set the suit and lost to any higher card of it. | Review probe. | A joker-only trick is treated as a lead (`chooseLeadCard`), so the AI plays its strongest suited card; test `aiPolicy_treatsAJokerOnlyNoTrumpTrickAsALead`. |
+| F-11 | Minor (found in review of the fixes) | **Fixed** | `TableRulesManifest.directionAndNoTrumpBindingFromAuction` was declared but never read, advertising a toggle with no effect. | `grep`. | Field removed; the binding is an unconditional rule of `strict-table-v1.0.0`. |
 
 Positive results worth keeping: AI-vs-AI hands terminate with 13 books and 48
 unique played cards each; the whole suite runs on a plain JVM with no Android
