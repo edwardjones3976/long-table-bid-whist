@@ -37,6 +37,8 @@ export function useTableActions(tableId: TableId | null): TableActions {
   const revision = useStore((state) => (state.table?.tableId === tableId ? state.table.revision : null));
   const [error, setError] = useState<string | null>(null);
   const pending = useRef(false);
+  /** Goes up on every press and every table change: only the reply to the latest press, made since the last change, settles `pending` and the message. */
+  const generation = useRef(0);
   const latest = useRef(description);
   const lastPress = useRef({ at: 0, id: "" });
   latest.current = description;
@@ -46,6 +48,7 @@ export function useTableActions(tableId: TableId | null): TableActions {
     setError(null);
     // The table has moved on, so a press made now is a new one even if the last reply is still on its way.
     pending.current = false;
+    generation.current += 1;
   }, [tableId, revision]);
 
   const press = useCallback(async (button: TableButton): Promise<void> => {
@@ -57,7 +60,10 @@ export function useTableActions(tableId: TableId | null): TableActions {
     lastPress.current = { at: now, id: button.id };
     if (isDestructive(button) && last.id !== button.id && now - last.at < RELAY_GUARD_MS) return;
     pending.current = true;
+    const mine = ++generation.current;
     const reply = await runButton(button);
+    // A reply that lands after the table moved on must not free a newer press still waiting, nor show an old refusal.
+    if (generation.current !== mine) return;
     pending.current = false;
     // A stale revision needs no message: the newer snapshot shows what changed.
     setError(reply && !reply.ok && reply.error !== "stale-revision" ? reply.message : null);

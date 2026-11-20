@@ -447,6 +447,37 @@ describe("useTableActions", () => {
     expect(hook.result.current.description!.role).toBe("player");
   });
 
+  it("lets a reply that lands after the table moved on neither free a newer press nor show its refusal", async () => {
+    const world = atPlay();
+    const hook = renderHook(() => useTableActions("spades-1"));
+    await serve(world);
+    const held = hook.result.current.description!.hand.find((card) => card.selectable)!;
+    act(() => hook.result.current.pick(held.card.id));
+    const play = hook.result.current.description!.buttons.find((button) => button.id === "play")!;
+    const replies: ((reply: unknown) => void)[] = [];
+    fake.state.answer = () => new Promise((resolve) => replies.push(resolve));
+    const first = hook.result.current.press(play);
+    // A snapshot moves the table on while the first reply is on its way, so a second press may go out.
+    world.revision += 1;
+    await serve(world);
+    const second = hook.result.current.press(play);
+    expect(replies).toHaveLength(2);
+
+    await act(async () => {
+      replies[0]({ ok: false, error: "seat-taken", message: "An old refusal" });
+      await first;
+    });
+    expect(hook.result.current.busy()).toBe(true);
+    expect(hook.result.current.error).toBeNull();
+
+    await act(async () => {
+      replies[1]({ ok: false, error: "seat-taken", message: "That seat was just taken" });
+      await second;
+    });
+    expect(hook.result.current.busy()).toBe(false);
+    expect(hook.result.current.error).toBe("That seat was just taken");
+  });
+
   it("shows a refusal in the panel as an alert", async () => {
     const world = makeWorld("spades");
     render(<TablePanelDom />);

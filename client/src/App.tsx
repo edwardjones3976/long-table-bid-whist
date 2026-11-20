@@ -2,11 +2,13 @@ import { Canvas } from "@react-three/fiber";
 import { XR } from "@react-three/xr";
 import { Component, useEffect, useState, type ReactNode } from "react";
 import type { TableId } from "../../shared/protocol";
+import { desk, pollGamepad } from "./controls/input";
 import { Player } from "./controls/Player";
 import { Entry } from "./hud/Entry";
 import { Hint, Hud } from "./hud/Hud";
 import { mySeat, myTable, net, useStore } from "./net/store";
 import { local, useLocal } from "./state/local";
+import { useActiveTableId, useTableDescription } from "./state/table";
 import { xrStore } from "./state/xr";
 import { useTurnCues } from "./tableui/clock";
 import { TablePanelDom } from "./tableui/TablePanelDom";
@@ -69,6 +71,32 @@ function TurnCues(): null {
   return null;
 }
 
+/**
+ * The gamepad in the DOM panel, kept outside the 3D view so it still works when that cannot start: the bumpers step
+ * through my selectable cards, then the table's enabled buttons. The view reads the pad each frame (controls/Player.tsx);
+ * without it, `poll` does the same here. Its own component for the same reason as TurnCues.
+ */
+function PadFocus({ poll }: { poll: boolean }): null {
+  const description = useTableDescription(useActiveTableId());
+  useEffect(() => {
+    desk.focusIds = description
+      ? [
+          ...description.hand.filter((card) => card.selectable).map((card) => `card-${card.card.id}`),
+          ...description.buttons.filter((button) => !button.disabled).map((button) => button.id),
+        ]
+      : [];
+  }, [description]);
+  useEffect(() => {
+    if (!poll) return;
+    let frame = requestAnimationFrame(function tick() {
+      pollGamepad();
+      frame = requestAnimationFrame(tick);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [poll]);
+  return null;
+}
+
 function Mansion() {
   useSeating();
   usePoseLink();
@@ -108,6 +136,7 @@ function Mansion() {
       </SceneBoundary>
       <Hud tables={!panel} />
       <TurnCues />
+      <PadFocus poll={failed} />
       {panel ? <TablePanelDom /> : <Hint />}
     </div>
   );
