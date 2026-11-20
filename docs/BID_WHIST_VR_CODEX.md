@@ -616,7 +616,7 @@ Still required before VR acceptance:
 | Kitty | Exactly 6 discards; discards never appear in any projection; kitty book credited once |
 | Scoring | Made/set for every level; NT doubling; Boston only on 7; game ends at 7; no negative scores |
 | Replay | Golden audit logs identical across Kotlin and C# engines for ≥ 1 000 seeds |
-| Property | For 10 000 random seeds with random legal actions: no duplicate card, no impossible count, no out-of-turn transition, contiguous audit sequence numbers, termination within 60 transitions |
+| Property | For 10 000 random seeds with random legal actions: no duplicate card, no impossible count, no out-of-turn transition, contiguous audit sequence numbers, termination within **66 engine transitions** (4 bids + at most 1 trump selection + 1 kitty discard + 48 card plays + 12 trick collections; a No-Trump hand takes 65) |
 
 ### 13.2 Human evidence
 
