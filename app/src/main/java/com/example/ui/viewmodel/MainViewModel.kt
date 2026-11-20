@@ -171,8 +171,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (current.phase != TablePhase.PLAYING_TRICK || current.currentTurn != Seat.SOUTH) return
         val view = engine.projectSeatView(current)
         if (cardId !in view.legalPlayCardIds) {
-            val ledCard = current.currentTrick.firstOrNull()?.card
-            val ledSuit = ledCard?.let { c -> current.contract?.let { engine.effectiveSuit(c, it) } }
+            val ledSuit = current.contract?.let { engine.governingSuit(current.currentTrick, it) }
             val suitMsg = ledSuit?.let { "Must follow ${it.symbol} ${it.label}." } ?: "Select a legal card."
             _tableState.value = _tableState.value.copy(statusNotice = suitMsg)
             return

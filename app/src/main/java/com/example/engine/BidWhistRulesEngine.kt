@@ -367,13 +367,24 @@ class BidWhistRulesEngine(
         }
     }
 
+    /**
+     * The suit that governs the trick: the effective suit of the first card played
+     * that has one. In a trump contract this is always the led card's effective suit
+     * (Jokers count as trump). In No-Trump a led Joker has no suit, so the first
+     * non-Joker card played sets the suit to follow (Codex decision D-02). Returns
+     * null while no card in the trick has a suit (empty trick, or only Jokers in No-Trump).
+     */
+    fun governingSuit(trick: List<PlayedCard>, contract: Contract): Suit? {
+        return trick.firstNotNullOfOrNull { effectiveSuit(it.card, contract) }
+    }
+
     fun legalCards(
         hand: List<Card>,
         currentTrick: List<PlayedCard>,
         contract: Contract
     ): List<Card> {
         if (currentTrick.isEmpty()) return hand
-        val ledSuit = effectiveSuit(currentTrick.first().card, contract) ?: return hand
+        val ledSuit = governingSuit(currentTrick, contract) ?: return hand
         val matchingSuit = hand.filter { effectiveSuit(it, contract) == ledSuit }
         return matchingSuit.ifEmpty { hand }
     }
@@ -396,8 +407,9 @@ class BidWhistRulesEngine(
             }
             return 0
         } else {
-            // No-Trump: Jokers have no suit and cannot win tricks
-            if (card.isJoker) return 0
+            // No-Trump: Jokers have no suit and lose to every non-Joker card, including
+            // off-suit discards. Strictly below 0 so a led Joker never wins by default.
+            if (card.isJoker) return -1
             if (ledSuit != null && card.suit == ledSuit) {
                 return 100 + rankStrength(card.rank, contract.direction)
             }
@@ -407,7 +419,7 @@ class BidWhistRulesEngine(
 
     fun determineTrickWinner(plays: List<PlayedCard>, contract: Contract): Seat {
         require(plays.size == 4) { "Trick must have 4 plays" }
-        val ledSuit = effectiveSuit(plays.first().card, contract)
+        val ledSuit = governingSuit(plays, contract)
         return plays.maxBy { cardStrength(it.card, ledSuit, contract) }.seat
     }
 
