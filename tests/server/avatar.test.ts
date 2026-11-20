@@ -188,6 +188,19 @@ describe("gestures", () => {
     vi.setSystemTime(Date.now() + 4_000);
     expect(await send(a, "gesture", { kind: "clap" })).toEqual({ ok: true });
   });
+
+  it("keeps a bow and applause for the end of the hand while a match is in play at the sender's table", async () => {
+    const a = await enter("Ana");
+    const b = await enter("Bo", a.joined!.code);
+    for (const [seat, who] of [a, b].entries()) {
+      expect(await send(who, "table:sit", { tableId: "tonk-1", role: "player", seat })).toMatchObject({ ok: true });
+      expect(await send(who, "table:ready", { ready: true })).toEqual({ ok: true });
+    }
+    expect(await send(a, "table:start")).toEqual({ ok: true });
+    await until(() => (a.tables.at(-1) as { view?: { phase: string } } | undefined)?.view?.phase === "draw", "the hand");
+    for (const kind of ["bow", "clap"]) expect(await send(a, "gesture", { kind })).toMatchObject({ ok: false, error: "in-play" });
+    expect(await send(a, "gesture", { kind: "wave" })).toEqual({ ok: true });
+  });
 });
 
 describe("a VR player's head and hands", () => {

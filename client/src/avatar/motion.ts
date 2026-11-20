@@ -6,7 +6,7 @@
  *   stepGait(gait, moved, dt, m)    walking speed and stride phase from how far the eased position moved
  *   stepAir(air, y, vy, dt)         the height the feet last rested at; tuckOf(air, y) tucks while above it
  *   isFloating(x, z, y)             in the pool: the feet below the floor under them
- *   animate(scene, rig)             one frame: every joint's turn, the hip height, a bob and the mouth
+ *   animate(scene, rig)             one frame: every joint's turn, the hip height, a bob, the mouth and brows, and the hem
  *   reachArm(...)                   two-bone IK, for a VR player's tracked hands
  *   actNow(id, now, ...lists)       the gesture or reaction a member is playing now, if any
  *   blinkAt(seed, t), gazeAt(...)   the face: seeded blinks, eyes on the nearest member moving
@@ -20,7 +20,7 @@
 import { Euler, Matrix4, Quaternion, Vector3 } from "three";
 import { GESTURE_MS, type GestureId, type Hand } from "../../../shared/avatar";
 import type { RoomSnapshot, Seat, TableId, TableStatus } from "../../../shared/protocol";
-import { floorHeight, SEAT_HEIGHT } from "../world/layout";
+import { EYE_HEIGHT_STANDING, floorHeight, SEAT_HEIGHT } from "../world/layout";
 import { JOINT_NAMES, type JointName, type MouthShape } from "./figure";
 import type { Measurements } from "./measure";
 
@@ -45,6 +45,10 @@ export interface Rig {
   /** Added to the figure's height: the dip of a stride, the bob of floating. */
   lift: number;
   mouth: MouthShape;
+  /** -1 knit to 1 raised: Figure.face.setBrows. */
+  brows: number;
+  /** How far the top hangs below the waist: Figure.setHem. */
+  hem: number;
 }
 
 export interface Gait {
@@ -106,6 +110,8 @@ export const newRig = (): Rig => ({
   pelvisY: 0,
   lift: 0,
   mouth: "relaxed",
+  brows: 0,
+  hem: 1,
 });
 
 /** A steady number from a member id, for seeding their blinks and idles. */
@@ -180,6 +186,18 @@ export function fanSize(status: TableStatus | undefined, mine: boolean, count: n
 
 /** Feet tucked this far back under the knees, radians. */
 const TUCK = 0.12;
+/** A seated head at rest tips this far down toward the table, radians. */
+export const SEATED_HEAD = -0.12;
+
+/** Eases a seated head's look toward `target` (or back to the rest), at most 3 rad/s, so a change of turn never snaps it. */
+export function easeLook(look: { yaw: number; pitch: number }, target: Seated["look"], dt: number): void {
+  const to = target ?? { yaw: 0, pitch: SEATED_HEAD };
+  const step = (from: number, goal: number) => from + clamp((goal - from) * Math.min(1, dt * 4), -dt * 3, dt * 3);
+  look.yaw = step(look.yaw, to.yaw);
+  look.pitch = step(look.pitch, to.pitch);
+}
+/** Seated, the top's hem is drawn up to this share of its hang, so it lies on the lap rather than through the thighs. */
+export const SEATED_HEM = 0.1;
 
 /**
  * Sitting on a chair at SEAT_HEIGHT: the hip joint just above the cushion, thighs sloping down only as far as
@@ -213,16 +231,18 @@ export function actNow(memberId: string, now: number, ...lists: readonly (readon
 /** 0 to 1 to 0 over an act: in over its first 15%, out over its last 20%, so it starts and ends at the idle. */
 const envelope = (p: number) => smooth(clamp(Math.min(p / 0.15, (1 - p) / 0.2), 0, 1));
 
-type Shape = { joints: Partial<Record<JointName, Turn>>; mouth: MouthShape };
+/** An act's pose: joint turns, the mouth, and the brows (raised in every act: they are all friendly). */
+type Shape = { joints: Partial<Record<JointName, Turn>>; mouth: MouthShape; brows?: number };
 
 /** Each act's pose at `s` seconds in (`p` of the way through). Seated acts keep the legs and use the table. */
 const ACTS: Record<Act, (s: number, p: number, seated: boolean) => Shape> = {
-  wave: (s) => ({ joints: { upperArmR: [0.15, 0, 2.5], foreArmR: [0, 0, 0.3 + 0.4 * Math.sin(TAU * 2.5 * s)], head: [0.06, -0.1, 0.08] }, mouth: "smile" }),
+  wave: (s) => ({ joints: { upperArmR: [0.15, 0, 2.5], foreArmR: [0, 0, 0.3 + 0.4 * Math.sin(TAU * 2.5 * s)], head: [0.06, -0.1, 0.08] }, mouth: "smile", brows: 1 }),
   clap: (s) => {
     const apart = 0.22 * (0.5 + 0.5 * Math.cos(TAU * 3 * s));
     return {
       joints: { upperArmL: [0.95, 0, 0.32 - apart], upperArmR: [0.95, 0, -0.32 + apart], foreArmL: [0.9, 0, 0], foreArmR: [0.9, 0, 0] },
       mouth: "grin",
+      brows: 0.7,
     };
   },
   laugh: (s) => {
@@ -236,12 +256,15 @@ const ACTS: Record<Act, (s: number, p: number, seated: boolean) => Shape> = {
         foreArmL: [1.3, 0, 0],
         foreArmR: [1.3, 0, 0],
       },
-      mouth: shake > 0 ? "open" : "grin",
+      // Held open, not flicked to a grin with every shake, so it reads as a laugh.
+      mouth: "laugh",
+      brows: 1,
     };
   },
   bow: (_s, _p, seated) => ({
     joints: { torso: [seated ? -0.35 : -0.6, 0, 0], head: [-0.2, 0, 0], upperArmR: [0.45, 0, -0.35], foreArmR: [1.5, 0, 0] },
     mouth: "smile",
+    brows: 0.4,
   }),
   slap: (_s, p, seated) => {
     // Up for 45%, down hard by 58%, then held where it landed: on the table edge, or on the other palm.
@@ -257,16 +280,20 @@ const ACTS: Record<Act, (s: number, p: number, seated: boolean) => Shape> = {
         ...(seated ? {} : { upperArmL: [0.6, 0, 0.3] as Turn, foreArmL: [0.9, 0, 0] as Turn }),
       },
       mouth: "grin",
+      brows: 0.6,
     };
   },
   boston: (s, p) => {
     const pump = 0.5 * (0.5 + 0.5 * Math.sin(TAU * 2 * s));
     return {
       joints: { upperArmL: [0.2, 0, -2.6], upperArmR: [0.2, 0, 2.6], foreArmL: [0, 0, -pump], foreArmR: [0, 0, pump], torso: [0.08, 0, 0], head: [0.2, 0, 0] },
-      mouth: p < 0.3 ? "grin" : "open",
+      // A moment of happy surprise as the arms go up, then the grin and the cheer.
+      mouth: p < 0.15 ? "surprise" : p < 0.3 ? "grin" : "open",
+      brows: 1,
     };
   },
-  shake: (s) => ({ joints: { head: [0, 0.38 * Math.sin(TAU * 2.2 * s), 0] }, mouth: "smile" }),
+  // Rueful, not reproachful: brows up and a grin while the head shakes.
+  shake: (s) => ({ joints: { head: [0, 0.38 * Math.sin(TAU * 2.2 * s), 0] }, mouth: "grin", brows: 0.4 }),
   shrug: () => ({
     joints: {
       upperArmL: [0.2, 0, -0.45],
@@ -278,8 +305,9 @@ const ACTS: Record<Act, (s: number, p: number, seated: boolean) => Shape> = {
       head: [0, 0, 0.15],
     },
     mouth: "smile",
+    brows: 0.8,
   }),
-  grin: (s) => ({ joints: { head: [0.06 + 0.06 * Math.sin(TAU * 1.4 * s), 0, 0] }, mouth: "grin" }),
+  grin: (s) => ({ joints: { head: [0.06 + 0.06 * Math.sin(TAU * 1.4 * s), 0, 0] }, mouth: "grin", brows: 0.8 }),
 };
 
 // ---- the frame ----
@@ -292,6 +320,8 @@ export function animate(scene: Scene, rig: Rig): Rig {
   rig.pelvisY = m.joints.pelvis[1];
   rig.lift = 0;
   rig.mouth = "relaxed";
+  rig.brows = 0;
+  rig.hem = scene.seated ? SEATED_HEM : 1;
   const sway = scene.calm ? 0 : 1;
   const own = (scene.seed / 4294967296) * TAU;
   const out = armsOut(m);
@@ -314,22 +344,24 @@ export function animate(scene: Scene, rig: Rig): Rig {
     // Upright and settled, elbows in: the fan held before the chest in the left hand, the right hand by the table
     // edge, reaching in to play.
     set(j.torso, -0.05 - 0.2 * lean, 0, 0);
-    set(j.head, -0.12, 0, 0);
+    set(j.head, SEATED_HEAD, 0, 0);
     set(j.upperArmL, holding ? 0.3 : 0.35, 0, holding ? 0.25 : 0.15);
     set(j.foreArmL, holding ? 1.45 : 1.15, 0, 0);
     set(j.upperArmR, 0.35 + 0.5 * lean, 0, -0.15);
     set(j.foreArmR, 1.15 - 0.35 * lean, 0, 0);
     if (look) {
       set(j.head, look.pitch, look.yaw, 0);
-      idle = 0;
+      // The idle fades in as an eased look comes back to rest, so nothing jumps when it gets there.
+      idle *= 1 - clamp((Math.abs(look.yaw) + Math.abs(look.pitch - SEATED_HEAD)) / 0.15, 0, 1);
     }
   } else if (scene.floating) {
-    // A gentle bob, arms paddling in slow circles, legs kicking softly.
+    // The eyes where the swimmer's own are (just over the water), with a gentle bob; the arms paddle out at the
+    // surface in slow circles and the legs kick softly below.
     const k = t * 1.8 + own;
     const reach = scene.calm ? 0.4 : 1;
-    rig.lift = 0.035 * sway * Math.sin(k * 0.6);
-    set(j.upperArmL, 0.35 + 0.35 * reach * Math.sin(k), 0, -(0.85 + 0.15 * reach * Math.cos(k)));
-    set(j.upperArmR, 0.35 - 0.35 * reach * Math.sin(k), 0, 0.85 - 0.15 * reach * Math.cos(k));
+    rig.lift = EYE_HEIGHT_STANDING - (m.height - 0.52 * m.head) + 0.035 * sway * Math.sin(k * 0.6);
+    set(j.upperArmL, 0.35 * reach * Math.sin(k), 0, -(1.3 + 0.12 * reach * Math.cos(k)));
+    set(j.upperArmR, -0.35 * reach * Math.sin(k), 0, 1.3 + 0.12 * reach * Math.cos(k));
     set(j.foreArmL, 0.5, 0, 0);
     set(j.foreArmR, 0.5, 0, 0);
     set(j.thighL, 0.2 + 0.25 * reach * Math.sin(k * 1.5), 0, 0);
@@ -377,6 +409,10 @@ export function animate(scene: Scene, rig: Rig): Rig {
     j.upperArmR[0] += 0.03 * idle * Math.sin(0.5 * t + own + 1);
   }
 
+  // A VR player's live head and hands first, so a gesture blends out of them and back.
+  if (scene.head) set(j.head, scene.head.pitch, scene.head.yaw, 0);
+  scene.hands?.forEach((hand, i) => hand && reachInto(rig, m, SIDES[i], hand));
+
   if (scene.act) {
     const { kind, ms } = scene.act;
     const p = clamp(ms / ACT_MS[kind], 0, 1);
@@ -387,10 +423,8 @@ export function animate(scene: Scene, rig: Rig): Rig {
       for (let i = 0; i < 3; i += 1) now[i] += (turn[i] - now[i]) * e;
     }
     if (e > 0.25) rig.mouth = shape.mouth;
+    rig.brows = (shape.brows ?? 0) * e;
   }
-
-  if (scene.head) set(j.head, scene.head.pitch, scene.head.yaw, 0);
-  scene.hands?.forEach((hand, i) => hand && reachInto(rig, m, SIDES[i], hand));
   return rig;
 }
 

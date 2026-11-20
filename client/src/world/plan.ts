@@ -589,7 +589,8 @@ export function decor(theme: Theme): Part[] {
       }
     }
   }
-  const corners: [number, number][] = [[gallery.x0 + 0.8, -2.5], [gallery.x1 - 0.8, -2.5], [-7.2, 12], [7.2, 12], [9, HOUSE.z0 - 1], [23, HOUSE.z0 - 1]];
+  // In the foyer, the corners by the arch: clear of the dressing mirror's glass and the lounge doors.
+  const corners: [number, number][] = [[gallery.x0 + 0.8, -2.5], [gallery.x1 - 0.8, -2.5], [-7.2, 10.5], [7.2, 10.5], [9, HOUSE.z0 - 1], [23, HOUSE.z0 - 1]];
   for (const r of rooms.filter((r) => r.kind === "lounge")) {
     const outerX = r.rect.x0 === HOUSE.x0 ? r.rect.x0 + 1 : r.rect.x1 - 1;
     corners.push([outerX, r.rect.z0 + 1], [outerX, r.rect.z1 - 1]);

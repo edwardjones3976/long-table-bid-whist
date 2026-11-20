@@ -91,10 +91,69 @@ function pelvisProfile(m: Measurements, near: boolean): Profile {
   return [[0, -0.09 * k], [m.hip * 0.7, -0.075 * k], [m.hip, -0.01 * k], [m.hip * 0.97, 0.04 * k], [m.waist, m.pelvis + 0.02]];
 }
 
-/** Checks on any lathe: a lathe lists its triangles two per quad, column by column. */
-const checks = (rows: number, a: string, b: string): Paint => (_, triangle) => {
+/** A midi or maxi skirt's lathe profile in pelvis space, flaring from the hips to its hem, or null for any other bottom. */
+function skirtProfile(m: Measurements, legs: Legs): { profile: Profile; hemY: number; bandTop: number } | null {
+  if (legs !== "midi" && legs !== "maxi") return null;
+  const k = m.scale;
+  const maxi = legs === "maxi";
+  const hemY = -(m.thigh + m.shin * (maxi ? 0.95 : 0.5));
+  const hemR = m.hip * (maxi ? 1.5 : 1.38) + LOW;
+  const hipR = m.hip + LOW + 0.012 * k;
+  const bandTop = hemY + 0.035 * k;
+  const profile: Profile = [
+    [hemR, hemY],
+    [hemR + ((hipR - hemR) * (bandTop - hemY)) / (-0.06 * k - hemY), bandTop],
+    [hipR, -0.06 * k],
+    [m.hip + LOW, 0.03 * k],
+    [m.waist + LOW, m.pelvis + 0.02],
+  ];
+  return { profile, hemY, bandTop };
+}
+
+/**
+ * The top's lathe profile in torso space, and the shell worn under it below the waist in pelvis space (the bottoms or
+ * a skirt). Below the waist the top is everywhere at least its own thickness outside that shell, so nothing worn under
+ * it shows through, on any build, standing or seated (where its lower part is only drawn up toward the waist).
+ */
+export function topAndBottom(look: Look, m: Measurements, near: boolean): { top: Profile; under: Profile } {
+  const o = outfitOf(look);
+  const d = THICK[o.top] ?? 0.008;
+  const drop = HEM[o.top] * m.scale;
+  const under = skirtProfile(m, o.legs)?.profile ?? inflate(pelvisProfile(m, near), LOW);
+  // Where it hangs, and where a seated figure draws it up to (motion.ts SEATED_HEM).
+  const over = (y: number) => Math.max(radiusAt(under, m.pelvis + y), radiusAt(under, m.pelvis + y / 10)) + d;
+  const torso = inflate(torsoProfile(m, near), d).map(([r, y]) => [y < 0.02 ? Math.max(r, over(y)) : r, y] as const);
+  return { top: drop > 0 ? [[over(-drop), -drop], ...torso] : torso, under };
+}
+
+/** Checks this tall, a little more than a torso column is wide up close. */
+const CHECK = 0.1;
+
+/** The profile with points added so no row is taller than `step`, for checks in even bands. */
+const finer = (profile: Profile, step: number): Profile =>
+  profile.flatMap(([r, y], i) => {
+    if (i === 0) return [[r, y] as const];
+    const [r0, y0] = profile[i - 1];
+    const n = Math.max(1, Math.ceil(Math.abs(y - y0) / step));
+    return Array.from({ length: n }, (_, j) => [r0 + ((r - r0) * (j + 1)) / n, y0 + ((y - y0) * (j + 1)) / n] as const);
+  });
+
+/**
+ * Checks on a lathe of `profile` (a lathe lists its triangles two per quad, column by column): by column, and by bands
+ * `step` high taken from each quad's middle, so both its triangles agree. A row closing in to a point is plain.
+ */
+const checks = (profile: Profile, step: number, a: string, b: string): Paint => (_, triangle) => {
+  const rows = profile.length - 1;
   const quad = Math.floor(triangle / 2);
-  return (Math.floor(quad / rows) + (quad % rows)) % 2 ? b : a;
+  const [[r0, y0], [r1, y1]] = [profile[quad % rows], profile[(quad % rows) + 1]];
+  if (Math.min(r0, r1) < 0.5 * Math.max(r0, r1)) return a;
+  return (Math.floor(quad / rows) + Math.floor((y0 + y1) / 2 / step)) % 2 ? b : a;
+};
+
+/** Radians round from the front (+ toward the figure's right) of the middle of the lathe column holding a triangle. */
+const columnAngle = (triangle: number, rows: number, segments: number): number => {
+  const phi = ((Math.floor(triangle / 2 / rows) + 0.5) * 2 * Math.PI) / segments;
+  return Math.atan2(Math.sin(phi), -Math.cos(phi));
 };
 
 /** A short open band around a lathe at height y: hems, cuffs and collars. */
@@ -124,14 +183,18 @@ export function body(look: Look, m: Measurements, detail: "near" | "far"): Dress
   const d = THICK[o.top] ?? 0.008;
   const drop = HEM[o.top] * k;
   const pelvis = pelvisProfile(m, near);
-  const hemRadius = radiusAt(pelvis, m.pelvis - drop) + LOW + d;
-  const top: Profile = drop > 0 ? [[hemRadius, -drop], ...inflate(torsoProfile(m, near), d)] : inflate(torsoProfile(m, near), d);
+  // Up close a patterned top has rows in even bands, so its checks are a regular grid.
+  const checked = o.top === "patterned" && near;
+  const fitted = topAndBottom(look, m, near).top;
+  const top = checked ? finer(fitted, CHECK * k) : fitted;
+  const hemRadius = top[0][0];
   const t = m.torso;
   const rows = top.length - 1;
   const across = (p: Vector3) => Math.atan2(p.x, -p.z / zs);
   const paint: Paint =
-    o.top === "patterned" ? checks(rows, o.main, o.trim)
-    : o.top === "jersey" ? (p) => (Math.abs(Math.abs(across(p)) - Math.PI / 2) < 0.5 ? o.trim : o.main)
+    o.top === "patterned" ? checks(top, CHECK * k, o.main, o.trim)
+    // Side panels by whole columns, so the two triangles of a quad never fall on different sides of a jagged edge.
+    : o.top === "jersey" ? (_, n) => (Math.abs(Math.abs(columnAngle(n, rows, s.torso)) - Math.PI / 2) < 0.5 ? o.trim : o.main)
     : !near ? o.main
     : o.top === "sweater" ? (p) => (p.y > 0.72 * t && p.y < 0.86 * t ? o.trim : o.main)
     : o.top === "hoodie" ? (p) => (p.y > -0.02 && p.y < 0.3 * t && Math.abs(across(p)) < 1.05 ? o.trim : o.main)
@@ -200,8 +263,9 @@ export function body(look: Look, m: Measurements, detail: "near" | "far"): Dress
     }
   }
   if (o.top === "hoodie") {
-    // The hood lies on the upper back. It is closed, so the outline never shows through an opening.
-    shell("torso", piece(new SphereGeometry(0.1 * k, s.small + 2, near ? 5 : 3), shade(o.main, 0.9), { at: [0, t - 0.03, neckR * 0.5 + 0.02], scale: [1.25, 0.8, 0.6] }));
+    // The hood lies on the upper back, placed from the top's own back so it sits the same on every build. It is closed,
+    // so the outline never shows through an opening.
+    shell("torso", piece(new SphereGeometry(0.1 * k, s.small + 2, near ? 5 : 3), shade(o.main, 0.9), { at: [0, t - 0.03, radiusAt(top, t - 0.03) * zs - 0.04 * k], scale: [1.25, 0.8, 0.6] }));
     for (const [side] of SIDES) small("torso", ...ribbon(side * 0.03 * k, t - 0.01, side * 0.035 * k, t - 0.13 * k, 0.006, 0.004, o.trim));
   }
 
@@ -210,25 +274,32 @@ export function body(look: Look, m: Measurements, detail: "near" | "far"): Dress
   const puff = o.top === "blouse" ? 0.01 : 0;
   // Beyond 8 m a limb is left open at its lower end, which the next part covers.
   const end = near ? 1 : 0.98;
-  const upper = limb(m.limb, m.limb * 0.85, m.upperArm, s.cap, 0, end);
+  // The shoulder keeps a rounded dome at any distance, never a cone's peak.
+  const shoulderCap = Math.max(s.cap, 2);
+  const upper = limb(m.limb, m.limb * 0.85, m.upperArm, shoulderCap, 0, end);
   const fore = limb(m.limb * 0.85, m.limb * 0.68, m.foreArm, s.cap, 0, end);
   const wrist = m.limb * 0.68;
-  const sleevePaint = (profile: Profile): Paint => (o.top === "patterned" ? checks(profile.length - 1, o.main, o.trim) : o.main);
+  /** A sleeve's shell: checked in even bands like the top, else plain. */
+  const sleeveOf = (profile: Profile) => {
+    const shape = checked ? finer(profile, CHECK * k) : profile;
+    return piece(lathe(shape, s.arm), o.top === "patterned" ? checks(shape, CHECK * k, o.main, o.trim) : o.main);
+  };
   for (const [side, at] of SIDES) {
     const [shoulder, elbow, hand] = [`upperArm${at}`, `foreArm${at}`, `hand${at}`] as const;
     if (sleeve >= 1) {
       const cuff = inflate(limb(m.limb * 0.85, wrist, m.foreArm, s.cap, 0, 0.96), d);
-      shell(shoulder, piece(lathe(inflate(upper, d), s.arm), sleevePaint(upper)));
-      shell(elbow, piece(lathe(cuff, s.arm), sleevePaint(cuff)));
+      shell(shoulder, sleeveOf(inflate(upper, d)));
+      shell(elbow, sleeveOf(cuff));
       const rim = o.top === "suit" || o.top === "jacket" ? null : o.top === "patterned" || o.top === "button-up" ? shade(o.main, 0.9) : o.trim;
       if (rim) small(elbow, piece(band(cuff[0][0] + 0.002, -m.foreArm * 0.94, 0.03 * k, s.arm), rim));
       if (o.top === "suit") small(elbow, piece(band(wrist + 0.006, -m.foreArm * 0.985, 0.014 * k, s.arm), o.trim));
     } else {
-      shell(shoulder, piece(lathe(upper, s.arm), skin));
+      // Under a short sleeve only the arm below it is drawn, from just inside the sleeve's edge.
+      shell(shoulder, piece(lathe(sleeve > 0 ? limb(m.limb, m.limb * 0.85, m.upperArm, shoulderCap, 0.9 * sleeve, end) : upper, s.arm), skin));
       shell(elbow, piece(lathe(fore, s.arm), skin));
       if (sleeve > 0) {
-        const cover = inflate(limb(m.limb, m.limb * 0.85, m.upperArm, s.cap, 0, sleeve), d + puff);
-        shell(shoulder, piece(lathe(cover, s.arm), sleevePaint(cover)));
+        const cover = inflate(limb(m.limb, m.limb * 0.85, m.upperArm, shoulderCap, 0, sleeve), d + puff);
+        shell(shoulder, sleeveOf(cover));
         small(shoulder, piece(band(cover[0][0] + 0.003, -m.upperArm * sleeve + 0.009 * k, 0.018 * k, s.arm), o.trim));
       }
     }
@@ -242,7 +313,8 @@ export function body(look: Look, m: Measurements, detail: "near" | "far"): Dress
       [wrist * 1.05, -0.012 * k],
       [wrist, 0.035 * k],
     ];
-    shell(hand, piece(lathe(near ? palm : [palm[0], palm[3], palm[5]], s.hand), skin, { scale: [0.55, 1, 1] }));
+    // Beyond 8 m as few points, the fingertip still rounded, not a point.
+    shell(hand, piece(lathe(near ? palm : [palm[0], palm[1], palm[3], palm[5]], s.hand), skin, { scale: [0.55, 1, 1] }));
     if (near) shell(hand, piece(lathe(limb(0.011 * k, 0.009 * k, 0.032 * k, 1), 5), skin, { at: [0, -m.hand * 0.22, -reach * 0.78], rot: [0.55, 0, 0] }));
     if (look.marks.includes("vitiligo")) {
       const light = vitiligo(look.skin, skin);
@@ -254,20 +326,10 @@ export function body(look: Look, m: Measurements, detail: "near" | "far"): Dress
 
   // ---- hips and legs ----
   const legs = o.legs;
-  const skirt = legs === "midi" || legs === "maxi";
-  if (skirt) {
-    const maxi = legs === "maxi";
-    const hemY = -(m.thigh + m.shin * (maxi ? 0.95 : 0.5));
-    const hemR = m.hip * (maxi ? 1.5 : 1.38) + LOW;
-    const hipR = m.hip + LOW + 0.012 * k;
-    const bandTop = hemY + 0.035 * k;
-    const profile: Profile = [
-      [hemR, hemY],
-      [hemR + ((hipR - hemR) * (bandTop - hemY)) / (-0.06 * k - hemY), bandTop],
-      [hipR, -0.06 * k],
-      [m.hip + LOW, 0.03 * k],
-      [m.waist + LOW, m.pelvis + 0.02],
-    ];
+  const flared = skirtProfile(m, legs);
+  const skirt = flared !== null;
+  if (flared) {
+    const { profile, hemY, bandTop } = flared;
     const geometry = lathe(profile, s.torso);
     // As deep as the hips down to below them (so a top hanging over it covers it), rounder toward the hem so the legs have room.
     const position = geometry.attributes.position;
@@ -277,7 +339,16 @@ export function body(look: Look, m: Measurements, detail: "near" | "far"): Dress
     }
     shell("pelvis", piece(geometry, (p) => (p.y < bandTop ? o.lowTrim : o.low)));
   } else {
-    shell("pelvis", piece(lathe(inflate(pelvis, LOW), s.pelvis), o.low, { scale: [1, 1, zs] }));
+    const hips = lathe(inflate(pelvis, LOW), s.pelvis);
+    // Lit like the thighs below it, so hip and legs read as one garment with no seat panel: the normals, the seat's below
+    // the hips too, tipped as the thighs taper.
+    const { position, normal } = hips.attributes;
+    for (let i = 0; i < position.count; i++) {
+      const [x, z] = [position.getX(i), position.getZ(i)];
+      const out = Math.hypot(x, z) || 1;
+      normal.setXYZ(i, x / out, -0.09, z / out);
+    }
+    shell("pelvis", piece(hips, o.low, { scale: [1, 1, zs] }));
   }
   const thigh = limb(m.limb * 1.45, m.limb * 1.05, m.thigh, s.cap, 0, end);
   const shin = limb(m.limb * 1.05, m.limb * 0.75, m.shin, s.cap, 0, end);
@@ -315,20 +386,65 @@ export function body(look: Look, m: Measurements, detail: "near" | "far"): Dress
   return out;
 }
 
-/** A capsule-shaped foot lying along -Z, centred at (0, y, z): the foot itself, and each shoe built over it. */
-function footShape(length: number, halfWidth: number, height: number, y: number, z: number, near: boolean, segments: number): BufferGeometry {
+/**
+ * A foot lying along -Z, centred at (0, y, z): the foot itself, and each shoe built over it. Shaped (the default), it
+ * is flat underneath with its upper rising from a low, rounded toe to a full heel; unshaped, a rounded slab (a sole).
+ */
+function footShape(length: number, halfWidth: number, height: number, y: number, z: number, near: boolean, segments: number, shaped = true): BufferGeometry {
   const [l, w] = [length / 2, halfWidth];
+  const [start, wide] = footTurn(near, segments);
   const profile: Profile = near
     ? [[0, -l], [w * 0.75, -l + w * 0.35], [w, -l + w], [w, l - w], [w * 0.75, l - w * 0.35], [0, l]]
-    : [[0, -l], [w, 0], [0, l]];
+    : [[0, -l], [w * wide, -0.5 * l], [w * wide, 0.5 * l], [0, l]];
   // Turned so the profile's top is the toe (-Z), and flattened to the foot's height.
-  return lathe(profile, segments).applyMatrix4(matrixOf({ at: [0, y, z], rot: [-Math.PI / 2, 0, 0], scale: [1, 1, height / (2 * w)] }));
+  const geometry = lathe(profile, segments, start).applyMatrix4(matrixOf({ at: [0, y, z], rot: [-Math.PI / 2, 0, 0], scale: [1, 1, height / (2 * w)] }));
+  return shaped ? shod(geometry, y, z, l, height / 2) : geometry;
+}
+
+/**
+ * Where a foot's sides start round it, and how much wider they are cut. Beyond 8 m its four sides are turned half a
+ * side and widened to keep its width, so the shoe stands flat on its sole with a flat top: a shoe, not a diamond.
+ */
+const footTurn = (near: boolean, segments: number): [number, number] => (near ? [0, 1] : [Math.PI / segments, 1 / Math.cos(Math.PI / segments)]);
+
+/** How high a shoe's upper stands at `toe` (0 at the heel, 1 at the toe), as a share of the foot's height above its sole. */
+const upperAt = (toe: number) => 0.3 + 1.7 * (1 - 0.55 * toe * toe);
+
+/**
+ * Bends a shape made round a foot's centre line (height y, middle z, half-length l, half-height a) into a shoe's:
+ * flat soled, low at the toe and full at the heel, a little wider across the toes. Straps go through it too, so they
+ * stay on the foot.
+ */
+function shod(geometry: BufferGeometry, y: number, z: number, l: number, a: number): BufferGeometry {
+  const p = geometry.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    const toe = Math.min(1, Math.max(0, ((z - p.getZ(i)) / l) * 0.5 + 0.5));
+    const dy = p.getY(i) - y;
+    const up = dy < 0 ? 0.3 * (a + dy) : 0.3 * a + (upperAt(toe) - 0.3) * dy;
+    p.setXYZ(i, p.getX(i) * (0.9 + 0.15 * toe), y - a + up, p.getZ(i));
+  }
+  geometry.computeVertexNormals();
+  // Vertices in one place (a lathe's seam, its tips) share one normal, so no crease shows down the top of the shoe.
+  const { normal } = geometry.attributes;
+  const sums = new Map<string, Vector3>();
+  const key = (i: number) => `${p.getX(i).toFixed(5)} ${p.getY(i).toFixed(5)} ${p.getZ(i).toFixed(5)}`;
+  for (let i = 0; i < p.count; i++) {
+    const sum = sums.get(key(i)) ?? sums.set(key(i), new Vector3()).get(key(i))!;
+    sum.x += normal.getX(i);
+    sum.y += normal.getY(i);
+    sum.z += normal.getZ(i);
+  }
+  for (let i = 0; i < p.count; i++) {
+    const n = sums.get(key(i))!.clone().normalize();
+    normal.setXYZ(i, n.x, n.y, n.z);
+  }
+  return geometry;
 }
 
 function feet(out: Dressing, joint: JointName, look: Look, m: Measurements, near: boolean, skin: string, side: number): void {
   const s = SEGMENTS[near ? "near" : "far"];
   const k = m.scale;
-  const colour = hexOf("shoeColor", look.shoeColor) ?? "#5a3423";
+  const colour = hexOf("shoeColor", look.shoeColor) ?? "#331a10";
   const style = look.shoes;
   const [length, width, height] = [m.foot, m.limb * 0.85, m.ankle * 0.8];
   // Beyond 8 m the sole is not drawn, so the shoe itself stands on the floor.
@@ -341,20 +457,25 @@ function feet(out: Dressing, joint: JointName, look: Look, m: Measurements, near
   if (style === "sandals") {
     pieces.push(piece(footShape(length, width, height, y, z, near, s.foot), skin));
     for (const dz of near ? [-0.25, 0.05] : [-0.1]) {
-      pieces.push(piece(new CylinderGeometry(1, 1, 0.014 * k, s.foot, 1, true), colour, { at: [0, y, z + dz * length], rot: [Math.PI / 2, 0, 0], scale: [width + 0.003, 1, height / 2 + 0.003] }));
+      const [start, wide] = footTurn(near, s.foot);
+      const strap = new CylinderGeometry(wide, wide, 0.014 * k, s.foot, 1, true, start).applyMatrix4(matrixOf({ at: [0, y, z + dz * length], rot: [Math.PI / 2, 0, 0], scale: [width + 0.003, 1, height / 2 + 0.003] }));
+      pieces.push(piece(shod(strap, y, z, length / 2, height / 2), colour));
     }
   } else {
     const low = style === "loafers" || style === "heels" ? 0.85 : 1;
     pieces.push(piece(footShape(length + 2 * grow, width + grow, (height + 2 * grow) * low, floor + sole + ((height + 2 * grow) * low) / 2, z, near, s.foot), colour));
   }
   const soleColour = style === "sneakers" || style === "high-tops" ? SOLE_LIGHT : style === "sandals" ? shade(colour, 0.75) : SOLE_DARK;
-  if (near) pieces.push(piece(new BoxGeometry(2 * width + 0.02 * k, sole, length + 0.02 * k), soleColour, { at: [0, floor + sole / 2, z] }));
+  // A rounded sole, a little larger than the shoe all round.
+  if (near) pieces.push(piece(footShape(length + 0.02 * k, width + 0.008 * k, sole, floor + sole / 2, z, near, s.foot, false), soleColour));
   const ankle = m.limb * 0.75;
   if (style === "high-tops") pieces.push(piece(new CylinderGeometry(ankle + 0.016, ankle + 0.014, 0.08 * k, s.leg, 1, true), colour));
   if (style === "boots") pieces.push(piece(new CylinderGeometry(ankle + 0.014, ankle + 0.012, 0.17 * k, s.leg, 1, true), colour, { at: [0, floor * 0.5 + 0.085 * k, 0] }));
   if (style === "loafers" && near) {
-    const top = y + (height * 0.85) / 2 + grow;
-    small.push(piece(strip(new Vector3(-width, top - 0.006, z - length * 0.12), new Vector3(width, top - 0.006, z - length * 0.12), 0.012 * k, 0.006, new Vector3(0, 1, 0)), shade(colour, 0.6)));
+    // The saddle across the instep, on the upper's curve where it crosses.
+    const a = ((height + 2 * grow) * 0.85) / 2;
+    const top = floor + sole + a * upperAt(0.62);
+    small.push(piece(strip(new Vector3(-0.5 * width, top - 0.003, z - length * 0.12), new Vector3(0.5 * width, top - 0.003, z - length * 0.12), 0.012 * k, 0.006, new Vector3(0, 1, 0)), shade(colour, 0.6)));
   }
   if (style === "heels" && near) {
     // Raise the heel about the front of the sole, which stays on the floor, and put a low block under it.

@@ -7,8 +7,9 @@
  *
  * Every covering clears the tucked hair (hair.ts TUCKED_LIFT plus the sag of its own facets) and reaches
  * past the natural hairline, so no hair shows through or below it. All but the hijab stop above the ears,
- * which stay clear with anything worn behind them; the hijab covers the ears and neck and frames the face.
- * Patterns are plain folds, ribs, seams and bands made in the vertex colours.
+ * which stay clear with anything worn behind them; the hijab covers the ears and neck and frames the face, lined
+ * inside in a deeper shade so the face opening shows cloth. Patterns are plain folds, ribs, seams and bands made in
+ * the vertex colours.
  */
 import { SphereGeometry, Vector3, type BufferGeometry } from "three";
 import { hexOf, type Look } from "../../../shared/avatar";
@@ -19,17 +20,10 @@ import { add, dressing, lathe, mix, piece, shade, strip, type Dressing, type Pai
 
 const TAU = Math.PI * 2;
 const RIM = 0.003;
-const GOLD = "#d6a32b";
 /** A covering's edge: past the natural hairline all round, still above the ears. */
 const cover = (phi: number) => HAIRLINE(fromFace(phi)) + 0.06;
 
 export const HIJAB_SIDE = 0.022;
-
-/** Gold on deep colours, a deeper shade of the colour itself on light ones: trims that stand out on every colour. */
-export function trimOf(colour: string): string {
-  const [r, g, b] = [1, 3, 5].map((i) => parseInt(colour.slice(i, i + 2), 16) / 255);
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.45 ? shade(colour, 0.45) : mix(colour, GOLD, 0.6);
-}
 
 interface Wear {
   m: Measurements;
@@ -40,6 +34,8 @@ interface Wear {
   base: number;
   colour: string;
   shell: (...pieces: BufferGeometry[]) => void;
+  /** Not outlined. */
+  detail: (...pieces: BufferGeometry[]) => void;
   neck: (...pieces: BufferGeometry[]) => void;
 }
 
@@ -78,22 +74,34 @@ function hijab(w: Wear): void {
     return new Vector3(widest.x + (under.x - widest.x) * k * k, half + (0.03 - half) * k, widest.z + (under.z - widest.z) * k * k);
   };
   const hood = grid(w.cols, rows, (i, j) => (j === 0 ? head.at(0, 0, lift(0)) : point((TAU * i) / w.cols, (opening(fromFace((TAU * i) / w.cols)) * j) / rows)), true);
-  // The last row round the face is a band in the trim colour.
-  const trim = trimOf(w.colour);
+  // The last row round the face is a contrasting trim, a light cream over the cloth's own colour: a hem, never gold or
+  // ochre, so it never reads as hair.
+  const band = mix(w.colour, "#f1ead9", 0.55);
   const paint: Paint = (_, n) => {
     const [i, j] = cell(n, w.cols);
-    return j === rows - 1 && fromFace((TAU * (i + 0.5)) / w.cols) < F0 ? trim : w.colour;
+    return j === rows - 1 && fromFace((TAU * (i + 0.5)) / w.cols) < F0 ? band : w.colour;
   };
   w.shell(piece(hood, paint));
+  // Up close, a lining: the hood again facing inward, so the face opening shows cloth rather than the outline behind it.
+  if (!near) return;
+  const lining = hood.clone();
+  const index = lining.index!;
+  for (let i = 0; i < index.count; i += 3) {
+    const a = index.getX(i);
+    index.setX(i, index.getX(i + 1));
+    index.setX(i + 1, a);
+  }
+  lining.computeVertexNormals();
+  w.detail(piece(lining, shade(w.colour, 0.72)));
 }
 
-/** Wrapped round and up, in diagonal folds that meet at the front. */
+/** Wrapped round and up, tall, in deep diagonal folds that meet at the front: never one more dome. */
 function turban(w: Wear): void {
   const band = (phi: number, u: number) => Math.floor(5 * u + (2 * fromFace(phi)) / Math.PI) % 2;
-  const lift = (phi: number, _: number, u: number) => w.base + 0.006 + 0.036 * Math.sqrt(1 - u * u) + 0.004 * band(phi, u);
+  const lift = (phi: number, _: number, u: number) => w.base + 0.006 + 0.06 * Math.sqrt(1 - u * u) + 0.012 * band(phi, u);
   const paint: Paint = (at) => {
     const [phi, t] = w.head.angles(at);
-    return band(phi, t / cover(phi)) ? shade(w.colour, 0.8) : w.colour;
+    return band(phi, t / cover(phi)) ? shade(w.colour, 0.65) : w.colour;
   };
   w.shell(piece(layer(w.head, w.cols, w.near ? 6 : 2, cover, lift, RIM), paint));
 }
@@ -119,8 +127,13 @@ function headwrap(w: Wear): void {
 
 /** Close and smooth with a seam down the middle, tied at the back, its two tails lying down the upper back. */
 function durag(w: Wear): void {
-  const shine = mix(w.colour, "#ffffff", 0.18);
-  const paint: Paint = (at) => (Math.abs(Math.sin(w.head.angles(at)[0])) < 0.13 ? shine : w.colour);
+  // A broad shine down the seam and a deeper band along the front edge, so it reads as cloth, not as hair.
+  const [shine, edge] = [mix(w.colour, "#ffffff", 0.22), shade(w.colour, 0.6)];
+  const paint: Paint = (at) => {
+    const [phi, t] = w.head.angles(at);
+    if (fromFace(phi) < 0.45 * Math.PI && t / cover(phi) > 0.8) return edge;
+    return Math.abs(Math.sin(phi)) < 0.22 ? shine : w.colour;
+  };
   w.shell(piece(layer(w.head, w.cols, w.near ? 4 : 2, cover, () => w.base, RIM), paint));
   const back = w.m.chest * w.m.depth + 0.018;
   // Beyond 8 m the two tails read as one band.
@@ -141,15 +154,16 @@ function crownHat(w: Wear): void {
   const rb = m.headWidth * Math.sqrt(1 - (yb / (h / 2) - 1) ** 2) + w.base + 0.012;
   const zs = m.headDepth / m.headWidth;
   const band = shade(w.colour, 0.6);
+  // A ring exactly at the band's top edge, so the band's triangles stop on a straight line.
   const crown = near
-    ? [[rb, yb - 0.004], [rb + 0.006, yb + 0.05], [rb - 0.006, h + 0.035], [rb * 0.6, h + 0.06], [0, h + 0.066]] as const
-    : [[rb, yb - 0.004], [rb, h + 0.03], [0, h + 0.06]] as const;
+    ? [[rb, yb - 0.004], [rb + 0.004, yb + 0.028], [rb - 0.006, h + 0.035], [rb * 0.6, h + 0.06], [0, h + 0.066]] as const
+    : [[rb, yb - 0.004], [rb, yb + 0.028], [rb, h + 0.03], [0, h + 0.06]] as const;
   w.shell(piece(lathe(crown, w.cols), (at) => (at.y < yb + 0.028 ? band : w.colour), { scale: [1, 1, zs] }));
   // Its profile runs underneath outward, round the rim, then back in on top, so each face looks out of the brim.
   const brim = near
     ? [[rb - 0.003, yb - 0.006], [rb + 0.11, yb - 0.022], [rb + 0.11, yb - 0.016], [rb - 0.003, yb + 0.002]] as const
     : [[rb - 0.003, yb - 0.006], [rb + 0.1, yb - 0.02], [rb - 0.003, yb + 0.002]] as const;
-  w.shell(piece(lathe(brim, near ? 16 : 8), w.colour, { scale: [1, 1, zs] }));
+  w.shell(piece(lathe(brim, near ? 12 : 6), w.colour, { scale: [1, 1, zs] }));
   if (!near) return;
   const phi = 1.35 * Math.PI;
   const r = rb + 0.008;
@@ -158,19 +172,20 @@ function crownHat(w: Wear): void {
     yb + 0.016 + dy,
     (r + out) * zs * Math.cos(phi + along),
   ];
-  const ball = new SphereGeometry(1, 6, 3);
+  const ball = new SphereGeometry(1, 5, 3);
   w.shell(piece(ball.clone(), band, { at: at(0.004, 0, 0), scale: 0.011 }));
   for (const side of [-1, 1]) w.shell(piece(ball.clone(), band, { at: at(0, 0.004, side * 0.17), rot: [0, phi, side * 0.4], scale: [0.026, 0.014, 0.007] }));
 }
 
 /** A knit cap with ribs, a turned-up cuff and a little slouch. */
 function beanie(w: Wear): void {
-  const lift = (_: number, __: number, u: number) => w.base + 0.004 + 0.012 * (1 - u) ** 2 + (u > 0.72 ? 0.004 : 0);
+  // The cuff stands out a step and a shade deeper, and the ribs show, so it reads as knit, not as hair.
+  const lift = (_: number, __: number, u: number) => w.base + 0.004 + 0.012 * (1 - u) ** 2 + (u > 0.72 ? 0.008 : 0);
   const paint: Paint = (at) => {
     const [phi, t] = w.head.angles(at);
     const rib = Math.floor((phi * w.cols) / TAU) % 2;
     const cuff = t / cover(phi) > 0.72;
-    return shade(w.colour, (rib ? 0.86 : 1) * (cuff ? 0.92 : 1));
+    return shade(w.colour, (rib ? 0.8 : 1) * (cuff ? 0.72 : 1));
   };
   w.shell(piece(layer(w.head, w.cols, w.near ? 5 : 2, cover, lift, RIM), paint));
 }
@@ -187,6 +202,9 @@ const COVERINGS: Record<Exclude<Look["headwear"], "none">, (w: Wear) => void> = 
 export function headwear(look: Look, m: Measurements, detail: Detail): Dressing {
   const out: Dressing = { ...dressing(), tucksHair: look.headwear !== "none" };
   if (look.headwear === "none" || detail === "simple") return out;
+  // Like the hats: long hair hangs below a crown hat's band or a beanie's cuff.
+  if (look.headwear === "crown-hat") out.hatEdge = () => Math.acos((0.68 * m.head) / (m.head / 2) - 1);
+  if (look.headwear === "beanie") out.hatEdge = (f) => HAIRLINE(f) + 0.06;
   const near = detail === "near";
   COVERINGS[look.headwear]({
     m,
@@ -196,6 +214,7 @@ export function headwear(look: Look, m: Measurements, detail: Detail): Dressing 
     base: near ? 0.011 : 0.021,
     colour: hexOf("headwearColor", look.headwearColor) ?? "#6e2a5c",
     shell: (...pieces) => add(out.shell, "head", ...pieces),
+    detail: (...pieces) => add(out.detail, "head", ...pieces),
     neck: (...pieces) => add(out.shell, "neck", ...pieces),
   });
   return out;

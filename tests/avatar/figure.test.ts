@@ -1,7 +1,7 @@
 // @vitest-environment node
-import { Box3, Group, Mesh, Vector3, type Object3D } from "three";
+import { Box3, Group, Mesh, SkinnedMesh, Vector3, type Object3D } from "three";
 import { expect, it } from "vitest";
-import { buildFigure, HEIGHT_M, JOINT_NAMES, type Detail } from "../../client/src/avatar/figure";
+import { buildFigure, HEIGHT_M, JOINT_NAMES, type Detail, type JointName } from "../../client/src/avatar/figure";
 import { CATALOG, cleanLook, STARTING_LOOKS, type Look } from "../../shared/avatar";
 
 const DETAILS: Detail[] = ["near", "far", "simple"];
@@ -36,9 +36,11 @@ it("builds a rig with every joint, standing on its feet at the chosen height, wi
 it("faces -Z, with the left arm on -X", () => {
   const figure = buildFigure(STARTING_LOOKS[0], "near");
   figure.root.updateMatrixWorld(true);
-  const irises = figure.joints.head.getObjectByName("irises")!;
   const at = (object: Object3D) => object.getWorldPosition(new Vector3());
-  expect(new Box3().setFromObject(irises).getCenter(new Vector3()).z).toBeLessThan(at(figure.joints.head).z);
+  // The irises are drawn by the face mesh on a bone of their own, in front of the head's joint.
+  const face = figure.root.getObjectByName("face") as SkinnedMesh;
+  expect(new Box3().setFromObject(face).getCenter(new Vector3()).z).toBeLessThan(at(figure.joints.head).z);
+  expect(face.skeleton.bones).toContain(figure.joints.head.getObjectByName("irises"));
   expect(at(figure.joints.handL).x).toBeLessThan(0);
   expect(at(figure.joints.handR).x).toBeGreaterThan(0);
   expect(at(figure.joints.footL).y).toBeGreaterThan(0);
@@ -55,8 +57,49 @@ it("gives each call its own rig on shared geometries and materials, and dispose 
   scene.add(two.root);
   two.dispose();
   expect(scene.children).toEqual([]);
-  // A far figure has no moving face parts, but the face stays callable.
   one.face.setMouth("grin");
   one.face.setBlink(1);
   one.face.setGaze(0.5, -0.5);
+});
+
+it("skins each vertex wholly to its own joint, so a turned joint carries its own part and its children's, exactly as a rigid part", () => {
+  for (const detail of DETAILS) {
+    const figure = buildFigure(STARTING_LOOKS[3], detail);
+    const skinned = meshes(figure.root) as SkinnedMesh[];
+    const drawn = () => {
+      figure.root.updateMatrixWorld(true);
+      return skinned.map((mesh) => Array.from({ length: mesh.geometry.attributes.position.count }, (_, i) => mesh.getVertexPosition(i, new Vector3()).applyMatrix4(mesh.matrixWorld)));
+    };
+    const onBone = (mesh: SkinnedMesh, i: number) => mesh.skeleton.bones[mesh.geometry.attributes.skinIndex.getX(i)];
+    const rest = drawn();
+    const joint = (name: JointName) => figure.joints[name];
+    joint("upperArmL").rotation.set(-1.1, 0.2, 0.4);
+    const raised = drawn();
+    // The left arm's three parts move; nothing else does.
+    const arm = new Set<Object3D>([joint("upperArmL"), joint("foreArmL"), joint("handL")]);
+    for (const [m, mesh] of skinned.entries()) {
+      for (let i = 0; i < rest[m].length; i++) {
+        const moved = raised[m][i].distanceTo(rest[m][i]);
+        if (arm.has(onBone(mesh, i))) expect(moved).toBeGreaterThan(0.001);
+        else expect(moved).toBe(0);
+      }
+    }
+    // Posed and placed anywhere, every vertex is where its joint carries it, as if it hung on that joint.
+    joint("pelvis").position.y -= 0.3;
+    joint("torso").rotation.set(0.3, -0.4, 0.1);
+    joint("head").rotation.set(-0.2, 0.6, 0);
+    joint("shinR").rotation.x = -1.2;
+    figure.root.position.set(4, 0.5, -2);
+    figure.root.rotation.y = 2.1;
+    figure.face.setGaze(0.7, -0.4);
+    const posed = drawn();
+    for (const [m, mesh] of skinned.entries()) {
+      const position = mesh.geometry.attributes.position;
+      for (let i = 0; i < position.count; i++) {
+        const hung = new Vector3().fromBufferAttribute(position, i).applyMatrix4(onBone(mesh, i).matrixWorld);
+        expect(posed[m][i].distanceTo(hung)).toBeLessThan(1e-5);
+      }
+    }
+    figure.dispose();
+  }
 });

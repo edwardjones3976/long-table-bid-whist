@@ -15,6 +15,11 @@ import { choose } from "../../client/src/hud/look/LookEditor";
 import { net } from "../../client/src/net/store";
 import { local } from "../../client/src/state/local";
 import { detailFor } from "../../client/src/world/Avatars";
+import { previewPlace } from "../../client/src/avatar/VrLook";
+import { HEIGHT_M } from "../../client/src/avatar/figure";
+import { measure } from "../../client/src/avatar/measure";
+import { MIRROR } from "../../client/src/world/layout";
+import { besideMirror } from "../../client/src/world/Mirror";
 
 const stored = new Map<string, string>();
 
@@ -127,6 +132,24 @@ describe("VR look panel", () => {
     expect(stepOption("hair", ids[0], -1)).toBe(ids[ids.length - 1]);
   });
 
+  it("steps back and forward with Undo and Redo, and a new change clears Redo", () => {
+    lookDraft.open(STARTING_LOOKS[0]);
+    lookDraft.change(STARTING_LOOKS[1]);
+    lookDraft.change(STARTING_LOOKS[2]);
+    lookDraft.undo();
+    lookDraft.undo();
+    expect(lookDraft.get()?.draft).toEqual(STARTING_LOOKS[0]);
+    lookDraft.redo();
+    expect(lookDraft.get()?.draft).toEqual(STARTING_LOOKS[1]);
+    lookDraft.redo();
+    lookDraft.redo();
+    expect(lookDraft.get()).toMatchObject({ draft: STARTING_LOOKS[2], future: [] });
+    lookDraft.undo();
+    lookDraft.change(STARTING_LOOKS[3]);
+    expect(lookDraft.get()).toMatchObject({ draft: STARTING_LOOKS[3], future: [], past: [STARTING_LOOKS[0], STARTING_LOOKS[1]] });
+    lookDraft.close();
+  });
+
   it("keeps a draft with Undo and Before, and leaves the saved look alone until Save", () => {
     const saved = STARTING_LOOKS[0];
     lookDraft.open(saved);
@@ -143,6 +166,23 @@ describe("VR look panel", () => {
     expect(lookDraft.get()?.draft).toEqual(saved);
     lookDraft.close();
     expect(lookDraft.get()).toBeNull();
+  });
+
+  it("stands the preview straight ahead at eye height, and uses the mirror only close in front of its glass and facing it", () => {
+    for (const look of STARTING_LOOKS) {
+      const [feet, z, scale] = previewPlace(look, "full");
+      expect(feet + (HEIGHT_M[look.height] * scale) / 2).toBeCloseTo(0, 5);
+      expect(z).toBeCloseTo(-1.3, 5);
+      const [face, near] = previewPlace(look, "face");
+      expect(Math.abs(face + HEIGHT_M[look.height] - measure(look).head / 2)).toBeLessThan(1e-9);
+      expect(near).toBeGreaterThan(-1);
+    }
+    const [nx, nz] = [Math.sin(MIRROR.ry), Math.cos(MIRROR.ry)];
+    const at = (out: number, side: number, ry = MIRROR.ry) => ({ x: MIRROR.x + out * nx + side * nz, z: MIRROR.z + out * nz - side * nx, ry });
+    expect(besideMirror(at(0.7, 0))).toBe(true);
+    expect(besideMirror(at(3, 0))).toBe(false);
+    expect(besideMirror(at(0.7, 2))).toBe(false);
+    expect(besideMirror(at(0.7, 0, MIRROR.ry + Math.PI))).toBe(false);
   });
 
   it("keeps the edits when Your look is pressed again while the panel is open", () => {

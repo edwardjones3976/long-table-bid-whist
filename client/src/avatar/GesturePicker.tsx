@@ -9,7 +9,7 @@
  */
 import { useEffect, useRef, type CSSProperties } from "react";
 import { GESTURES } from "../../../shared/avatar";
-import { playGesture, useGestureReady } from "./gestures";
+import { AFTER_HAND, playGesture, useGestureAllowed, useGestureReady } from "./gestures";
 
 /** Looks unavailable without losing keyboard focus, as a disabled button would. */
 const WAITING: CSSProperties = { borderStyle: "dashed", color: "var(--muted)" };
@@ -19,6 +19,7 @@ const typing = (target: EventTarget | null): boolean =>
 
 export function GesturePicker({ onClose }: { onClose: () => void }) {
   const ready = useGestureReady();
+  const allowed = useGestureAllowed();
   const first = useRef<HTMLButtonElement>(null);
 
   useEffect(() => first.current?.focus(), []);
@@ -45,11 +46,12 @@ export function GesturePicker({ onClose }: { onClose: () => void }) {
             ref={i === 0 ? first : undefined}
             data-testid={`gesture-${id}`}
             aria-keyshortcuts={String(i + 1)}
-            aria-disabled={!ready || undefined}
-            style={ready ? undefined : WAITING}
+            aria-disabled={!ready || !allowed(id) || undefined}
+            style={ready && allowed(id) ? undefined : WAITING}
             onClick={() => void playGesture(id)}
           >
             {i + 1} {label}
+            {allowed(id) ? "" : ` (${AFTER_HAND})`}
           </button>
         ))}
         <button onClick={onClose}>Close</button>

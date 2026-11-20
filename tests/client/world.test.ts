@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { artwork } from "../../client/src/world/art";
-import { doors, isWalkable, obstacles, pool, rooms, signs, TABLE_HEIGHT, TABLE_RADIUS, tableSpots } from "../../client/src/world/layout";
+import { doors, isWalkable, MIRROR, obstacles, pool, rooms, signs, TABLE_HEIGHT, TABLE_RADIUS, tableSpots } from "../../client/src/world/layout";
 import { GROOVES } from "../../client/src/world/Music";
 import { ARTWORKS, decor, footprint, labels, rng, structure, subtract, type Part } from "../../client/src/world/plan";
 import { BURST_POINTS, burstDirections, burstFrame, burstPlan, countdownText, LOOKS } from "../../client/src/world/theme";
@@ -120,6 +120,19 @@ describe("celebration themes", () => {
     }
     // Nothing in the daytime set hangs where a standing head would be (the cylinders are the table bands).
     for (const p of july) if (p.shape !== "cyl") expect(p.y - p.sy / 2).toBeGreaterThan(2.2);
+  });
+
+  it("keeps every decoration out from in front of the foyer mirror, by day and by night", () => {
+    const normal = { x: Math.sin(MIRROR.ry), z: Math.cos(MIRROR.ry) };
+    for (const theme of ["july4", "newyear"] as const) {
+      for (const p of decor(theme)) {
+        const ahead = (p.x - MIRROR.x) * normal.x + (p.z - MIRROR.z) * normal.z;
+        const across = Math.abs((p.x - MIRROR.x) * normal.z - (p.z - MIRROR.z) * normal.x);
+        const low = p.y - p.sy / 2 < MIRROR.y + MIRROR.h / 2;
+        // Two metres out from the glass, across its width and 0.3 m more either side, up to the top of the frame.
+        expect(ahead > 0 && ahead < 2 && across < MIRROR.w / 2 + 0.3 && low, `${theme} ${p.shape} at ${p.x}, ${p.z}`).toBe(false);
+      }
+    }
   });
 
   it("has a daytime look and a night look", () => {

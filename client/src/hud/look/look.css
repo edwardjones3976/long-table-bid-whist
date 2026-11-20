@@ -55,6 +55,13 @@
 }
 
 /* Six starting looks as equals: the same size, the same weight, no first choice. A grid, so a wrapped one is not wider. */
+/* Before is held by a long press: no text selection or callout may start and cancel the hold. */
+.look-tools [aria-describedby="look-before-hint"] {
+  -webkit-touch-callout: none;
+  user-select: none;
+  touch-action: none;
+}
+
 .look-starts {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
@@ -249,34 +256,50 @@
   font-weight: 700;
 }
 
-/* Phone: the preview above the tabs, and the starting looks in one row to swipe along. */
+/* Phone: the preview above the tabs, the starting looks in one row to swipe along, and the whole box scrolling
+   through every option at full height, Cancel and Save kept in reach at its foot. */
 @media (max-width: 44rem) {
   .look-box {
     padding: 0.6rem;
     border-radius: 12px;
+    /* A focused option scrolls clear of the pinned Cancel and Save bar. */
+    scroll-padding-bottom: 4.5rem;
+  }
+
+  /* Each part keeps its own height, so the box scrolls rather than squeezing one part under the next. */
+  .look-box > * {
+    flex-shrink: 0;
   }
 
   .look-head p {
     display: none;
   }
 
+  /* All six as equal tiles, two to a row, none hidden behind a swipe: no first choice on a phone either. */
   .look-starts {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-  }
-
-  .look-start {
-    flex: 0 0 auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .look-main {
+    flex: none;
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(14rem, 40vh) 1fr;
+    /* Never shorter than what the preview row holds, so its buttons never slide under the tabs on a short phone. */
+    grid-template-rows: minmax(min-content, 32vh) auto;
     gap: 0.6rem;
   }
 
   .look-preview {
     min-height: 8rem;
+  }
+
+  .look-panel {
+    overflow: visible;
+  }
+
+  .look-foot {
+    position: sticky;
+    bottom: -0.6rem;
+    padding: 0.5rem 0;
+    background: #0f1524;
   }
 }

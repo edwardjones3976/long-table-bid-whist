@@ -162,6 +162,8 @@ function Options({ field, look, peek, onPick, onPoint, onUnpoint }: { field: Fie
   const chosen: readonly string[] = Array.isArray(value) ? value : [value];
   const list = isList(field);
   const full = field === "accessories" && chosen.length >= MAX_ACCESSORIES;
+  // Hats sit only over no covering or a durag: say so before anyone presses one.
+  const hatsOff = field === "accessories" && look.headwear !== "none" && look.headwear !== "durag";
   const nameId = `look-${field}`;
   return (
     <section className="look-group">
@@ -173,6 +175,7 @@ function Options({ field, look, peek, onPick, onPoint, onUnpoint }: { field: Fie
       {field === "accessories" && (
         <p id="look-accessories-note" className="look-note">
           {full ? `${MAX_ACCESSORIES} of ${MAX_ACCESSORIES} on, the most at once. Take one off to add another.` : `Up to ${MAX_ACCESSORIES} at once.`}
+          {hatsOff && ` Hats do not fit over a ${nameOf("headwear", look.headwear).toLowerCase()}.`}
         </p>
       )}
       <div
@@ -184,13 +187,16 @@ function Options({ field, look, peek, onPick, onPoint, onUnpoint }: { field: Fie
       >
         {CATALOG[field].map(({ id, label, hex }) => {
           const on = chosen.includes(id);
+          const refused = list && !on && "refused" in choose(look, field, id);
           return (
             <button
               key={id}
               type="button"
               role={list ? "checkbox" : "radio"}
               aria-checked={on}
-              aria-disabled={(list && !on && "refused" in choose(look, field, id)) || undefined}
+              aria-disabled={refused || undefined}
+              // Its reason is the visible note above the choices.
+              aria-describedby={refused && field === "accessories" ? "look-accessories-note" : undefined}
               aria-label={hex ? label : undefined}
               title={hex ? label : undefined}
               tabIndex={list || on ? 0 : -1}
@@ -240,6 +246,7 @@ export function LookEditor({ onClose }: { onClose: () => void }) {
   const [peek, setPeek] = useState<Look | null>(null);
   const [before, setBefore] = useState(false);
   const [zoom, setZoom] = useState<Zoom>("full");
+  const [spin, setSpin] = useState(0);
   const [light, setLight] = useState<Theme>(theme);
   // Counted, so the same words said twice (Undo, Undo) are a new line the screen reader reads again.
   const [news, setNews] = useState({ words: "", n: 0 });
@@ -325,7 +332,10 @@ export function LookEditor({ onClose }: { onClose: () => void }) {
                   <span key={j} style={{ background: hex }} />
                 ))}
               </span>
-              <span className="sr-only">Starting look {i + 1}: </span>
+              {/* The dots in words, so a screen reader hears all a sighted player sees. */}
+              <span className="sr-only">
+                Starting look {i + 1}: skin {nameOf("skin", look.skin)}, {nameOf("hairColor", look.hairColor)} hair, {nameOf("topColor", look.topColor)} top:{" "}
+              </span>
               {nameOf("hair", look.hair)}
               <small>{outfitOf(look)}</small>
             </button>
@@ -337,11 +347,20 @@ export function LookEditor({ onClose }: { onClose: () => void }) {
 
         <div className="look-main">
           <div className="look-stage">
-            <Preview look={shown} label={`${before ? "Your saved look" : "Your new look"}: ${describe(shown)}`} zoom={zoom} light={light} still={still} />
+            <Preview look={shown} label={`${before ? "Your saved look" : "Your new look"}: ${describe(shown)}`} zoom={zoom} light={light} still={still} spin={spin} />
             <p className="look-caption" aria-hidden="true">
               {before ? "Before: your saved look" : "Your new look"}
             </p>
             <div className="look-tools">
+              {/* Turning needs no drag: a tap or a key turns the figure a step. */}
+              <span role="group" aria-label="Turn">
+                <button type="button" aria-label="Turn left" onClick={() => setSpin((s) => s + 0.5)}>
+                  ↺ Turn
+                </button>
+                <button type="button" aria-label="Turn right" onClick={() => setSpin((s) => s - 0.5)}>
+                  Turn ↻
+                </button>
+              </span>
               <span role="group" aria-label="Zoom">
                 {(["face", "full"] as const).map((to) => (
                   <button key={to} type="button" aria-pressed={zoom === to} onClick={() => setZoom(to)}>

@@ -9,9 +9,17 @@
  * GESTURE_COOLDOWN_MS spreads 4 over 6 seconds, so the first may arrive up to 2 seconds late and still not count.
  */
 import { useSyncExternalStore } from "react";
-import type { GestureId } from "../../../shared/avatar";
-import { net } from "../net/store";
+import { gestureNow, type GestureId } from "../../../shared/avatar";
+import { net, useStore } from "../net/store";
 import type { Played } from "./motion";
+
+/** Whether each gesture can be made now: at my table mid-hand, bow and applause wait for the hand-over (gestureNow). */
+export function useGestureAllowed(): (kind: GestureId) => boolean {
+  const phase = useStore((state) => state.table?.view?.phase ?? null);
+  return (kind) => gestureNow(kind, phase);
+}
+/** What a gesture that has to wait says. */
+export const AFTER_HAND = "after the hand";
 
 export const GESTURE_COOLDOWN_MS = 2000;
 /** The member id my mirror image plays under while I am not in a room. */
@@ -23,7 +31,7 @@ const listeners = new Set<() => void>();
 const tell = (): void => listeners.forEach((listener) => listener());
 
 export async function playGesture(kind: GestureId): Promise<boolean> {
-  if (cooling) return false;
+  if (cooling || !gestureNow(kind, net.getState().table?.view?.phase)) return false;
   cooling = true;
   tell();
   setTimeout(() => {

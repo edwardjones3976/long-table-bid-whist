@@ -6,17 +6,18 @@
  * colour with their symbol, always turned to the viewer.
  *
  * A figure is "near" detail within NEAR_M of the viewer and "far" beyond ("simple" shapes everywhere with the
- * comfort switch); beyond PAUSE_M, or out of view and out of the foyer mirror's reflection, it holds still. Hide gestures
+ * comfort switch); out of view and out of the foyer mirror's reflection it holds still, and beyond PAUSE_M too unless a
+ * gesture plays (it is posed once first, so a far seated figure still sits). Hide gestures
  * stops the others' gestures. A look from the server is cleaned again here, so an option this build does not know falls
  * back field by field. Avatars are scenery to pointers, and show nothing a player could not already see:
  * the cards in hand are only ever backs.
  */
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DoubleSide, Frustum, InstancedMesh, Matrix4, MeshBasicMaterial, Object3D, PlaneGeometry, Sphere, Vector3, type Group, type Mesh } from "three";
+import { DoubleSide, Frustum, InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, Object3D, PlaneGeometry, Sphere, Vector3, type Group } from "three";
 import { cleanLook, hexOf, type Look } from "../../../shared/avatar";
-import type { MemberInfo, Seat, TableId, TableStatus } from "../../../shared/protocol";
-import { buildFigure, JOINT_NAMES, type Detail, type Figure } from "../avatar/figure";
+import type { MemberInfo, Pose, Seat, TableId, TableStatus } from "../../../shared/protocol";
+import { buildFigure, type Detail, type Figure } from "../avatar/figure";
 import { measure } from "../avatar/measure";
 import {
   actNow,
@@ -29,6 +30,8 @@ import {
   MAX_FAN,
   newRig,
   seatedLegs,
+  easeLook,
+  SEATED_HEAD,
   seatOf,
   seedOf,
   stepAir,
@@ -37,8 +40,10 @@ import {
   wrap,
   type Mover,
   type Played,
+  type Scene,
   type Seated,
 } from "../avatar/motion";
+import { applyRig } from "../avatar/pose";
 import { reactionsOn, watchHands } from "../avatar/reactions";
 import { noRaycast } from "../controls/Hands";
 import { net, useStore } from "../net/store";
@@ -46,7 +51,7 @@ import { local } from "../state/local";
 import { CARD_ASPECT, makeCardBackTexture, SUIT_SYMBOLS } from "../ui/cards";
 import { makeTextTexture, releaseTexture, textAspect } from "../ui/text";
 import { seatPose } from "./layout";
-import { inFront, mirrorShown } from "./Mirror";
+import { inReflection, mirrorShown } from "./Mirror";
 
 /** Full detail within this many metres of the viewer. */
 const NEAR_M = 8;
@@ -64,8 +69,29 @@ const movers = new Map<string, Mover>();
 const reactionLog: Played[] = [];
 const view = { frustum: new Frustum(), matrix: new Matrix4(), eye: new Vector3(), sphere: new Sphere(new Vector3(), 1.1) };
 
-/** What each drawn figure is now, by member id: for the browser tests' debug hook (main.tsx). */
-export const drawn = new Map<string, { memberId: string; lookKey: string; detail: Detail; triangles: number; gesture: string | null }>();
+/** What each drawn figure is now, by member id: for the browser tests' debug hook (main.tsx). `animated` is the clock time it was last posed. */
+export const drawn = new Map<string, { memberId: string; lookKey: string; detail: Detail; triangles: number; gesture: string | null; animated: number }>();
+
+/**
+ * Whether a figure is posed this frame: never out of view; beyond PAUSE_M only while a gesture plays (a wave from
+ * the backyard reads across the house), or once after it is built or changes seat, so a far figure is never left in
+ * its rest pose.
+ */
+export const animates = (distance: number, seen: boolean, acting: boolean, posed: boolean): boolean => seen && (distance <= PAUSE_M || acting || !posed);
+
+/**
+ * A VR player's live head and hands to draw. Seated, none: where a hand reaches over the cards in its sorted row would
+ * tell the table where a hidden card sat, so the scripted seated pose holds the fan instead.
+ */
+export const liveParts = (pose: Pick<Pose, "head" | "hands">, seated: boolean): Pick<Scene, "head" | "hands"> =>
+  seated ? {} : { head: pose.head, hands: pose.hands };
+
+/** Seated figures sit this far forward of the chair's centre, still on its cushion, so their knees and feet go under the table top. */
+const SIT_FORWARD = 0.18;
+export function sitPlace(tableId: TableId, seat: Seat): { x: number; z: number; ry: number } {
+  const chair = seatPose(tableId, seat);
+  return { x: chair.x - Math.sin(chair.ry) * SIT_FORWARD, z: chair.z - Math.cos(chair.ry) * SIT_FORWARD, ry: chair.ry };
+}
 
 /** The detail to draw at `distance` metres; the half-metre band either side of NEAR_M keeps the current one, so it never flickers. */
 export function detailFor(distance: number, current: Detail, simple: boolean): Detail {
@@ -88,6 +114,14 @@ const SYMBOLS: Record<Look["plateSymbol"], string> = {
 const DARK_INK = "#000000";
 
 export const plateText = (name: string, symbol: Look["plateSymbol"]): string => `${SYMBOLS[symbol]} ${name}`.trim();
+
+/**
+ * How far above the head a name plate floats, staggered so neighbours' plates never sit on one line: at a table
+ * opposite seats a whole plate apart (and all under the table's board), standing one of four levels a whole plate
+ * apart, steady from the member's id.
+ */
+export const plateLift = (id: string, seat: Seat | null): number =>
+  seat === null ? 0.32 + (seedOf(id) % 4) * (PLATE_HEIGHT + 0.01) : 0.2 + Math.floor(seat / 2) * PLATE_HEIGHT;
 
 /** sRGB relative luminance of a #rrggbb colour. */
 function luminance(hex: string): number {
@@ -168,7 +202,24 @@ function Avatar({ member, seat, status, mine }: AvatarProps) {
     mesh.raycast = noRaycast;
     return mesh;
   }, []);
-  const motion = useRef({ gait: { phase: 0, speed: 0 }, air: { ground: 0, settled: 0 }, rig: newRig(), seed: seedOf(id), cards: -1, leanAt: -Infinity, fan: 0, mouth: "" });
+  // The card slapped down in the card slap: one back, held flat along the right hand, shown only while it plays.
+  const slapped = useMemo(() => {
+    const { geometry, material } = fanPartsOnce();
+    return Object.assign(new Mesh(geometry, material), { name: "slap-card", visible: false, raycast: noRaycast });
+  }, []);
+  const motion = useRef({
+    gait: { phase: 0, speed: 0 },
+    air: { ground: 0, settled: 0 },
+    rig: newRig(),
+    seed: seedOf(id),
+    cards: -1,
+    leanAt: -Infinity,
+    fan: 0,
+    mouth: "",
+    look: { yaw: 0, pitch: SEATED_HEAD },
+    posed: "",
+    animated: -1,
+  });
 
   useEffect(() => () => void fan.dispose(), [fan]);
   useEffect(
@@ -185,20 +236,26 @@ function Avatar({ member, seat, status, mine }: AvatarProps) {
     built.root.traverse((object) => (object.raycast = noRaycast));
     fan.position.set(0, -m.hand * 0.45, 0);
     built.joints.handL.add(fan);
+    // In the palm's plane, reaching down past the fingers: the hand brings it down onto the table.
+    slapped.position.set(0, -m.hand * 0.3, 0);
+    slapped.rotation.set(0, Math.PI / 2, Math.PI);
+    built.joints.handR.add(slapped);
     body.current?.add(built.root);
     figure.current = Object.assign(built, { detail });
     motion.current.mouth = "";
+    motion.current.posed = "";
     return () => {
       fan.removeFromParent();
+      slapped.removeFromParent();
       built.dispose();
       figure.current = null;
     };
-  }, [look, detail, fan, m]);
+  }, [look, detail, fan, slapped, m]);
 
   const hex = hexOf("plateColor", look.plateColor) ?? "#10131c";
   const texture = useMemo(() => makeTextTexture([plateText(name, look.plateSymbol)], { fontPx: 56, background: hex, color: plateInk(hex) }), [name, look.plateSymbol, hex]);
   useEffect(() => () => releaseTexture(texture), [texture]);
-  const plateY = (seat ? m.height - (m.joints.pelvis[1] - seatedLegs(m).pelvisY) : m.height) + 0.32;
+  const plateY = (seat ? m.height - (m.joints.pelvis[1] - seatedLegs(m).pelvisY) : m.height) + plateLift(id, seat?.seat ?? null);
 
   useFrame(({ camera, clock }, delta) => {
     const root = group.current;
@@ -211,7 +268,7 @@ function Avatar({ member, seat, status, mine }: AvatarProps) {
     const t = clock.elapsedTime;
     const dt = Math.min(delta, 0.1);
     // At a table they sit in their own chair, whatever their head is doing.
-    const place = seat ? seatPose(seat.tableId, seat.seat) : pose;
+    const place = seat ? sitPlace(seat.tableId, seat.seat) : pose;
     // The feet height: a jump, a bench top, the pool. Older clients send none, which is the floor.
     const y = seat ? 0 : (pose.y ?? 0);
     const { position } = root;
@@ -243,7 +300,9 @@ function Avatar({ member, seat, status, mine }: AvatarProps) {
         const at = seatPose(seat.tableId, game.turn);
         glance = game.turn === seat.seat ? { yaw: 0, pitch: -0.3 } : { yaw: Math.max(-1, Math.min(1, wrap(bearing(place.x, place.z, at.x, at.z) - place.ry))), pitch: -0.08 };
       }
-      seated = { holding: cards > 0, lean: since >= 0 && since < LEAN_S ? Math.sin((Math.PI * since) / LEAN_S) : 0, look: glance };
+      // The head turns to the new turn over a moment, and back to the idle after the hand, never in one frame.
+      easeLook(st.look, glance, dt);
+      seated = { holding: cards > 0, lean: since >= 0 && since < LEAN_S ? Math.sin((Math.PI * since) / LEAN_S) : 0, look: st.look };
     } else if (st.fan) layFan(fan, (st.fan = 0));
 
     camera.getWorldPosition(view.eye);
@@ -251,13 +310,24 @@ function Avatar({ member, seat, status, mine }: AvatarProps) {
     const { comfort } = local.getState();
     const want = detailFor(distance, detail ?? "far", comfort.simpleShapes);
     if (want !== detail) setDetail(want);
+    // Standing, past NEAR_M the plate grows with distance (up to twice), so a name still reads across a lounge or the yard;
+    // it grows upward, off the head. Seated plates keep their size under the table's board.
+    const grow = seat ? 1 : Math.min(2, Math.max(1, distance / NEAR_M));
+    plate.current.scale.set(textAspect(texture) * PLATE_HEIGHT * grow, PLATE_HEIGHT * grow, 1);
+    plate.current.position.y = plateY + ((grow - 1) * PLATE_HEIGHT) / 2;
     const built = figure.current;
     const act = actNow(id, Date.now(), comfort.hideGestures ? [] : state.gestures, reactionLog);
-    if (built) drawn.set(id, { memberId: id, lookKey, detail: built.detail, triangles: built.triangles, gesture: act?.kind ?? null });
+    slapped.visible = act?.kind === "slap";
+    const info = built && { memberId: id, lookKey, detail: built.detail, triangles: built.triangles, gesture: act?.kind ?? null, animated: st.animated };
+    if (info) drawn.set(id, info);
     view.sphere.center.set(position.x, position.y + 0.9, position.z);
-    // The mirror draws the whole scene again, so someone behind me but in front of the glass keeps moving there.
-    const seen = view.frustum.intersectsSphere(view.sphere) || (mirrorShown.rendered && inFront(position.x, position.z) > 0);
-    if (!built || distance > PAUSE_M || !seen) return;
+    // The mirror draws the scene again, so someone behind me but in its reflection keeps moving there.
+    const seen = view.frustum.intersectsSphere(view.sphere) || (mirrorShown.rendered && inReflection(view.eye.x, view.eye.z, position.x, position.z));
+    const seatKey = seat ? `${seat.tableId}:${seat.seat}` : "standing";
+    if (!built || !animates(distance, seen, act !== null, st.posed === seatKey)) return;
+    st.posed = seatKey;
+    st.animated = t;
+    if (info) info.animated = t;
 
     const rig = animate(
       {
@@ -269,15 +339,12 @@ function Avatar({ member, seat, status, mine }: AvatarProps) {
         floating: !seat && isFloating(position.x, position.z, position.y),
         seated,
         act,
-        head: pose.head,
-        hands: pose.hands,
+        ...liveParts(pose, seat !== null),
         calm: comfort.reducedMotion,
       },
       st.rig,
     );
-    for (const joint of JOINT_NAMES) built.joints[joint].rotation.set(...rig.joints[joint]);
-    built.joints.pelvis.position.y = rig.pelvisY;
-    built.root.position.y = rig.lift;
+    applyRig(built, rig);
     if (rig.mouth !== st.mouth) built.face.setMouth((st.mouth = rig.mouth));
     built.face.setBlink(blinkAt(st.seed, t));
     built.face.setGaze(gazeAt(position.x, position.z, place.ry + rig.joints.head[1], movers.values()), 0);
@@ -290,7 +357,8 @@ function Avatar({ member, seat, status, mine }: AvatarProps) {
       <group ref={body} />
       <mesh ref={plate} name="plate" position={[0, plateY, 0]} scale={[textAspect(texture) * PLATE_HEIGHT, PLATE_HEIGHT, 1]} raycast={noRaycast}>
         <planeGeometry />
-        <meshBasicMaterial map={texture} />
+        {/* Not tone mapped: drawn in exactly the colours whose 4.5 contrast is checked. */}
+        <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
     </group>
   );

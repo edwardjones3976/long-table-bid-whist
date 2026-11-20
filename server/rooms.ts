@@ -4,7 +4,7 @@
  * request throws Refusal.
  */
 import { randomBytes, randomUUID } from "node:crypto";
-import { cleanLook, HAND_HEIGHT, HAND_REACH, HEAD_TURN, isGesture, STARTING_LOOKS, type Hand, type Look } from "../shared/avatar";
+import { cleanLook, gestureNow, HAND_HEIGHT, HAND_REACH, HEAD_TURN, isGesture, STARTING_LOOKS, type Hand, type Look } from "../shared/avatar";
 import type { Card } from "../shared/cards";
 import {
   BENCH_MS,
@@ -562,6 +562,8 @@ export class Rooms {
   gesture(memberId: string | undefined, kind: unknown): void {
     const member = this.need(memberId);
     if (!isGesture(kind)) throw new Refusal("bad-request", "There is no such gesture");
+    // At a table a bow or applause waits for the end of the hand, so it can never answer someone's play mid-hand.
+    if (!gestureNow(kind, member.table?.match?.state?.phase)) throw new Refusal("in-play", "Bow and applause wait for the end of the hand");
     if (!allow(member.gestureTimes, GESTURE_RATE)) throw new Refusal("rate-limited", "Too many gestures; wait a moment");
     for (const other of member.room.members.values()) {
       if (other !== member && other.connected) this.emit(other.id, "gesture", { memberId: member.id, kind });

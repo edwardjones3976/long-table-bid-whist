@@ -7,6 +7,7 @@ import {
   FIELDS,
   GARMENT_PALETTE,
   GESTURE_MS,
+  gestureNow,
   GESTURES,
   hexOf,
   MAX_ACCESSORIES,
@@ -31,19 +32,47 @@ function seeded(seed: number): () => number {
   };
 }
 
-/** OKLab lightness and chroma of a #rrggbb colour. */
-function oklab(hex: string): { L: number; C: number } {
-  const [r, g, b] = [1, 3, 5].map((i) => {
+/** Machado, Oliveira and Fernandes (2009) at full severity, on linear RGB. */
+const DEFICIENCIES: Record<string, number[][]> = {
+  protanopia: [
+    [0.152286, 1.052583, -0.204868],
+    [0.114503, 0.786281, 0.099216],
+    [-0.003882, -0.048116, 1.051998],
+  ],
+  deuteranopia: [
+    [0.367322, 0.860646, -0.227968],
+    [0.280085, 0.672501, 0.047413],
+    [-0.01182, 0.04294, 0.968881],
+  ],
+  tritanopia: [
+    [1.255528, -0.076749, -0.178779],
+    [-0.078411, 0.930809, 0.147602],
+    [0.004733, 0.691367, 0.3039],
+  ],
+};
+
+/** OKLab [L, a, b] of a #rrggbb colour, seen through a colour-vision `matrix` when given. */
+function lab(hex: string, matrix?: number[][]): [number, number, number] {
+  let rgb = [1, 3, 5].map((i) => {
     const c = parseInt(hex.slice(i, i + 2), 16) / 255;
     return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   });
+  if (matrix) rgb = matrix.map((row) => Math.min(1, Math.max(0, row[0] * rgb[0] + row[1] * rgb[1] + row[2] * rgb[2])));
+  const [r, g, b] = rgb;
   const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
   const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
   const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
-  const a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
-  const bb = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
-  return { L: 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, C: Math.hypot(a, bb) };
+  return [0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s];
 }
+
+/** OKLab lightness and chroma of a #rrggbb colour. */
+function oklab(hex: string): { L: number; C: number } {
+  const [L, a, b] = lab(hex);
+  return { L, C: Math.hypot(a, b) };
+}
+
+/** OKLab distance times 100: about 1 is just noticeable side by side. */
+const apart = (p: readonly number[], q: readonly number[]) => 100 * Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]);
 
 describe("the catalog", () => {
   it("has every baseline option of the design, each with a unique id and a label", () => {
@@ -99,6 +128,34 @@ describe("the catalog", () => {
     // The starting looks draw on every family, so a full table feels balanced.
     const worn = new Set(STARTING_LOOKS.flatMap((look) => [look.topColor, look.topTrim, look.bottomColor, look.headwearColor, look.shoeColor]));
     expect(new Set(GARMENT_PALETTE.filter((colour) => worn.has(colour.id)).map((colour) => colour.family)).size).toBe(5);
+  });
+
+  it("keeps every garment colour off the skin ramp, so no outfit reads as bare skin", () => {
+    const tones = SKIN_TONES.map((hex) => lab(hex));
+    for (const colour of GARMENT_PALETTE) {
+      const nearest = Math.min(...tones.map((tone) => apart(lab(colour.hex), tone)));
+      expect(nearest, colour.id).toBeGreaterThanOrEqual(4);
+    }
+    // The darkest garment colour stays well clear of the deepest tones (13w to 14c), the ones it could pass for.
+    const deep = SKIN_TONES.slice(-6).map((hex) => lab(hex));
+    expect(Math.min(...deep.map((tone) => apart(lab(hexOf("topColor", "chocolate")!), tone)))).toBeGreaterThanOrEqual(8);
+  });
+
+  it("keeps every two garment colours apart under protanopia, deuteranopia and tritanopia", () => {
+    // White stays white through every simulation.
+    for (const matrix of Object.values(DEFICIENCIES)) expect(apart(lab("#ffffff", matrix), lab("#ffffff"))).toBeLessThan(0.1);
+    const close: string[] = [];
+    for (const [name, matrix] of Object.entries(DEFICIENCIES)) {
+      for (const [i, a] of GARMENT_PALETTE.entries()) {
+        for (const b of GARMENT_PALETTE.slice(i + 1)) {
+          const gap = apart(lab(a.hex, matrix), lab(b.hex, matrix));
+          if (gap < 3) close.push(`${name}: ${a.id} / ${b.id} ${gap.toFixed(1)}`);
+        }
+      }
+    }
+    expect(close).toEqual([]);
+    // And with normal colour vision, wider still.
+    for (const [i, a] of GARMENT_PALETTE.entries()) for (const b of GARMENT_PALETTE.slice(i + 1)) expect(apart(lab(a.hex), lab(b.hex)), `${a.id} / ${b.id}`).toBeGreaterThanOrEqual(4);
   });
 
   it("spaces the 42 skin tones evenly in lightness, the deep end as rich as the light end", () => {
@@ -210,6 +267,16 @@ describe("cleanLook", () => {
   });
 });
 
+describe("gestureNow", () => {
+  it("keeps bow and applause for the end of a hand at a table; every other gesture, and any gesture away from a match, goes", () => {
+    for (const kind of ["bow", "clap"] as const) {
+      for (const phase of ["play", "bidding", "kitty", "draw"]) expect(gestureNow(kind, phase), `${kind} ${phase}`).toBe(false);
+      for (const phase of ["hand-over", "game-over", null, undefined]) expect(gestureNow(kind, phase), `${kind} ${phase}`).toBe(true);
+    }
+    for (const kind of ["wave", "laugh", "slap", "boston", "shake"] as const) expect(gestureNow(kind, "play"), kind).toBe(true);
+  });
+});
+
 describe("shuffleLook", () => {
   it("reaches every option of every field over many draws, and every result is valid", () => {
     const random = seeded(7);
@@ -250,6 +317,25 @@ describe("shuffleLook", () => {
       coverings.add(look.headwear);
     }
     expect([...coverings].sort()).toEqual(["durag", "none"]);
+  });
+
+  it("draws only accessories that can be worn together, so no, one, two and three are equally likely and every item comes up", () => {
+    const random = seeded(17);
+    const counts = [0, 0, 0, 0];
+    const items = new Map<string, number>();
+    const draws = 20000;
+    for (let i = 0; i < draws; i += 1) {
+      const look = shuffleLook(random, { ...base, headwear: "none" }, "extras");
+      counts[look.accessories.length] += 1;
+      for (const id of look.accessories) items.set(id, (items.get(id) ?? 0) + 1);
+    }
+    for (const count of counts) expect(Math.abs(count / draws - 0.25)).toBeLessThan(0.02);
+    expect(items.size).toBe(CATALOG.accessories.length);
+    // One from each group at most means a grouped item cannot come up quite as often as a lone one; none falls far behind.
+    const shares = [...items.values()];
+    expect(Math.max(...shares) / Math.min(...shares)).toBeLessThan(1.5);
+    // Under a covering a hat cannot sit over, no hat is drawn at all.
+    for (let i = 0; i < 300; i += 1) expect(shuffleLook(random, { ...base, headwear: "turban" }, "extras").accessories).not.toContain("cap");
   });
 
   it("survives a random source that returns 1 or nonsense", () => {

@@ -3,17 +3,18 @@
  * made in a room reaches them within 2 s, a wave plays on their screen, and "Show others as simple shapes" changes
  * the detail they draw. My own body is only in the mirror's reflection. A table of four is drawn seated, each holding
  * a fan of card backs and never a face. In an emulated headset the look panel saves a look the others see (pressing
- * Your look again keeps the edits), and the gesture wheel plays a wave.
+ * Your look again keeps the edits), the gesture wheel plays a wave, and seated at a table the panel still saves.
  *
  * Screenshots for a person to judge, in client/.e2e-screens/: avatars-starts (the editor's six starting looks),
  * avatars-face (a close look at a face), avatars-foyer-day and avatars-foyer-night (a group in the foyer),
- * avatars-mirror (the foyer mirror) and avatars-table (four seated people).
+ * avatars-mirror (the foyer mirror), avatars-table (four seated people) and avatars-vr-look-seated (the look panel
+ * seen from a chair).
  */
 import { expect, test, type Page } from "@playwright/test";
 import { CATALOG, cleanLook, STARTING_LOOKS, type Look } from "../../shared/avatar";
 import type { Pose, RoomSnapshot } from "../../shared/protocol";
 import { MIRROR, seatPose, spawn, tableSpot } from "../../client/src/world/layout";
-import { enterHeadset, park, rayPress } from "./headset";
+import { enterHeadset, park, rayPress, sitWithRay } from "./headset";
 import { closeAll, enter, open, openMenu, problems, settle, shoot, standBy } from "./helpers";
 
 test.beforeEach(() => void (problems.length = 0));
@@ -195,14 +196,17 @@ test("the others in the foyer by day and by night, my own look in the mirror, an
       return { x: group.position.x, z: group.position.z, thigh: y("thighL") - y("shinL"), fan: fan.count, both: material.side, back, textured: textured.sort() };
     }, id);
   for (const [seat, id] of ids.slice(0, 4).entries()) {
-    const at = seatPose(tableId, seat as 0 | 1 | 2 | 3);
+    const chair = seatPose(tableId, seat as 0 | 1 | 2 | 3);
+    // Sat 0.18 m forward of the chair's middle, on its cushion, knees under the table top (world/Avatars.tsx sitPlace).
+    const at = { x: chair.x - Math.sin(chair.ry) * 0.18, z: chair.z - Math.cos(chair.ry) * 0.18 };
     await expect.poll(async () => (await seated(id))?.fan ?? 0).toBeGreaterThan(0);
     const seen = (await seated(id))!;
     expect(Math.hypot(seen.x - at.x, seen.z - at.z)).toBeLessThan(0.05);
     // Seated: the knee is about as high as the hip.
     expect(Math.abs(seen.thigh)).toBeLessThan(0.2);
-    // Only the fan and the name plate carry a picture, and the fan's is the card back (deep blue), on both sides.
-    expect(seen.textured).toEqual(["fan", "plate"]);
+    // Only the card backs (the fan, and the one card of a card slap, shown only while it plays) and the name plate carry a
+    // picture, and the fan's is the card back (deep blue), on both sides.
+    expect(seen.textured).toEqual(["fan", "plate", "slap-card"]);
     expect(seen.back).toEqual([0x14, 0x30, 0x6b]);
     expect(seen.both).toBe(2);
   }
@@ -239,6 +243,20 @@ test("in an emulated headset the look panel saves a look the others see, and the
   await rayPress(ana, "right", "vr-menu-gestures");
   await rayPress(ana, "right", "vr-gesture-wave");
   await expect.poll(async () => (await hooks(bo).drawn(anaId))?.gesture, { intervals: [50] }).toBe("wave");
+  await park(ana, "right");
+
+  // Seated at a table, by one hand: the panel comes closer and a little higher, and its lowest row still saves.
+  await ana.evaluate(() => (window.__mansion as unknown as Hooks).local.set({ vrMenu: false }));
+  await sitWithRay(ana, tableSpot("tonk-1"));
+  await rayPress(ana, "right", "vr-menu");
+  await rayPress(ana, "right", "vr-menu-look");
+  await park(ana, "right");
+  await settle(ana, 300);
+  await ana.screenshot({ path: "client/.e2e-screens/avatars-vr-look-seated.png" });
+  await rayPress(ana, "right", "vr-look-next");
+  await rayPress(ana, "right", "vr-look-save");
+  const seatedNext = cleanLook({ ...next, build: builds[(builds.indexOf(next.build) + 1) % builds.length] });
+  await expect.poll(() => hooks(ana).saved()).toEqual(seatedNext);
   await park(ana, "right");
 
   await closeAll([ana, bo]);

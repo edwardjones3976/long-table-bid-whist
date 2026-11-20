@@ -94,8 +94,8 @@ export const CONTROLS_HELP: { device: string; action: string; input: string }[] 
   { device: "Gamepad", action: "Jump", input: "X (left button)" },
   { device: "Gamepad", action: "Teleport", input: "Hold the left trigger to aim, let go to go" },
   { device: "Gamepad", action: "Confirm: press the focused button, else what the centre ring points at", input: "A (bottom button)" },
-  { device: "Gamepad", action: "Cancel: drop focus, clear picked cards, stop aiming", input: "B (right button)" },
-  { device: "Gamepad", action: "Step through your cards and the table's buttons", input: "Left / right bumper" },
+  { device: "Gamepad", action: "Cancel: drop focus, clear picked cards, stop aiming; close an open window (Menu, Gestures, Your look)", input: "B (right button)" },
+  { device: "Gamepad", action: "Step through your cards and the table's buttons, or an open window's buttons", input: "Left / right bumper" },
   { device: "Gamepad", action: "Open or close the menu", input: "Start" },
   { device: "VR controllers", action: "Take hold of the card, pile top or token a hand is touching", input: "Grip, either hand; it stays in that hand until you let go" },
   { device: "VR controllers", action: "Place what a hand holds", input: "Let go of the grip over a drop zone; anywhere else puts it back" },
@@ -653,7 +653,8 @@ export function Player({ children }: { children?: ReactNode }) {
     rig.facing = !presenting ? null : sitting ? rig.seat!.ry : bodyYaw(rig.facing, head.ry);
     // Seated, the others draw me in my chair whatever my head does, so my hands are measured from the seat too.
     const feet = sitting ? rig.seat! : head;
-    const pose = poseToSend({ x: feet.x, y, z: feet.z }, rig.facing ?? head.ry, presenting ? tracked(rig, camera, head.ry) : undefined);
+    // Seated, my real head and hands are not sent: over my sorted row of cards they would tell the table where a hidden card sat.
+    const pose = poseToSend({ x: feet.x, y, z: feet.z }, rig.facing ?? head.ry, presenting && !sitting ? tracked(rig, camera, head.ry) : undefined);
     desk.pose = pose;
     rig.sinceReport += dt;
     if (rig.sinceReport >= (airborne ? 0.05 : 0.1)) {

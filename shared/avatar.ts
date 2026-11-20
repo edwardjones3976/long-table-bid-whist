@@ -38,32 +38,37 @@ export const PALETTE_FAMILIES: Record<PaletteFamily, string> = {
   blues: "Blues and blacks",
 };
 
-/** Garment colours: rich on every skin tone, the deepest included, and readable by day and by night. */
+/**
+ * Garment colours: rich on every skin tone, the deepest included, and readable by day and by night. None lies on
+ * the skin ramp (so no outfit reads as bare skin), and every two stay apart under the three common colour-vision
+ * deficiencies (tests/avatar/look.test.ts measures both).
+ */
 export const GARMENT_PALETTE = [
   { id: "forest", label: "Forest green", hex: "#1f5e3b", family: "greens" },
   { id: "emerald", label: "Emerald", hex: "#1d8a5a", family: "greens" },
   { id: "sage", label: "Sage", hex: "#8fae8b", family: "greens" },
-  { id: "olive", label: "Olive", hex: "#6b7a2e", family: "greens" },
-  { id: "teal", label: "Teal", hex: "#1b7f86", family: "greens" },
+  { id: "olive", label: "Olive", hex: "#5e7f40", family: "greens" },
+  { id: "teal", label: "Teal", hex: "#257889", family: "greens" },
   { id: "crimson", label: "Crimson", hex: "#b3203a", family: "reds" },
-  { id: "brick", label: "Brick red", hex: "#a8432e", family: "reds" },
+  { id: "brick", label: "Brick red", hex: "#ad4625", family: "reds" },
   { id: "wine", label: "Wine", hex: "#7a1f34", family: "reds" },
   { id: "plum", label: "Plum", hex: "#6e2a5c", family: "reds" },
   { id: "rose", label: "Rose", hex: "#d0607a", family: "reds" },
   { id: "gold", label: "Gold", hex: "#d6a32b", family: "golds" },
   { id: "copper", label: "Copper", hex: "#b5652d", family: "golds" },
-  { id: "tan", label: "Tan", hex: "#c8a07a", family: "golds" },
-  { id: "camel", label: "Camel", hex: "#a87445", family: "golds" },
-  { id: "chocolate", label: "Chocolate", hex: "#5a3423", family: "golds" },
+  { id: "tan", label: "Tan", hex: "#ca9853", family: "golds" },
+  { id: "camel", label: "Camel", hex: "#b2792b", family: "golds" },
+  // A deep red-brown, well off the deep end of the skin ramp, so it never reads as bare skin on the deepest tones.
+  { id: "chocolate", label: "Chocolate", hex: "#360802", family: "golds" },
   { id: "white", label: "White", hex: "#f4f1ea", family: "neutrals" },
-  { id: "cream", label: "Cream", hex: "#e9dcc0", family: "neutrals" },
+  { id: "cream", label: "Cream", hex: "#eae0af", family: "neutrals" },
   { id: "silver", label: "Silver", hex: "#b9bec4", family: "neutrals" },
   { id: "grey", label: "Grey", hex: "#7d838b", family: "neutrals" },
   { id: "charcoal", label: "Charcoal", hex: "#3b3f45", family: "neutrals" },
   { id: "navy", label: "Navy", hex: "#1d2b53", family: "blues" },
   { id: "royal", label: "Royal blue", hex: "#2c4fb5", family: "blues" },
   { id: "sky", label: "Sky blue", hex: "#6f9fd8", family: "blues" },
-  { id: "denim", label: "Denim", hex: "#3f5f86", family: "blues" },
+  { id: "denim", label: "Denim", hex: "#485d84", family: "blues" },
   { id: "black", label: "Black", hex: "#17181c", family: "blues" },
 ] as const satisfies readonly (Option & { hex: string; family: PaletteFamily })[];
 export type Colour = Id<typeof GARMENT_PALETTE>;
@@ -101,7 +106,9 @@ export type SkinId = `${Tone}${(typeof UNDERTONES)[number][0]}`;
 const SKIN: readonly Option[] = SKIN_TONES.map((hex, i) => {
   const [code, name] = UNDERTONES[i % 3];
   const tone = Math.floor(i / 3) + 1;
-  return { id: `${tone}${code}`, label: `Tone ${tone} of 14, ${name}`, hex };
+  // The ends named, so the scale means something to someone who cannot see the swatches.
+  const end = tone === 1 ? ", lightest" : tone === 14 ? ", deepest" : "";
+  return { id: `${tone}${code}`, label: `Tone ${tone} of 14${end}, ${name}`, hex };
 });
 
 const NATURAL_HAIR = [
@@ -491,7 +498,7 @@ export const STARTING_LOOKS: readonly Look[] = [
     hair: "box-braids", hairColor: "dark-brown", headwear: "none", headwearColor: "royal",
     top: "jersey", topColor: "royal", topTrim: "white", bottom: "shorts", bottomColor: "navy", bottomTrim: "white", onePiece: "none",
     shoes: "high-tops", shoeColor: "white",
-    accessories: ["hoops"], assistive: [], plateColor: "royal", plateSymbol: "none",
+    accessories: ["hoops"], assistive: [], plateColor: "royal", plateSymbol: "star",
   },
   {
     // Bright and bold.
@@ -506,7 +513,7 @@ export const STARTING_LOOKS: readonly Look[] = [
   {
     // Sunday best.
     build: "round", height: "tallest", skin: "14c",
-    eyes: "hooded", eyeColor: "deep", brows: "rounded", browColor: "black", nose: "button", mouth: "bow", ears: "close",
+    eyes: "hooded", eyeColor: "deep", brows: "rounded", browColor: "black", nose: "straight", mouth: "bow", ears: "close",
     marks: ["beauty-mark"], facialHair: "none", liner: "bold", lipColor: "plum", cheekColor: "gold",
     hair: "silk-press", hairColor: "black", headwear: "crown-hat", headwearColor: "plum",
     top: "blouse", topColor: "plum", topTrim: "gold", bottom: "midi", bottomColor: "plum", bottomTrim: "gold", onePiece: "dress",
@@ -516,7 +523,7 @@ export const STARTING_LOOKS: readonly Look[] = [
   {
     // Quiet strategist.
     build: "medium", height: "shortest", skin: "4w",
-    eyes: "monolid", eyeColor: "hazel", brows: "straight", browColor: "brown", nose: "straight", mouth: "thin", ears: "round",
+    eyes: "monolid", eyeColor: "hazel", brows: "straight", browColor: "brown", nose: "button", mouth: "thin", ears: "round",
     marks: [], facialHair: "none", liner: "none", lipColor: "rose", cheekColor: "peach",
     hair: "bun", hairColor: "brown", headwear: "hijab", headwearColor: "plum",
     top: "cardigan", topColor: "cream", topTrim: "plum", bottom: "maxi", bottomColor: "charcoal", bottomTrim: "silver", onePiece: "none",
@@ -526,7 +533,7 @@ export const STARTING_LOOKS: readonly Look[] = [
   {
     // Cookout fit.
     build: "broad", height: "middle", skin: "9w",
-    eyes: "downturned", eyeColor: "amber", brows: "angled", browColor: "black", nose: "upturned", mouth: "wide", ears: "small",
+    eyes: "downturned", eyeColor: "amber", brows: "soft-arch", browColor: "black", nose: "upturned", mouth: "wide", ears: "small",
     marks: [], facialHair: "goatee", liner: "none", lipColor: "none", cheekColor: "none",
     hair: "waves", hairColor: "black", headwear: "durag", headwearColor: "gold",
     top: "tee", topColor: "emerald", topTrim: "gold", bottom: "shorts", bottomColor: "cream", bottomTrim: "tan", onePiece: "none",
@@ -605,8 +612,16 @@ export function shuffleLook(random: () => number, base: Look = FALLBACK, group?:
     // A tab's shuffle never takes a hat off on the Extras tab: only a covering the hat sits over.
     if (group && field === "headwear" && base.accessories.some((id) => HATS.includes(id))) ids = ids.filter((id) => HAT_OVER.includes(id));
     if (isSet(field)) {
+      // Only what can be worn together, so cleanLook drops nothing and every count is as likely: no hat over a covering
+      // it would pass through, and one from each group.
+      if (field === "accessories" && !HAT_OVER.includes(String(out.headwear))) ids = ids.filter((id) => !HATS.includes(id));
       const chosen: string[] = [];
-      for (let count = draw(SET_FIELDS[field] + 1); count > 0; count -= 1) chosen.push(ids.splice(draw(ids.length), 1)[0]);
+      for (let count = draw(SET_FIELDS[field] + 1); count > 0 && ids.length > 0; count -= 1) {
+        const id = ids.splice(draw(ids.length), 1)[0];
+        chosen.push(id);
+        const group = ACCESSORY_GROUPS.find((members) => members.includes(id));
+        if (group) ids = ids.filter((other) => !group.includes(other));
+      }
       out[field] = chosen;
     } else out[field] = ids[draw(ids.length)];
   }
@@ -639,6 +654,14 @@ export const GESTURE_MS: Record<GestureId, number> = {
 };
 
 export const isGesture = (kind: unknown): kind is GestureId => GESTURES.some((gesture) => gesture.id === kind);
+
+/**
+ * Whether a gesture may be made now. A bow or applause belongs to the end of a hand: at a table whose match is in play
+ * (`phase` is its game phase; null or undefined away from a match) they wait for the hand-over, so neither can answer a
+ * play or a mistake mid-hand.
+ */
+export const gestureNow = (kind: GestureId, phase: string | null | undefined): boolean =>
+  (kind !== "bow" && kind !== "clap") || phase == null || phase === "hand-over" || phase === "game-over";
 
 // ---- a VR player's live head and hands ----
 

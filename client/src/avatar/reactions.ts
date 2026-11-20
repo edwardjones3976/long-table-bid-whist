@@ -55,7 +55,8 @@ export function watchHands(seen: string | null, table: TableSnapshot, allowed: b
   const bySeat = SEATS.map((seat): Reaction => {
     // Partners (seats 0 and 2, 1 and 3) do different things.
     const odd = ((seat >> 1) + hand) % 2 === 1;
-    return winners.includes(seat) ? (odd ? "clap" : "grin") : odd ? "shrug" : "laugh";
+    // A lone winner always applauds, so every hand with a winner gets applause.
+    return winners.includes(seat) ? (odd || winners.length === 1 ? "clap" : "grin") : odd ? "shrug" : "laugh";
   });
   return { seen: now, bySeat };
 }

@@ -7,7 +7,7 @@
 import type { RootState } from "@react-three/fiber";
 import type { Pose } from "../../../shared/protocol";
 import { local } from "../state/local";
-import { clickFocused, cycleFocus } from "./activate";
+import { clickFocused, cycleAmong, cycleFocus } from "./activate";
 import { deadZone, runLatch } from "./motion";
 
 /** What window.__mansion.rig() answers: the head's place and facing, the feet height, and what the body is doing. */
@@ -46,6 +46,8 @@ export const desk = {
   padY: 0,
   padTurn: 0,
   padLook: 0,
+  /** The right stick's sideways push while a modal dialog (the look editor) has the pad: it turns the preview figure, not the view. */
+  padSpin: 0,
   /** Gamepad X held (jump), the left trigger held (aim a teleport), and running since a left-stick click. */
   padJump: false,
   padAim: false,
@@ -195,13 +197,19 @@ if (typeof window !== "undefined") {
   window.addEventListener("gamepaddisconnected", () => (pads = Math.max(0, pads - 1)));
 }
 
+/** The open dialog on top (the look editor, the gestures, the Menu), or null: then the bumpers walk its buttons and B is its Escape. */
+function openDialog(): HTMLElement | null {
+  const open = [...document.querySelectorAll<HTMLElement>('[role="dialog"]')].filter((dialog) => !dialog.closest("[hidden]"));
+  return open[open.length - 1] ?? null;
+}
+
 /** Standard mapping, pressed once: 0 south (A), 1 east (B), 4 and 5 bumpers, 9 Start, 10 left-stick click. Held: 2 west (X), 6 left trigger. */
 const WATCHED = [0, 1, 4, 5, 9, 10] as const;
 let wasDown = 0;
 
 /** Reads the first standard-mapping gamepad into `desk`; call once a frame outside VR. */
 export function pollGamepad(): void {
-  desk.padX = desk.padY = desk.padTurn = desk.padLook = 0;
+  desk.padX = desk.padY = desk.padTurn = desk.padLook = desk.padSpin = 0;
   desk.padActive = desk.padJump = desk.padAim = false;
   if (!pads) {
     desk.padRun = false;
@@ -223,12 +231,26 @@ export function pollGamepad(): void {
     for (const index of WATCHED) if (pad.buttons[index]?.pressed) down |= 1 << index;
     const pressed = down & ~wasDown;
     wasDown = down;
+    // A modal dialog (the look editor) has the pad to itself: the world behind it does not walk, turn, jump, aim or press,
+    // and Start leaves the Menu behind it alone, so Save returns me exactly where I was.
+    const modal = document.querySelector('[role="dialog"][aria-modal="true"]') !== null;
+    if (modal) {
+      desk.padSpin = deadZone(desk.padTurn);
+      desk.padX = desk.padY = desk.padTurn = desk.padLook = 0;
+      desk.padJump = desk.padAim = false;
+    }
     desk.padRun = runLatch(desk.padRun, (pressed & (1 << 10)) !== 0, desk.padX !== 0 || desk.padY !== 0);
-    if (pressed & (1 << 0) && !clickFocused()) desk.activate = true;
-    if (pressed & (1 << 1)) cancel();
-    if (pressed & (1 << 4)) cycleFocus(desk.focusIds, -1);
-    if (pressed & (1 << 5)) cycleFocus(desk.focusIds, 1);
-    if (pressed & (1 << 9)) document.querySelector<HTMLElement>('[data-testid="hud-menu"]')?.click();
+    if (pressed & (1 << 0) && !clickFocused() && !modal) desk.activate = true;
+    const dialog = pressed & ((1 << 1) | (1 << 4) | (1 << 5)) ? openDialog() : null;
+    if (pressed & (1 << 1)) {
+      if (dialog) dialog.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", code: "Escape", bubbles: true }));
+      else cancel();
+    }
+    // In a dialog every button and switch is a stop, the options of a radio group included (they keep only one in the Tab order).
+    const step = (direction: 1 | -1) => (dialog ? cycleAmong([...dialog.querySelectorAll<HTMLButtonElement | HTMLInputElement>('button, input[type="checkbox"]')], direction) : cycleFocus(desk.focusIds, direction));
+    if (pressed & (1 << 4)) step(-1);
+    if (pressed & (1 << 5)) step(1);
+    if (pressed & (1 << 9) && !modal) document.querySelector<HTMLElement>('[data-testid="hud-menu"]')?.click();
     return;
   }
 }

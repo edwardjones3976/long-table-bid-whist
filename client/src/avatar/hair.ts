@@ -1,7 +1,8 @@
 /**
  * Hair: the 24 styles, each with a bare version and a tucked one that sits under any head covering or hat.
  *
- *   hair(look, m, "near", tucked)   pieces for the head joint, in head space: chin at y = 0, crown at m.head, face toward -Z
+ *   hair(look, m, "near", tucked)   pieces for the head joint, in head space: chin at y = 0, crown at m.head, face toward -Z;
+ *                                   `tucked` is true under a head covering, or a hat's lower edge (Dressing.hatEdge)
  *   scalp(m)                         points on the head's smooth surface, for anything worn on the head
  *   layer(head, cols, rows, edge, lift)   a sheet over the scalp from the crown down to an edge
  *   HAIRLINE(f)                      the natural hairline: t down from the crown, by f round from the face
@@ -14,8 +15,9 @@
  * head keeps behind the upper back of every build.
  *
  * The tucked version of every style is one close layer under the natural hairline (TUCKED_LIFT off the
- * head), so a covering or hat only has to clear that one shape. Beyond 8 m each style keeps its outline in a
- * few triangles: ropes, rows and knots become a fall, colours or a few cones.
+ * head), so a covering or hat only has to clear that one shape. Under a hat the long styles (LONG) keep what
+ * hangs below its edge, so long locs, braids and a ponytail stay the wearer's own. Beyond 8 m each style keeps
+ * its outline in a few triangles: ropes, rows and knots become a fall, colours or a few cones.
  */
 import { BufferGeometry, ConeGeometry, CylinderGeometry, Float32BufferAttribute, Matrix4, Quaternion, SphereGeometry, Vector3 } from "three";
 import { hexOf, SKIN_TONES, type Look } from "../../../shared/avatar";
@@ -136,12 +138,6 @@ export function layer(head: Scalp, cols: number, rows: number, edge: (phi: numbe
   );
 }
 
-/** A number from 0 to 1 that changes from place to place but is the same for the same place. */
-const hash = (p: Vector3): number => {
-  const s = Math.sin(p.x * 127.1 + p.y * 311.7 + p.z * 74.7) * 43758.5453;
-  return s - Math.floor(s);
-};
-
 interface Kit {
   m: Measurements;
   head: Scalp;
@@ -159,11 +155,17 @@ interface Kit {
   skin: string;
   /** How far back (+Z) hair hanging below the head must stay: clear of the upper back of this build in a thick top. */
   back: number;
+  /** Under a hat, its lower edge (t by f): only what hangs below it is drawn, over the tucked layer. */
+  under?: (f: number) => number;
   shell: (...pieces: BufferGeometry[]) => void;
   detail: (...pieces: BufferGeometry[]) => void;
 }
 
-const speckle = (a: string, b: string, share = 0.45): Paint => (at) => (hash(at) < share ? b : a);
+/** One soft tone a little toward `b`: a mass reads as a soft shape, never as triangles of two colours. */
+const speckle = (a: string, b: string, share = 0.45): Paint => {
+  const tone = mix(a, b, share * 0.5);
+  return () => tone;
+};
 /** Paint by where a triangle sits on the scalp. */
 const byAngles = (k: Kit, paint: (phi: number, t: number, at: Vector3) => string): Paint => (at) => paint(...k.head.angles(at), at);
 const lifted = (k: Kit, lift: number) => Math.max(lift, k.min);
@@ -256,31 +258,43 @@ const sections = (k: Kit, across: number, down: number, a: string, b: string): P
 const sleek = (k: Kit, paint: Paint, edge = naturalEdge) => piece(layer(k.head, k.cols, k.near ? 5 : 2, edge, () => lifted(k, 0.008)), paint);
 /** Long hair streaked along its fall. */
 const streaks = (k: Kit): Paint => (_, n) => (Math.floor(n / 2) % 3 === 1 ? k.mid : k.hue);
+/** Where a rope hanging from (phi, t) starts: at its root, or just below a hat's edge. */
+const below = (k: Kit, phi: number, t: number) => (k.under ? Math.max(t, k.under(fromFace(phi)) + 0.08) : t);
+/** Whether a point on the head shows: always bare, and under a hat only below its edge. */
+const shows = (k: Kit, p: Vector3) => {
+  if (!k.under) return true;
+  const [phi, t] = k.head.angles(p);
+  return t > k.under(fromFace(phi)) + 0.06;
+};
 
 function locs(long: boolean) {
   return (k: Kit) => {
     const base = sections(k, 12, 4, k.hue, k.deep);
     if (!k.near) {
-      k.shell(close(k, base, lifted(k, 0.02)));
-      if (long) k.shell(piece(fall(k, 0.66 * Math.PI, -0.26, 0.02, 0.03), streaks(k)));
+      if (!k.under) k.shell(close(k, base, lifted(k, 0.02)));
+      // Banded in rope-wide stripes, deep and light, so far off locs still read as ropes, not as long straight hair.
+      if (long) k.shell(piece(fall(k, 0.66 * Math.PI, -0.26, 0.02, 0.03), (_, n) => (Math.floor(n / 2) % 2 ? k.deep : k.hue)));
       return;
     }
-    k.shell(close(k, base, 0.005));
+    if (!k.under) k.shell(close(k, base, 0.005));
     if (long) {
       // Behind the ears, from near the crown down the back of the head and over the back.
       const n = 10;
       for (let i = 0; i < n; i++) {
         const phi = -0.34 * Math.PI + (0.68 * Math.PI * (i + 0.5)) / n;
-        const points = hanging(k, phi, i % 2 ? 0.7 : 0.35, i % 2 ? 1.8 : 1.9, i % 2 ? 0.015 : 0.009, -0.26 + (i % 3) * 0.02);
+        const points = hanging(k, phi, below(k, phi, i % 2 ? 0.7 : 0.35), i % 2 ? 1.8 : 1.9, i % 2 ? 0.015 : 0.009, -0.26 + (i % 3) * 0.02);
         k.shell(piece(rope(points, 0.011, 5, 3, (s) => 1 - 0.25 * s), i % 2 ? k.hue : k.deep));
       }
       return;
     }
     // Short locs fall from two rings over the head: forward to the brows, down the sides to above the ears, down the back.
+    // Under a hat the ones down the back peek out below its edge, pressed down by it.
     const roots = [...[0, 1, 2, 3].map((i) => [(i + 0.5) * (TAU / 4), 0.3] as const), ...[0, 1, 2, 3, 4, 5, 6, 7].map((i) => [i * (TAU / 8), 0.75] as const)];
-    roots.forEach(([phi, t0], i) => {
+    roots.forEach(([phi, root], i) => {
       const f = fromFace(phi);
-      const end = Math.min(t0 + 0.8, f < 0.3 * Math.PI ? 1.27 : f < 0.66 * Math.PI ? 1.3 : 2.2);
+      const t0 = below(k, phi, root);
+      const end = Math.max(Math.min(root + 0.8, f < 0.3 * Math.PI ? 1.27 : f < 0.66 * Math.PI ? 1.3 : 2.2), k.under && f >= 0.66 * Math.PI ? t0 + 0.25 : 0);
+      if (t0 > end - 0.1) return;
       const points = [t0, (t0 + end) / 2, end].map((t, j) => k.head.at(phi, t, [0.006, 0.02, 0.016][j]));
       k.shell(piece(rope(points, 0.0085, 3, 3, (s) => 1 - 0.3 * s), i % 2 ? k.hue : k.deep));
     });
@@ -323,45 +337,59 @@ const STYLES: Record<Exclude<Look["hair"], "bald">, (k: Kit) => void> = {
   "box-braids": (k) => {
     const parts = sections(k, 14, 5, k.hue, mix(k.hue, k.skin, 0.4));
     if (!k.near) {
-      k.shell(close(k, parts, lifted(k, 0.016)), piece(fall(k, 0.66 * Math.PI, -0.28, 0.018, 0.025), plait(k.hue, k.deep, 2)));
+      if (!k.under) k.shell(close(k, parts, lifted(k, 0.016)));
+      k.shell(piece(fall(k, 0.66 * Math.PI, -0.28, 0.018, 0.025), plait(k.hue, k.deep, 2)));
       return;
     }
-    k.shell(close(k, parts, 0.005, 3));
-    const n = 12;
+    // Ten down the back; under a hat two more take their place, as the swept ones would pass through its edge.
+    const n = k.under ? 12 : 10;
     for (let i = 0; i < n; i++) {
       const phi = -0.34 * Math.PI + (0.68 * Math.PI * (i + 0.5)) / n;
-      const points = hanging(k, phi, [0.3, 0.6, 0.9][i % 3], 1.85, i % 2 ? 0.013 : 0.008, -0.28 + (i % 2) * 0.03);
+      const points = hanging(k, phi, below(k, phi, [0.3, 0.6, 0.9][i % 3]), 1.85, i % 2 ? 0.013 : 0.008, -0.28 + (i % 2) * 0.03);
       k.shell(piece(rope(points, 0.0075, 5, 3), plait(k.hue, k.deep, 3)));
+    }
+    if (k.under) return;
+    k.shell(close(k, parts, 0.005, 3));
+    // A braid from each temple, swept back above the ear to join the rest: box braids read as braids from the front too.
+    for (const side of [-1, 1]) {
+      const at = (f: number, t: number, lift: number) => k.head.at(Math.PI - side * f, t, lift);
+      const swept = [at(0.3 * Math.PI, 1.18, 0.006), at(0.48 * Math.PI, 1.22, 0.009), at(0.66 * Math.PI, 1.3, 0.01), at(0.8 * Math.PI, 1.62, 0.012)];
+      const last = swept[3];
+      const down = [new Vector3(last.x * 0.97, -0.04, Math.max(last.z, k.back * 0.95)), new Vector3(last.x * 1.05, -0.25, Math.max(last.z, k.back))];
+      k.shell(piece(rope([...swept, ...down], 0.0085, 6, 3), plait(k.hue, k.deep, 3)));
     }
   },
   cornrows: (k) => {
     const scalpTone = mix(k.hue, k.skin, 0.5);
     if (!k.near) {
-      k.shell(close(k, byAngles(k, (_, __, at) => (Math.floor((at.x / k.m.headWidth + 1) * 3.5) % 2 ? k.hue : scalpTone)), lifted(k, 0)));
+      if (!k.under) k.shell(close(k, byAngles(k, (_, __, at) => (Math.floor((at.x / k.m.headWidth + 1) * 3.5) % 2 ? k.hue : scalpTone)), lifted(k, 0)));
       return;
     }
-    k.shell(close(k, scalpTone));
-    // Six raised rows straight back from the hairline to the nape.
+    if (!k.under) k.shell(close(k, scalpTone));
+    // Six raised rows straight back from the hairline to the nape; under a hat, their ends below its edge.
     for (const side of spread(-0.85, 0.85, 6)) {
-      const points = backward(side, spread(1.05 - 0.1 * Math.abs(side), -2, 7)).map((u) => k.head.toward(u.x, u.y, u.z, 0.006));
-      k.shell(piece(rope(points, 0.0065, 6, 3), plait(k.hue, k.deep, 3)));
+      const points = backward(side, spread(1.05 - 0.1 * Math.abs(side), -2, k.under ? 13 : 7))
+        .map((u) => k.head.toward(u.x, u.y, u.z, 0.006))
+        .filter((p) => shows(k, p));
+      if (points.length > 1) k.shell(piece(rope(points, 0.0065, 6, 3), plait(k.hue, k.deep, 3)));
     }
   },
   knots: (k) => {
-    k.shell(close(k, sections(k, 8, 3, k.hue, mix(k.hue, k.skin, 0.4)), lifted(k, 0)));
+    if (!k.under) k.shell(close(k, sections(k, 8, 3, k.hue, mix(k.hue, k.skin, 0.4)), lifted(k, 0)));
     const knots = [[0, 0.05], ...[0, 1, 2, 3, 4].map((i) => [Math.PI + (i * TAU) / 5, 0.75]), [0.22 * Math.PI, 1.35], [-0.22 * Math.PI, 1.35]] as const;
     const knot = k.near ? lathe([[0.024, 0], [0.021, 0.015], [0.012, 0.028], [0, 0.034]], 5) : new ConeGeometry(0.022, 0.034, 3, 1, true).translate(0, 0.017, 0);
     const swirl: Paint = (_, n) => ((n + Math.floor(n / 10)) % 3 === 0 ? k.deep : k.hue);
-    for (const [phi, t] of knots) k.shell(piece(knot.clone(), swirl, onScalp(k, phi, t, 0.004)));
+    for (const [phi, t] of knots) if (shows(k, k.head.at(phi, t))) k.shell(piece(knot.clone(), swirl, onScalp(k, phi, t, 0.004)));
   },
   buzz: (k) => k.shell(close(k, speckle(mix(k.hue, k.skin, 0.3), mix(k.hue, k.skin, 0.4)))),
   "fade-low": (k) => {
     // Longer on top, fading to the skin low on the sides and back, with a part cut on the left.
     const fade = (u: number) => (u < 0.6 ? 0.011 : 0.011 - 0.007 * ((u - 0.6) / 0.4));
-    const paint = byAngles(k, (phi, t, at) => {
+    const grain = mix(k.hue, k.mid, 0.2);
+    const paint = byAngles(k, (phi, t) => {
       const u = t / naturalEdge(phi);
       const blend = (u < 0.6 ? 0 : u < 0.8 ? 0.3 : 0.55) * sides(phi);
-      return mix(hash(at) < 0.4 ? k.mid : k.hue, k.skin, blend);
+      return mix(grain, k.skin, blend);
     });
     k.shell(piece(layer(k.head, k.cols, k.near ? 6 : 2, naturalEdge, (_, __, u) => lifted(k, fade(u)), RIM), paint));
     if (k.near) {
@@ -370,11 +398,15 @@ const STYLES: Record<Exclude<Look["hair"], "bald">, (k: Kit) => void> = {
         return fade(t / naturalEdge(phi)) + 0.0012;
       };
       k.detail(line(k, backward(-0.45, spread(1.0, 0.1, 4)), onHair, 0.0016, shade(k.skin, 0.95)));
+      // And a short curved line cut beside it, curving away toward the back.
+      const design = spread(0.9, 0.35, 4).map((psi, i) => backward(-0.56 - (0.05 * i * i) / 3, [psi])[0]);
+      k.detail(line(k, design, onHair, 0.0014, shade(k.skin, 0.95)));
     }
   },
   "fade-high": (k) => {
     // Faded close all round, under a tall flat-topped block.
-    const paint = byAngles(k, (phi, t, at) => mix(hash(at) < 0.4 ? k.mid : k.hue, k.skin, (t / naturalEdge(phi) < 0.7 ? 0.25 : 0.55) * sides(phi)));
+    const grain = mix(k.hue, k.mid, 0.2);
+    const paint = byAngles(k, (phi, t) => mix(grain, k.skin, (t / naturalEdge(phi) < 0.7 ? 0.25 : 0.55) * sides(phi)));
     k.shell(close(k, paint, lifted(k, 0.005), k.near ? 5 : 2));
     const [h, rb] = [k.m.head, 0.9 * k.m.headWidth];
     const profile = k.near
@@ -402,8 +434,9 @@ const STYLES: Record<Exclude<Look["hair"], "bald">, (k: Kit) => void> = {
   },
   "silk-press": (k) => {
     // Sleek and glossy, parted in the middle, falling past the jaw, with laid edges along the hairline.
-    k.shell(sleek(k, byAngles(k, (_, t) => (t > 0.35 && t < 0.7 ? k.light : k.hue))));
     k.shell(piece(fall(k, 0.62 * Math.PI, -0.12, 0.014, 0.03), streaks(k)));
+    if (k.under) return;
+    k.shell(sleek(k, byAngles(k, (_, t) => (t > 0.35 && t < 0.7 ? k.light : k.hue))));
     if (!k.near) return;
     k.detail(line(k, backward(0, spread(1.05, 0.15, 4)), () => 0.0092, 0.0015, shade(k.skin, 0.92)));
     const edges = spread(-0.36 * Math.PI, 0.36 * Math.PI, 9).map((f) => k.head.at(Math.PI + f, HAIRLINE(Math.abs(f)) + 0.035 + 0.025 * Math.abs(Math.sin(f * 7)), 0.0015));
@@ -411,10 +444,16 @@ const STYLES: Record<Exclude<Look["hair"], "bald">, (k: Kit) => void> = {
   },
   "curly-bob": (k) => {
     // Full curls to the jaw, framing the face in front of the ears and falling behind them, lifted clear over each ear.
+    // Deep relief in three clear shades, so it reads as curls rather than a smooth helmet: each curl lit on its crown and
+    // shaded in the grooves round it, with smaller curls drawn in the colour over the larger ones.
     const bob = curve([[0, 1.13], [0.2 * Math.PI, 1.2], [0.36 * Math.PI, 2.0], [0.45 * Math.PI, 1.36], [0.62 * Math.PI, 1.36], [0.76 * Math.PI, 2.35], [Math.PI, 2.35]]);
     const edge = (phi: number) => bob(fromFace(phi));
-    const lift = (phi: number, t: number, u: number) => lifted(k, 0.026 * (1 + 0.12 * Math.sin(5 * phi + 8 * t)) * fullness(u, 0.7, 0.6));
-    const curls: Paint = (at) => [k.hue, k.mid, mix(k.hue, "#fff6e8", 0.06)][Math.floor(hash(at) * 3)];
+    const wave = (phi: number, t: number) => 0.3 * Math.sin(5 * phi + 8 * t) + 0.12 * Math.cos(7 * phi - 5 * t);
+    const lift = (phi: number, t: number, u: number) => lifted(k, 0.026 * (1 + wave(phi, t)) * fullness(u, 0.7, 0.6));
+    const curls = byAngles(k, (phi, t) => {
+      const crown = wave(phi, t) + 0.16 * Math.sin(11 * phi + 17 * t);
+      return crown > 0.16 ? mix(k.hue, "#fff6e8", 0.07) : crown < -0.14 ? shade(k.hue, 0.85) : k.hue;
+    });
     k.shell(piece(layer(k.head, k.near ? 16 : k.cols, k.near ? 6 : 2, edge, lift, RIM), curls));
   },
   pixie: (k) => {
@@ -429,20 +468,22 @@ const STYLES: Record<Exclude<Look["hair"], "bald">, (k: Kit) => void> = {
   },
   "long-straight": (k) => {
     // Full and long, to the middle of the back, parted on the right.
-    k.shell(sleek(k, streaks(k)));
     k.shell(piece(fall(k, 0.62 * Math.PI, -0.3, 0.017, 0.045), streaks(k)));
+    if (k.under) return;
+    k.shell(sleek(k, streaks(k)));
     if (k.near) k.detail(line(k, backward(0.3, spread(1.0, 0.2, 4)), () => 0.0092, 0.0015, shade(k.skin, 0.92)));
   },
   ponytail: (k) => {
-    k.shell(sleek(k, byAngles(k, (phi) => (Math.floor((phi * 12) / TAU) % 2 ? k.light : k.hue))));
-    // Tied high at the back with a gold band, the tail swinging out and down behind the neck.
-    const tie = k.head.at(0, 0.95, 0.008);
-    const out = k.head.at(0, 0.95, 1).sub(k.head.at(0, 0.95)).normalize();
+    if (!k.under) k.shell(sleek(k, byAngles(k, (phi) => (Math.floor((phi * 12) / TAU) % 2 ? k.light : k.hue))));
+    // Tied high at the back with a gold band, the tail swinging out and down behind the neck; under a hat, tied low below its edge.
+    const tied = k.under ? Math.max(0.95, k.under(Math.PI) + 0.06) : 0.95;
+    const tie = k.head.at(0, tied, 0.008);
+    const out = k.head.at(0, tied, 1).sub(k.head.at(0, tied)).normalize();
     const at = (o: number, down: number) => tie.clone().addScaledVector(out, o).add(new Vector3(0, -down, 0));
     const tail = [tie, at(0.03, -0.005), at(0.055, 0.06), at(0.06, 0.15), at(0.05, 0.22)];
     const swell = (s: number) => 0.6 + 0.6 * Math.sin(Math.PI * Math.min(1, s * 1.4)) ** 0.8 * (1 - 0.6 * s);
     k.shell(piece(rope(tail, 0.02, k.near ? 6 : 3, k.near ? 5 : 3, swell), (_, n) => (n % 10 < 4 ? k.light : k.hue)));
-    if (k.near) k.detail(piece(new CylinderGeometry(0.017, 0.017, 0.012, 6, 1, true), "#d6a32b", onScalp(k, 0, 0.95, -0.012)));
+    if (k.near && !k.under) k.detail(piece(new CylinderGeometry(0.017, 0.017, 0.012, 6, 1, true), "#d6a32b", onScalp(k, 0, 0.95, -0.012)));
   },
   bun: (k) => {
     k.shell(sleek(k, byAngles(k, (phi) => (Math.floor((phi * 12) / TAU) % 2 ? k.light : k.hue))));
@@ -468,7 +509,28 @@ const STYLES: Record<Exclude<Look["hair"], "bald">, (k: Kit) => void> = {
   },
 };
 
-export function hair(look: Look, m: Measurements, detail: Detail, tucked = false): Dressing {
+/** How far a dressing's head pieces stand out along `normal` within `reach` of the line through `at`: 0 where there are none. */
+export function standOff(dressing: Dressing, at: Vector3, normal: Vector3, reach = 0.025): number {
+  let most = 0;
+  const v = new Vector3();
+  for (const geometry of [...(dressing.shell.head ?? []), ...(dressing.detail.head ?? [])]) {
+    const p = geometry.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      v.fromBufferAttribute(p, i).sub(at);
+      const out = v.dot(normal);
+      if (out > most && v.addScaledVector(normal, -out).length() < reach) most = out;
+    }
+  }
+  return most;
+}
+
+/** Styles that hang below a hat's edge, to the jaw or further. */
+export const LONG: readonly Look["hair"][] = ["locs-long", "box-braids", "silk-press", "long-straight", "ponytail"];
+/** Styles that keep what shows below a hat's edge: the long ones, and the ends of short locs, cornrows and knots at the nape. The rest tuck under it. */
+export const BELOW_HAT: readonly Look["hair"][] = [...LONG, "locs-short", "cornrows", "knots"];
+
+/** `covered`: a covering (a crown hat, a beanie) hides the whole scalp, so a long style under it needs no close layer of its own. */
+export function hair(look: Look, m: Measurements, detail: Detail, tucked: boolean | ((f: number) => number) = false, covered = false): Dressing {
   const out = dressing();
   if (look.hair === "bald" || detail === "simple") return out;
   const near = detail === "near";
@@ -481,14 +543,17 @@ export function hair(look: Look, m: Measurements, detail: Detail, tucked = false
     min: TUCKED_LIFT[detail],
     hue,
     deep: shade(hue, 0.55),
-    mid: mix(shade(hue, 0.72), "#fff6e8", 0.05),
+    // Close to the hue: grain that softens a mass, never hard facets of another colour.
+    mid: mix(shade(hue, 0.86), "#fff6e8", 0.03),
     light: mix(hue, "#fff6e8", 0.12),
     skin: hexOf("skin", look.skin) ?? SKIN_TONES[22],
     back: m.chest * m.depth + 0.03,
+    under: typeof tucked === "function" ? tucked : undefined,
     shell: (...pieces) => add(out.shell, "head", ...pieces),
     detail: (...pieces) => add(out.detail, "head", ...pieces),
   };
-  if (tucked) k.shell(close(k, speckle(k.hue, k.deep, 0.3)));
-  else STYLES[look.hair](k);
+  const hangs = !!k.under && BELOW_HAT.includes(look.hair);
+  if (tucked && !(covered && hangs)) k.shell(close(k, speckle(k.hue, k.deep, 0.3)));
+  if (!tucked || hangs) STYLES[look.hair](k);
   return out;
 }

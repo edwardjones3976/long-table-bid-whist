@@ -4,8 +4,9 @@
  *
  *   <Mirror />            inside the R3F canvas (World draws it)
  *   mirrorShown.rendered  whether the reflection was drawn last frame (the browser tests' hook, main.tsx)
- *   besideMirror(pose)    in front of the glass and close to it: there the reflection is the look panel's preview
+ *   besideMirror(pose)    close in front of the glass and facing it: there the reflection is the look panel's preview
  *   inFront(x, z)         how far in front of the glass a point is, in metres (negative behind it)
+ *   inReflection(eye, at) whether someone there can show in the glass to that eye
  *
  * My own body is drawn only in the reflection: its meshes are on MIRROR_LAYER, which the reflection's camera
  * sees and the main camera never does, so nobody's view of the room changes. It is my saved look (or the draft
@@ -35,14 +36,32 @@ import { MIRROR } from "./layout";
 export const MIRROR_LAYER = 5;
 /** The reflection is drawn only while the viewer is this close to the glass. */
 const REFLECT_M = 10;
-/** Close enough to see oneself in it while using the look panel. */
-const BESIDE_M = 3.5;
 
 const NORMAL = { x: Math.sin(MIRROR.ry), z: Math.cos(MIRROR.ry) };
 /** How far in front of the glass (x, z) is; negative behind it. */
 export const inFront = (x: number, z: number): number => (x - MIRROR.x) * NORMAL.x + (z - MIRROR.z) * NORMAL.z;
+/** How far along the glass from its middle (x, z) is. */
+const along = (x: number, z: number): number => (x - MIRROR.x) * NORMAL.z - (z - MIRROR.z) * NORMAL.x;
 
-export const besideMirror = (pose: Pose): boolean => inFront(pose.x, pose.z) > 0.2 && Math.hypot(pose.x - MIRROR.x, pose.z - MIRROR.z) < BESIDE_M;
+/**
+ * Whether someone at (x, z) can show in the glass to an eye at (ex, ez), seen from above: both in front of it, and the
+ * line from the eye's mirror image to them crossing the glass, widened by `margin` for a body's width.
+ */
+export function inReflection(ex: number, ez: number, x: number, z: number, margin = 0.5): boolean {
+  const [n, ne] = [inFront(x, z), inFront(ex, ez)];
+  if (n <= 0 || ne <= 0) return false;
+  const [u, ue] = [along(x, z), along(ex, ez)];
+  return Math.abs(ue + ((u - ue) * ne) / (n + ne)) < MIRROR.w / 2 + margin;
+}
+
+/**
+ * Using the glass as the look preview: 0.4 to 1 m in front of it (so the reflection stands about 1 to 2 m ahead, as the
+ * preview figure would), in front of the glass itself, and facing it. Anywhere else the small preview figure shows.
+ */
+export const besideMirror = (pose: Pose): boolean => {
+  const out = inFront(pose.x, pose.z);
+  return out > 0.4 && out < 1 && Math.abs(along(pose.x, pose.z)) < MIRROR.w / 2 && Math.sin(pose.ry) * NORMAL.x + Math.cos(pose.ry) * NORMAL.z > 0.5;
+};
 
 export const mirrorShown = { rendered: false };
 let drew = false;
@@ -80,7 +99,8 @@ function Self({ reflecting }: { reflecting: { current: boolean } }) {
     const pose = desk.pose;
     const built = figure.current;
     const group = holder.current;
-    if (!group || !built || !pose || !reflecting.current) return;
+    // Still while the glass is not drawn (out of view, or seen from behind its wall): nobody can see this figure then.
+    if (!group || !built || !pose || !reflecting.current || !mirrorShown.rendered) return;
     const s = st.current;
     const dt = Math.min(delta, 0.1);
     const y = pose.y ?? 0;

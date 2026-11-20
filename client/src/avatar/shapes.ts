@@ -1,6 +1,6 @@
 /**
  * Tools for building avatar parts in code. A part is a list of pieces: plain coloured geometries in one
- * joint's own space, which buildFigure merges into one geometry per joint.
+ * joint's own space, which buildFigure weights wholly to that joint and merges into one skinned geometry.
  *
  *   piece(new SphereGeometry(1, 8, 6), "#c28d6d", { at: [0, 0.2, 0], scale: [0.1, 0.12, 0.1] })
  *   piece(lathe(profile, 12), (at, i) => (at.y > 0.3 ? trim : main))   a colour per triangle: trims, patterns
@@ -52,6 +52,8 @@ export interface Dressing {
   detail: Parts;
   /** The hair must use its tucked version: it sits under a covering or a hat. */
   tucksHair: boolean;
+  /** A hat's lower edge, as t down from the crown by f round from the face (hair.ts): long hair still hangs below it. */
+  hatEdge?: (f: number) => number;
 }
 
 export const dressing = (): Dressing => ({ shell: {}, detail: {}, tucksHair: false });
@@ -62,7 +64,7 @@ export function add(parts: Parts, joint: JointName, ...pieces: BufferGeometry[])
 
 /** How finely each detail is cut. Even counts around keep a vertex line down the front of the head and torso. */
 export const SEGMENTS = {
-  near: { head: 12, headRows: 8, torso: 12, pelvis: 10, arm: 7, leg: 6, cap: 2, hand: 5, foot: 5, small: 6, eye: 7, tube: 5, around: 4, disc: 8, band: 12 },
+  near: { head: 12, headRows: 8, torso: 12, pelvis: 12, arm: 7, leg: 6, cap: 2, hand: 5, foot: 5, small: 6, eye: 7, tube: 5, around: 4, disc: 8, band: 12 },
   far: { head: 6, headRows: 4, torso: 6, pelvis: 6, arm: 4, leg: 4, cap: 1, hand: 4, foot: 4, small: 4, eye: 4, tube: 3, around: 3, disc: 5, band: 6 },
 } as const;
 export type Segments = (typeof SEGMENTS)["near" | "far"];
@@ -77,6 +79,19 @@ function linear(hex: string): Color {
 /** The colour times k in linear light: below 1 darker, above 1 lighter. */
 export const shade = (hex: string, k: number): string => `#${linear(hex).clone().multiplyScalar(k).getHexString()}`;
 export const mix = (a: string, b: string, t: number): string => `#${linear(a).clone().lerp(linear(b), t).getHexString()}`;
+const lumaOf = (c: Color) => 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
+/** Relative luminance, in linear light. */
+export const luma = (hex: string): number => lumaOf(linear(hex));
+/**
+ * `a` mixed toward `b` by t, but never lighter than `most` times a's own luminance: a tint rather than a highlight,
+ * so the same blush or lip on the deepest skin stays as quiet as on the lightest.
+ */
+export function tint(a: string, b: string, t: number, most = 1.15): string {
+  const out = linear(a).clone().lerp(linear(b), t);
+  const cap = lumaOf(linear(a)) * most;
+  if (lumaOf(out) > cap) out.multiplyScalar(cap / lumaOf(out));
+  return `#${out.getHexString()}`;
+}
 
 export function matrixOf(place: Place): Matrix4 {
   const scale = place.scale ?? 1;
@@ -108,7 +123,23 @@ export function piece(geometry: BufferGeometry, paint: Paint, place: Place | Mat
     for (let j = i; j < i + 3; j++) out.set([r, g, b], j * 3);
   }
   flat.setAttribute("color", new BufferAttribute(out, 3));
-  return flat;
+  return withoutSlivers(flat);
+}
+
+/** Drops triangles with two corners in one place (a lathe's tips leave them): they draw nothing but still cost. */
+function withoutSlivers(geometry: BufferGeometry): BufferGeometry {
+  const position = geometry.attributes.position;
+  const same = (a: number, b: number) => position.getX(a) === position.getX(b) && position.getY(a) === position.getY(b) && position.getZ(a) === position.getZ(b);
+  const kept: number[] = [];
+  for (let i = 0; i < position.count; i += 3) if (!same(i, i + 1) && !same(i + 1, i + 2) && !same(i, i + 2)) kept.push(i);
+  if (kept.length * 3 === position.count) return geometry;
+  for (const name of ["position", "normal", "color"]) {
+    const from = geometry.attributes[name].array;
+    const to = new Float32Array(kept.length * 9);
+    kept.forEach((at, k) => to.set(from.subarray(at * 3, at * 3 + 9), k * 9));
+    geometry.setAttribute(name, new BufferAttribute(to, 3));
+  }
+  return geometry;
 }
 
 /** One geometry from many pieces, or null when there are none. */

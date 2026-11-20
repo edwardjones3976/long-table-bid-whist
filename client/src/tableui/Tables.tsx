@@ -156,6 +156,7 @@ export function Pressable({
   size,
   disabled = false,
   onPress,
+  onHold,
   position,
   rotation,
 }: {
@@ -164,11 +165,19 @@ export function Pressable({
   size: [number, number];
   disabled?: boolean;
   onPress: () => void;
+  /** A button that acts while held: true as a pointer goes down on it, false as it lets go or leaves. Its click does nothing more. */
+  onHold?: (held: boolean) => void;
   position?: Vec3;
   rotation?: Vec3;
 }) {
   // Either hand, or both, may be on it.
   const over = useRef(new Set<number>());
+  const holding = useRef(false);
+  const release = (): void => {
+    if (!holding.current) return;
+    holding.current = false;
+    onHold?.(false);
+  };
   const [hover, setHover] = useState(false);
   const grip = useSteadyGrip();
   const lit = hover && !disabled;
@@ -186,12 +195,19 @@ export function Pressable({
         geometry={PLANE}
         scale={[width, height, 1]}
         userData={{ onActivate: onPress }}
-        onPointerDown={grip.onPointerDown}
+        onPointerDown={(event) => {
+          grip.onPointerDown(event);
+          if (!onHold || disabled) return;
+          holding.current = true;
+          onHold(true);
+        }}
+        onPointerUp={release}
+        onPointerCancel={release}
         onClick={(event) => {
           event.stopPropagation();
           if (!grip.steady(event)) return;
           cue(disabled ? "refuse" : "place", sourceOf(event));
-          if (!disabled) onPress();
+          if (!disabled && !onHold) onPress();
         }}
         onPointerEnter={(event) => {
           event.stopPropagation();
@@ -205,13 +221,14 @@ export function Pressable({
         onPointerLeave={(event) => {
           over.current.delete(event.pointerId);
           setHover(over.current.size > 0);
+          release();
         }}
       >
         <meshBasicMaterial color={background} />
       </mesh>
       <Label
         lines={lines}
-        box={[width * 0.94, Math.min(height * 0.9, lines.length * height * 0.36)]}
+        box={[width * 0.94, Math.min(height * 0.9, lines.length * height * 0.38)]}
         options={{ background, color: disabled ? "#d0d4dc" : "#ffffff", fontPx: 44, padding: 6 }}
         position={[0, 0, 0.002]}
         onActivate={onPress}
@@ -240,22 +257,28 @@ function MatchClock({ summary }: { summary: TableSummary }) {
     ref.current.scale.setScalar(Math.min(3, Math.max(1, Math.hypot(world[12] - spot.x, world[14] - spot.z) / 3.5)));
   });
   return elapsed === null ? null : (
-    <group ref={ref} position={[0.9, 2.43, 0]}>
+    <group ref={ref} position={[0.9, STATUS_Y, 0]}>
       <Label lines={[clockText(elapsed)]} box={[0.5, 0.18]} options={{ fontPx: 80, color: "#d8dde8" }} position={[0.25, 0, 0]} inert />
     </group>
   );
 }
 
+/** The seat lines' middle; the title and status sit above them. */
+const BOARD_Y = 2.4;
+const STATUS_Y = BOARD_Y + 0.33;
+/** The board's lowest edge: every seated player's name plate stays below it (world/Avatars.tsx plateLift). */
+export const BOARD_BOTTOM = BOARD_Y - 0.21;
+
 function StatusBoard({ spot, summary }: { spot: TableSpot; summary: TableSummary }) {
   return (
     <Facing x={spot.x} y={0} z={spot.z}>
-      <Label lines={[spot.label]} box={[1.7, 0.26]} options={{ fontPx: 96 }} position={[0, 2.7, 0]} />
-      <mesh geometry={STATUS_ICONS[summary.status]} position={[-0.62, 2.43, 0]} scale={0.2}>
+      <Label lines={[spot.label]} box={[1.7, 0.26]} options={{ fontPx: 96 }} position={[0, BOARD_Y + 0.6, 0]} />
+      <mesh geometry={STATUS_ICONS[summary.status]} position={[-0.62, STATUS_Y, 0]} scale={0.2}>
         <meshBasicMaterial color={STATUS_COLOURS[summary.status]} />
       </mesh>
-      <Label lines={[STATUS_WORDS[summary.status]]} box={[1, 0.2]} options={{ fontPx: 80 }} position={[0.1, 2.43, 0]} />
+      <Label lines={[STATUS_WORDS[summary.status]]} box={[1, 0.2]} options={{ fontPx: 80 }} position={[0.1, STATUS_Y, 0]} />
       <MatchClock summary={summary} />
-      <Label lines={boardLines(summary)} box={[1.7, 0.42]} position={[0, 2.1, 0]} />
+      <Label lines={boardLines(summary)} box={[1.7, 0.42]} position={[0, BOARD_Y, 0]} />
     </Facing>
   );
 }

@@ -5,7 +5,7 @@
  *
  *   bodyYaw(previous, headYaw)          in VR the body turns only once the head is more than HEAD_LEAD off it
  *   poseToSend(feet, ry, tracked?)      the Pose: plain without `tracked`, with head and hands in VR
- *   applyRig(figure, rig)               turns a figure's joints to one frame of motion.ts's animate()
+ *   applyRig(figure, rig)               turns a figure's joints, brows and hem to one frame of motion.ts's animate()
  *
  * controls/Player.tsx builds it every frame (desk.pose, which the mirror draws me from) and sends it a few times a second.
  */
@@ -57,4 +57,6 @@ export function applyRig(figure: Figure, rig: Rig): void {
   for (const joint of JOINT_NAMES) figure.joints[joint].rotation.set(...rig.joints[joint]);
   figure.joints.pelvis.position.y = rig.pelvisY;
   figure.root.position.y = rig.lift;
+  figure.face.setBrows(rig.brows);
+  figure.setHem(rig.hem);
 }

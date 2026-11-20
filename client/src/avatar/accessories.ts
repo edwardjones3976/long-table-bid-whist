@@ -7,15 +7,16 @@
  * Looks come through cleanLook, which keeps one of each kind (glasses, earrings, hats) and at most three.
  * Should two hats arrive anyway, the first is worn and the second ignored.
  *
- * Glasses sit in front of the eyes with their arms over the ears (over the cloth when a hijab is worn);
+ * Glasses sit in front of the eyes with their arms over the ears (into the cloth at the temples when a hijab is worn);
  * earrings hang from the lobes, in front of any hearing aid or processor; the chain lies round the base of
  * the neck over any top; the watch goes on the left wrist and bracelets on the right, just below any
- * sleeve. Hats sit over tucked hair (and over a durag) in the head-covering colour, above the ears. Under
+ * sleeve. Hats sit over tucked hair (and over a durag) in the head-covering colour, above the ears, and say where
+ * their lower edge is (Dressing.hatEdge), so long hair can hang below it. Under
  * a hijab the earrings and chain are hidden, so they are not drawn. Beyond 8 m only hats are drawn.
  */
 import { CatmullRomCurve3, CylinderGeometry, Matrix4, OctahedronGeometry, RingGeometry, SphereGeometry, TubeGeometry, Vector3, type BufferGeometry } from "three";
 import { hexOf, type Look } from "../../../shared/avatar";
-import { EARS } from "./face";
+import { earShape } from "./face";
 import type { Detail } from "./figure";
 import { fromFace, curve, grid, layer, scalp, type Scalp } from "./hair";
 import { HIJAB_SIDE } from "./headwear";
@@ -34,7 +35,7 @@ const HATS: readonly Accessory[] = ["cap", "bucket", "fedora"];
 const FRAMES: Record<Glasses, { a: number; b: number; n: number; rim: number; colour: string }> = {
   "glasses-round": { a: 0.03, b: 0.03, n: 2, rim: 0.0065, colour: "#5a3a24" },
   "glasses-square": { a: 0.029, b: 0.026, n: 4, rim: 0.007, colour: "#16110f" },
-  "glasses-cat": { a: 0.031, b: 0.024, n: 3, rim: 0.007, colour: "#5b1b2b" },
+  "glasses-cat": { a: 0.032, b: 0.021, n: 3, rim: 0.007, colour: "#5b1b2b" },
   "glasses-rect": { a: 0.034, b: 0.021, n: 4, rim: 0.0065, colour: "#2e3136" },
   "glasses-wire": { a: 0.026, b: 0.025, n: 2, rim: 0.0022, colour: "#c8963e" },
 };
@@ -71,9 +72,9 @@ function glasses(k: Kit, id: Glasses): void {
       const [r, angle] = [Math.hypot(x, y), Math.atan2(y, x)];
       const [c, n] = [Math.cos(angle), Math.sin(angle)];
       const power = (v: number) => Math.sign(v) * Math.abs(v) ** (2 / frame.n);
-      // A cat-eye's upper outer corner sweeps up and out.
-      const flick = id === "glasses-cat" && c * side > 0 && n > 0 ? 1 + 0.5 * c * side * n : 1;
-      position.setXYZ(i, r * a * power(c) * (1 + 0.08 * (flick - 1)), r * b * power(n) * flick, 0);
+      // A cat-eye's upper outer corner sweeps up and out into a wing.
+      const flick = id === "glasses-cat" && c * side > 0 && n > 0 ? 1 + 1.4 * (c * side * n) ** 1.5 : 1;
+      position.setXYZ(i, r * a * power(c) * (1 + 0.3 * (flick - 1)), r * b * power(n) * flick, 0);
     }
     // Outer edges turned back a little, round the face.
     parts.push(piece(lens, frame.colour, new Matrix4().makeTranslation(side * cx, cy, cz).multiply(new Matrix4().makeRotationY(-side * tilt))));
@@ -82,14 +83,13 @@ function glasses(k: Kit, id: Glasses): void {
   const bridge = [edge(-1, -a + rim / 2, 0.004 * s), new Vector3(0, cy + 0.008 * s, Math.min(cz, faceZ(0, cy) - 0.016 * s)), edge(1, -a + rim / 2, 0.004 * s)];
   const thin = id === "glasses-wire" ? 0.0011 : 0.0018;
   parts.push(piece(tube(bridge.map(xyz), thin * s, 2, 3), frame.colour));
-  // Over the ear tops, or over the cloth of a hijab.
+  // Over the ear tops; with a hijab, into the cloth at the temples, ending well inside it (past the sag of its facets).
   const hijab = k.look.headwear === "hijab";
-  const lift = hijab ? HIJAB_SIDE + 0.004 : 0.004;
-  const earTop = m.ear[1] + 0.075 * h * EARS[k.look.ears].size;
+  const earTop = m.ear[1] + earShape(k.look.ears, m, 1).half[1];
   for (const side of [-1, 1]) {
-    const temple = k.head.toward(side * 0.97, 0.06, -0.25, lift);
-    const over = hijab ? k.head.toward(side, 0, m.ear[2] / m.headDepth, lift) : new Vector3(side * (-m.ear[0] + 0.002), earTop + 0.003, m.ear[2]);
-    const arm = [edge(side, a - rim / 2, 0.004 * s), temple, over];
+    const arm = hijab
+      ? [edge(side, a - rim / 2, 0.004 * s), k.head.toward(side * 0.98, 0.06, -0.12, HIJAB_SIDE - 0.008)]
+      : [edge(side, a - rim / 2, 0.004 * s), k.head.toward(side * 0.97, 0.06, -0.25, 0.004), new Vector3(side * (-m.ear[0] + 0.002), earTop + 0.003, m.ear[2])];
     parts.push(piece(tube(arm.map(xyz), thin * s, 3, 3), frame.colour));
   }
   add(k.out.detail, "head", ...parts);
@@ -98,9 +98,9 @@ function glasses(k: Kit, id: Glasses): void {
 /** Studs, hoops or drops at each lobe, in front of anything worn behind the ear. */
 function earrings(k: Kit, id: "studs" | "hoops" | "drops"): void {
   const { m, s } = k;
-  const ear = EARS[k.look.ears];
+  const high = earShape(k.look.ears, m, 1).half[1];
   for (const side of [-1, 1]) {
-    const lobe = new Vector3(side * (-m.ear[0] + 0.007 * s), m.ear[1] - 0.075 * m.head * ear.size * 0.8, m.ear[2] - 0.004 * s);
+    const lobe = new Vector3(side * (-m.ear[0] + 0.007 * s), m.ear[1] - high * 0.8, m.ear[2] - 0.004 * s);
     // A hoop passes through the lobe itself; studs and drops sit on it.
     const parts = id === "hoops" ? [] : [piece(new OctahedronGeometry(0.0042 * s), GOLD, { at: xyz(lobe) })];
     if (id === "hoops") {
@@ -173,6 +173,7 @@ function hat(k: Kit, id: Hat): void {
   const shell = (...pieces: BufferGeometry[]) => add(k.out.shell, "head", ...pieces);
   if (id === "cap") {
     const edge = curve([[0, 1.18], [0.5 * Math.PI, 1.3], [Math.PI, 1.45]]);
+    k.out.hatEdge = edge;
     const panels: Paint = (at) => (Math.floor((head.angles(at)[0] * 6) / TAU) % 2 ? shade(colour, 0.88) : colour);
     shell(piece(layer(head, cols, near ? 3 : 2, (phi) => edge(fromFace(phi)), () => lift, 0.003), panels));
     // The visor reaches forward over the face, curved round the forehead.
@@ -183,6 +184,7 @@ function hat(k: Kit, id: Hat): void {
   }
   if (id === "bucket") {
     const edge = curve([[0, 1.25], [0.5 * Math.PI, 1.38], [Math.PI, 1.45]]);
+    k.out.hatEdge = edge;
     shell(piece(layer(head, cols, near ? 3 : 2, (phi) => edge(fromFace(phi)), () => lift + 0.004), colour));
     // Sloping down all round, stitched in rings.
     const stitched: Paint = (_, n) => (Math.floor(n / (2 * cols)) === 0 ? shade(colour, 0.85) : colour);
@@ -192,11 +194,14 @@ function hat(k: Kit, id: Hat): void {
   // The fedora: a crown dipping a little at the top, with a dark band, its brim snapped down in front and turned up behind.
   const h = m.head;
   const yb = 0.7 * h;
+  k.out.hatEdge = () => Math.acos(yb / (h / 2) - 1);
   const rb = m.headWidth * Math.sqrt(1 - (yb / (h / 2) - 1) ** 2) + lift;
   const zs = m.headDepth / m.headWidth;
+  // The crown's dip clears the top of the head by the hat's own lift, so tucked hair or a durag never shows through it.
+  const top = h + lift + 0.01;
   const crown = near
-    ? [[rb, yb - 0.004], [rb * 0.97, yb + 0.075], [rb * 0.84, yb + 0.098], [0, yb + 0.09]] as const
-    : [[rb, yb - 0.004], [rb * 0.9, yb + 0.095], [0, yb + 0.09]] as const;
+    ? [[rb, yb - 0.004], [rb * 0.97, top - 0.02], [rb * 0.84, top + 0.008], [0, top]] as const
+    : [[rb, yb - 0.004], [rb * 0.9, top + 0.005], [0, top]] as const;
   shell(piece(lathe(crown, cols), (at) => (at.y < yb + 0.022 ? shade(colour, 0.4) : colour), { scale: [1, 1, zs] }));
   const inner = (phi: number) => new Vector3(rb * Math.sin(phi), yb, rb * zs * Math.cos(phi));
   shell(piece(brim(k, around(0, TAU, cols), inner, 0.05 * k.s, (f) => -0.012 * Math.cos(f) + 0.01 * Math.sin(f) ** 2, 0.004), colour));

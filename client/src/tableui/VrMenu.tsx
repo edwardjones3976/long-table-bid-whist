@@ -18,7 +18,7 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import type { Group } from "three";
 import { GESTURES } from "../../../shared/avatar";
 import { lookDraft } from "../avatar/draft";
-import { playGesture, useGestureReady } from "../avatar/gestures";
+import { AFTER_HAND, playGesture, useGestureAllowed, useGestureReady } from "../avatar/gestures";
 import { VrLook } from "../avatar/VrLook";
 import { CONNECTION } from "../hud/Hud";
 import { runButton } from "../net/run";
@@ -63,6 +63,7 @@ export function useHeadAnchor(open: boolean): RefObject<Group | null> {
 /** Seven large buttons round a Back button. All wait out the cooldown after any gesture (avatar/gestures.ts). */
 function GestureWheel({ onBack }: { onBack: () => void }) {
   const ready = useGestureReady();
+  const allowed = useGestureAllowed();
   return (
     <>
       {GESTURES.map(({ id, label }, i) => {
@@ -71,9 +72,9 @@ function GestureWheel({ onBack }: { onBack: () => void }) {
           <Pressable
             key={id}
             name={`vr-gesture-${id}`}
-            lines={ready ? [label] : [label, "(in a moment)"]}
+            lines={!allowed(id) ? [label, `(${AFTER_HAND})`] : ready ? [label] : [label, "(in a moment)"]}
             size={[0.16, 0.08]}
-            disabled={!ready}
+            disabled={!ready || !allowed(id)}
             onPress={() => void playGesture(id)}
             position={[Math.sin(angle) * 0.22, -0.11 + Math.cos(angle) * 0.2, 0]}
           />

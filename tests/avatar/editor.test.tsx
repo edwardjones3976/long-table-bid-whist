@@ -93,6 +93,16 @@ describe("look editor", () => {
     expect(preview()).toContain("Bald");
   });
 
+  it("turns the preview with two Turn buttons, so no drag is needed, and names each starting look's colours in words", () => {
+    open();
+    const turns = within(screen.getByRole("group", { name: "Turn" })).getAllByRole("button");
+    expect(turns.map((button) => button.getAttribute("aria-label"))).toEqual(["Turn left", "Turn right"]);
+    for (const button of turns) fireEvent.click(button);
+    // Clicking them changes nothing but the view: the draft is untouched and the editor stays open.
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.getByRole("button", { name: /^Starting look 1: skin Tone \d+ of 14.*hair, .* top:/ })).toBeTruthy();
+  });
+
   it("switches Before on and off with a click that has no pointer (Enter, a screen reader, voice control)", () => {
     open();
     fireEvent.click(tab("Hair"));
@@ -277,6 +287,26 @@ describe("look editor", () => {
     // Taking one off makes room again.
     fireEvent.click(box("Watch"));
     expect(box("Bracelets").getAttribute("aria-disabled")).toBeNull();
+  });
+
+  it("says before any press why a hat cannot go over the head covering worn", () => {
+    open();
+    fireEvent.click(tab("Hair"));
+    fireEvent.click(option("Crown hat"));
+    fireEvent.click(tab("Extras"));
+    const note = document.getElementById("look-accessories-note")!;
+    expect(note.textContent).toMatch(/Hats do not fit over a crown hat\./);
+    for (const name of ["Cap", "Bucket hat", "Fedora"]) {
+      const hat = screen.getByRole("checkbox", { name });
+      expect(hat.getAttribute("aria-disabled")).toBe("true");
+      expect(hat.getAttribute("aria-describedby")).toBe("look-accessories-note");
+    }
+    // Over a durag a hat fits, and the note says nothing of hats.
+    fireEvent.click(tab("Hair"));
+    fireEvent.click(option("Durag"));
+    fireEvent.click(tab("Extras"));
+    expect(document.getElementById("look-accessories-note")!.textContent).not.toMatch(/Hats/);
+    expect(screen.getByRole("checkbox", { name: "Cap" }).getAttribute("aria-disabled")).toBeNull();
   });
 
   it("moves through the tabs and an option group with the keyboard, trying before choosing", () => {

@@ -68,19 +68,27 @@ export function activateAt(scene: Object3D, camera: Camera, at: Vector2): boolea
 
 /** Moves DOM focus to the next (1) or previous (-1) enabled control among these data-testid values. */
 export function cycleFocus(testIds: readonly string[], direction: 1 | -1): void {
-  const controls = testIds
-    .map((id) => document.querySelector<HTMLButtonElement>(`[data-testid="${CSS.escape(id)}"]`))
-    .filter((control): control is HTMLButtonElement => control !== null && !control.disabled);
-  if (!controls.length) return;
-  const current = controls.indexOf(document.activeElement as HTMLButtonElement);
-  const next = current < 0 ? (direction > 0 ? 0 : controls.length - 1) : (current + direction + controls.length) % controls.length;
-  controls[next].focus();
+  cycleAmong(
+    testIds.map((id) => document.querySelector<HTMLButtonElement>(`[data-testid="${CSS.escape(id)}"]`)).filter((control) => control !== null),
+    direction,
+  );
+}
+
+/** Moves DOM focus to the next (1) or previous (-1) enabled one of `controls`, wrapping round; from outside them, to the first or last. */
+export function cycleAmong(controls: readonly (HTMLButtonElement | HTMLInputElement)[], direction: 1 | -1): void {
+  const enabled = controls.filter((control) => !control.disabled);
+  if (!enabled.length) return;
+  const current = enabled.indexOf(document.activeElement as HTMLButtonElement);
+  const next = current < 0 ? (direction > 0 ? 0 : enabled.length - 1) : (current + direction + enabled.length) % enabled.length;
+  enabled[next].focus();
 }
 
 /** Presses the DOM button that has focus. Returns whether there was one. */
 export function clickFocused(): boolean {
   const focused = document.activeElement;
-  if (!(focused instanceof HTMLButtonElement) || focused.disabled) return false;
+  // A checkbox (the Settings switches) toggles like a button.
+  const pressable = focused instanceof HTMLButtonElement || (focused instanceof HTMLInputElement && focused.type === "checkbox");
+  if (!pressable || focused.disabled) return false;
   focused.click();
   return true;
 }
