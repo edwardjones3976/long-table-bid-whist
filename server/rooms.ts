@@ -4,7 +4,7 @@
  * request throws Refusal.
  */
 import { randomBytes, randomUUID } from "node:crypto";
-import { cleanLook, gestureNow, HAND_HEIGHT, HAND_REACH, HEAD_TURN, isGesture, STARTING_LOOKS, type Hand, type Look } from "../shared/avatar";
+import { cleanLook, gestureNow, HAND_HEIGHT, HAND_REACH, HEAD_TURN, isGesture, shuffleLook, STARTING_LOOKS, type Hand, type Look } from "../shared/avatar";
 import type { Card } from "../shared/cards";
 import {
   BENCH_MS,
@@ -15,6 +15,7 @@ import {
   ROOM_CODE_LENGTH,
   SEAT_HOLD_MS,
   TABLES,
+  WALKERS,
   type ErrorCode,
   type GameId,
   type GameView,
@@ -29,6 +30,7 @@ import {
   type TableSnapshot,
   type TableStatus,
   type TableSummary,
+  type Walker,
 } from "../shared/protocol";
 import { GAMES } from "./games/index";
 import { Match, type ActionReply, type ActionRequest, type Pace } from "./match";
@@ -75,6 +77,8 @@ interface Table {
   match: Match | null;
   /** Timed-out turns per seat in the current match. */
   strikes: [number, number, number, number];
+  /** Each seat's look while a bot plays it: new at the match start, and for a seat a person leaves mid-match. */
+  botLooks: Look[];
 }
 
 interface Room {
@@ -86,6 +90,7 @@ interface Room {
   /** Members admitted so far: picks the starting look of anyone who brings none. */
   admitted: number;
   posesChanged: boolean;
+  walkers: Walker[];
 }
 
 const SEATS: readonly Seat[] = [0, 1, 2, 3];
@@ -152,12 +157,11 @@ function summary(table: Table): TableSummary {
     id: table.id,
     game: table.game,
     status: statusOf(table),
-    seats: table.seats.map(
-      (seat): SeatInfo =>
-        seat
-          ? { occupant: "human", memberId: seat.member.id, name: seat.member.name, ready: seat.ready, connected: seat.member.connected }
-          : { occupant: table.match ? "bot" : "open", memberId: null, name: null, ready: false, connected: false },
-    ) as TableSummary["seats"],
+    seats: table.seats.map((seat, s): SeatInfo => {
+      if (seat) return { occupant: "human", memberId: seat.member.id, name: seat.member.name, ready: seat.ready, connected: seat.member.connected };
+      const open: SeatInfo = { occupant: "open", memberId: null, name: null, ready: false, connected: false };
+      return table.match ? { ...open, occupant: "bot", look: table.botLooks[s] } : open;
+    }) as TableSummary["seats"],
     host: table.host && { memberId: table.host.id, name: table.host.name, connected: table.host.connected },
     managerId: managerOf(table)?.id ?? null,
     options: table.options,
@@ -230,10 +234,18 @@ export class Rooms {
         host: null,
         match: null,
         strikes: [0, 0, 0, 0],
+        botLooks: [],
       })),
       arrivals: 0,
       admitted: 0,
       posesChanged: false,
+      walkers: Array.from({ length: WALKERS }, (_, loop) => ({
+        id: `walker-${loop + 1}`,
+        name: `Walker ${loop + 1}`,
+        look: shuffleLook(Math.random),
+        loop,
+        since: Date.now(),
+      })),
     };
     this.rooms.set(code, room);
     return this.admit(room, clean, look);
@@ -400,8 +412,10 @@ export class Rooms {
       // Strikes belong to the person, not to the bot that takes the seat.
       table.strikes[seat] = 0;
       if (table.match) {
-        if (table.seats.some(Boolean)) table.match.leave(seat);
-        else {
+        if (table.seats.some(Boolean)) {
+          table.match.leave(seat);
+          table.botLooks[seat] = shuffleLook(Math.random);
+        } else {
           // A match with no people left to play it is over.
           table.match.stop();
           table.match = null;
@@ -450,6 +464,8 @@ export class Rooms {
     for (const s of SEATS) match.humans[s] = table.seats[s] !== null;
     table.match = match;
     table.strikes = [0, 0, 0, 0];
+    // Only the seats bots play show theirs.
+    table.botLooks = SEATS.map(() => shuffleLook(Math.random));
     try {
       match.start();
     } catch (error) {
@@ -614,6 +630,7 @@ export class Rooms {
       code: room.code,
       members: members.map((m) => ({ id: m.id, name: m.name, connected: m.connected, tableId: m.table?.id ?? null, look: m.look })),
       tables: room.tables.map(summary),
+      walkers: room.walkers,
     };
     for (const member of members) {
       if (member.connected) this.emit(member.id, "room", { ...shared, you: member.id } satisfies RoomSnapshot);

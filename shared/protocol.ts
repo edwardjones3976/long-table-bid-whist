@@ -52,6 +52,23 @@ export interface SeatInfo {
   name: string | null;
   ready: boolean;
   connected: boolean;
+  /** A bot's look, picked at random when the seat became a bot and kept while it stays one; already through cleanLook. Bots only. */
+  look?: Look;
+}
+
+/** How many walkers each room has. */
+export const WALKERS = 3;
+
+/** A bot that walks a fixed loop through the house, the same for everyone: never seated and not a room member. */
+export interface Walker {
+  id: string;
+  name: string;
+  /** Picked at random when the room was made; already through cleanLook. */
+  look: Look;
+  /** Which of the client's walking loops it follows (client/src/world/Bots.tsx). */
+  loop: number;
+  /** The server's Date.now() when it set off from the loop's first point. */
+  since: number;
 }
 
 export interface TableSummary {
@@ -102,6 +119,8 @@ export interface RoomSnapshot {
   you: string;
   members: MemberInfo[];
   tables: TableSummary[];
+  /** Absent from older servers. */
+  walkers?: Walker[];
 }
 
 export type GameView = TonkView | SpadesView | BidWhistView;

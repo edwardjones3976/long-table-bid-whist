@@ -163,9 +163,20 @@ function crosses(x0: number, z0: number, x1: number, z1: number, box: Rect): boo
   return from <= to;
 }
 
+/** A walker bot's body (m): the disc a player's centre keeps PLAYER_RADIUS clear of. */
+export const MOVER_RADIUS = 0.3;
+/** Where the walker bots are now (world/Bots.tsx sets it every frame). They are solid at any height, like a wall. */
+let movers: readonly { x: number; z: number }[] = [];
+export function setMovers(list: readonly { x: number; z: number }[]): void {
+  movers = list;
+}
+
 export const ground: Ground = {
   blocked(x, z, reach, feet = -Infinity) {
     if (x < WEST + R || x > EAST - R || z < NORTH + R || z > SOUTH - R) return true;
+    // A walker that walks into a standing player makes the spot blocked, and the player is moved to open floor
+    // (controls/Player.tsx): the walker nudges past, it never walks through.
+    for (let i = 0; i < movers.length; i++) if (Math.hypot(x - movers[i].x, z - movers[i].z) < R + MOVER_RADIUS) return true;
     let floor = bare(x, z);
     if (floor > reach) return true;
     /** The tallest thing here that cannot be stood on. */
