@@ -54,6 +54,8 @@ export interface Dressing {
   tucksHair: boolean;
   /** A hat's lower edge, as t down from the crown by f round from the face (hair.ts): long hair still hangs below it. */
   hatEdge?: (f: number) => number;
+  /** How far below that edge the hat's brim reaches (metres, by f; none where absent): an afro puffs out below it. */
+  hatDrop?: (f: number) => number;
 }
 
 export const dressing = (): Dressing => ({ shell: {}, detail: {}, tucksHair: false });

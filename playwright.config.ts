@@ -29,8 +29,9 @@ export default defineConfig({
   webServer: {
     // Serves client/dist: run "npm run build" first ("npm run test:e2e" does).
     command: "node --import tsx server/main.ts",
-    // Instant bots and no turn clock: the tests wait on server state, and pacing would only make them slower.
-    env: { PORT: port, BOT_DELAY_MS: "0", TURN_SECONDS: "0" },
+    // Instant bots and no turn clock: the tests wait on server state, and pacing would only make them slower. No walkers:
+    // they would stroll through pictures and stand on spots the tests stand on (tests/e2e/bots.e2e.ts runs its own).
+    env: { PORT: port, BOT_DELAY_MS: "0", TURN_SECONDS: "0", WALKERS: "0" },
     url: `http://localhost:${port}/`,
     reuseExistingServer: false,
     timeout: 60_000,

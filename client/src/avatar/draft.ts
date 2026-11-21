@@ -9,6 +9,7 @@
  *   lookDraft.get()                      { saved, past, future, draft, before } or null while closed
  *   useLookDraft()                       React hook for the same
  *   shownLook(state)                     the look to draw: the saved one while Before is on
+ *   stepLines("Undo", past.length)       Undo's or Redo's words, with why it waits when there is no step
  *   stepOption(field, id, dir)           the option before or after `id`, wrapping round (previous / next)
  */
 import { useSyncExternalStore } from "react";
@@ -61,6 +62,9 @@ export function useLookDraft(): Draft | null {
 }
 
 export const shownLook = (draft: Draft): Look => (draft.before ? draft.saved : draft.draft);
+
+/** Undo's or Redo's words, given how many steps it could take: with none it waits and says why, short enough to stay 1.5 cm tall in VR. */
+export const stepLines = (name: "Undo" | "Redo", steps: number): string[] => (steps ? [name] : [name, "(nothing)"]);
 
 export function stepOption(field: Field, id: string, dir: 1 | -1): string {
   const options = CATALOG[field];

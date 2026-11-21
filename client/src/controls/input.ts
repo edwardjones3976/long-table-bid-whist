@@ -46,7 +46,7 @@ export const desk = {
   padY: 0,
   padTurn: 0,
   padLook: 0,
-  /** The right stick's sideways push while a modal dialog (the look editor) has the pad: it turns the preview figure, not the view. */
+  /** The turning stick's sideways push while a look editor is open (the desktop dialog or the VR panel): it turns the preview figure, not the view. */
   padSpin: 0,
   /** Gamepad X held (jump), the left trigger held (aim a teleport), and running since a left-stick click. */
   padJump: false,
@@ -68,7 +68,7 @@ export const desk = {
   three: null as (() => RootState) | null,
   /** Browser tests only: where the body is and what it is doing; set by the rig. */
   rig: null as (() => RigReport) | null,
-  /** data-testid of the DOM controls the gamepad bumpers step through; set by the rig. */
+  /** data-testid of the DOM controls the gamepad bumpers step through; set by App.tsx PadFocus, with or without the 3D view. */
   focusIds: [] as readonly string[],
 };
 
@@ -191,6 +191,12 @@ export function attachDesktop(canvas: HTMLCanvasElement, options: DesktopOptions
   };
 }
 
+/** The turning stick's sideways push `x` (a gamepad's right stick, or the VR main hand's): while a look editor is `editing`, it turns the preview (desk.padSpin) instead of the view. Returns what is left to turn the view. */
+export function spinOrTurn(x: number, editing: boolean): number {
+  desk.padSpin = editing ? deadZone(x) : 0;
+  return editing ? 0 : x;
+}
+
 let pads = 0;
 if (typeof window !== "undefined") {
   window.addEventListener("gamepadconnected", () => pads++);
@@ -234,9 +240,9 @@ export function pollGamepad(): void {
     // A modal dialog (the look editor) has the pad to itself: the world behind it does not walk, turn, jump, aim or press,
     // and Start leaves the Menu behind it alone, so Save returns me exactly where I was.
     const modal = document.querySelector('[role="dialog"][aria-modal="true"]') !== null;
+    desk.padTurn = spinOrTurn(desk.padTurn, modal);
     if (modal) {
-      desk.padSpin = deadZone(desk.padTurn);
-      desk.padX = desk.padY = desk.padTurn = desk.padLook = 0;
+      desk.padX = desk.padY = desk.padLook = 0;
       desk.padJump = desk.padAim = false;
     }
     desk.padRun = runLatch(desk.padRun, (pressed & (1 << 10)) !== 0, desk.padX !== 0 || desk.padY !== 0);

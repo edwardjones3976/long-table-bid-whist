@@ -279,7 +279,7 @@ function make(look: Look, detail: Detail): Built {
   const hairs =
     detail === "far" && wear.tucksHair && !(wear.hatEdge && BELOW_HAT.includes(look.hair))
       ? dressing()
-      : hair(look, m, detail, wear.hatEdge ?? (wear.tucksHair || (extras.hatEdge ?? extras.tucksHair)), !!wear.hatEdge);
+      : hair(look, m, detail, wear.hatEdge ?? (wear.tucksHair || (extras.hatEdge ?? extras.tucksHair)), !!wear.hatEdge, wear.hatEdge ? wear.hatDrop : extras.hatDrop);
   const coil = detail === "near" && look.assistive.includes("implant") ? coilSpot(m) : null;
   const head = face(look, m, detail, coil ? standOff(hairs, coil.at, coil.normal) : 0);
   const dressings: Dressing[] = [body(look, m, detail), { shell: { head: head.shell }, detail: { head: head.detail }, tucksHair: false }, hairs, wear, extras];

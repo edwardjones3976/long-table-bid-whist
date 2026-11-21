@@ -58,8 +58,9 @@ export const GARMENT_PALETTE = [
   { id: "copper", label: "Copper", hex: "#b5652d", family: "golds" },
   { id: "tan", label: "Tan", hex: "#ca9853", family: "golds" },
   { id: "camel", label: "Camel", hex: "#b2792b", family: "golds" },
-  // A deep red-brown, well off the deep end of the skin ramp, so it never reads as bare skin on the deepest tones.
-  { id: "chocolate", label: "Chocolate", hex: "#360802", family: "golds" },
+  // A deep red-brown, well off the deep end of the skin ramp, so it never reads as bare skin on the deepest tones, even
+  // under the night light, which crushes the dark end.
+  { id: "chocolate", label: "Chocolate", hex: "#300400", family: "golds" },
   { id: "white", label: "White", hex: "#f4f1ea", family: "neutrals" },
   { id: "cream", label: "Cream", hex: "#eae0af", family: "neutrals" },
   { id: "silver", label: "Silver", hex: "#b9bec4", family: "neutrals" },

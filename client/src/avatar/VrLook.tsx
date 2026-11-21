@@ -12,7 +12,7 @@
  *
  * The view never moves, and straight ahead stays clear of the panel. Close in front of the foyer mirror and facing it
  * (where the reflection stands about 1 to 2 m ahead) the reflection is the preview; elsewhere a small figure of the draft
- * stands 1.3 m in front at eye height, turned by Turn and brought to a face view at eye height by Face (the figure comes
+ * stands 1.3 m in front at eye height, turned by Turn or the turning stick (which then leaves the view alone) and brought to a face view at eye height by Face (the figure comes
  * closer; the player does not), at the mirror too. Buttons are
  * 6.5 cm tall and their one-line words about 1.55 cm, at uiScale 1, and never under 4 cm at the smallest text size;
  * a larger text size grows the panel down and to the left from its top right corner. Its rows run from just below eye level to about 40
@@ -20,10 +20,11 @@
  * it looks the same and its lowest rows stay in front of the table's edge.
  */
 import { useFrame } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import type { Group, Object3D } from "three";
 import { CATALOG, cleanLook, FIELD_GROUPS, hexOf, SET_FIELDS, shuffleLook, STARTING_LOOKS, type Field, type FieldGroup, type Look } from "../../../shared/avatar";
 import { noRaycast } from "../controls/Hands";
+import { desk } from "../controls/input";
 import { choose, fieldName, nameOf, TABS } from "../hud/look/LookEditor";
 import type { Zoom } from "../hud/look/Preview";
 import { mySeat, net, useStore } from "../net/store";
@@ -31,7 +32,7 @@ import { local, useLocal } from "../state/local";
 import { Label, Pressable } from "../tableui/Tables";
 import { useHeadAnchor } from "../tableui/VrMenu";
 import { besideMirror } from "../world/Mirror";
-import { lookDraft, shownLook, stepOption, useLookDraft, type Draft } from "./draft";
+import { lookDraft, shownLook, stepLines, stepOption, useLookDraft, type Draft } from "./draft";
 import { buildFigure, HEIGHT_M, type Figure } from "./figure";
 import { measure } from "./measure";
 import { animate, blinkAt, newRig } from "./motion";
@@ -77,7 +78,7 @@ const Frame = ({ size, position }: { size: [number, number]; position: [number, 
 );
 
 /** The draft as a small figure 1.3 m ahead, just above the panel, turned to face the player and then by `turn`; or its face 0.8 m ahead. */
-function Preview({ look, zoom, turn }: { look: Look; zoom: Zoom; turn: number }) {
+function Preview({ look, zoom, turn }: { look: Look; zoom: Zoom; turn: RefObject<number> }) {
   const holder = useRef<Group>(null);
   const figure = useRef<Figure | null>(null);
   const m = useMemo(() => measure(look), [look]);
@@ -93,7 +94,10 @@ function Preview({ look, zoom, turn }: { look: Look; zoom: Zoom; turn: number })
     };
   }, [look]);
   // It breathes and blinks; Reduce motion stills it.
-  useFrame(({ clock }) => {
+  useFrame(({ clock }, delta) => {
+    // The turning stick turns it too, as a gamepad's right stick turns the desktop preview (controls/input.ts spinOrTurn).
+    turn.current += desk.padSpin * Math.min(delta, 0.1) * 2.5;
+    if (holder.current) holder.current.rotation.y = Math.PI + turn.current;
     const built = figure.current;
     if (!built) return;
     const calm = local.getState().comfort.reducedMotion;
@@ -102,7 +106,7 @@ function Preview({ look, zoom, turn }: { look: Look; zoom: Zoom; turn: number })
     built.face.setBlink(calm ? 0 : blinkAt(0, clock.elapsedTime));
   });
   const [y, z, scale] = previewPlace(look, zoom);
-  return <group ref={holder} position={[0, y, z]} rotation={[0, Math.PI + turn, 0]} scale={scale} />;
+  return <group ref={holder} position={[0, y, z]} scale={scale} />;
 }
 
 function Panel({ draft }: { draft: Draft }) {
@@ -118,7 +122,7 @@ function Panel({ draft }: { draft: Draft }) {
   const [cursor, setCursor] = useState(0);
   const [news, setNews] = useState("Point at a button and press it. Your view stays still.");
   const [zoom, setZoom] = useState<Zoom>("full");
-  const [turn, setTurn] = useState(0);
+  const turn = useRef(0);
   const look = draft.draft;
   const fields: readonly Field[] = FIELD_GROUPS[tab];
   const field = fields[Math.min(at, fields.length - 1)];
@@ -260,8 +264,8 @@ function Panel({ draft }: { draft: Draft }) {
         />
         {/* Turn and zoom move the preview figure, never the player. Beside the mirror the reflection is the full preview,
             so Turn waits there (and says why) while Face still brings a life-size face close. */}
-        <Pressable name="vr-look-turn-left" lines={reflected ? ["↺ Turn", "(mirror)"] : ["↺ Turn"]} size={[0.1, H]} disabled={reflected} position={[toolX[2], -0.135, 0]} onPress={() => setTurn(turn + TURN)} />
-        <Pressable name="vr-look-turn-right" lines={reflected ? ["Turn ↻", "(mirror)"] : ["Turn ↻"]} size={[0.1, H]} disabled={reflected} position={[toolX[3], -0.135, 0]} onPress={() => setTurn(turn - TURN)} />
+        <Pressable name="vr-look-turn-left" lines={reflected ? ["↺ Turn", "(mirror)"] : ["↺ Turn"]} size={[0.1, H]} disabled={reflected} position={[toolX[2], -0.135, 0]} onPress={() => void (turn.current += TURN)} />
+        <Pressable name="vr-look-turn-right" lines={reflected ? ["Turn ↻", "(mirror)"] : ["Turn ↻"]} size={[0.1, H]} disabled={reflected} position={[toolX[3], -0.135, 0]} onPress={() => void (turn.current -= TURN)} />
         {(["face", "full"] as const).map((to, i) => (
           <group key={to}>
             {zoom === to && <Frame size={[0.08, H]} position={[toolX[4 + i], -0.135, 0]} />}
@@ -290,7 +294,7 @@ function Panel({ draft }: { draft: Draft }) {
         />
         <Pressable
           name="vr-look-undo"
-          lines={["Undo"]}
+          lines={stepLines("Undo", draft.past.length)}
           size={[0.12, H]}
           disabled={!draft.past.length}
           position={[footX[1], -0.21, 0]}
@@ -301,7 +305,7 @@ function Panel({ draft }: { draft: Draft }) {
         />
         <Pressable
           name="vr-look-redo"
-          lines={["Redo"]}
+          lines={stepLines("Redo", draft.future.length)}
           size={[0.12, H]}
           disabled={!draft.future.length}
           position={[footX[2], -0.21, 0]}

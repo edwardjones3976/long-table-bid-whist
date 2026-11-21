@@ -20,14 +20,18 @@ export interface BotSeat {
   tableId: TableId;
   seat: Seat;
   name: string;
-  look?: Look;
+  look: Look;
 }
 
-/** Every seat a bot plays, at every table: the room summary marks them once a match has started. */
+/**
+ * Every seat a bot plays, at every table: the room summary marks them once a match has started. A bot the server has
+ * not yet described (the seat I am standing up from, until its snapshot arrives; net/store.ts withoutMeAt) is not drawn
+ * yet, so it appears once, in its own look, as before.
+ */
 export function botSeats(room: RoomSnapshot | null): BotSeat[] {
   if (!room) return [];
   return room.tables.flatMap((table) =>
-    table.seats.flatMap((info, seat) => (info.occupant === "bot" ? [{ tableId: table.id, seat: seat as Seat, name: `Bot ${seat + 1}`, look: info.look }] : [])),
+    table.seats.flatMap((info, seat) => (info.occupant === "bot" && info.look ? [{ tableId: table.id, seat: seat as Seat, name: `Bot ${seat + 1}`, look: info.look }] : [])),
   );
 }
 
@@ -92,7 +96,16 @@ const NO_WALKERS: readonly Walker[] = [];
 
 /** Keeps the walkers solid: their places this frame are what world/ground.ts blocks a player's body with. */
 function WalkerBodies({ walkers }: { walkers: readonly Walker[] }) {
-  const spots = useMemo(() => walkers.filter((walker) => WALKER_LOOPS[walker.loop]).map(() => ({ x: 0, z: 0 })), [walkers]);
+  // Each body starts where its walker is now: every room snapshot makes new bodies, and they are solid before the next frame moves them.
+  const spots = useMemo(() => {
+    const now = Date.now();
+    return walkers
+      .filter((walker) => WALKER_LOOPS[walker.loop])
+      .map((walker) => {
+        const { x, z } = walkerAt(WALKER_LOOPS[walker.loop], now - walker.since);
+        return { x, z };
+      });
+  }, [walkers]);
   useEffect(() => {
     setMovers(spots);
     return () => setMovers([]);

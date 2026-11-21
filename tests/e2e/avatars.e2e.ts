@@ -2,8 +2,10 @@
  * Avatars end to end: a look chosen in the editor (by mouse and by keyboard) is the look the others draw, a change
  * made in a room reaches them within 2 s, a wave plays on their screen, and "Show others as simple shapes" changes
  * the detail they draw. My own body is only in the mirror's reflection. A table of four is drawn seated, each holding
- * a fan of card backs and never a face. In an emulated headset the look panel saves a look the others see (pressing
- * Your look again keeps the edits), the gesture wheel plays a wave, and seated at a table the panel still saves.
+ * a fan of card backs and never a face. Seated at a table, a look saved from the Menu leaves me in my chair with the
+ * Menu open, and at the end of a hand the others react on my screen. In an emulated headset the look panel saves a
+ * look the others see (pressing Your look again keeps the edits), the gesture wheel plays a wave, and seated at a
+ * table the panel still saves.
  *
  * Screenshots for a person to judge, in client/.e2e-screens/: avatars-starts (the editor's six starting looks),
  * avatars-face (a close look at a face), avatars-foyer-day and avatars-foyer-night (a group in the foyer),
@@ -15,7 +17,7 @@ import { CATALOG, cleanLook, STARTING_LOOKS, type Look } from "../../shared/avat
 import type { Pose, RoomSnapshot } from "../../shared/protocol";
 import { MIRROR, seatPose, spawn, tableSpot } from "../../client/src/world/layout";
 import { enterHeadset, park, rayPress, sitWithRay } from "./headset";
-import { closeAll, enter, open, openMenu, problems, settle, shoot, standBy } from "./helpers";
+import { closeAll, enter, open, openMenu, problems, settle, shoot, standBy, tableOf } from "./helpers";
 
 test.beforeEach(() => void (problems.length = 0));
 
@@ -214,6 +216,64 @@ test("the others in the foyer by day and by night, my own look in the mirror, an
   await bo.screenshot({ path: "client/.e2e-screens/avatars-table.png" });
 
   await closeAll([bo, ...guests]);
+  expect(problems).toEqual([]);
+});
+
+test("seated at a table, a look saved from the Menu keeps my chair and the open Menu, and the others react at the end of a hand", async ({ browser }) => {
+  const { page: ana, code } = await enter(browser, "Ana", undefined, true);
+  const others: Page[] = [];
+  for (const [i, name] of ["Bo", "Cy", "Dee"].entries()) {
+    const page = (await enter(browser, name, code)).page;
+    await standAs(page, STARTING_LOOKS[i + 1], { x: spawn.x + i - 1, z: spawn.z - 3.2, ry: Math.PI });
+    others.push(page);
+  }
+  const pages = [ana, ...others];
+  const ids = await Promise.all(others.map((page) => hooks(page).me()));
+  const tableId = "tonk-1";
+  for (const [seat, page] of pages.entries()) {
+    await page.getByTestId(`table-${tableId}`).click();
+    await page.getByTestId(`sit-${seat}`).click();
+  }
+  // A dealt 49 or 50 would end the hand before anyone moves: the drop below is what ends it.
+  await ana.getByTestId("option-initialFifty").click();
+  await expect(ana.getByTestId("option-initialFifty")).toContainText("no");
+  for (const page of pages) await page.getByTestId("ready").click();
+  await ana.getByTestId("start").click();
+  await expect.poll(async () => (await tableOf(ana))?.phase).toBe("draw");
+  await expect.poll(async () => (await Promise.all(ids.map((id) => hooks(ana).drawn(id)))).every(Boolean)).toBe(true);
+
+  // A new look saved from the Menu mid-hand: I stay in my chair, and the Menu stays open with Your look focused.
+  const where = () =>
+    ana.evaluate(() => {
+      const { seated, playerPose } = window.__mansion.local.getState();
+      return { seated, x: playerPose?.x, z: playerPose?.z, you: window.__mansion.getState().table?.you };
+    });
+  const chair = seatPose(tableId, 0);
+  const inChair = { seated: chair, x: chair.x, z: chair.z, you: 0 };
+  expect(await where()).toEqual(inChair);
+  await openMenu(ana);
+  await ana.getByTestId("hud-look").click();
+  const editor = ana.getByRole("dialog", { name: "Your look" });
+  await editor.getByRole("button", { name: /^Starting look 5:/ }).click();
+  await editor.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(editor).toHaveCount(0);
+  await expect(ana.getByTestId("hud-look")).toBeFocused();
+  await expect(ana.getByTestId("hud-menu")).toHaveAttribute("aria-expanded", "true");
+  expect(await hooks(ana).saved()).toEqual(cleanLook(STARTING_LOOKS[4]));
+  await settle(ana);
+  expect(await where()).toEqual(inChair);
+
+  // The player on turn drops, which ends the hand at once: each of the others reacts on my screen.
+  const { turn } = (await tableOf(ana))!;
+  await pages[turn!].getByTestId("drop").click();
+  const reacting = () =>
+    ana.evaluate(
+      (others) => (window.__mansion as unknown as Hooks).avatars().filter((a) => others.includes(a.memberId) && ["clap", "grin", "shrug", "laugh"].includes(a.gesture ?? "")).length,
+      ids,
+    );
+  await expect.poll(reacting, { intervals: [50] }).toBe(3);
+
+  await closeAll(pages);
   expect(problems).toEqual([]);
 });
 

@@ -40,7 +40,8 @@ export function useTableActions(tableId: TableId | null): TableActions {
   /** Goes up on every press and every table change: only the reply to the latest press, made since the last change, settles `pending` and the message. */
   const generation = useRef(0);
   const latest = useRef(description);
-  const lastPress = useRef({ at: 0, id: "" });
+  /** The last press that was sent: when, which button, and whether it was Leave, which re-lays the buttons on the spot. */
+  const lastPress = useRef({ at: 0, id: "", stand: false });
   latest.current = description;
 
   // (Picked cards are dropped on the same change, in state/table.ts.)
@@ -54,16 +55,26 @@ export function useTableActions(tableId: TableId | null): TableActions {
   const press = useCallback(async (button: TableButton): Promise<void> => {
     // One request at a time: a double press must not send the action twice.
     if (button.disabled || pending.current) return;
-    // A new snapshot re-lays the buttons: the second half of a double press on another button must not land on Leave or New game.
+    // A new snapshot re-lays the buttons: the second half of a double press on another button must not land on Leave or
+    // New game. Leave re-lays them on the spot (I am a visitor at once), so for the same while after it no other button is
+    // taken either: the later presses of a bouncing Leave must not land on the seat just left. A dropped press is not
+    // remembered, so the window is measured from the press that was sent.
     const last = lastPress.current;
     const now = performance.now();
-    lastPress.current = { at: now, id: button.id };
-    if (isDestructive(button) && last.id !== button.id && now - last.at < RELAY_GUARD_MS) return;
+    const stand = button.run.kind === "socket" && button.run.call === "stand";
+    if ((isDestructive(button) || last.stand) && last.id !== button.id && now - last.at < RELAY_GUARD_MS) return;
+    lastPress.current = { at: now, id: button.id, stand };
     pending.current = true;
     const mine = ++generation.current;
     const reply = await runButton(button);
     // A reply that lands after the table moved on must not free a newer press still waiting, nor show an old refusal.
-    if (generation.current !== mine) return;
+    // Except a refused Leave: the table moved on by that press itself (and back, on the refusal), and the refusal is why
+    // I am still seated, so it is shown unless a newer press is already waiting. Not when the server had already taken
+    // me off the table: its own reason is shown, and "not at a table" would only repeat it.
+    if (generation.current !== mine) {
+      if (stand && reply && !reply.ok && reply.error !== "not-at-table" && !pending.current) setError(reply.message);
+      return;
+    }
     pending.current = false;
     // A stale revision needs no message: the newer snapshot shows what changed.
     setError(reply && !reply.ok && reply.error !== "stale-revision" ? reply.message : null);

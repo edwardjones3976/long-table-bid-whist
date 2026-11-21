@@ -25,6 +25,8 @@ const THEMES = [
   ["night", "newyear"],
 ] as const;
 const NUMBERS = `${DIR}/numbers.json`;
+/** Relative to DIR: client/.e2e-screens/round3/, for the hair-under-hats pictures. */
+const ROUND3 = "../../round3";
 // Kept across runs, so one test run alone updates only its own entries.
 const numbers: Record<string, unknown> = existsSync(NUMBERS) ? JSON.parse(readFileSync(NUMBERS, "utf8")) : {};
 const record = (key: string, value: unknown) => {
@@ -840,15 +842,10 @@ test("the look editor by touch on a phone, and on a short phone: tap, hold Befor
   await touch("touchEnd");
   expect(await scrolled()).toBe(from);
   await page.screenshot({ path: `${DIR}/05-editor-390-touch-day.png` });
-  const save = editor.getByRole("button", { name: "Save", exact: true });
-  await save.tap();
-  // shortcut: after the emulated long press and drag above, Chromium's touch emulation did not turn the next tap into a
-  // click in this run; Save is then pressed as a click. Replace with a tap alone once that is understood.
-  await page.waitForTimeout(500);
-  const savedByTap = (await editor.count()) === 0;
-  if (!savedByTap) await save.click();
+  // The first tap after a quick drag: it once only stopped a fling the drag had left running, and Save did nothing.
+  await editor.getByRole("button", { name: "Save", exact: true }).tap();
   await expect(editor).toHaveCount(0);
-  record("touchEditor", { tapTabOption: true, holdBefore: true, dragTurnsWithoutScroll: true, savedByTap });
+  record("touchEditor", { tapTabOption: true, holdBefore: true, dragTurnsWithoutScroll: true, savedByTap: true });
 
   // A short phone: the six starting looks as equal tiles, none off screen, and the preview's buttons above the tabs.
   await page.setViewportSize({ width: 375, height: 667 });
@@ -1049,6 +1046,27 @@ test("close-ups at 1 m: ears, marks and grey hair, facial hair, accessories, ass
     await rowSheet(page, browser, guests, `12-hair-styles-${from / 6 + 1}-day.png`, `Hair styles, left to right: ${styles.map(({ name }) => name).join(", ")}; 3 m, day`, TURNS);
     await leave(guests);
   }
+  await closeAll([page]);
+  expect(problems).toEqual([]);
+});
+
+test("hats and coverings over a large afro, and the curly bob, from 3 m and from 1 m", async ({ browser, baseURL }) => {
+  test.setTimeout(600_000);
+  const { page, code } = await enter(browser, "Viewer", undefined, true, false);
+  const base = cleanLook({ ...STARTING_LOOKS[1], accessories: [], headwear: "none", headwearColor: "plum" });
+  const afro = cleanLook({ ...base, hair: "afro-l" });
+  const people = [
+    ...(["cap", "bucket", "fedora"] as const).map((hat) => ({ name: hat, look: cleanLook({ ...afro, accessories: [hat] }) })),
+    ...(["crown-hat", "beanie", "turban"] as const).map((headwear) => ({ name: headwear, look: cleanLook({ ...afro, headwear }) })),
+    { name: "curly-bob", look: cleanLook({ ...base, hair: "curly-bob" }) },
+  ];
+  const guests = await join(baseURL!, code, people);
+  await viewFrom(page, viewer(0, 3));
+  await setTheme(page, "july4");
+  const title = `A large afro under a cap, a bucket hat, a fedora, a crown hat, a beanie and a turban, then a curly bob`;
+  await rowSheet(page, browser, guests, `${ROUND3}/hats-3m-day.png`, `${title}; 3 m, day`, TURNS);
+  await leave(guests);
+  for (const [turn, ry] of TURNS) await sheet(browser, `${ROUND3}/hats-1m-${turn}-day.png`, `${title}; 1 m, ${turn}, day`, await closeUps(page, baseURL!, code, people, ry), 4);
   await closeAll([page]);
   expect(problems).toEqual([]);
 });

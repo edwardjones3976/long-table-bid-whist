@@ -1,4 +1,5 @@
 import { existsSync } from "node:fs";
+import { WALKERS } from "../shared/protocol";
 import { createGameServer, serveStatic } from "./index";
 
 const port = Number(process.env.PORT) || 3000;
@@ -14,7 +15,9 @@ function fromEnv(name: string, max: number, fallback: number): number {
 const botDelayMs = fromEnv("BOT_DELAY_MS", 10_000, 1500);
 /** Seconds a person has for each decision before a bot plays it for them and they get a strike. TURN_SECONDS (0 to 600) overrides it; 0 turns the clock off. */
 const turnMs = fromEnv("TURN_SECONDS", 600, 45) * 1000;
-const { http } = createGameServer({ botDelayMs, trickPauseMs: botDelayMs * 2, turnMs });
+/** Walker bots strolling each room, for the demo. WALKERS (0 to 3) overrides it; 0 has none. */
+const walkers = Math.floor(fromEnv("WALKERS", WALKERS, WALKERS));
+const { http } = createGameServer({ botDelayMs, trickPauseMs: botDelayMs * 2, turnMs, walkers });
 // Resolved from the folder the server is started in, which is the project root for every npm script.
 http.on(
   "request",

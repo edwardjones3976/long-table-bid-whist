@@ -7,33 +7,10 @@
  * of his turns runs out. Both collect strikes and are taken off the table at three; Bo, taken off a second time
  * at another table, is benched. Screenshots go to client/.e2e-screens/clock-*.png.
  */
-import { spawn, type ChildProcess } from "node:child_process";
-import { createServer } from "node:net";
 import { expect, test, type Page } from "@playwright/test";
-import { click, closeAll, enter, problems, settle, sitAt } from "./helpers";
+import { click, closeAll, enter, ownServer, problems, settle, sitAt } from "./helpers";
 
-const port = await new Promise<number>((resolve) => {
-  const probe = createServer().listen(0, () => {
-    const { port: free } = probe.address() as { port: number };
-    probe.close(() => resolve(free));
-  });
-});
-const base = `http://localhost:${port}`;
-// Every page these tests open (helpers.open makes its own context, which takes this) goes to this file's server.
-test.use({ baseURL: base });
-
-let server: ChildProcess | null = null;
-test.beforeAll(async () => {
-  // Serves client/dist, like the shared server: run "npm run build" first.
-  server = spawn(process.execPath, ["--import", "tsx", "server/main.ts"], {
-    env: { ...process.env, PORT: String(port), BOT_DELAY_MS: "0", TURN_SECONDS: "2" },
-    stdio: "ignore",
-  });
-  await expect
-    .poll(() => fetch(base).then((response) => response.ok, () => false), { timeout: 60_000 })
-    .toBe(true);
-});
-test.afterAll(() => void server?.kill());
+await ownServer({ TURN_SECONDS: "2" });
 test.beforeEach(() => void (problems.length = 0));
 
 const SPADES_1 = { x: -16, z: -4.5 };
