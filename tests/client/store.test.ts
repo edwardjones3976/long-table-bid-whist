@@ -432,11 +432,38 @@ describe("net store", () => {
     fake.serve("table", snapshot);
     void net.stand();
     expect(await net.sit("spades-2", "player", 0)).toEqual({ ok: true, seat: 0 });
+    // Nothing of the old table is set aside any more: its next snapshot is shown as any other.
+    fake.serve("table", { ...snapshot, revision: 9 });
+    expect(net.getState().table?.revision).toBe(9);
     const elsewhere: TableSummary = { ...table, id: "spades-2", seats: [table.seats[2], table.seats[0], table.seats[1], table.seats[3]] };
     fake.serve("room", { ...room("spades-2"), tables: [{ ...table, seats: [table.seats[0], table.seats[1], table.seats[0], table.seats[3]] }, elsewhere] });
     fake.serve("table", { ...snapshot, tableId: "spades-2", revision: 1, you: 0 });
     expect(myTable(net.getState())?.id).toBe("spades-2");
     expect(net.getState().table?.tableId).toBe("spades-2");
+  });
+
+  it("a sit answered while a later stand waits leaves that stand's leftovers aside", async () => {
+    let releaseSit: (reply: Reply) => void = () => {};
+    const sitGate = new Promise<Reply>((resolve) => (releaseSit = resolve));
+    const fake = fakeSocket((event) => (event === "table:sit" ? (sitGate as unknown as Reply) : event === "table:stand" ? (new Promise<Reply>(() => {}) as unknown as Reply) : joined));
+    const net = createNet(() => fake.socket);
+    net.open();
+    fake.connect();
+    await net.joinRoom("ABCDEFGH", "Ann");
+    fake.serve("room", room(null));
+    const sitting = net.sit("spades-1", "player", 2);
+    // The server seats me and says so before it answers; I stand again at once.
+    fake.serve("room", room("spades-1"));
+    fake.serve("table", snapshot);
+    void net.stand();
+    expect(myTable(net.getState())).toBeNull();
+    releaseSit({ ok: true, seat: 2 } as Reply);
+    await sitting;
+    // The sit's late answer is not the stand's confirmation: the old seat's leftovers stay aside.
+    fake.serve("table", { ...snapshot, revision: 8 });
+    fake.serve("room", room("spades-1"));
+    expect(net.getState().table).toBeNull();
+    expect(myTable(net.getState())).toBeNull();
   });
 
   it("standing while not at a table sends the request and changes nothing locally", async () => {

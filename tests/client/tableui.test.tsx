@@ -502,6 +502,93 @@ describe("useTableActions", () => {
     });
   });
 
+  it("keeps dropping a bouncing Leave's later presses for the whole while, measured from the Leave itself", async () => {
+    const world = makeWorld("spades");
+    world.sit(1, true);
+    const hook = renderHook(() => useTableActions("spades-1"));
+    await serve(world);
+    const leave = hook.result.current.description!.buttons.find((button) => button.id === "leave")!;
+    let releaseStand: (reply: unknown) => void = () => {};
+    fake.state.answer = (event, payload) => (event === "table:stand" ? new Promise((resolve) => (releaseStand = resolve)) : world.answer(event, payload));
+    const clock = vi.spyOn(performance, "now");
+    const sentBefore = fake.sent.length;
+    let pressed: Promise<void> = Promise.resolve();
+    clock.mockReturnValue(10_000);
+    act(() => void (pressed = hook.result.current.press(leave)));
+    const sit = hook.result.current.description!.buttons.find((button) => button.id === "sit-1")!;
+    clock.mockReturnValue(10_150);
+    await act(() => hook.result.current.press(sit));
+    clock.mockReturnValue(10_300);
+    await act(() => hook.result.current.press(sit));
+    expect(fake.sent.slice(sentBefore).map((message) => message.event)).toEqual(["table:stand"]);
+    // Half a second on, a press is a press.
+    clock.mockReturnValue(10_600);
+    await act(() => hook.result.current.press(sit));
+    expect(fake.sent.slice(sentBefore).map((message) => message.event)).toEqual(["table:stand", "table:sit"]);
+    clock.mockRestore();
+    await act(async () => {
+      releaseStand({ ok: true });
+      await pressed;
+    });
+  });
+
+  it("takes I am ready straight after New game, and a Leave the guard dropped protects nothing", async () => {
+    const world = makeWorld("spades");
+    world.sit(1, true);
+    const hook = renderHook(() => useTableActions("spades-1"));
+    await serve(world);
+    fake.state.answer = (event, payload) => (event === "table:stand" ? new Promise(() => {}) : world.answer(event, payload));
+    const sentBefore = fake.sent.length;
+    const buttons = () => hook.result.current.description!.buttons;
+    // Ready, then Leave in the same breath: the Leave is dropped, as before, and is not remembered.
+    await act(() => hook.result.current.press(buttons().find((button) => button.id === "unready")!));
+    await act(() => hook.result.current.press(buttons().find((button) => button.id === "leave")!));
+    await act(() => hook.result.current.press(buttons().find((button) => button.id === "ready")!));
+    expect(fake.sent.slice(sentBefore).map((message) => message.event)).toEqual(["table:ready", "table:ready"]);
+    // New game is destructive too, but it re-lays nothing on the spot: the manager's next press goes through.
+    const results = makeWorld("tonk", 9);
+    results.sit(0, true);
+    results.start();
+    for (let hands = 0; hands < 200 && results.state.phase !== "game-over"; hands += 1) {
+      results.bots(true);
+      if (results.state.phase === "hand-over") results.nextHand();
+    }
+    fake.state.answer = results.answer;
+    const hook2 = renderHook(() => useTableActions("tonk-1"));
+    await serve(results);
+    expect(results.summary.status).toBe("results");
+    const after = fake.sent.length;
+    const button = (id: RegExp) => {
+      const found = hook2.result.current.description!.buttons.find((candidate) => id.test(candidate.id));
+      expect(found, `a button matching ${id}`).toBeDefined();
+      return found!;
+    };
+    await act(() => hook2.result.current.press(button(/^reset$/)));
+    await act(() => hook2.result.current.press(button(/^(ready|unready)$/)));
+    expect(fake.sent.slice(after).map((message) => message.event)).toEqual(["table:reset", "table:ready"]);
+  });
+
+  it("does not repeat 'not at a table' when the server itself took me off the table before the Leave arrived", async () => {
+    const world = makeWorld("spades");
+    world.sit(1, true);
+    const hook = renderHook(() => useTableActions("spades-1"));
+    await serve(world);
+    const leave = hook.result.current.description!.buttons.find((button) => button.id === "leave")!;
+    const reason = "Time ran out on 3 of your turns, so a bot took your seat. You can take a seat again in 2 minutes.";
+    fake.state.answer = (event, payload) => {
+      if (event !== "table:stand") return world.answer(event, payload);
+      fake.handlers.get("table:left")!({ tableId: "spades-1", reason });
+      world.place = undefined;
+      world.summary.seats[1] = open();
+      world.push();
+      return { ok: false, error: "not-at-table", message: "You are not at a table" };
+    };
+    await act(() => hook.result.current.press(leave));
+    expect(hook.result.current.description!.role).toBe("visitor");
+    expect(hook.result.current.error).toBeNull();
+    expect(net.getState().lastError).toBe(reason);
+  });
+
   it("shows why a Leave was refused, although the table moved on and back by that press", async () => {
     const world = makeWorld("spades");
     world.sit(1, true);

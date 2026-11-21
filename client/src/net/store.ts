@@ -365,9 +365,11 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     async sit(tableId: TableId, role: "player" | "host", seat?: Seat): Promise<Reply> {
       // Pressed while a stand is unanswered, even for the table just left: the server handles the stand first and
       // tells of it (table:left, then the room) before anything about the new seat, so the old table's leftovers stay
-      // set aside until then. Its answer to the sit, should that come first, ends the wait too.
+      // set aside until then. Its answer to the sit, should that come first, ends the wait too (not that of a stand
+      // pressed after the sit, which is still to be confirmed).
+      const before = standing;
       const reply = await request("table:sit", seat === undefined ? { tableId, role } : { tableId, role, seat });
-      if (reply.ok) standing = null;
+      if (reply.ok && standing === before) standing = null;
       return reply;
     },
     async stand(): Promise<Reply> {
