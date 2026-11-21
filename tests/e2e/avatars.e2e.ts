@@ -41,6 +41,29 @@ const hooks = (page: Page) => ({
   saved: () => page.evaluate(() => (JSON.parse(localStorage.getItem("mansion.look") ?? "null") as { look: Look } | null)?.look ?? null),
 });
 
+/**
+ * Watches, from now on and once a frame, for `page` to draw `id` making `gesture`; the returned check says whether it
+ * has. A gesture is a short act (a wave lasts 1.6 s), and a ray press in an emulated headset waits several frames after
+ * the trigger comes up, which on a slow renderer outlasts the act: asking afterwards finds it over. Watching from
+ * before the press does not.
+ */
+async function watchGesture(page: Page, id: string, gesture: string): Promise<() => Promise<boolean>> {
+  type Watching = { __gestureSeen?: Record<string, boolean>; __mansion: Hooks };
+  await page.evaluate(
+    ([i, g]) => {
+      const w = window as unknown as Watching;
+      w.__gestureSeen = { ...w.__gestureSeen, [`${i}:${g}`]: false };
+      const tick = () => {
+        if (w.__mansion.avatars().find((a) => a.memberId === i)?.gesture === g) w.__gestureSeen![`${i}:${g}`] = true;
+        else requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    },
+    [id, gesture] as const,
+  );
+  return () => page.evaluate(([i, g]) => (window as unknown as Watching).__gestureSeen?.[`${i}:${g}`] ?? false, [id, gesture] as const);
+}
+
 /** Wears `look` and stands at `pose`, as a page without the 3D view (it sends no pose of its own). */
 async function standAs(page: Page, look: Look, pose: Pose): Promise<void> {
   expect(await page.evaluate((l) => (window.__mansion as unknown as Hooks).net.setLook(l), look)).toMatchObject({ ok: true });
@@ -298,11 +321,12 @@ test("in an emulated headset the look panel saves a look the others see, and the
   await expect.poll(() => hooks(ana).saved()).toEqual(next);
   await expect.poll(async () => JSON.parse((await hooks(bo).drawn(anaId))?.lookKey ?? "null")).toEqual(next);
 
-  // The gesture wheel: Bo's figure of Ana waves.
+  // The gesture wheel: Bo's figure of Ana waves. Bo watches for it from before the press (see watchGesture).
   await rayPress(ana, "right", "vr-menu");
   await rayPress(ana, "right", "vr-menu-gestures");
+  const waved = await watchGesture(bo, anaId, "wave");
   await rayPress(ana, "right", "vr-gesture-wave");
-  await expect.poll(async () => (await hooks(bo).drawn(anaId))?.gesture, { intervals: [50] }).toBe("wave");
+  await expect.poll(waved, { intervals: [50] }).toBe(true);
   await park(ana, "right");
 
   // Seated at a table, by one hand: the panel comes closer and a little higher, and its lowest row still saves.
