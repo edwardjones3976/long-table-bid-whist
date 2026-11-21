@@ -6,8 +6,8 @@
  *   HIJAB_SIDE                  how far the hijab stands off the head at the temples, for glasses worn over it
  *
  * Every covering clears the tucked hair (hair.ts TUCKED_LIFT plus the sag of its own facets) and reaches
- * past the natural hairline, so no hair shows through or below it, except a beanie or a crown hat over an afro: it sits
- * up on the hair (hair.ts PERCH) and the afro puffs out below it. All but the hijab stop above the ears,
+ * past the natural hairline, so no hair shows through or below it, except a beanie or a crown hat over an afro or a
+ * twist-out (hair.ts PUFFS): it sits up on the hair (hair.ts PERCH) and the hair puffs out below it. All but the hijab stop above the ears,
  * which stay clear with anything worn behind them; the hijab covers the ears and neck and frames the face, lined
  * inside in a deeper shade so the face opening shows cloth. Patterns are plain folds, ribs, seams and bands made in
  * the vertex colours.
@@ -36,7 +36,7 @@ interface Wear {
   colour: string;
   /** A hat-like covering's lower edge, t by f (Dressing.hatEdge). */
   hatEdge?: (f: number) => number;
-  /** Sitting up on an afro (hair.ts PERCH). */
+  /** Sitting up on an afro or a twist-out (hair.ts PUFFS, PERCH). */
   perched: boolean;
   shell: (...pieces: BufferGeometry[]) => void;
   /** Not outlined. */
@@ -177,7 +177,7 @@ function crownHat(w: Wear): void {
     : [[rb, yb - 0.004], [rb, yb + 0.028], [rb, h + 0.03], [0, h + 0.06]] as const;
   w.shell(piece(lathe(crown, w.cols), (at) => (at.y < yb + 0.028 ? band : w.colour), { scale: [1, 1, zs] }));
   // Its profile runs underneath outward, round the rim, then back in on top, so each face looks out of the brim.
-  // On an afro the brim is narrower, still the widest of the hats, so the afro shows past it from the front.
+  // On an afro or a twist-out the brim is narrower, still the widest of the hats, so the hair shows below it from the front.
   const reach = w.perched ? 0.07 : 0.11;
   const brim = near
     ? [[rb - 0.003, yb - 0.006], [rb + reach, yb - 0.022], [rb + reach, yb - 0.016], [rb - 0.003, yb + 0.002]] as const
@@ -196,7 +196,7 @@ function crownHat(w: Wear): void {
   for (const side of [-1, 1]) w.shell(piece(ball.clone(), band, { at: at(0, 0.004, side * 0.17), rot: [0, phi, side * 0.4], scale: [0.026, 0.014, 0.007] }));
 }
 
-/** A knit cap with ribs, a turned-up cuff and a little slouch; over an afro it sits up on the hair like a cap. */
+/** A knit cap with ribs, a turned-up cuff and a little slouch; over an afro or a twist-out it sits up on the hair like a cap. */
 function beanie(w: Wear): void {
   const edge = (phi: number) => w.hatEdge!(fromFace(phi));
   // The cuff stands out a step and a shade deeper, and the ribs show, so it reads as knit, not as hair.
@@ -222,11 +222,12 @@ const COVERINGS: Record<Exclude<Look["headwear"], "none">, (w: Wear) => void> = 
 export function headwear(look: Look, m: Measurements, detail: Detail): Dressing {
   const out: Dressing = { ...dressing(), tucksHair: look.headwear !== "none" };
   if (look.headwear === "none" || detail === "simple") return out;
-  // Like the hats: long hair hangs below a crown hat's band or a beanie's cuff, and an afro puffs out below them,
-  // the crown hat sitting up on it (as hair.ts PERCH) so the afro shows below its brim.
+  // Like the hats: long hair hangs below a crown hat's band or a beanie's cuff, and an afro or a twist-out (hair.ts
+  // PUFFS) puffs out below them, the crown hat sitting up on it (as hair.ts PERCH) so the hair shows below its brim.
   const perched = PUFFS.includes(look.hair);
   if (look.headwear === "crown-hat") {
-    const band = perched ? 0.76 : 0.68;
+    // Perched, its band is as high as the hats' at the sides (PERCH).
+    const band = perched ? (1 + Math.cos(PERCH(Math.PI / 2))) / 2 : 0.68;
     out.hatEdge = () => Math.acos(2 * band - 1);
     out.hatDrop = () => 0.022;
   }

@@ -261,8 +261,9 @@ const ACTS: Record<Act, (s: number, p: number, seated: boolean) => Shape> = {
       brows: 1,
     };
   },
+  // A small, polite bow: a modest lean, the head dipping more so it still reads across the room.
   bow: (_s, _p, seated) => ({
-    joints: { torso: [seated ? -0.35 : -0.6, 0, 0], head: [-0.2, 0, 0], upperArmR: [0.45, 0, -0.35], foreArmR: [1.5, 0, 0] },
+    joints: { torso: [seated ? -0.23 : -0.4, 0, 0], head: [-0.3, 0, 0], upperArmR: [0.45, 0, -0.35], foreArmR: [1.5, 0, 0] },
     mouth: "smile",
     brows: 0.4,
   }),
