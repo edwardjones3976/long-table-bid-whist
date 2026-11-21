@@ -28,8 +28,10 @@ describe("visible bots", () => {
     ]);
   });
 
-  it("draws none before a room is joined or while every table is in its lobby", () => {
+  it("draws none before a room is joined or while every table is in its lobby, nor a bot the server has not described yet", () => {
     expect(botSeats(null)).toEqual([]);
+    // The seat I am standing up from is a bot before the server's snapshot arrives, with no look yet: it appears once, in its own.
+    expect(botSeats({ tables: [{ id: "tonk-1", seats: [seat("human"), { ...seat("bot"), look: undefined }, seat("open"), seat("open")] }] } as unknown as RoomSnapshot)).toEqual([]);
     expect(botSeats({ tables: [{ id: "tonk-1", seats: [seat("human"), seat("open"), seat("open"), seat("open")] }] } as unknown as RoomSnapshot)).toEqual([]);
   });
 

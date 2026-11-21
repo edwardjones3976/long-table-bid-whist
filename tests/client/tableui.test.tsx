@@ -478,6 +478,44 @@ describe("useTableActions", () => {
     expect(hook.result.current.error).toBe("That seat was just taken");
   });
 
+  it("drops the second half of a double press on Leave, which would land on the seat just left", async () => {
+    const world = makeWorld("spades");
+    world.sit(1, true);
+    const hook = renderHook(() => useTableActions("spades-1"));
+    await serve(world);
+    const leave = hook.result.current.description!.buttons.find((button) => button.id === "leave")!;
+    let releaseStand: (reply: unknown) => void = () => {};
+    fake.state.answer = (event, payload) => (event === "table:stand" ? new Promise((resolve) => (releaseStand = resolve)) : world.answer(event, payload));
+    const sentBefore = fake.sent.length;
+    let pressed: Promise<void> = Promise.resolve();
+    act(() => void (pressed = hook.result.current.press(leave)));
+    // Up at once: the buttons are a visitor's now, with Sit where Leave was.
+    const after = hook.result.current.description!;
+    expect(after.role).toBe("visitor");
+    const sit = after.buttons.find((button) => button.id === "sit-1")!;
+    expect(sit.disabled).toBe(false);
+    await act(() => hook.result.current.press(sit));
+    expect(fake.sent.slice(sentBefore).map((message) => message.event)).toEqual(["table:stand"]);
+    await act(async () => {
+      releaseStand({ ok: true });
+      await pressed;
+    });
+  });
+
+  it("shows why a Leave was refused, although the table moved on and back by that press", async () => {
+    const world = makeWorld("spades");
+    world.sit(1, true);
+    const hook = renderHook(() => useTableActions("spades-1"));
+    await serve(world);
+    const leave = hook.result.current.description!.buttons.find((button) => button.id === "leave")!;
+    fake.state.answer = (event, payload) =>
+      event === "table:stand" ? { ok: false, error: "internal", message: "The server did not answer. Check your connection." } : world.answer(event, payload);
+    await act(() => hook.result.current.press(leave));
+    expect(hook.result.current.description!.role).toBe("player");
+    expect(hook.result.current.error).toBe("The server did not answer. Check your connection.");
+    expect(hook.result.current.busy()).toBe(false);
+  });
+
   it("shows a refusal in the panel as an alert", async () => {
     const world = makeWorld("spades");
     render(<TablePanelDom />);

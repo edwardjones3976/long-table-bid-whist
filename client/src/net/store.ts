@@ -177,14 +177,33 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
   // joined afterwards comes with a fresh member id, so its snapshots are followed whatever order the packets arrive in.
   let leftAs: string | null = null;
   // The table this tab is standing up from, until the server confirms it (its table:left, a room snapshot that no
-  // longer seats me there, or the answer to the stand). Snapshots of that table queued before the server heard the
-  // stand are stale: a table snapshot is kept aside, and a room snapshot is shown with me already gone from the table.
-  // What the server last said (which still seats me) is kept to put back should it refuse the stand.
-  let standing: { from: TableId; room: RoomSnapshot; table: TableSnapshot | null } | null = null;
+  // longer seats me there, the answer to the stand, or a seat taken since). Snapshots of that table queued before the
+  // server heard the stand are stale: a table snapshot is kept aside, and a room snapshot is shown with me already gone
+  // from the table. What the server last said (which still seats me) is kept to put back should it refuse the stand:
+  // its latest room, and its latest table snapshot with the time it arrived, told against the one shown before.
+  let standing: {
+    from: TableId;
+    me: string;
+    room: RoomSnapshot;
+    table: { snapshot: TableSnapshot; at: number } | null;
+    shown: TableSnapshot | null;
+  } | null = null;
 
   function set(partial: Partial<NetState>): void {
     state = { ...state, ...partial };
     for (const listener of listeners) listener();
+  }
+
+  /**
+   * Shows a table snapshot that arrived at `at`. A strike is told once, as it is given, against `shown`, the snapshot
+   * on screen before it: not on a table's first snapshot (after a reload), nor when a new match clears it.
+   */
+  function showTable(table: TableSnapshot, at: number, shown: TableSnapshot | null): void {
+    const seat = table.you;
+    const before = seat !== null && shown?.tableId === table.tableId ? (shown.strikes?.[seat] ?? 0) : Infinity;
+    const strikes = seat === null ? 0 : (table.strikes?.[seat] ?? 0);
+    const notice = `Your time ran out, so a bot played your turn. Strike ${strikes} of ${MAX_STRIKES}: at ${MAX_STRIKES} a bot takes your seat.`;
+    set({ table, tableAt: at, ...(strikes > before ? { lastError: notice } : {}) });
   }
 
   /**
@@ -241,15 +260,10 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
     opened.on("table", (table) => {
       if (stale()) return;
       if (standing !== null && table.tableId === standing.from) {
-        standing.table = table;
+        standing.table = { snapshot: table, at: Date.now() };
         return;
       }
-      // A strike is told once, as it is given: not on a table's first snapshot (after a reload), nor when a new match clears it.
-      const seat = table.you;
-      const before = seat !== null && state.table?.tableId === table.tableId ? (state.table.strikes?.[seat] ?? 0) : Infinity;
-      const strikes = seat === null ? 0 : (table.strikes?.[seat] ?? 0);
-      const notice = `Your time ran out, so a bot played your turn. Strike ${strikes} of ${MAX_STRIKES}: at ${MAX_STRIKES} a bot takes your seat.`;
-      set({ table, tableAt: Date.now(), ...(strikes > before ? { lastError: notice } : {}) });
+      showTable(table, Date.now(), state.table);
     });
     opened.on("table:left", ({ tableId, reason }) => {
       if (stale()) return;
@@ -261,8 +275,9 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
       set({ poses });
     });
     opened.on("look", ({ memberId, look }) => {
-      const room = state.room;
-      if (room) set({ room: { ...room, members: room.members.map((member) => (member.id === memberId ? { ...member, look } : member)) } });
+      const dressed = (room: RoomSnapshot): RoomSnapshot => ({ ...room, members: room.members.map((member) => (member.id === memberId ? { ...member, look } : member)) });
+      if (standing) standing.room = dressed(standing.room);
+      if (state.room) set({ room: dressed(state.room) });
     });
     opened.on("gesture", ({ memberId, kind }) => {
       if (stale()) return;
@@ -347,30 +362,39 @@ export function createNet(connect: () => ClientSocket = () => io({ transports: [
       leaveLocally(null);
       return ask("room:leave", {});
     },
-    sit: (tableId: TableId, role: "player" | "host", seat?: Seat) => {
-      // Sitting again, even at the table just left: the server handles the stand first, so what it sends for the new
-      // seat is current and must not be mistaken for the old table's leftovers.
-      standing = null;
-      return request("table:sit", seat === undefined ? { tableId, role } : { tableId, role, seat });
+    async sit(tableId: TableId, role: "player" | "host", seat?: Seat): Promise<Reply> {
+      // Pressed while a stand is unanswered, even for the table just left: the server handles the stand first and
+      // tells of it (table:left, then the room) before anything about the new seat, so the old table's leftovers stay
+      // set aside until then. Its answer to the sit, should that come first, ends the wait too.
+      const reply = await request("table:sit", seat === undefined ? { tableId, role } : { tableId, role, seat });
+      if (reply.ok) standing = null;
+      return reply;
     },
     async stand(): Promise<Reply> {
       // Up from the table on this frame: my hand goes and my place at the table empties (so the camera stands and the
       // panels change at once); the server is told afterwards and, in a match, hands the seat to a bot. Until it
       // confirms, snapshots of this table are stale. Should it refuse instead, or not answer, I am still seated there
-      // as far as it knows, so what it last said is put back; a refusal that I was not at a table needs no putting back.
-      // Offline, the request is refused here without being sent, so nothing moves.
+      // as far as it knows, so what it last said is put back, and then why. A refusal that I was not at a table follows
+      // the server's own table:left, whose reason is already shown, and one that lands after this tab moved on (sat
+      // elsewhere, left the room) is history. Offline, the request is refused here without being sent, so nothing moves.
       const mine = myTable(state);
-      const { room, me } = state;
-      const now = mine && room && me !== null && open().connected ? { from: mine.id, room, table: state.table, me } : null;
-      if (now) {
-        standing = now;
-        set({ table: null, room: withoutMeAt(now.room, now.me, now.from) });
-      }
-      const reply = await request("table:stand", {});
-      if (now && standing === now) {
+      const { room, me, table } = state;
+      const now =
+        mine && room && me !== null && open().connected
+          ? { from: mine.id, me, room, table: table && { snapshot: table, at: state.tableAt }, shown: table }
+          : null;
+      if (!now) return request("table:stand", {});
+      standing = now;
+      set({ table: null, room: withoutMeAt(now.room, now.me, now.from) });
+      const reply = await ask("table:stand", {});
+      if (standing === now) {
         standing = null;
-        if (!reply.ok && reply.error !== "not-at-table") set({ room: now.room, table: now.table });
+        if (!reply.ok && reply.error !== "not-at-table") {
+          set({ room: now.room, lastError: reply.message });
+          if (now.table) showTable(now.table.snapshot, now.table.at, now.shown);
+        }
       }
+      if (reply.ok && state.room !== null && state.me === now.me) set({ lastError: null });
       return reply;
     },
     setReady: (ready: boolean) => request("table:ready", { ready }),
