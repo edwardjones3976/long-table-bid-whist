@@ -16,8 +16,8 @@
  *
  * The tucked version of every style is one close layer under the natural hairline (TUCKED_LIFT off the
  * head), so a covering or hat only has to clear that one shape. Under a hat the long styles (LONG) keep what
- * hangs below its edge, so long locs, braids and a ponytail stay the wearer's own, and an afro (PUFFS) puffs out
- * below its brim, so from the front its outline stays wider than the head there. Beyond 8 m each style keeps
+ * hangs below its edge, so long locs, braids and a ponytail stay the wearer's own, and an afro or a twist-out (PUFFS)
+ * puffs out below its brim in one rounded roll, so from the front its outline stays wider than the head there. Beyond 8 m each style keeps
  * its outline in a few triangles: ropes, rows and knots become a fall, colours or a few cones.
  */
 import { BufferGeometry, ConeGeometry, CylinderGeometry, Float32BufferAttribute, Matrix4, Quaternion, SphereGeometry, Vector3 } from "three";
@@ -160,6 +160,8 @@ interface Kit {
   under?: (f: number) => number;
   /** Under a hat, how far below that edge its brim reaches (metres, by f): an afro puffs out only below it. */
   brim: (f: number) => number;
+  /** Under a crown hat or a beanie, which hides the whole scalp: no close layer is drawn under what is kept below it. */
+  covered: boolean;
   shell: (...pieces: BufferGeometry[]) => void;
   detail: (...pieces: BufferGeometry[]) => void;
 }
@@ -245,44 +247,74 @@ const round = (size: number, t: number, u: number) => size * (1 + 0.15 * Math.si
 /** How far up a round style's underside curls back to the head. */
 const CURL = 0.3;
 
-/** Over an afro (PUFFS) a hat sits up on the hair, its lower edge (t by f) no lower than this, so the afro has room to show below its brim above the ears. */
+/** Over an afro or a twist-out (PUFFS) a hat sits up on the hair, its lower edge (t by f) no lower than this, so the hair has room to show below its brim above the ears. */
 export const PERCH = (f: number): number => 0.95 + 0.27 * Math.max(0, (2 * f) / Math.PI - 1);
 
+/** A puff runs round the back from this far either side of the face (radians), so nothing puffs over the forehead. */
+const PUFF_END = 0.26 * Math.PI;
+
 /**
- * Under a hat, an afro pressed close beneath it, then puffing out its full size just below the hat's brim (k.brim), so
- * from the front it shows below the brim, wider than the head: down to just past the hairline at the sides (still
- * above the ears) and to the nape behind them, in rounded, uneven bumps. Nothing puffs over the forehead.
+ * Under a hat, a puff (PUFFS): pressed close beneath it from its edge, then one soft roll round the back of the head
+ * just below its brim (k.brim), so from the front it shows below the brim, wider than the head. It hangs to just past
+ * the hairline at the sides (still above the ears) and `drop` (radians) lower behind them. Down each meridian it is
+ * half an ellipse, so it rounds out from under the brim and turns back in underneath; each end is a rounded cap at
+ * the temple, never a blade or a corner. `bump` and `paint` are the style's own texture.
  */
-function puff(k: Kit, size: number): BufferGeometry {
-  const cols = k.near ? 16 : k.cols;
+function puff(k: Kit, size: number, bump: (phi: number, t: number) => number, paint: Paint, drop = 0.3): BufferGeometry {
+  const [cols, rows] = k.near ? [16, 5] : [6, 2];
   const half = k.m.head / 2;
-  // Down each meridian: where a row sits (0 the hat's edge, 1 just below the brim, 2 halfway on, 3 the bottom) and its
-  // share of the size out, as full at its widest as a bare afro's sides (round).
-  const rows = k.near ? [[0, 0], [1, 0], [1, 0.9], [2, 1.15], [3, 1], [3, 0]] : [[0, 0], [1, 0], [3, 1.15], [3, 0]];
-  const geometry = grid(cols, rows.length - 1, (i, j) => {
-    const phi = (TAU * i) / cols;
+  const clamp = (x: number) => Math.min(1, Math.max(0, x));
+  const ease = (f: number, from: number, to: number) => Math.sin((Math.PI / 2) * clamp((f - from) / (to - from)));
+  // Pressed close from the hat's edge down to the brim only where no close layer lies under it already.
+  const lead = k.covered ? 1 : 0;
+  const geometry = grid(cols, rows + lead, (i, row) => {
+    const j = row + 1 - lead;
+    // Columns closer together toward the ends, where the roll rounds off.
+    const v = i / cols;
+    const phi = Math.PI + PUFF_END + (TAU - 2 * PUFF_END) * (v - (0.35 * Math.sin(TAU * v)) / TAU);
     const f = fromFace(phi);
     const top = k.under!(f);
-    const bottom = Math.max(top, naturalEdge(phi) + 0.06 * sides(phi));
-    // Where the head is 4 mm below the brim's lowest point: the puff's top, between the hat's edge and its bottom.
-    const clear = Math.acos(Math.max(-1, Math.min(1, Math.cos(top) - (k.brim(f) + 0.004) / half)));
-    const rim = Math.min(bottom, Math.max(top, clear));
-    const [at, share] = rows[j];
-    const t = [top, rim, (rim + bottom) / 2, bottom][at];
-    const out = size * sides(phi) * share * (1 + 0.08 * Math.sin(4 * phi + 7 * t));
-    const on = k.head.at(phi, t, j === rows.length - 1 && bottom > top ? RIM : k.min);
+    if (j === 0) return k.head.at(phi, top, k.min);
+    // Where the head is 4 mm below the brim's lowest point: the roll's top.
+    const rim = Math.max(top, Math.acos(Math.max(-1, Math.min(1, Math.cos(top) - (k.brim(f) + 0.004) / half))));
+    const hang = naturalEdge(phi) + 0.06 * sides(phi) + drop * clamp((f - 0.62 * Math.PI) / (0.15 * Math.PI));
+    // In front of the ears it keeps some height of its own, so it can round off there; at the ends a quarter circle
+    // takes its height and reach down to nothing together.
+    const full = Math.max(0, hang - rim, 0.14 * (1 - sides(phi)));
+    const cap = Math.sqrt(1 - (1 - clamp((f - PUFF_END) / (0.14 * Math.PI))) ** 2);
+    // It stands out little further than it hangs, so it is round in section: slim over the ear, where there is little
+    // room above it, and fullest just behind the ear, where it hangs lower, so from the front the outline swells below
+    // the brim and rounds back in, never a thin wing standing out wider than it is tall. Round the back it eases in
+    // evenly to a bare afro's fullness, so from the side no corner of it stands out past the rest as a wedge. Where it
+    // shows from the front, beside the head, it stands out no more than 0.15 of the head's height, however high the hat
+    // sits: a rounded puff below the brim, never a shelf reaching out past it.
+    const beside = (0.15 + 0.35 * ease(f, 0.7 * Math.PI, 0.9 * Math.PI)) * k.m.head;
+    const reach = cap * Math.min(1.15 * size * (1 + 0.45 * ease(f, 0.5 * Math.PI, 0.7 * Math.PI) - 0.45 * ease(f, 0.72 * Math.PI, Math.PI)), 1.4 * half * (Math.cos(rim) - Math.cos(rim + full)), beside);
+    // Half an ellipse down the meridian, fullest halfway down.
+    const a = (Math.PI * (j - 1)) / rows;
+    const t = rim + (full * cap * (1 - Math.cos(a))) / 2;
+    // The style's bumps on one side, mirrored onto the other, so from the front neither side bulges more.
+    const out = reach * Math.sin(a) ** 0.9 * bump(Math.PI + f, t);
+    const on = k.head.at(phi, t, j === rows + 1 && full * cap > 0 ? RIM : k.min);
     return on.add(new Vector3(on.x, 0, on.z).normalize().multiplyScalar(out));
   });
-  return piece(geometry, plait(k.hue, mix(k.hue, k.mid, 0.5), cols));
+  return piece(geometry, paint);
 }
+
+/** An afro's rounded, uneven bumps. */
+const bumps = (phi: number, t: number) => 1 + 0.08 * Math.sin(4 * phi + 7 * t);
 
 function afro(size: number) {
   return (k: Kit) => {
-    if (k.under) return k.shell(puff(k, size));
-    const lift = (phi: number, t: number, u: number) => lifted(k, round(size, t, u) * (1 + 0.08 * Math.sin(4 * phi + 7 * t)));
+    if (k.under) return k.shell(puff(k, size, bumps, speckle(k.hue, k.mid, 0.4)));
+    const lift = (phi: number, t: number, u: number) => lifted(k, round(size, t, u) * bumps(phi, t));
     k.shell(piece(layer(k.head, k.near ? 16 : k.cols, k.near ? 6 : 2, naturalEdge, lift, RIM, CURL), speckle(k.hue, k.mid, 0.4)));
   };
 }
+
+/** A twist-out's springy clumps, and the twists running across them. */
+const clumps = (phi: number, t: number) => 1 + 0.22 * Math.sin(3 * phi + 5 * t);
+const twists = (k: Kit) => byAngles(k, (phi, t) => (Math.floor((phi * 4) / Math.PI + t * 6) % 2 ? k.hue : k.mid));
 
 /** A close layer under the natural hairline: buzz cuts, bases under ropes and rows, tucked hair. */
 const close = (k: Kit, paint: Paint, lift = k.min, rows = k.near ? 4 : 2) => piece(layer(k.head, k.cols, rows, naturalEdge, () => lift), paint);
@@ -345,10 +377,11 @@ const STYLES: Record<Exclude<Look["hair"], "bald">, (k: Kit) => void> = {
   "afro-m": afro(0.055),
   "afro-l": afro(0.085),
   "twist-out": (k) => {
-    // Taller than wide, in springy clumps, with the twists running across them.
-    const lift = (phi: number, t: number, u: number) => lifted(k, round(0.042, t, u) * (1 + 0.22 * Math.sin(3 * phi + 5 * t)) + 0.016 * Math.cos(t) ** 2);
-    const paint = byAngles(k, (phi, t) => (Math.floor((phi * 4) / Math.PI + t * 6) % 2 ? k.hue : k.mid));
-    k.shell(piece(layer(k.head, k.near ? 16 : k.cols, k.near ? 6 : 2, naturalEdge, lift, RIM, CURL), paint));
+    // Taller than wide, in springy clumps, with the twists running across them. Under a hat it puffs out below the brim
+    // as a medium afro does, hanging lower behind the ears, so it stays taller than wide.
+    if (k.under) return k.shell(puff(k, 0.055, clumps, twists(k), 0.42));
+    const lift = (phi: number, t: number, u: number) => lifted(k, round(0.042, t, u) * clumps(phi, t) + 0.016 * Math.cos(t) ** 2);
+    k.shell(piece(layer(k.head, k.near ? 16 : k.cols, k.near ? 6 : 2, naturalEdge, lift, RIM, CURL), twists(k)));
   },
   "locs-short": locs(false),
   "locs-long": locs(true),
@@ -571,9 +604,9 @@ export function standOff(dressing: Dressing, at: Vector3, normal: Vector3, reach
 
 /** Styles that hang below a hat's edge, to the jaw or further. */
 export const LONG: readonly Look["hair"][] = ["locs-long", "box-braids", "silk-press", "long-straight", "ponytail"];
-/** Styles that puff out below a hat's edge. */
-export const PUFFS: readonly Look["hair"][] = ["afro-s", "afro-m", "afro-l"];
-/** Styles that keep what shows below a hat's edge: the long ones, the ends of short locs, cornrows and knots at the nape, and the afros. The rest tuck under it. */
+/** Styles that puff out below a hat's edge, the hat sitting up on them (PERCH). */
+export const PUFFS: readonly Look["hair"][] = ["afro-s", "afro-m", "afro-l", "twist-out"];
+/** Styles that keep what shows below a hat's edge: the long ones, the ends of short locs, cornrows and knots at the nape, and the puffs. The rest tuck under it. */
 export const BELOW_HAT: readonly Look["hair"][] = [...LONG, "locs-short", "cornrows", "knots", ...PUFFS];
 
 /**
@@ -600,6 +633,7 @@ export function hair(look: Look, m: Measurements, detail: Detail, tucked: boolea
     back: m.chest * m.depth + 0.03,
     under: typeof tucked === "function" ? tucked : undefined,
     brim,
+    covered,
     shell: (...pieces) => add(out.shell, "head", ...pieces),
     detail: (...pieces) => add(out.detail, "head", ...pieces),
   };

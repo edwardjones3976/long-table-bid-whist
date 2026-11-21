@@ -13,7 +13,7 @@ import { accessories } from "../../client/src/avatar/accessories";
 import { topAndBottom } from "../../client/src/avatar/body";
 import { coilSpot, EARS, earShape, face, headProfile, LIPS, MOUTHS, MUSTACHE } from "../../client/src/avatar/face";
 import { buildFigure, JOINT_NAMES, TRIANGLE_BUDGET, type Detail, type Figure, type JointName } from "../../client/src/avatar/figure";
-import { BELOW_HAT, hair, LONG, standOff } from "../../client/src/avatar/hair";
+import { BELOW_HAT, fromFace, hair, LONG, scalp, standOff } from "../../client/src/avatar/hair";
 import { headwear } from "../../client/src/avatar/headwear";
 import { measure, type Measurements } from "../../client/src/avatar/measure";
 import { frontZ, luma, merge, radiusAt, SEGMENTS, tint, triangles, type Dressing } from "../../client/src/avatar/shapes";
@@ -63,6 +63,9 @@ const finite = (dressing: Dressing) =>
   [...Object.values(dressing.shell), ...Object.values(dressing.detail)].flat().every((g) => (g!.attributes.position.array as Float32Array).every(Number.isFinite));
 const joints = (dressing: Dressing): JointName[] => [...new Set([...Object.keys(dressing.shell), ...Object.keys(dressing.detail)])].sort() as JointName[];
 const count = (dressing: Dressing) => [...Object.values(dressing.shell), ...Object.values(dressing.detail)].flat().reduce((sum, g) => sum + triangles(g!), 0);
+/** The points of a dressing's head shell. */
+const points = (dressing: Dressing) =>
+  (dressing.shell.head ?? []).flatMap((geometry) => Array.from({ length: geometry.attributes.position.count }, (_, i) => new Vector3().fromBufferAttribute(geometry.attributes.position, i)));
 /** Each hat, the crown hat and the beanie, worn over this look: its lower edge (hatEdge) and brim (hatDrop) with it. */
 const hats = (look: Look, m: Measurements) => [
   ...(["cap", "bucket", "fedora"] as const).map((hat) => [hat, accessories({ ...look, accessories: [hat] }, m, "near")] as const),
@@ -176,19 +179,49 @@ describe("accessories", () => {
     expect(tucked).toBeGreaterThan(0);
   });
 
-  it("shows a large afro from the front below every hat, a crown hat and a beanie, and out past the brim", () => {
+  it("shows a large afro and a twist-out from the front below every hat, a crown hat and a beanie, standing well out from the head", () => {
     const m = measure(BASE);
-    const look = cleanLook({ ...BASE, hair: "afro-l" });
     // The head pieces' points on the front half, seen from the front.
-    const front = (worn: Dressing) =>
-      (worn.shell.head ?? []).flatMap((geometry) => Array.from({ length: geometry.attributes.position.count }, (_, i) => new Vector3().fromBufferAttribute(geometry.attributes.position, i))).filter((p) => p.z < 0.01);
-    for (const [hat, worn] of hats(look, m)) {
-      // Below the hat's lowest point and wider than its brim, so no brim hides it, even seen from a little above.
-      const lowest = Math.min(...front(worn).map((p) => p.y));
-      const widest = Math.max(...front(worn).map((p) => Math.abs(p.x)));
-      const shown = front(hair(look, m, "near", worn.hatEdge, false, worn.hatDrop)).filter((p) => p.y < lowest - 0.005 && Math.abs(p.x) > widest);
-      expect(shown.length, hat).toBeGreaterThan(0);
+    const front = (worn: Dressing) => points(worn).filter((p) => p.z < 0.01);
+    for (const style of ["afro-l", "twist-out"] as const) {
+      const look = cleanLook({ ...BASE, hair: style });
+      for (const [hat, worn] of hats(look, m)) {
+        // Below the hat's lowest point and 3 cm out past the side of the head: a round puff below the brim, not a wing
+        // reaching out past it.
+        const lowest = Math.min(...front(worn).map((p) => p.y));
+        const under = front(hair(look, m, "near", worn.hatEdge, false, worn.hatDrop));
+        const shown = under.filter((p) => p.y < lowest - 0.005 && Math.abs(p.x) > m.headWidth + 0.03);
+        expect(shown.length, `${style} under ${hat}`).toBeGreaterThan(0);
+        // Both sides alike, so neither bulges more from the front, and no shelf reaching far out past the head.
+        const widest = (side: number) => Math.max(...under.map((p) => side * p.x));
+        expect(widest(1), `${style} under ${hat}`).toBeCloseTo(widest(-1), 5);
+        expect(widest(1), `${style} under ${hat}`).toBeLessThan(m.headWidth + 0.2 * m.head);
+      }
     }
+  });
+
+  it("keeps a twist-out below every hat's edge as it keeps an afro, in its own clumps", () => {
+    const m = measure(BASE);
+    const head = scalp(m);
+    const look = cleanLook({ ...BASE, hair: "twist-out" });
+    const afros = hats({ ...look, hair: "afro-m" }, m);
+    hats(look, m).forEach(([hat, worn], i) => {
+      // The hat sits up on it just as on an afro (hair.ts PERCH).
+      for (const f of [0, Math.PI / 2, Math.PI]) expect(worn.hatEdge!(f), hat).toBe(afros[i][1].hatEdge!(f));
+      const covered = hat === "crown-hat" || hat === "beanie";
+      for (const detail of DETAILS) {
+        const under = hair(look, m, detail, worn.hatEdge, covered, worn.hatDrop);
+        // Below the hat's edge it stands 2 cm or more off the head: a puff, not tucked flat.
+        const puffed = points(under).filter((p) => {
+          const [phi, t] = head.angles(p);
+          return t > worn.hatEdge!(fromFace(phi)) && p.distanceTo(head.at(phi, t)) > 0.02;
+        });
+        expect(puffed.length, `${hat} ${detail}`).toBeGreaterThan(0);
+        // Its own shape and paint, not a medium afro's.
+        const afro = hair({ ...look, hair: "afro-m" }, m, detail, worn.hatEdge, covered, worn.hatDrop);
+        expect(points(under), `${hat} ${detail}`).not.toEqual(points(afro));
+      }
+    });
   });
 
   it("wears the first of two hats and ignores the second", () => {
@@ -273,7 +306,9 @@ it("keeps hair, coverings and hats clear of the ears and anything worn behind th
       ["tucked", hair(look, m, "near", true)],
       ...COVERINGS.filter((id) => id !== "hijab").map((id) => [id, headwear({ ...look, headwear: id }, m, "near")] as [string, Dressing]),
       ...(["cap", "bucket", "fedora"] as const).map((id) => [id, accessories({ ...look, accessories: [id] }, m, "near")] as [string, Dressing]),
-      ...hats({ ...look, hair: "afro-l" }, m).map(([id, worn]) => [`afro-l under ${id}`, hair({ ...look, hair: "afro-l" }, m, "near", worn.hatEdge, false, worn.hatDrop)] as [string, Dressing]),
+      ...(["afro-l", "twist-out"] as const).flatMap((style) =>
+        hats({ ...look, hair: style }, m).map(([id, worn]) => [`${style} under ${id}`, hair({ ...look, hair: style }, m, "near", worn.hatEdge, false, worn.hatDrop)] as [string, Dressing]),
+      ),
     ];
     for (const [name, part] of parts) {
       for (const geometry of [...(part.shell.head ?? []), ...(part.detail.head ?? [])]) {

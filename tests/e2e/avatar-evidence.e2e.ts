@@ -27,6 +27,8 @@ const THEMES = [
 const NUMBERS = `${DIR}/numbers.json`;
 /** Relative to DIR: client/.e2e-screens/round3/, for the hair-under-hats pictures. */
 const ROUND3 = "../../round3";
+/** Relative to DIR: client/.e2e-screens/round4/, for the puffs-under-hats pictures. */
+const ROUND4 = "../../round4";
 // Kept across runs, so one test run alone updates only its own entries.
 const numbers: Record<string, unknown> = existsSync(NUMBERS) ? JSON.parse(readFileSync(NUMBERS, "utf8")) : {};
 const record = (key: string, value: unknown) => {
@@ -1071,6 +1073,22 @@ test("hats and coverings over a large afro, and the curly bob, from 3 m and from
   await rowSheet(page, browser, guests, `${ROUND3}/hats-3m-day.png`, `${title}; 3 m, day`, TURNS);
   await leave(guests);
   for (const [turn, ry] of TURNS) await sheet(browser, `${ROUND3}/hats-1m-${turn}-day.png`, `${title}; 1 m, ${turn}, day`, await closeUps(page, baseURL!, code, people, ry), 4);
+  await closeAll([page]);
+  expect(problems).toEqual([]);
+});
+
+test("puffs under hats from 1 m, front and side: a large afro and a twist-out", async ({ browser, baseURL }) => {
+  test.setTimeout(600_000);
+  const { page, code } = await enter(browser, "Viewer", undefined, true, false);
+  await viewFrom(page, viewer(0, 1));
+  await setTheme(page, "july4");
+  const base = cleanLook({ ...STARTING_LOOKS[1], accessories: [], headwear: "none", headwearColor: "plum" });
+  const people = (["afro-l", "twist-out"] as const).flatMap((hair) => [
+    ...(["bucket", "fedora"] as const).map((hat) => ({ name: `${hair} under a ${hat}`, look: cleanLook({ ...base, hair, accessories: [hat] }) })),
+    ...(hair === "twist-out" ? (["crown-hat", "beanie"] as const) : (["crown-hat"] as const)).map((headwear) => ({ name: `${hair} under a ${headwear}`, look: cleanLook({ ...base, hair, headwear }) })),
+  ]);
+  const title = "A large afro under a bucket hat, a fedora and a crown hat, then a twist-out under the same and a beanie";
+  for (const [turn, ry] of TURNS.slice(0, 2)) await sheet(browser, `${ROUND4}/puffs-1m-${turn}-day.png`, `${title}; 1 m, ${turn}, day`, await closeUps(page, baseURL!, code, people, ry), 4);
   await closeAll([page]);
   expect(problems).toEqual([]);
 });
