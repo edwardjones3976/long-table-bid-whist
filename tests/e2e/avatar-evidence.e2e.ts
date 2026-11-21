@@ -81,9 +81,13 @@ const frames = (page: Page, count: number): Promise<void> =>
   page.evaluate(
     (n) =>
       new Promise<void>((resolve) => {
-        const info = (window.__mansion as unknown as Hooks).three().gl.info.render;
-        const from = info.frame;
+        // The scene registers itself once it draws, which on a slow renderer can be after the page has entered the room.
+        let from: number | null = null;
         const timer = setInterval(() => {
+          const three = (window.__mansion as unknown as Hooks).three() as ReturnType<Hooks["three"]> | undefined;
+          if (!three) return;
+          const info = three.gl.info.render;
+          from ??= info.frame;
           if (info.frame < from + n) return;
           clearInterval(timer);
           resolve();
